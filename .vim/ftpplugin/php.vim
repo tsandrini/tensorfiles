@@ -39,6 +39,9 @@ call plug#begin('~/.vim/plugged')
 	" Command-t (fast-file navigation)
 	Plug 'wincent/command-t'
 
+	" Surround.vim (autocomplete parenthesis)
+	Plug 'tpope/vim-surround'
+
 call plug#end()
 " ============================================================
 " |                                                          |
