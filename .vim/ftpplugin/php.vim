@@ -39,8 +39,11 @@ call plug#begin('~/.vim/plugged')
 	" Command-t (fast-file navigation)
 	Plug 'wincent/command-t'
 
-	" Surround.vim (autocomplete parenthesis)
+	" Surround.vim (parenthesis used as object)
 	Plug 'tpope/vim-surround'
+
+	" Lexima.vim (auto-complete parenthesis)
+	Plug 'cohama/lexima.vim'
 
 call plug#end()
 " ============================================================
@@ -243,6 +246,11 @@ let g:EasyMotion_smartcase = 1
 " JK motions: Line motions
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+
+" >>>>>>>>>>>>>>>>>>>>>> Lexima.vim <<<<<<<<<<<<<<<<<<<<<<
+
+let g:lexima_enable_basic_rules = 1
 
 " ============================================================
 " |                                                          |
