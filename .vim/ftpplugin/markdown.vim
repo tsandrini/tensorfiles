@@ -44,10 +44,12 @@ call plug#end()
 " Activate tab-autocompleteion in : mode
 set wildmode=full
 
-" Set tab-width
+" Define tab as 4 spaces
+set tabstop=8
+set softtabstop=0
+set expandtab
 set shiftwidth=4
-set tabstop=4
-set softtabstop=0 noexpandtab
+set smarttab
 
 " Wrap long lines to multiple lines
 set wrap
