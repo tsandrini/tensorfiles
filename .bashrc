@@ -5,16 +5,24 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-alias ls='ls --color=auto'
-alias git-pretty-graph="git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all"
-
 # PS1='[\u@\h \W]\$ '
 
 # Gitflow autocompletion
 source ~/.git-flow.sh
 
-# If in git repo, show branch name
-PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
+PS1="\[\033[48;5;27m\]\u\[$(tput sgr0)\]\[\033[48;5;27m\]@\h \[$(tput sgr0)\]\[\033[38;5;27m\]\[\033[48;5;9m\] \[$(tput sgr0)\]\[\033[48;5;9m\]\W \[$(tput sgr0)\]\[\033[38;5;9m\]\$(__git_ps1 '  %s ')\[\033[38;5;9m\]\[$(tput sgr0)\]\[\033[38;5;15m\]\[$(tput sgr0)\]\[$(tput bold)\] \\$ \[$(tput sgr0)\]"
 
 # Auto cd
 shopt -s autocd
+
+# Colorize grep
+alias grep='grep --color=auto'
+
+# Colorize diff
+alias diff='diff --color=auto'
+
+# Colorize ls
+alias ls='ls --color=auto'
+
+# Dynamicily resize line width by window width
+shopt -s checkwinsize

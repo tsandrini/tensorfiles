@@ -57,6 +57,12 @@ call plug#begin('~/.vim/plugged')
 
         " vim-startify
         Plug 'mhinz/vim-startify'
+        
+        " indentline (Show indent lines)
+        Plug 'yggdroot/indentline'
+        
+        " pdv (vim dockblockr for php )
+        Plug 'tobyS/pdv'
 
 call plug#end()
 " ============================================================
@@ -315,6 +321,17 @@ let g:syntastic_error_symbol = '✗'
 let g:syntastic_warning_symbol = '✗'
 let g:syntastic_style_error_symbol = '∆'
 let g:syntastic_style_warning_symbol = '∆'
+
+
+
+" >>>>>>>>>>>>>>>>>>>>>> Indentline <<<<<<<<<<<<<<<<<<<<<<
+
+let g:indentLine_char = '|'
+let g:indentLine_color_term = 239
+
+
+let g:pdv_template_dir = $HOME ."/.vim/plugged/pdv/templates_snip"
+nnoremap <buffer> <C-p> :call pdv#DocumentWithSnip()<CR>
 
 " ============================================================
 " |                                                          |
