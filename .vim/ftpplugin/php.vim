@@ -1,3 +1,7 @@
+" Security
+set secure
+set noexrc
+
 " ============================================================
 " |                                                          |
 " |                      PlugImport                          |
@@ -23,21 +27,42 @@ call plug#begin('~/.vim/plugged')
 
 	" Vim-fugitive (git interaction)
 	Plug 'tpope/vim-fugitive'
-	
-	" PHP-vim 
+
+	" PHP-vim
 	Plug 'stanangeloff/php.vim'
 
 	" PHP tools (Codesniffer, mess detector, syntax errors)
-	Plug 'joonty/vim-phpqa'
+	" Plug 'joonty/vim-phpqa'
+
+	" Syntastic (syntax cheking tools)
+	Plug 'scrooloose/syntastic'
 
 	" EasyMotion
 	Plug 'easymotion/vim-easymotion'
-	
+
 	" Vim-twig (syntax, snippets etc.)
 	Plug 'evidens/vim-twig'
-		
+
 	" Command-t (fast-file navigation)
 	Plug 'wincent/command-t'
+
+	" Surround.vim (parenthesis used as object)
+	Plug 'tpope/vim-surround'
+
+	" Lexima.vim (auto-complete parenthesis)
+	Plug 'cohama/lexima.vim'
+
+        " Phpcomplete
+        Plug 'shawncplus/phpcomplete.vim'
+
+        " vim-startify
+        Plug 'mhinz/vim-startify'
+        
+        " indentline (Show indent lines)
+        Plug 'yggdroot/indentline'
+        
+        " pdv (vim dockblockr for php )
+        Plug 'tobyS/pdv'
 
 call plug#end()
 " ============================================================
@@ -45,23 +70,24 @@ call plug#end()
 " |                      PlugImport END                      |
 " |                                                          |
 " ============================================================
- 
+
 " ============================================================
 " |                                                          |
 " |                   VIM-base-configuration                 |
 " |                                                          |
 " ============================================================
 
-" Activate tab-autocompleteion in : mode
+" Wildmode
 set wildmode=full
+set wildmenu
+set wildignorecase
 
-" Set tab-width
+" Define tab as 4 spaces
+set tabstop=8
+set softtabstop=0
+set expandtab
 set shiftwidth=4
-set tabstop=4
-set softtabstop=0 noexpandtab
-
-" Wrap long lines on multiple lines
-set wrap
+set smarttab
 
 " Set default clipboard
 set clipboard=unnamedplus
@@ -70,6 +96,17 @@ set clipboard=unnamedplus
 filetype indent on
 set autoindent
 set smartindent
+set shiftround
+
+" Wrapping
+set wrap
+set showmatch
+set linebreak
+set nofoldenable
+
+" UI
+set ruler
+
 
 " Activate relative numbering in sidebar
 set relativenumber
@@ -112,8 +149,11 @@ set history=100
 " Remove whitespaces on save
 autocmd BufWritePre * :%s/\s\+$//e
 
-" Highlight searched word
+" Searching
 set hlsearch
+set ignorecase
+set smartcase
+set nowrapscan
 
 
 " ============================================================
@@ -129,7 +169,7 @@ set hlsearch
 " ============================================================
 
 
-" >>>>>>>>>>>>>>>>>>>>>> NERDTREE  <<<<<<<<<<<<<<<<<<<<<<  
+" >>>>>>>>>>>>>>>>>>>>>> NERDTREE  <<<<<<<<<<<<<<<<<<<<<<
 
 " Toggle NERDtree with ctrl +t
 nmap <C-t> :NERDTreeToggle<CR>
@@ -138,7 +178,11 @@ nmap <C-t> :NERDTreeToggle<CR>
 let NERDTreeMapActivateNode='l'
 let NERDTreeMapCloseChildren='h'
 
-" >>>>>>>>>>>>>>>>>>>>>> LIGHTLINE  <<<<<<<<<<<<<<<<<<<<<< 
+" Auto delete buffer
+let NERDTreeAutoDeleteBuffer = 1
+
+
+" >>>>>>>>>>>>>>>>>>>>>> LIGHTLINE  <<<<<<<<<<<<<<<<<<<<<<
 
 " Bugfix
 set laststatus=2
@@ -148,7 +192,8 @@ let g:lightline = {
       \ 'colorscheme': 'landscape',
       \ 'mode_map': { 'c': 'NORMAL' },
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ]
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+      \   'right': [ ['syntastic', 'lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']  ]
       \ },
       \ 'component_function': {
       \   'modified': 'LightlineModified',
@@ -159,6 +204,12 @@ let g:lightline = {
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
+      \ },
+      \ 'component_expand': {
+      \   'syntastic': 'SyntasticStatuslineFlag',
+      \ },
+      \ 'component_type': {
+      \   'syntastic': 'error',
       \ },
       \ 'separator': { 'left': '', 'right': '' },
       \ 'subseparator': { 'left': '', 'right': '' }
@@ -205,10 +256,20 @@ function! LightlineMode()
 	return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 
+augroup AutoSyntastic
+    autocmd!
+    autocmd BufWritePost *.c,*.cpp call s:syntastic()
+augroup END
+function! s:syntastic()
+    SyntasticCheck
+    call lightline#update()
+endfunction
+
+
 " Let the lightline tell me which mod i am currently in
 set noshowmode
 
-" >>>>>>>>>>>>>>>>>>>>>> PHP-VIM  <<<<<<<<<<<<<<<<<<<<<< 
+" >>>>>>>>>>>>>>>>>>>>>> PHP-VIM  <<<<<<<<<<<<<<<<<<<<<<
 
 function! PhpSyntaxOverride()
 	hi! def link phpDocTags  phpDefine
@@ -223,7 +284,7 @@ augroup END
 " >>>>>>>>>>>>>>>>>>>>>> EasyMotion <<<<<<<<<<<<<<<<<<<<<<
 
 " Disable default key-mappings
-let g:EasyMotion_do_mapping = 0 
+let g:EasyMotion_do_mapping = 0
 
 " Jump to anywhere you want with minimal keystrokes, with just one key
 " binding.
@@ -241,9 +302,39 @@ let g:EasyMotion_smartcase = 1
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
+
+" >>>>>>>>>>>>>>>>>>>>>> Lexima.vim <<<<<<<<<<<<<<<<<<<<<<
+
+let g:lexima_enable_basic_rules = 1
+
+" >>>>>>>>>>>>>>>>>>>>>> Syntastic <<<<<<<<<<<<<<<<<<<<<<
+"
+let g:syntastic_always_populate_loc_list = 2
+let g:syntastic_auto_loc_list = 2
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_enable_balloons = 0
+let g:syntastic_loc_list_height = 5
+let g:syntastic_ignore_files = ['\.min\.js$', '\.min\.css$', '\.sw?', '.env*']
+
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '✗'
+let g:syntastic_style_error_symbol = '∆'
+let g:syntastic_style_warning_symbol = '∆'
+
+
+
+" >>>>>>>>>>>>>>>>>>>>>> Indentline <<<<<<<<<<<<<<<<<<<<<<
+
+let g:indentLine_char = '|'
+let g:indentLine_color_term = 239
+
+
+let g:pdv_template_dir = $HOME ."/.vim/plugged/pdv/templates_snip"
+nnoremap <buffer> <C-p> :call pdv#DocumentWithSnip()<CR>
+
 " ============================================================
 " |                                                          |
 " |               Plugin-specific-conf END                   |
 " |                                                          |
 " ============================================================
-
