@@ -1,0 +1,5 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =3
+let g:netrw_dirhist_1='/home/tomas/Projekty/logic_elements/htdocs/LogicElements/app/Http/Controllers'
+let g:netrw_dirhist_2='/home/tomas/Projekty/logic_elements/htdocs/LogicElements/app/Http/Controllers/Admin'
+let g:netrw_dirhist_3='/home/tomas/Projekty/logic_elements/htdocs/LogicElements/app/Http/Controllers'
