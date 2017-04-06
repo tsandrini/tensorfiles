@@ -12,7 +12,7 @@ set $terminal   urxvt -uc
 set $ws1  "1: "
 set $ws2  "2: "
 set $ws3  "3: "
-set $ws4  "4: "
+set $ws4  "4: "
 set $ws5  "5: "
 set $ws6  "6: 6"
 set $ws7  "7: 7"
@@ -33,7 +33,7 @@ floating_modifier $mod
 bindsym $mod+Shift+q kill
 
 bindsym $mod+Return exec --no-startup-id $terminal
-bindsym $mod+d exec rofi --no-startup-id -show run -lines 3 -eh 2 -width 100 -padding 800 -bw 0 -bc "$bg-color" -bg "$bg-color"     -fg "$text-color" -hlbg "$bg-color" -hlfg "#9575cd" -font "System San Francisco Display 18"
+bindsym $mod+d exec rofi --no-startup-id -show run
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -159,30 +159,35 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5% #increase sound volume
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% #decrease sound volume
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle # mute sound
+bindsym XF86AudioRaiseVolume exec --no-startup-id pulseaudio-ctl up
+bindsym XF86AudioLowerVolume exec --no-startup-id pulseaudio-ctl down
+bindsym XF86AudioMute exec --no-startup-id pulseaudio-ctl mute
 
-bindsym XF86MonBrightnessUp exec --no-startup-id xbacklight -inc 15 # increase screen brightness
-bindsym XF86MonBrightnessDown exec --no-startup-id xbacklight -dec 15 # decrease screen brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id light -A 5
+bindsym XF86MonBrightnessDown exec --no-startup-id light -U 5
   
-bindsym XF86AudioPlay exec --no-startup-id playerctl play
-bindsym XF86AudioPause exec --no-startup-id playerctl pause
-bindsym XF86AudioNext exec --no-startup-id playerctl next
-bindsym XF86AudioPrev exec --no-startup-id playerctl previous
+bindsym XF86AudioPlay exec --no-startup-id cmus-remote --play
+bindsym XF86AudioPause exec --no-startup-id cmus-remote --pause
+bindsym XF86AudioNext exec --no-startup-id cmus-remote --next
+bindsym XF86AudioPrev exec --no-startup-id cmus-remote --previous
 
 
 bindsym $mod+f exec --no-startup-id $terminal -e "ranger"
 bindsym F1 exec --no-startup-id echo  "no need for help" > /dev/null
 bindsym Print exec --no-startup-id xfce4-screenshooter
 bindsym $mod+shift+g exec --no-startup-id i3lock-fancy
-bindsym $mod+m exec --no-startup-id cmus
+bindsym $mod+m exec --no-startup-id $terminal -e "cmus"
 
-exec_always --no-startup-id feh --bg-scale ~/.wallpaper.png
-exec_always --no-startup-id compton -f &
-exec_always --no-startup-id nm-applet &
+bindsym $mod+n exec --no-startup-id cmus-remote --next
+bindsym $mod+p exec --no-startup-id cmus-remote --prev
+bindsym $mod+u exec --no-startup-id cmus-remote --pause
+
+exec --no-startup-id feh --bg-scale ~/.wallpaper.png
+exec --no-startup-id compton -f &
+exec --no-startup-id nm-applet &
 exec --no-startup-id cbatticon &
-exec_always --no-startup-id dunst -fn "System San Francisco Display 11"  &
+exec --no-startup-id dunst -fn "System San Francisco Display 11"
 exec --no-startup-id redshift-gtk &
 exec --no-startup-id Thermald &
-exec--no-startup-id kalu &
+exec --no-startup-id kalu &
+exec --no-startup-id pasystray &
