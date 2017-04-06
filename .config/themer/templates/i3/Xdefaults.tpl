@@ -57,11 +57,24 @@ Xft*.antialias: true
 Xft*.hinting: true
 Xft*.hintstyle: hintslight
 
-
+rofi.fullscreen: false
+rofi.fake-transparency: false
+rofi.opacity: 90
+rofi.separator-style: dash
+rofi.font: System San Francisco Display 18
 rofi.color-enabled: true
-!rofi.color-window: #273238, #273238, #1e2529
-!rofi.color-normal: #273238, #c1c1c1, #273238, #394249, #ffffff
-rofi.color-window: argb: EE000000, argb: EE000000, argb: EE000000
-rofi.color-normal: argb: 00000000, #DEDEDE, argb: 00000000, #DEDEDE
-rofi.color-active: #273238, #80cbc4, #273238, #394249, #80cbc4
-rofi.color-urgent: #273238, #ff1844, #273238, #394249, #ff1844
+rofi.width: 100
+rofi.padding: 800
+rofi.hide-scrollbar: true
+rofi.location: 0
+rofi.color-enabled: true
+rofi.yoffset: 0
+rofi.xoffset: 0
+rofi.line-margin: 5
+
+rofi.color-window:      argb:dc111111, argb:dc111111
+! State:                'bg',          'fg',   'bgalt',       'hlbg',        'hlfg'
+rofi.color-normal:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
+rofi.color-urgent:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
+rofi.color-active:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
+
