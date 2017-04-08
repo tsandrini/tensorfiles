@@ -7,7 +7,7 @@ ZSH=/usr/share/oh-my-zsh/
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="agnoster"
+ZSH_THEME="gnzh" 
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -93,4 +93,9 @@ source $ZSH/oh-my-zsh.sh
 # Startup archlinux logo
 if type "alsi" > /dev/null; then
     alsi -u
+fi
+
+# Include aliases
+if [ -f ~/.zsh_aliases ]; then
+. ~/.zsh_aliases
 fi

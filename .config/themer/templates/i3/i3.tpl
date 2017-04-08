@@ -183,7 +183,7 @@ bindsym $mod+p exec --no-startup-id cmus-remote --prev
 bindsym $mod+u exec --no-startup-id cmus-remote --pause
 
 exec --no-startup-id feh --bg-scale ~/.wallpaper.png
-exec --no-startup-id compton -f &
+exec --no-startup-id compton -f --opengl --vsync opengl-swc --paint-on-overlay &
 exec --no-startup-id nm-applet &
 exec --no-startup-id cbatticon &
 exec --no-startup-id dunst -fn "System San Francisco Display 11"

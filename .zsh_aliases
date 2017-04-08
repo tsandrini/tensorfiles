@@ -1,0 +1,1 @@
+alias gentags="ctags -f .vimtags -R ." 

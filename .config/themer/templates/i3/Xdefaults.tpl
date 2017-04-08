@@ -1,6 +1,9 @@
-*faceName:Menlo for Powerline
-*faceSize:14
-URxvt*.font: xft:Menlo for Powerline:pixelsize=14
+URxvt*font: \
+        xft:MesloLGM Nerd Font:style=RegularForPowerline:pixelsize=17:antialias=true:hinting=true, \
+        xft:TerminessTTF Nerd Font:style=Medium:pixelsize=17:antialias=true:hinting=true
+URxvt*boldFont: \
+        xft:MesloLGM Nerd Font:style=Bold:pixelsize=17:antialias=true:hinting=true, \
+        xft:TerminessTTF Nerd Font:style=Bold:pixelsize=17:antialias=true:hinting=true
 
 URxvt*.background: {% if transparency %}[{{ transparency }}]{% endif %}{% if background %}{{ background }}{% else %}{{ black }}{% endif %}
 URxvt*.foreground: {% if foreground %}{{ foreground }}{% else %}{{ white }}{% endif %}
@@ -33,29 +36,27 @@ URxvt*.color15: {{ alt_white }}
 ! underline when default
 URxvt*.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
 
-URxvt*.saveLines: 65535
+URxvt*.saveLines: 500
 URxvt*.scrollBar: false
 
-URxvt.perl-ext-common : default,selection-autotransform,url-select,keyboard-select,rotate-colors,matcher,resize-font
+URxvt*iso14755: false
+URxvt*iso14755_52: false
+
+URxvt*letterSpace: -1
+URxvt.imLocate: cs_CZ.UTF-8
+
+URxvt.perl-ext-common : default,selection-autotransform,url-select,keyboard-select,matcher,resize-font
 URxvt.perl-ext        : default,clipboard
 
-URxvt.keysym.M-Escape: perl:keyboard-select:activate
-URxvt.keysym.M-s: perl:keyboard-select:search
-URxvt.keysym.M-u: perl:url-select:select_next
 URxvt.keysym.M-c:   perl:clipboard:copy
 URxvt.keysym.M-v:   perl:clipboard:paste
-URxvt.keysym.M-C-v: perl:clipboard:paste_escaped
 
-URxvt.url-select.launcher  : chromium
 URxvt.url-select.underline : true
 URxvt.url-select.button    : 2
+URxvt*urlLauncher: chromium
 
 URxvt*.transparent: true
 URxvt*.shading: 30
-
-Xft*.antialias: true
-Xft*.hinting: true
-Xft*.hintstyle: hintslight
 
 rofi.fullscreen: false
 rofi.fake-transparency: false

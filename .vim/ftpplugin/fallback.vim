@@ -1,6 +1,12 @@
+" Security
+set secure
+
+" Read local .vimrc
+set exrc
+
 " ============================================================
-" | 				        							 	 |
-" |						 PlugImport                          |
+" | 			                                     |
+" |		         PlugImport                          |
 " |                                                          |
 " ============================================================
 
@@ -27,17 +33,27 @@ call plug#begin('~/.vim/plugged')
 	" EasyMotion
 	Plug 'easymotion/vim-easymotion'
 
+        " Ctrl-P (currently best fuzzy finder)
+        Plug 'ctrlpvim/ctrlp.vim'
+
+         " Lexima.vim (auto-complete parenthesis)
+        Plug 'cohama/lexima.vim'
+
+        " vim-devicons
+        Plug 'ryanoasis/vim-devicons'
+
+ 				  
 call plug#end()
 
 " ============================================================
-" | 				        							 	 |
-" |						 PlugImport END                      |
+" | 			                                     |
+" |			 PlugImport END                      |
 " |                                                          |
 " ============================================================
 
 " ============================================================
-" | 				        							 	 |
-" |					  VIM-base-configuration 				 |
+" | 				        		     |
+" |		 VIM-base-configuration                      |
 " |                                                          |
 " ============================================================
 
@@ -51,11 +67,20 @@ set expandtab
 set shiftwidth=4
 set smarttab
 
+" Command line history
+set history=100
+
+" Where to put *.swp files
+set dir=~/.vim/tmp
+
+" Where to put backup files
+set backupdir=~/.vim/backup
+
 " Wrap long lines to multiple lines
 set wrap
 
 " Set default clipboard
-set clipboard=unnamedplus
+set clipboard=unnamed
 
 " Autoindetation when creating new line
 set autoindent
@@ -76,12 +101,21 @@ filetype plugin on
 syntax on
 
 " Set encoding
-set encoding=utf-8
 scriptencoding utf-8
+set encoding=utf-8
+set termencoding=utf-8
+set fileencoding=utf-8
+set fileencodings=ucs-bom,utf-8,gbk,big5,latin1
 
 " Spell checking
 " setlocal spell spelllang=cs
 " set spell
+
+" Quickly resize windows use +/-
+map - <C-W>-
+map + <C-W>+
+map > <C-W>>
+map < <C-W><
 
 " Prevent from using arrow keys
 nnoremap <Up> :echomsg "Use k you n00b"<cr>
@@ -89,19 +123,24 @@ nnoremap <Down> :echomsg "Use j you n00b"<cr>
 nnoremap <Left> :echomsg "Use h you n00b"<cr>
 nnoremap <Right> :echomsg "Use l you n00b"<cr>
 
+" new tab
+map <C-x>n :tabnew<CR>
+" close tab
+map <C-x>c :tabclose<CR> 
+
+
 " Highlight searched word
 set hlsearch
 
-
 " ============================================================
-" | 				        							 	 |
-" |					   VIM-base-conf END 					 |
+" |                                                          |
+" |                    VIM-base-conf END                     |
 " |                                                          |
 " ============================================================
 
 " ============================================================
-" | 				        							 	 |
-" |				      Plugin-specific-conf                   |
+" |                                                          |
+" |                   Plugin-specific-conf                   |
 " |                                                          |
 " ============================================================
 
@@ -208,12 +247,12 @@ map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
 
 
+" >>>>>>>>>>>>>>>>>>>>>> Ctags <<<<<<<<<<<<<<<<<<<<<<
+
+set tags=./.vimtags;,.vimtags;
+
 " ============================================================
-" | 				        							 	 |
-" |				  Plugin-specific-conf END                   |
+" | 			                                     |
+" |	          Plugin-specific-conf END                   |
 " |                                                          |
 " ============================================================
-
-if !empty(glob(".vimrc_local"))
-	source .vimrc_local
-endif

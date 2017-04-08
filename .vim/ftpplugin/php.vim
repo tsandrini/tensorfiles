@@ -1,5 +1,7 @@
 " Security
 set secure
+
+" Prevent from reccuring itself
 set noexrc
 
 " ============================================================
@@ -43,9 +45,6 @@ call plug#begin('~/.vim/plugged')
 	" Vim-twig (syntax, snippets etc.)
 	Plug 'evidens/vim-twig'
 
-	" Command-t (fast-file navigation)
-	Plug 'wincent/command-t'
-
 	" Surround.vim (parenthesis used as object)
 	Plug 'tpope/vim-surround'
 
@@ -57,12 +56,30 @@ call plug#begin('~/.vim/plugged')
 
         " vim-startify
         Plug 'mhinz/vim-startify'
-        
+
         " indentline (Show indent lines)
         Plug 'yggdroot/indentline'
+
+        " Ctrl-P (currently best fuzzy finder)
+        Plug 'ctrlpvim/ctrlp.vim'
         
-        " pdv (vim dockblockr for php )
-        Plug 'tobyS/pdv'
+        " vim-php-namespace (types use statements)
+        Plug 'arnaud-lb/vim-php-namespace'
+        
+        " vim-php
+        Plug 'vim-php/tagbar-phpctags.vim'
+       
+        " Tagbar
+        Plug 'majutsushi/tagbar'
+
+        " vim-easytags (needed for Tagbar)
+        Plug 'xolox/vim-easytags'
+
+        " vim-misc (needed for vim-easytags)
+        Plug 'xolox/vim-misc'
+        
+        " vim-devicons 
+        Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
 " ============================================================
@@ -89,8 +106,22 @@ set expandtab
 set shiftwidth=4
 set smarttab
 
+" Command line history
+set history=100
+
+" Cache rendering
+set lazyredraw
+set ttyfast
+
+
+" Where to put *.swp files
+set dir=~/.vim/tmp
+
+" Where to put backup files
+set backupdir=~/.vim/backupdir
+
 " Set default clipboard
-set clipboard=unnamedplus
+set clipboard=unnamed
 
 " Autoindetation when creating new line
 filetype indent on
@@ -106,7 +137,6 @@ set nofoldenable
 
 " UI
 set ruler
-
 
 " Activate relative numbering in sidebar
 set relativenumber
@@ -127,18 +157,31 @@ syntax on
 "au BufReadPost *.tpl set syntax=html
 
 " Set encoding
-set encoding=utf-8
 scriptencoding utf-8
+set encoding=utf-8                                  
+set termencoding=utf-8
+set fileencodings=ucs-bom,utf-8,gbk,big5,latin1
 
 " Spell checking
 setlocal spell spelllang=cs
 "set spell
+
+" Quickly resize windows use +/-
+map - <C-W>-
+map + <C-W>+
+map > <C-W>>
+map < <C-W><
 
 " Prevent from using arrow keys
 nnoremap <Up> :echomsg "Use k you n00b"<cr>
 nnoremap <Down> :echomsg "Use j you n00b"<cr>
 nnoremap <Left> :echomsg "Use h you n00b"<cr>
 nnoremap <Right> :echomsg "Use l you n00b"<cr>
+
+" new tab
+map <C-x>n :tabnew<CR>
+" close tab
+map <C-x>c :tabclose<CR> 
 
 "set lines=35 columns=150
 
@@ -322,16 +365,27 @@ let g:syntastic_warning_symbol = '✗'
 let g:syntastic_style_error_symbol = '∆'
 let g:syntastic_style_warning_symbol = '∆'
 
-
-
 " >>>>>>>>>>>>>>>>>>>>>> Indentline <<<<<<<<<<<<<<<<<<<<<<
 
-let g:indentLine_char = '|'
+let g:indentLine_char = '┆'
 let g:indentLine_color_term = 239
 
+" >>>>>>>>>>>>>>>>>>>>>> Ctags <<<<<<<<<<<<<<<<<<<<<<
 
-let g:pdv_template_dir = $HOME ."/.vim/plugged/pdv/templates_snip"
-nnoremap <buffer> <C-p> :call pdv#DocumentWithSnip()<CR>
+set tags=./.vimtags;,.vimtags;
+
+" >>>>>>>>>>>>>>>>>>>>>> PHP-cs-fixer <<<<<<<<<<<<<<<<<<<<<<
+
+nnoremap <silent><leader>pcd :call PhpCsFixerFixDirectory()<CR>
+nnoremap <silent><leader>pcf :call PhpCsFixerFixFile()<CR>
+
+" >>>>>>>>>>>>>>>>>>>>>> vim-easytags <<<<<<<<<<<<<<<<<<<<<<
+
+let g:easytags_dynamic_files = 1
+
+" >>>>>>>>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<
+
+noremap <F2> :TagbarToggle<CR>
 
 " ============================================================
 " |                                                          |
