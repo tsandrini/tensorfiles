@@ -25,8 +25,7 @@ for_window [class="^.*"] border pixel 0
 gaps inner 15
 gaps outer 15
 
-font pango:System San Francisco Display 11
-
+font pango:{{ fontName }} {{ fontSize }}
 
 floating_modifier $mod
 
@@ -176,18 +175,17 @@ bindsym $mod+f exec --no-startup-id $terminal -e "ranger"
 bindsym F1 exec --no-startup-id echo  "no need for help" > /dev/null
 bindsym Print exec --no-startup-id xfce4-screenshooter
 bindsym $mod+shift+g exec --no-startup-id i3lock-fancy
-bindsym $mod+m exec --no-startup-id $terminal -e "cmus"
+bindsym $mod+m exec --no-startup-id i3-msg 'workspace $ws4; exec --no-startup-id $terminal -e "cmus"'
 
 bindsym $mod+n exec --no-startup-id cmus-remote --next
 bindsym $mod+p exec --no-startup-id cmus-remote --prev
 bindsym $mod+u exec --no-startup-id cmus-remote --pause
 
-exec --no-startup-id feh --bg-scale ~/.wallpaper.png
+exec_always --no-startup-id feh --bg-scale ~/.wallpaper.png
 exec --no-startup-id compton -f --opengl --vsync opengl-swc --paint-on-overlay &
 exec --no-startup-id nm-applet &
 exec --no-startup-id cbatticon &
 exec --no-startup-id dunst -fn "System San Francisco Display 11"
-exec --no-startup-id redshift-gtk &
 exec --no-startup-id Thermald &
 exec --no-startup-id kalu &
-exec --no-startup-id pasystray &
+exec --no-startup-id volumeicon &

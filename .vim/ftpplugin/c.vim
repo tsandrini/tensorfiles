@@ -12,9 +12,6 @@ set noexrc
 
 call plug#begin('~/.vim/plugged')
 
-	" PHPCD (goto definition + completions)
-	Plug 'php-vim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' }
-
 	" NERDtree (sidebar panel)
 	Plug 'scrooloose/nerdtree'
 
@@ -30,29 +27,14 @@ call plug#begin('~/.vim/plugged')
 	" Vim-fugitive (git interaction)
 	Plug 'tpope/vim-fugitive'
 
-	" PHP-vim
-	Plug 'stanangeloff/php.vim'
-
-	" PHP tools (Codesniffer, mess detector, syntax errors)
-	" Plug 'joonty/vim-phpqa'
-
-	" Syntastic (syntax cheking tools)
-	Plug 'scrooloose/syntastic'
-
 	" EasyMotion
 	Plug 'easymotion/vim-easymotion'
-
-	" Vim-twig (syntax, snippets etc.)
-	Plug 'evidens/vim-twig'
 
 	" Surround.vim (parenthesis used as object)
 	Plug 'tpope/vim-surround'
 
 	" Lexima.vim (auto-complete parenthesis)
 	Plug 'cohama/lexima.vim'
-
-        " Phpcomplete
-        Plug 'shawncplus/phpcomplete.vim'
 
         " vim-startify
         Plug 'mhinz/vim-startify'
@@ -62,12 +44,6 @@ call plug#begin('~/.vim/plugged')
 
         " Ctrl-P (currently best fuzzy finder)
         Plug 'ctrlpvim/ctrlp.vim'
-
-        " vim-php-namespace (types use statements)
-        Plug 'arnaud-lb/vim-php-namespace'
-
-        " vim-php
-        Plug 'vim-php/tagbar-phpctags.vim'
 
         " Tagbar
         Plug 'majutsushi/tagbar'
@@ -80,9 +56,10 @@ call plug#begin('~/.vim/plugged')
 
         " vim-devicons
         Plug 'ryanoasis/vim-devicons'
+        
+        " c-vim
+        Plug 'c.vim'
 
-        " VIm-php-cs-fixer
-        Plug 'stephpy/vim-php-cs-fixer'
 
 call plug#end()
 " ============================================================
@@ -187,9 +164,6 @@ nnoremap <Right> :echomsg "Use l you n00b"<cr>
 map <C-x>n :tabnew<CR>
 " close tab
 map <C-x>c :tabclose<CR>
-
-" Format the whole document
-nnoremap <F3> gg=G
 
 "set lines=35 columns=150
 
@@ -320,18 +294,6 @@ endfunction
 " Let the lightline tell me which mod i am currently in
 set noshowmode
 
-" >>>>>>>>>>>>>>>>>>>>>> PHP-VIM  <<<<<<<<<<<<<<<<<<<<<<
-
-function! PhpSyntaxOverride()
-	hi! def link phpDocTags  phpDefine
-	hi! def link phpDocParam phpType
-endfunction
-
-augroup phpSyntaxOverride
-	autocmd!
-	autocmd FileType php call PhpSyntaxOverride()
-augroup END
-
 " >>>>>>>>>>>>>>>>>>>>>> EasyMotion <<<<<<<<<<<<<<<<<<<<<<
 
 " Disable default key-mappings
@@ -358,21 +320,6 @@ map <Leader>k <Plug>(easymotion-k)
 
 let g:lexima_enable_basic_rules = 1
 
-" >>>>>>>>>>>>>>>>>>>>>> Syntastic <<<<<<<<<<<<<<<<<<<<<<
-"
-let g:syntastic_always_populate_loc_list = 2
-let g:syntastic_auto_loc_list = 2
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_enable_balloons = 0
-let g:syntastic_loc_list_height = 5
-let g:syntastic_ignore_files = ['\.min\.js$', '\.min\.css$', '\.sw?', '.env*']
-
-let g:syntastic_error_symbol = '✗'
-let g:syntastic_warning_symbol = '✗'
-let g:syntastic_style_error_symbol = '∆'
-let g:syntastic_style_warning_symbol = '∆'
-
 " >>>>>>>>>>>>>>>>>>>>>> Indentline <<<<<<<<<<<<<<<<<<<<<<
 
 let g:indentLine_char = '┆'
@@ -386,17 +333,9 @@ set tags=./.vimtags;,.vimtags;
 
 let g:easytags_dynamic_files = 1
 
-" Update tags in background and don't interrupt the foreground processes
-let g:easytags_async = 1
-
 " >>>>>>>>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<
 
 noremap <F2> :TagbarToggle<CR>
-
-" >>>>>>>>>>>>>>>>>>>>>> PHP-cs-fixer <<<<<<<<<<<<<<<<<<<<<<
-
-noremap <F4> :call PhpCsFixerFixFile()<CR>
-let g:php_cs_fixer_verbose = 0
 
 " ============================================================
 " |                                                          |

@@ -56,13 +56,15 @@ URxvt.url-select.button    : 2
 URxvt*urlLauncher: chromium
 
 URxvt*.transparent: true
-URxvt*.shading: 30
+URxvt*.shading: 20
+
+URxvt*buffered: false
 
 rofi.fullscreen: false
 rofi.fake-transparency: false
 rofi.opacity: 90
 rofi.separator-style: dash
-rofi.font: System San Francisco Display 18
+rofi.font: {{ fontName  }} 20
 rofi.color-enabled: true
 rofi.width: 100
 rofi.padding: 800

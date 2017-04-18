@@ -1,1 +1,3 @@
 alias gentags="ctags -f .vimtags -R ." 
+alias vi="vim"
+alias shutnow="shutdown now"

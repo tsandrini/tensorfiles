@@ -4,8 +4,8 @@ variables:
   tertiary: red
   special: yellow
   transparency: 20
-  fontName: System San Francisco Display
-  fontSize: 11
+  fontName: SFNS Display
+  fontSize: 13
   font: "-*-System San Francisco Display-*-*-*-*-11-*-*-*-*-*-*-*"
 plugins:
   parsers:

@@ -41,7 +41,6 @@ call plug#begin('~/.vim/plugged')
 
         " vim-devicons
         Plug 'ryanoasis/vim-devicons'
-
  				  
 call plug#end()
 
@@ -74,6 +73,7 @@ set history=100
 set dir=~/.vim/tmp
 
 " Where to put backup files
+set backup
 set backupdir=~/.vim/backup
 
 " Wrap long lines to multiple lines
