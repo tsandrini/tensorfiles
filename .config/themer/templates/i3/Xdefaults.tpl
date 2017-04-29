@@ -42,7 +42,6 @@ URxvt*.scrollBar: false
 URxvt*iso14755: false
 URxvt*iso14755_52: false
 
-URxvt*letterSpace: -1
 URxvt.imLocate: cs_CZ.UTF-8
 
 URxvt.perl-ext-common : default,selection-autotransform,url-select,keyboard-select,matcher,resize-font

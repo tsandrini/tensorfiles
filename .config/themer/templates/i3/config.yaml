@@ -21,7 +21,7 @@ plugins:
     - themer.activators.i3.I3Activator
       # - themer.activators.acyl.ACYLActivator
 files:
-  Xdefaults.tpl: Xdefaults
+  Xdefaults.tpl: Xdefaults # .Xresources (rofi, urxvt etc..)
   index.tpl: index.html
-  i3.tpl: i3.conf
-  terminal.tpl: terminal.conf
+  i3.tpl: i3.conf # i3wm stuff
+  dunstrc.tpl: dunst.conf # dunst (desktop notifications)

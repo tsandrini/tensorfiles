@@ -18,11 +18,14 @@ call plug#begin('~/.vim/plugged')
 	" NERDtree (sidebar panel)
 	Plug 'scrooloose/nerdtree'
 
+        " NERD commenter
+        Plug 'scrooloose/nerdcommenter'
+
 	" NERDtree-git (Show git differences in NERDtree)
 	Plug 'Xuyuanp/nerdtree-git-plugin'
 
 	" Supertab (Autocompletion via tabulator)
-	Plug 'ervandew/supertab'
+	" Plug 'ervandew/supertab'
 
 	" Lightline (simplified vesrion of powerline)
 	Plug 'itchyny/lightline.vim'
@@ -83,6 +86,12 @@ call plug#begin('~/.vim/plugged')
 
         " VIm-php-cs-fixer
         Plug 'stephpy/vim-php-cs-fixer'
+
+        " vim-github-comment (Github comment straight from vim)
+        " Plug 'mmozuras/vim-github-comment'
+
+        " YouCompleteMe
+        Plug 'Valloric/YouCompleteMe'
 
 call plug#end()
 " ============================================================
@@ -148,18 +157,9 @@ set relativenumber
 " Show absolute number on current line
 set number
 
-" Remap esc to jj
-ino jj <esc>
-cno jj <c-c>
-vno v <esc>
-
 " Syntax highlight
 filetype plugin on
 syntax on
-
-" Set manually file syntax
-"au BufReadPost *.twig set syntax=html
-"au BufReadPost *.tpl set syntax=html
 
 " Set encoding
 scriptencoding utf-8
@@ -168,10 +168,35 @@ set termencoding=utf-8
 set fileencodings=ucs-bom,utf-8,gbk,big5,latin1
 
 " Spell checking
-setlocal spell spelllang=cs
-"set spell
+" Dunno why, but it does some weird highlighting
+"
+" setlocal spell spelllang=cs
+" set spell
 
-" Quickly resize windows use +/-
+" Speed up vim by caching a lil' bit
+set hidden
+set history=100
+
+" Remove whitespaces on save
+autocmd BufWritePre * :%s/\s\+$//e
+
+" Searching
+set incsearch " Start searching when typing
+set hlsearch " Highlight search
+set ignorecase
+set smartcase
+set nowrapscan
+
+
+" >>>>>>>>>>>>>>>>>>>>>> Mappings <<<<<<<<<<<<<<<<<<<<<<
+
+let mapleader = "\<Space>"
+
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>n :tabnew<CR>
+
+" Quickly resize windows using +/-
 map - <C-W>-
 map + <C-W>+
 map > <C-W>>
@@ -183,28 +208,14 @@ nnoremap <Down> :echomsg "Use j you n00b"<cr>
 nnoremap <Left> :echomsg "Use h you n00b"<cr>
 nnoremap <Right> :echomsg "Use l you n00b"<cr>
 
-" new tab
-map <C-x>n :tabnew<CR>
-" close tab
-map <C-x>c :tabclose<CR>
+" Remap esc to jj
+ino jj <esc>
+cno jj <c-c>
+vno v <esc>
 
 " Format the whole document
 nnoremap <F3> gg=G
 
-"set lines=35 columns=150
-
-" Speed up vim by caching a lil' bit
-set hidden
-set history=100
-
-" Remove whitespaces on save
-autocmd BufWritePre * :%s/\s\+$//e
-
-" Searching
-set hlsearch
-set ignorecase
-set smartcase
-set nowrapscan
 
 
 " ============================================================
@@ -223,7 +234,7 @@ set nowrapscan
 " >>>>>>>>>>>>>>>>>>>>>> NERDTREE  <<<<<<<<<<<<<<<<<<<<<<
 
 " Toggle NERDtree with ctrl +t
-nmap <C-t> :NERDTreeToggle<CR>
+noremap <Leader>t :NERDTreeToggle<CR>
 
 " Activate node with key l
 let NERDTreeMapActivateNode='l'
@@ -232,6 +243,11 @@ let NERDTreeMapCloseChildren='h'
 " Auto delete buffer
 let NERDTreeAutoDeleteBuffer = 1
 
+" Close NERDtree if it is the only remaining window
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+" Autoclose NERDTREE on file opening
+let NERDTreeQuitOnOpen=1
 
 " >>>>>>>>>>>>>>>>>>>>>> LIGHTLINE  <<<<<<<<<<<<<<<<<<<<<<
 
@@ -240,7 +256,7 @@ set laststatus=2
 
 " Components setup
 let g:lightline = {
-      \ 'colorscheme': 'landscape',
+      \ 'colorscheme': 'solarized',
       \ 'mode_map': { 'c': 'NORMAL' },
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
@@ -340,18 +356,18 @@ let g:EasyMotion_do_mapping = 0
 " Jump to anywhere you want with minimal keystrokes, with just one key
 " binding.
 " " `s{char}{label}`
-nmap <Space> <Plug>(easymotion-overwin-f)
+" noremap , <Plug>(easymotion-overwin-f)
 
 " `s{char}{char}{label}`
 " " Need one more keystroke, but on average, it may be more comfortable.
-nmap <Space> <Plug>(easymotion-overwin-f2)
+nmap , <Plug>(easymotion-overwin-f2)
 
 " Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
 
 " JK motions: Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
+" map <Leader>j <Plug>(easymotion-j)
+" map <Leader>k <Plug>(easymotion-k)
 
 
 " >>>>>>>>>>>>>>>>>>>>>> Lexima.vim <<<<<<<<<<<<<<<<<<<<<<
@@ -388,6 +404,10 @@ let g:easytags_dynamic_files = 1
 
 " Update tags in background and don't interrupt the foreground processes
 let g:easytags_async = 1
+
+" >>>>>>>>>>>>>>>>>>>>>> CTRL-P <<<<<<<<<<<<<<<<<<<<<<
+
+nnoremap <Leader>p :CtrlP<CR>
 
 " >>>>>>>>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<
 

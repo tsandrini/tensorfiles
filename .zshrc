@@ -7,7 +7,7 @@ ZSH=/usr/share/oh-my-zsh/
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="gnzh" 
+ZSH_THEME="spaceship"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -51,7 +51,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git colorize colored-man-pages cp)
+plugins=(git git-flow colorize colored-man-pages)
 
 
 # User configuration
@@ -91,9 +91,9 @@ fi
 source $ZSH/oh-my-zsh.sh
 
 # Startup archlinux logo
-if type "alsi" > /dev/null; then
-    alsi -u
-fi
+# if type "alsi" > /dev/null; then
+    # alsi -u
+# fi
 
 # Include aliases
 if [ -f ~/.zsh_aliases ]; then
