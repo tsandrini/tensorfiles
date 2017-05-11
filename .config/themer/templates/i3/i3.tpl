@@ -71,6 +71,44 @@ bindsym $mod+9 workspace $ws9
 bindsym $mod+0 workspace $ws10
 bindsym $mod+Tab workspace back_and_forth
 
+set $mode_gaps Gaps: (o) outer, (i) inner
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+        bindsym o      mode "$mode_gaps_outer"
+        bindsym i      mode "$mode_gaps_inner"
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_inner" {
+        bindsym plus  gaps inner current plus 5
+        bindsym minus gaps inner current minus 5
+        bindsym 0     gaps inner current set 0
+
+        bindsym Shift+plus  gaps inner all plus 5
+        bindsym Shift+minus gaps inner all minus 5
+        bindsym Shift+0     gaps inner all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+mode "$mode_gaps_outer" {
+        bindsym plus  gaps outer current plus 5
+        bindsym minus gaps outer current minus 5
+        bindsym 0     gaps outer current set 0
+
+        bindsym Shift+plus  gaps outer all plus 5
+        bindsym Shift+minus gaps outer all minus 5
+        bindsym Shift+0     gaps outer all set 0
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+
 workspace_auto_back_and_forth yes
 
 bindsym $mod+Control+Shift+Left move window to workspace prev
@@ -102,15 +140,15 @@ client.urgent           $warning    $warning   $foreground $warning
 bar {
     status_command    conky -c ~/.i3/conky/conkyrc
     mode              dock
-    position          top 
+    position          top
     workspace_buttons yes
     strip_workspace_numbers yes
- 
+
     colors {
         background $background
         statusline $primary
         separator  $primary
-        
+
         # Colors go <border> <background> <text> <indicator>
         focused_workspace $background $background $gray
         active_workspace $background $background $gray
@@ -164,7 +202,7 @@ bindsym XF86AudioMute exec --no-startup-id pulseaudio-ctl mute
 
 bindsym XF86MonBrightnessUp exec --no-startup-id light -A 5
 bindsym XF86MonBrightnessDown exec --no-startup-id light -U 5
-  
+
 bindsym XF86AudioPlay exec --no-startup-id cmus-remote --play
 bindsym XF86AudioPause exec --no-startup-id cmus-remote --pause
 bindsym XF86AudioNext exec --no-startup-id cmus-remote --next
@@ -174,7 +212,7 @@ bindsym XF86AudioPrev exec --no-startup-id cmus-remote --previous
 bindsym $mod+f exec --no-startup-id $terminal -e "ranger"
 bindsym F1 exec --no-startup-id echo  "no need for help" > /dev/null
 bindsym Print exec --no-startup-id xfce4-screenshooter
-bindsym $mod+shift+g exec --no-startup-id i3lock-fancy
+bindsym $mod+shift+i exec --no-startup-id i3lock-fancy
 bindsym $mod+m exec --no-startup-id i3-msg 'workspace $ws4; exec --no-startup-id $terminal -e "cmus"'
 
 bindsym $mod+n exec --no-startup-id cmus-remote --next

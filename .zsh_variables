@@ -1,0 +1,11 @@
+# This file is used for setting custom global variables
+
+export MUSIC_DIR=$HOME/Hudba/
+export MOVIES_DIR=$HOME/Filmy/
+export PROJECTS_DIR=$HOME/Projekty/
+export DOSU_DIR=$HOME/DosuNotes/
+export VIDS_DIR=$HOME/Videa/
+export PICS_DIR=$HOME/Obrázky/
+export WALLPAPERS_DIR=$HOME/Obrázky/Wallpapers/
+export DOCUMENTS_DIR=$HOME/Dokumenty/
+export DOWNLOADS_DIR=$HOME/Stažené/

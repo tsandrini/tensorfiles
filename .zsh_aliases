@@ -1,3 +1,5 @@
-alias gentags="ctags -f .vimtags -R ." 
+alias gentags="ctags -f .vimtags -R ."
 alias vi="vim"
 alias shutnow="shutdown now"
+alias qutebrowser "qutebrowser --backend webengine --enable-webengine-inspector"
+alias ll="ls -lA --group-directories-first"

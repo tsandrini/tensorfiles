@@ -1,8 +1,6 @@
-" Security
-set secure
-
-" Prevent from reccuring itself
-set noexrc
+set nocompatible " This has to be the first thing
+set secure " Shell commands not avaible in .vimrc
+set noexrc " Prevent from reccuring itself
 
 " ============================================================
 " |                                                          |
@@ -12,86 +10,41 @@ set noexrc
 
 call plug#begin('~/.vim/plugged')
 
-	" PHPCD (goto definition + completions)
-	Plug 'php-vim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' }
+    " BASE STUFF
 
-	" NERDtree (sidebar panel)
-	Plug 'scrooloose/nerdtree'
+    Plug 'scrooloose/nerdtree' " NERDtree | must have
+    Plug 'easymotion/vim-easymotion' " Easymotion | jump everywhere in document
+    Plug 'ctrlpvim/ctrlp.vim' " CtrlP | Really comfort-ish fuzzy finder
+    Plug 'ryanoasis/vim-devicons' " Devicons | Pretty icons, 'cause I need them
+    Plug 'yggdroot/indentline' " Indentline | Show indentlines
+    Plug 'itchyny/lightline.vim' " Lightline | Cause Powerline > Lightline
+    Plug 'tpope/vim-surround' " Surround | Parenthesis used as text object
+    Plug 'cohama/lexima.vim' " Auto-complete parenthesis
+    Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
+    Plug 'scrooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
 
-        " NERD commenter
-        Plug 'scrooloose/nerdcommenter'
+    " EXUBERANT TAGS (tags integration)
 
-	" NERDtree-git (Show git differences in NERDtree)
-	Plug 'Xuyuanp/nerdtree-git-plugin'
+    Plug 'xolox/vim-easytags' " Easytags | interactions with exuberant tags
+    Plug 'xolox/vim-misc' " Misc | idk, easytags needs it
+    Plug 'vim-php/tagbar-phpctags.vim' " Tagbar-phpctags | ctags for php
 
-	" Supertab (Autocompletion via tabulator)
-	" Plug 'ervandew/supertab'
+    " LANGUAGE SPECIFIC
 
-	" Lightline (simplified vesrion of powerline)
-	Plug 'itchyny/lightline.vim'
+    Plug 'stanangeloff/php.vim' " PHPvim | better base support for php
+    Plug 'php-vim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' } " PHPcd | goto definition and more
+    Plug 'lumiliet/vim-twig' " Twig | much better support for twig
+    Plug 'majutsushi/tagbar' " Tagbar | class preview - super cool dope stuff
+    Plug 'arnaud-lb/vim-php-namespace' " PHP-namespace | automatic use statements
+    Plug 'shawncplus/phpcomplete.vim' " PHPcomplete | improved php-autocompletions
+    Plug 'scrooloose/syntastic' " Syntastic | syntax-check
+    Plug 'Valloric/YouCompleteMe' " YCM | it is kinda language specific
 
-	" Vim-fugitive (git interaction)
-	Plug 'tpope/vim-fugitive'
-
-	" PHP-vim
-	Plug 'stanangeloff/php.vim'
-
-	" PHP tools (Codesniffer, mess detector, syntax errors)
-	" Plug 'joonty/vim-phpqa'
-
-	" Syntastic (syntax cheking tools)
-	Plug 'scrooloose/syntastic'
-
-	" EasyMotion
-	Plug 'easymotion/vim-easymotion'
-
-	" Vim-twig (syntax, snippets etc.)
-	Plug 'evidens/vim-twig'
-
-	" Surround.vim (parenthesis used as object)
-	Plug 'tpope/vim-surround'
-
-	" Lexima.vim (auto-complete parenthesis)
-	Plug 'cohama/lexima.vim'
-
-        " Phpcomplete
-        Plug 'shawncplus/phpcomplete.vim'
-
-        " vim-startify
-        Plug 'mhinz/vim-startify'
-
-        " indentline (Show indent lines)
-        Plug 'yggdroot/indentline'
-
-        " Ctrl-P (currently best fuzzy finder)
-        Plug 'ctrlpvim/ctrlp.vim'
-
-        " vim-php-namespace (types use statements)
-        Plug 'arnaud-lb/vim-php-namespace'
-
-        " vim-php
-        Plug 'vim-php/tagbar-phpctags.vim'
-
-        " Tagbar
-        Plug 'majutsushi/tagbar'
-
-        " vim-easytags (needed for Tagbar)
-        Plug 'xolox/vim-easytags'
-
-        " vim-misc (needed for vim-easytags)
-        Plug 'xolox/vim-misc'
-
-        " vim-devicons
-        Plug 'ryanoasis/vim-devicons'
-
-        " VIm-php-cs-fixer
-        Plug 'stephpy/vim-php-cs-fixer'
-
-        " vim-github-comment (Github comment straight from vim)
-        " Plug 'mmozuras/vim-github-comment'
-
-        " YouCompleteMe
-        Plug 'Valloric/YouCompleteMe'
+    " GIT INTERACTIONS
+    Plug 'gisphm/vim-gitignore' " Gitignore | ignore 'em !
+    Plug 'Xuyuanp/nerdtree-git-plugin' " NERDtree-git | git interactions to NERDtree
+    Plug 'tpope/vim-fugitive' " Fugitive | Git interactions
+    " Plug 'mmozuras/vim-github-comment'
 
 call plug#end()
 " ============================================================
@@ -106,10 +59,52 @@ call plug#end()
 " |                                                          |
 " ============================================================
 
-" Wildmode
-set wildmode=full
-set wildmenu
-set wildignorecase
+
+" >>>>>>>>>>>>>>>>>>>>>> System stuff <<<<<<<<<<<<<<<<<<<<<<
+
+" PERFORMANCE
+set nomodeline " Just to be sure
+set nospell " Spell checking, Never got it to work properly
+set nocursorcolumn " Draws currently active column -> super slow
+set nocursorline " Draws currently active line -> super slow
+set lazyredraw " Buffer sCReen updates
+set ttyfast " Fast terminal connection
+set history=100 " History
+set hidden " Avoid keeping closed buffers in background
+
+" Temporary, Backup files
+set backup " Enable backup files
+set dir=~/.vim/tmp " Where to store *.sw? files
+set backupdir=~/.vim/backup " Where to store backup files
+
+" FILE ENCODING
+scriptencoding utf-8
+set encoding=utf-8
+set termencoding=utf-8
+set fileencodings=ucs-bom,utf-8,gbk,big5,latin1
+
+" >>>>>>>>>>>>>>>>>>>>>> GUI stuff <<<<<<<<<<<<<<<<<<<<<<
+
+set background=dark
+
+set wrap " Enable wrapping
+set linebreak " Don't insert <EOL> at the end of the visible line
+set textwidth=0
+set wrapmargin=0
+set formatoptions+=l
+
+set ruler " Enable ruler
+set rulerformat=%l\:%c " Set ruler format
+
+set nofoldenable " Prevent from folding
+set noshowmode " Don't need this with lightline
+
+set number " Show line numbers
+set relativenumber " Show relative numbers insetad of the absolute ones
+
+set wildmenu " Enable wildmenu
+set wildmode=full " Wildmode - don't show all results, just cycle through them
+set wildignorecase " Ignore case in wildmenu
 
 " Define tab as 4 spaces
 set tabstop=8
@@ -118,79 +113,38 @@ set expandtab
 set shiftwidth=4
 set smarttab
 
-" Command line history
-set history=100
+set scrolloff=5 " Minimum lines to keep above and below cursor
 
-" Cache rendering
-set lazyredraw
-set ttyfast
+set list
+set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 
-" Where to put *.swp files
-set dir=~/.vim/tmp
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif " Return to the last position when opening files
 
-" Where to put backup files
-set backupdir=~/.vim/backup
+" >>>>>>>>>>>>>>>>>>>>>> Searching <<<<<<<<<<<<<<<<<<<<<<
 
-" Set default clipboard
-set clipboard=unnamed
+filetype plugin on " Enable ftp plugin
+syntax on " Enable file-specific syntax highlight
 
-" Autoindetation when creating new line
-filetype indent on
-set autoindent
-set smartindent
+filetype indent on " File specific indentation
+set autoindent " Automatic indent when CReating new line
+set smartindent " smart autoindent 8)
 set shiftround
 
-" Wrapping
-set wrap
-set showmatch
-set linebreak
-set nofoldenable
-
-set tw=80
-set formatoptions+=w
-
-" UI
-set ruler
-
-" Activate relative numbering in sidebar
-set relativenumber
-" Show absolute number on current line
-set number
-
-" Syntax highlight
-filetype plugin on
-syntax on
-
-" Set encoding
-scriptencoding utf-8
-set encoding=utf-8
-set termencoding=utf-8
-set fileencodings=ucs-bom,utf-8,gbk,big5,latin1
-
-" Spell checking
-" Dunno why, but it does some weird highlighting
-"
-" setlocal spell spelllang=cs
-" set spell
-
-" Speed up vim by caching a lil' bit
-set hidden
-set history=100
-
-" Remove whitespaces on save
-autocmd BufWritePre * :%s/\s\+$//e
-
-" Searching
 set incsearch " Start searching when typing
 set hlsearch " Highlight search
-set ignorecase
-set smartcase
-set nowrapscan
+set smartcase " Ignore case only when lowercase
+set nowrapscan " Searches wrap around the end of the file
+set showmatch " Highlight the matching bracket
 
+" >>>>>>>>>>>>>>>>>>>>>> Text-formatting <<<<<<<<<<<<<<<<<<<<<<
+
+autocmd BufWritePre * :%s/\s\+$//e " Removes unnecessary whitespaces on save
 
 " >>>>>>>>>>>>>>>>>>>>>> Mappings <<<<<<<<<<<<<<<<<<<<<<
 
-let mapleader = "\<Space>"
+let mapleader = "\<Space>" " remap leader
+
+set backspace=indent,eol,start " Backspace for dummies
 
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
@@ -203,10 +157,10 @@ map > <C-W>>
 map < <C-W><
 
 " Prevent from using arrow keys
-nnoremap <Up> :echomsg "Use k you n00b"<cr>
-nnoremap <Down> :echomsg "Use j you n00b"<cr>
-nnoremap <Left> :echomsg "Use h you n00b"<cr>
-nnoremap <Right> :echomsg "Use l you n00b"<cr>
+nnoremap <Up> :echomsg "Use k you n00b"<CR>
+nnoremap <Down> :echomsg "Use j you n00b"<CR>
+nnoremap <Left> :echomsg "Use h you n00b"<CR>
+nnoremap <Right> :echomsg "Use l you n00b"<CR>
 
 " Remap esc to jj
 ino jj <esc>
@@ -216,6 +170,19 @@ vno v <esc>
 " Format the whole document
 nnoremap <F3> gg=G
 
+" Window Navigation
+" <Leader>hljk = Move between windows
+nnoremap <Leader>h <C-w>h
+nnoremap <Leader>l <C-w>l
+nnoremap <Leader>j <C-w>j
+nnoremap <Leader>k <C-w>k
+
+" Window opening
+nnoremap <Leader>v <C-w>v
+nnoremap <Leader>s <C-w>s
+
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! %!sudo tee > /dev/null %
 
 
 " ============================================================
@@ -233,26 +200,20 @@ nnoremap <F3> gg=G
 
 " >>>>>>>>>>>>>>>>>>>>>> NERDTREE  <<<<<<<<<<<<<<<<<<<<<<
 
-" Toggle NERDtree with ctrl +t
-noremap <Leader>t :NERDTreeToggle<CR>
+noremap m :NERDTreeToggle<CR>
 
-" Activate node with key l
-let NERDTreeMapActivateNode='l'
-let NERDTreeMapCloseChildren='h'
+let NERDTreeMapActivateNode='l' " Toggle child nodes with l
+let NERDTreeMapCloseChildren='h' " Close  child nodes with h
 
-" Auto delete buffer
-let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeQuitOnOpen=1 " Autoclose NERDTREE on file opening
+let NERDTreeMinimalUI=1 " Hides 'Press ? for help'
+let NERDTreeAutoDeleteBuffer = 1 " Auto delete buffer
 
-" Close NERDtree if it is the only remaining window
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-" Autoclose NERDTREE on file opening
-let NERDTreeQuitOnOpen=1
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " Close NERDtree if only remaining window
 
 " >>>>>>>>>>>>>>>>>>>>>> LIGHTLINE  <<<<<<<<<<<<<<<<<<<<<<
 
-" Bugfix
-set laststatus=2
+set laststatus=2 " Bugfix
 
 " Components setup
 let g:lightline = {
@@ -334,10 +295,10 @@ endfunction
 
 
 " Let the lightline tell me which mod i am currently in
-set noshowmode
 
 " >>>>>>>>>>>>>>>>>>>>>> PHP-VIM  <<<<<<<<<<<<<<<<<<<<<<
 
+" Overrides php notation
 function! PhpSyntaxOverride()
 	hi! def link phpDocTags  phpDefine
 	hi! def link phpDocParam phpType
@@ -348,31 +309,34 @@ augroup phpSyntaxOverride
 	autocmd FileType php call PhpSyntaxOverride()
 augroup END
 
+" >>>>>>>>>>>>>>>>>>>>>> PHPcomplete <<<<<<<<<<<<<<<<<<<<<<
+
+setlocal omnifunc=phpcomplete#CompletePHP " Use phpcompletion
+
+" >>>>>>>>>>>>>>>>>>>>>> PHP-use-namespace <<<<<<<<<<<<<<<<<<<<<<
+
+function! IPhpInsertUse()
+    call PhpInsertUse()
+    call feedkeys('a',  'n')
+endfunction
+
+autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
+autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
+
 " >>>>>>>>>>>>>>>>>>>>>> EasyMotion <<<<<<<<<<<<<<<<<<<<<<
 
-" Disable default key-mappings
-let g:EasyMotion_do_mapping = 0
-
-" Jump to anywhere you want with minimal keystrokes, with just one key
-" binding.
-" " `s{char}{label}`
-" noremap , <Plug>(easymotion-overwin-f)
+let g:EasyMotion_do_mapping = 0 " Disable default key-mappings
+let g:EasyMotion_smartcase = 1 " Turn on case insensitive feature
 
 " `s{char}{char}{label}`
 " " Need one more keystroke, but on average, it may be more comfortable.
 nmap , <Plug>(easymotion-overwin-f2)
 
-" Turn on case insensitive feature
-let g:EasyMotion_smartcase = 1
-
-" JK motions: Line motions
-" map <Leader>j <Plug>(easymotion-j)
-" map <Leader>k <Plug>(easymotion-k)
-
-
 " >>>>>>>>>>>>>>>>>>>>>> Lexima.vim <<<<<<<<<<<<<<<<<<<<<<
 
 let g:lexima_enable_basic_rules = 1
+let g:lexima_enable_newline_rules = 1
+let g:lexima_enable_endwise_rules = 1
 
 " >>>>>>>>>>>>>>>>>>>>>> Syntastic <<<<<<<<<<<<<<<<<<<<<<
 "
@@ -397,26 +361,25 @@ let g:indentLine_color_term = 239
 " >>>>>>>>>>>>>>>>>>>>>> Ctags <<<<<<<<<<<<<<<<<<<<<<
 
 set tags=./.vimtags;,.vimtags;
+let g:easytags_file = '.vimtags'
 
 " >>>>>>>>>>>>>>>>>>>>>> vim-easytags <<<<<<<<<<<<<<<<<<<<<<
 
 let g:easytags_dynamic_files = 1
 
-" Update tags in background and don't interrupt the foreground processes
-let g:easytags_async = 1
+let g:easytags_async = 1 " Update tags in background and don't interrupt the foreground processes
 
 " >>>>>>>>>>>>>>>>>>>>>> CTRL-P <<<<<<<<<<<<<<<<<<<<<<
 
-nnoremap <Leader>p :CtrlP<CR>
+let g:ctrlp_map = '<Leader>p' " Chage default keybinding
 
 " >>>>>>>>>>>>>>>>>>>>>> Tagbar <<<<<<<<<<<<<<<<<<<<<<
 
 noremap <F2> :TagbarToggle<CR>
 
-" >>>>>>>>>>>>>>>>>>>>>> PHP-cs-fixer <<<<<<<<<<<<<<<<<<<<<<
+" >>>>>>>>>>>>>>>>>>>>>> YouCompleteMe  <<<<<<<<<<<<<<<<<<<<<<
 
-noremap <F4> :call PhpCsFixerFixFile()<CR>
-let g:php_cs_fixer_verbose = 0
+let g:ycm_collect_identifiers_from_tags_files = 1 " enable completion from tags
 
 " ============================================================
 " |                                                          |
