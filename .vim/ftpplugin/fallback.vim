@@ -142,6 +142,9 @@ nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>n :tabnew<CR>
 
+nnoremap J :tabprevious<CR>
+nnoremap K :tabnext<CR>
+
 " Quickly resize windows using +/-
 map - <C-W>-
 map + <C-W>+

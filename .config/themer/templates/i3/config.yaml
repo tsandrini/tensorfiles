@@ -25,3 +25,4 @@ files:
   index.tpl: index.html
   i3.tpl: i3.conf # i3wm stuff
   dunstrc.tpl: dunst.conf # dunst (desktop notifications)
+  qutebrowser.tpl : qutebrowser.conf

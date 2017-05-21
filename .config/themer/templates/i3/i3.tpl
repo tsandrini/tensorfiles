@@ -21,9 +21,10 @@ set $ws9  "9: 9"
 set $ws10 "10: 10"
 
 hide_edge_borders both
+new_window none
 for_window [class="^.*"] border pixel 0
-gaps inner 15
-gaps outer 15
+gaps inner 25
+gaps outer 20
 
 font pango:{{ fontName }} {{ fontSize }}
 
@@ -32,7 +33,7 @@ floating_modifier $mod
 bindsym $mod+Shift+q kill
 
 bindsym $mod+Return exec --no-startup-id $terminal
-bindsym $mod+d exec rofi --no-startup-id -show run
+bindsym $mod+d exec rofi --no-startup-id -show run -run-command "/bin/zsh -i -c '{cmd}'"
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -135,36 +136,12 @@ client.focused_inactive $background $primary   $foreground $background
 client.unfocused        $gray       $gray      $background $secondary
 client.urgent           $warning    $warning   $foreground $warning
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-    status_command    conky -c ~/.i3/conky/conkyrc
-    mode              dock
-    position          top
-    workspace_buttons yes
-    strip_workspace_numbers yes
-
-    colors {
-        background $background
-        statusline $primary
-        separator  $primary
-
-        # Colors go <border> <background> <text> <indicator>
-        focused_workspace $background $background $gray
-        active_workspace $background $background $gray
-        inactive_workspace $background $background $primary
-        urgent_workspace $background $background $warning
-    }
-}
-
-
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
 for_window [instance="float"] floating enable
 
 bindsym $mod+Shift+c reload
-bindsym $mod+Shift+r exec "i3-msg restart; xrdb -load ~/.Xresources"
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+bindsym $mod+Shift+r exec --no-startup-id ~/.i3/i3reset
 
 mode "resize" {
         bindsym j resize shrink width 10 px or 10 ppt
@@ -185,6 +162,20 @@ bindsym $mod+r mode "resize"
 
 bindsym $mod+shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
+
+set $mode_power lock(L) | logout(E) | suspend(S) | hibernate(H) | reboot(R) | shutdown(P)
+bindsym $mod+shift+m mode "$mode_power"
+mode "$mode_power" {
+    bindsym l mode "default", exec --no-startup-id ~/.i3/i3exit lock
+    bindsym e mode "default", exec --no-startup-id ~/.i3/i3exit logout
+    bindsym s mode "default", exec --no-startup-id ~/.i3/i3exit suspend
+    bindsym h mode "default", exec --no-startup-id ~/.i3/i3exit hibernate
+    bindsym r mode "default", exec --no-startup-id ~/.i3/i3exit reboot
+    bindsym p mode "default", exec --no-startup-id ~/.i3/i3exit shutdown
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
 
 assign [class="Chromium"] $ws1
 
@@ -220,10 +211,9 @@ bindsym $mod+p exec --no-startup-id cmus-remote --prev
 bindsym $mod+u exec --no-startup-id cmus-remote --pause
 
 exec_always --no-startup-id feh --bg-scale ~/.wallpaper.png
-exec --no-startup-id compton -f --opengl --vsync opengl-swc --paint-on-overlay &
+exec --no-startup-id compton -b &
 exec --no-startup-id nm-applet &
-exec --no-startup-id cbatticon &
-exec --no-startup-id dunst -fn "System San Francisco Display 11"
-exec --no-startup-id Thermald &
+exec --no-startup-id dunst &
+exec --no-startup-id thermald &
 exec --no-startup-id kalu &
-exec --no-startup-id volumeicon &
+exec --no-startup-id polybar main_bar &

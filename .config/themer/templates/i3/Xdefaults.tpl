@@ -11,36 +11,36 @@ URxvt*boldItalicFont: \
         xft:MesloLGM Nerd Font:style=Bold Italic:pixelsize=17:antialias=true:hinting=true, \
         xft:TerminessTTF Nerd Font:style=Bold Italic:pixelsize=17:antialias=true:hinting=true
 
-URxvt*.background: {% if transparency %}[{{ transparency }}]{% endif %}{% if background %}{{ background }}{% else %}{{ black }}{% endif %}
-URxvt*.foreground: {% if foreground %}{{ foreground }}{% else %}{{ white }}{% endif %}
-URxvt*.cursorColor: {{ white }}
+*.background: {% if background %}{{ background }}{% else %}{{ black }}{% endif %}
+*.foreground: {% if foreground %}{{ foreground }}{% else %}{{ white }}{% endif %}
+*.cursorColor: {{ white }}
 
 ! black
-URxvt*.color0: {{ black }}
-URxvt*.color8: {{ alt_black }}
+*.color0: {{ black }}
+*.color8: {{ alt_black }}
 ! red
-URxvt*.color1: {{ red }}
-URxvt*.color9: {{ alt_red }}
+*.color1: {{ red }}
+*.color9: {{ alt_red }}
 ! green
-URxvt*.color2: {{ green }}
-URxvt*.color10: {{ alt_green }}
+*.color2: {{ green }}
+*.color10: {{ alt_green }}
 ! yellow
-URxvt*.color3: {{ yellow }}
-URxvt*.color11: {{ alt_yellow }}
+*.color3: {{ yellow }}
+*.color11: {{ alt_yellow }}
 ! blue
-URxvt*.color4: {{ blue }}
-URxvt*.color12: {{ alt_blue }}
+*.color4: {{ blue }}
+*.color12: {{ alt_blue }}
 ! magenta
-URxvt*.color5: {{ magenta }}
-URxvt*.color13: {{ alt_magenta }}
+*.color5: {{ magenta }}
+*.color13: {{ alt_magenta }}
 ! cyan
-URxvt*.color6: {{ cyan }}
-URxvt*.color14: {{ alt_cyan }}
+*.color6: {{ cyan }}
+*.color14: {{ alt_cyan }}
 ! white
-URxvt*.color7: {{ white }}
-URxvt*.color15: {{ alt_white }}
+*.color7: {{ white }}
+*.color15: {{ alt_white }}
 ! underline when default
-URxvt*.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
+*.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
 
 URxvt.internalBorder: 0
 URxvt.externalBorder: 0

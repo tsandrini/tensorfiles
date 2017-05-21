@@ -20,7 +20,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'itchyny/lightline.vim' " Lightline | Cause Powerline > Lightline
     Plug 'tpope/vim-surround' " Surround | Parenthesis used as text object
     Plug 'cohama/lexima.vim' " Auto-complete parenthesis
-    Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
+    " Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
     Plug 'scrooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
 
     " EXUBERANT TAGS (tags integration)
@@ -149,6 +149,9 @@ set backspace=indent,eol,start " Backspace for dummies
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>n :tabnew<CR>
+
+nnoremap J :tabprevious<CR>
+nnoremap K :tabnext<CR>
 
 " Quickly resize windows using +/-
 map - <C-W>-
