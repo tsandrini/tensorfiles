@@ -1,5 +1,6 @@
-alias gentags="ctags -f .vimtags -R ."
+alias phptags="ctags -f .vimtags --languages=PHP -R ."
 alias vi="vim"
 alias shutnow="shutdown now"
-alias qutebrowser "qutebrowser --backend webengine --enable-webengine-inspector"
+alias qutebrowser="qutebrowser --backend webengine --enable-webengine-inspector"
 alias ll="ls -lA --group-directories-first"
+alias npm-exec='PATH=$(npm bin):$PATH'

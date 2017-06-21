@@ -1,6 +1,6 @@
 set nocompatible " This has to be the first thing
 set secure " Shell commands not avaible in .vimrc
-set exrc " Vim can load local .vimrc
+set noexrc " Vim can load local .vimrc
 
 " ============================================================
 " |                                                          |
@@ -22,8 +22,6 @@ call plug#begin('~/.vim/plugged')
     Plug 'cohama/lexima.vim' " Auto-complete parenthesis
     Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
     Plug 'sCRooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
-    Plug 'skammer/vim-css-color' " Idk - i guess some kind of colors
-    Plug 'sjl/gundo.vim' " Gundo | smarter fork of vim undo
 
     " EXUBERANT TAGS (tags integration)
 
@@ -32,7 +30,10 @@ call plug#begin('~/.vim/plugged')
 
     " LANGUAGE SPECIFIC
 
-    Plug 'Valloric/YouCompleteMe' " YCM | it is kinda language specific
+    " Plug 'Valloric/YouCompleteMe' " YCM | it is kinda language specific
+    Plug 'w0rp/ale' " Linter
+    Plug 'Chiel92/vim-autoformat' " vim formating
+    Plug 'davidhalter/jedi-vim' " Jedi-vim | autocompletion, goto definiton and more
 
     " GIT INTERACTIONS
     Plug 'gisphm/vim-gitignore' " Gitignore | ignore 'em !
@@ -70,12 +71,6 @@ set hidden " Avoid keeping closed buffers in background
 set backup " Enable backup files
 set dir=~/.vim/tmp " Where to store *.sw? files
 set backupdir=~/.vim/backup " Where to store backup files
-
-" Enabled undofiles
-set undodir=~/.vim/undos
-set undolevels=100
-set undoreload=100
-set undofile
 
 " FILE ENCODING
 scriptencoding utf-8
@@ -150,7 +145,7 @@ nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>n :tabnew<CR>
 
-nnoremap <Leader>f :noh<CR>
+nnoremap <Leader>h :noh<CR>
 
 nnoremap J :tabprevious<CR>
 nnoremap K :tabnext<CR>
@@ -339,11 +334,20 @@ let g:ctrlp_map = '<Leader>p' " Chage default keybinding
 " >>>>>>>>>>>>>>>>>>>>>> YouCompleteMe  <<<<<<<<<<<<<<<<<<<<<<
 
 let g:ycm_collect_identifiers_from_tags_files = 1 " enable completion from tags
-let g:ycm_autoclose_preview_window_after_completion=1 " auto close notation window
 
-" >>>>>>>>>>>>>>>>>>>>>> Gundo <<<<<<<<<<<<<<<<<<<<<<
+" >>>>>>>>>>>>>>>>>>>>>> Vim-format <<<<<<<<<<<<<<<<<<<<<<
 
-nnoremap <Leader>g :GundoToggle<CR>
+autocmd FileType python nnoremap <LocalLeader>= :0,$!yapf<CR>
+
+" >>>>>>>>>>>>>>>>>>>>>> Jedi-vim <<<<<<<<<<<<<<<<<<<<<<
+
+let g:jedi#goto_command = "<leader>d"
+let g:jedi#goto_assignments_command = "<leader>g"
+let g:jedi#goto_definitions_command = ""
+let g:jedi#documentation_command = "<leader>K"
+let g:jedi#usages_command = "<leader>u"
+let g:jedi#completions_command = "<C-Space>"
+let g:jedi#rename_command = "<leader>r"
 
 " ============================================================
 " |                                                          |

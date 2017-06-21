@@ -6,7 +6,7 @@
     dmenu = /usr/bin/rofi -p dunst:
     font = {{ fontName }} {{ fontSize }}
     format = "<b>%s</b>\n%b"
-    geometry = "425x5-5+27"
+    geometry = "425x5-40+32"
     history_length = 20
     horizontal_padding = 8
     idle_threshold = 120

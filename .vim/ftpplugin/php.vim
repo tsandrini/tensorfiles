@@ -20,8 +20,10 @@ call plug#begin('~/.vim/plugged')
     Plug 'itchyny/lightline.vim' " Lightline | Cause Powerline > Lightline
     Plug 'tpope/vim-surround' " Surround | Parenthesis used as text object
     Plug 'cohama/lexima.vim' " Auto-complete parenthesis
-    " Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
+    Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
     Plug 'scrooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
+    Plug 'skammer/vim-css-color' " Idk - i guess some kind of colors
+    Plug 'sjl/gundo.vim' " Gundo | smarter fork of vim undo
 
     " EXUBERANT TAGS (tags integration)
 
@@ -35,7 +37,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'php-vim/phpcd.vim', { 'for': 'php' , 'do': 'composer update' } " PHPcd | goto definition and more
     Plug 'lumiliet/vim-twig' " Twig | much better support for twig
     Plug 'majutsushi/tagbar' " Tagbar | class preview - super cool dope stuff
-    Plug 'arnaud-lb/vim-php-namespace' " PHP-namespace | automatic use statements
+    " Plug 'arnaud-lb/vim-php-namespace' " PHP-namespace | automatic use statements
     Plug 'shawncplus/phpcomplete.vim' " PHPcomplete | improved php-autocompletions
     Plug 'scrooloose/syntastic' " Syntastic | syntax-check
     Plug 'Valloric/YouCompleteMe' " YCM | it is kinda language specific
@@ -73,9 +75,15 @@ set history=100 " History
 set hidden " Avoid keeping closed buffers in background
 
 " Temporary, Backup files
-set backup " Enable backup files
 set dir=~/.vim/tmp " Where to store *.sw? files
 set backupdir=~/.vim/backup " Where to store backup files
+set backup " Enable backup files
+
+" Enabled undofiles
+set undodir=~/.vim/undos
+set undolevels=100
+set undoreload=100
+set undofile
 
 " FILE ENCODING
 scriptencoding utf-8
@@ -150,6 +158,8 @@ nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>n :tabnew<CR>
 
+nnoremap <Leader>f :noh<CR>
+
 nnoremap J :tabprevious<CR>
 nnoremap K :tabnext<CR>
 
@@ -166,12 +176,14 @@ nnoremap <Left> :echomsg "Use h you n00b"<CR>
 nnoremap <Right> :echomsg "Use l you n00b"<CR>
 
 " Remap esc to jj
-ino jj <esc>
-cno jj <c-c>
+ino jk <esc>
+ino kj <esc>
+cno jk <c-c>
+cno kj <c-c>
 vno v <esc>
 
 " Format the whole document
-nnoremap <F3> gg=G
+nnoremap <F3> mzgg=G'z
 
 " Window Navigation
 " <Leader>hljk = Move between windows
@@ -204,6 +216,7 @@ cmap w!! %!sudo tee > /dev/null %
 " >>>>>>>>>>>>>>>>>>>>>> NERDTREE  <<<<<<<<<<<<<<<<<<<<<<
 
 noremap m :NERDTreeToggle<CR>
+noremap <Leader>m :NERDTreeFind<CR>
 
 let NERDTreeMapActivateNode='l' " Toggle child nodes with l
 let NERDTreeMapCloseChildren='h' " Close  child nodes with h
@@ -316,16 +329,6 @@ augroup END
 
 setlocal omnifunc=phpcomplete#CompletePHP " Use phpcompletion
 
-" >>>>>>>>>>>>>>>>>>>>>> PHP-use-namespace <<<<<<<<<<<<<<<<<<<<<<
-
-function! IPhpInsertUse()
-    call PhpInsertUse()
-    call feedkeys('a',  'n')
-endfunction
-
-autocmd FileType php inoremap <Leader>u <Esc>:call IPhpInsertUse()<CR>
-autocmd FileType php noremap <Leader>u :call PhpInsertUse()<CR>
-
 " >>>>>>>>>>>>>>>>>>>>>> EasyMotion <<<<<<<<<<<<<<<<<<<<<<
 
 let g:EasyMotion_do_mapping = 0 " Disable default key-mappings
@@ -383,6 +386,11 @@ noremap <F2> :TagbarToggle<CR>
 " >>>>>>>>>>>>>>>>>>>>>> YouCompleteMe  <<<<<<<<<<<<<<<<<<<<<<
 
 let g:ycm_collect_identifiers_from_tags_files = 1 " enable completion from tags
+let g:ycm_autoclose_preview_window_after_completion=1 " auto close notation window
+
+" >>>>>>>>>>>>>>>>>>>>>> Gundo <<<<<<<<<<<<<<<<<<<<<<
+
+nnoremap <Leader>g :GundoToggle<CR>
 
 " ============================================================
 " |                                                          |

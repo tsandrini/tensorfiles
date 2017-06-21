@@ -1,3 +1,6 @@
+URxvt.allow_bold: true
+URxvt.loginShell: true
+
 URxvt*font: \
         xft:MesloLGM Nerd Font:style=RegularForPowerline:pixelsize=17:antialias=true:hinting=true, \
         xft:TerminessTTF Nerd Font:style=Medium:pixelsize=17:antialias=true:hinting=true
@@ -42,6 +45,11 @@ URxvt*boldItalicFont: \
 ! underline when default
 *.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
 
+Xft*antialias: true
+Xft.hinting: true
+Xft.hintstyle: hintslight
+Xft*dpi: 96
+
 URxvt.internalBorder: 0
 URxvt.externalBorder: 0
 
@@ -71,7 +79,7 @@ urxvt*matcher.pattern.1: \\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
 URxvt*.transparent: true
 URxvt*.shading: 20
 
-URxvt*buffered: false
+URxvt*buffered: true
 
 rofi.fullscreen: false
 rofi.fake-transparency: false
