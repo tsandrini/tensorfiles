@@ -1,6 +1,6 @@
 set nocompatible " This has to be the first thing
 set secure " Shell commands not avaible in .vimrc
-set exrc " Vim can load local .vimrc
+set exrc " Prevent from reccuring itself
 
 " ============================================================
 " |                                                          |
@@ -10,35 +10,38 @@ set exrc " Vim can load local .vimrc
 
 call plug#begin('~/.vim/plugged')
 
-    " BASE STUFF
+" BASE STUFF
 
-    Plug 'sCRooloose/nerdtree' " NERDtree | must have
-    Plug 'easymotion/vim-easymotion' " Easymotion | jump everywhere in document
-    Plug 'ctrlpvim/ctrlp.vim' " CtrlP | Really comfort-ish fuzzy finder
-    Plug 'ryanoasis/vim-devicons' " Devicons | Pretty icons, 'cause I need them
-    Plug 'yggdroot/indentline' " Indentline | Show indentlines
-    Plug 'itchyny/lightline.vim' " Lightline | Cause Powerline > Lightline
-    Plug 'tpope/vim-surround' " Surround | Parenthesis used as text object
-    Plug 'cohama/lexima.vim' " Auto-complete parenthesis
-    Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
-    Plug 'sCRooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
-    Plug 'skammer/vim-css-color' " Idk - i guess some kind of colors
-    Plug 'sjl/gundo.vim' " Gundo | smarter fork of vim undo
+Plug 'scrooloose/nerdtree' " NERDtree | must have
+Plug 'easymotion/vim-easymotion' " Easymotion | jump everywhere in document
+Plug 'ctrlpvim/ctrlp.vim' " CtrlP | Really comfort-ish fuzzy finder
+Plug 'ryanoasis/vim-devicons' " Devicons | Pretty icons, 'cause I need them
+Plug 'yggdroot/indentline' " Indentline | Show indentlines
+Plug 'itchyny/lightline.vim' " Lightline | Cause Powerline > Lightline
+Plug 'tpope/vim-surround' " Surround | Parenthesis used as text object
+Plug 'cohama/lexima.vim' " Auto-complete parenthesis
+Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quotes :)
+Plug 'scrooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
+Plug 'sjl/gundo.vim' " Gundo | smarter fork of vim undo
+Plug 'jlanzarotta/bufexplorer'
 
-    " EXUBERANT TAGS (tags integration)
+" EXUBERANT TAGS (tags integration)
 
-    Plug 'xolox/vim-easytags' " Easytags | interactions with exuberant tags
-    Plug 'xolox/vim-misc' " Misc | idk, easytags needs it
+Plug 'xolox/vim-easytags' " Easytags | interactions with exuberant tags
+Plug 'xolox/vim-misc' " Misc | idk, easytags needs it
 
-    " LANGUAGE SPECIFIC
+" SYNTAX
 
-    Plug 'Valloric/YouCompleteMe' " YCM | it is kinda language specific
+Plug 'elzr/vim-json' " vim-json | base vim support for json is awful
+Plug 'kchmck/vim-coffee-script' " Coffeescript support
 
-    " GIT INTERACTIONS
-    Plug 'gisphm/vim-gitignore' " Gitignore | ignore 'em !
-    Plug 'Xuyuanp/nerdtree-git-plugin' " NERDtree-git | git interactions to NERDtree
-    Plug 'tpope/vim-fugitive' " Fugitive | Git interactions
-    " Plug 'mmozuras/vim-github-comment'
+" LANGUAGE SPECIFIC
+
+Plug 'w0rp/ale'
+
+" GIT INTERACTIONS
+Plug 'gisphm/vim-gitignore' " Gitignore | ignore 'em !
+Plug 'Xuyuanp/nerdtree-git-plugin' " NERDtree-git | git interactions to NERDtree
 
 call plug#end()
 " ============================================================
@@ -56,8 +59,13 @@ call plug#end()
 
 " >>>>>>>>>>>>>>>>>>>>>> System stuff <<<<<<<<<<<<<<<<<<<<<<
 
+" Modelines
+set modeline
+set modelines=5
+
+set autoread " Refresh file contents if modified
+
 " PERFORMANCE
-set nomodeline " Just to be sure
 set nospell " Spell checking, Never got it to work properly
 set nocursorcolumn " Draws currently active column -> super slow
 set nocursorline " Draws currently active line -> super slow
@@ -67,14 +75,15 @@ set history=100 " History
 set hidden " Avoid keeping closed buffers in background
 
 " Temporary, Backup files
-set backup " Enable backup files
 set dir=~/.vim/tmp " Where to store *.sw? files
 set backupdir=~/.vim/backup " Where to store backup files
+set backup
+set noswapfile
 
 " Enabled undofiles
 set undodir=~/.vim/undos
-set undolevels=100
-set undoreload=100
+set undolevels=300
+set undoreload=300
 set undofile
 
 " FILE ENCODING
@@ -86,6 +95,7 @@ set fileencodings=ucs-bom,utf-8,gbk,big5,latin1
 " >>>>>>>>>>>>>>>>>>>>>> GUI stuff <<<<<<<<<<<<<<<<<<<<<<
 
 set background=dark
+colorscheme delek
 
 set wrap " Enable wrapping
 set linebreak " Don't insert <EOL> at the end of the visible line
@@ -106,6 +116,8 @@ set wildmenu " Enable wildmenu
 set wildmode=full " Wildmode - don't show all results, just cycle through them
 set wildignorecase " Ignore case in wildmenu
 
+set clipboard=unnamedplus " Set default register to system clipboard
+
 " Define tab as 4 spaces
 set tabstop=8
 set softtabstop=0
@@ -119,6 +131,11 @@ set list
 set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
 
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif " Return to the last position when opening files
+
+" >>>>>>>>>>>>>>>>>>>>>> Highlights <<<<<<<<<<<<<<<<<<<<<<
+
+highlight SpellBad term=reverse ctermbg=12 gui=undercurl guisp=Blue
+highlight Error term=reverse ctermfg=16 ctermbg=3 guifg=White guibg=Red
 
 " >>>>>>>>>>>>>>>>>>>>>> Searching <<<<<<<<<<<<<<<<<<<<<<
 
@@ -135,10 +152,20 @@ set hlsearch " Highlight search
 set smartcase " Ignore case only when lowercase
 set nowrapscan " Searches wrap around the end of the file
 set showmatch " Highlight the matching bracket
+set wrapscan " Why haven't I set this earlier ....
 
 " >>>>>>>>>>>>>>>>>>>>>> Text-formatting <<<<<<<<<<<<<<<<<<<<<<
 
 autocmd BufWritePre * :%s/\s\+$//e " Removes unnecessary whitespaces on save
+
+" >>>>>>>>>>>>>>>>>>>>>> Functions <<<<<<<<<<<<<<<<<<<<<<
+
+function! AppendModeline()
+    let l:modeline = printf("vim: set ts=%d sw=%d tw=%d %set :",
+        \ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
+    let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
+    call append(0, l:modeline)
+endfunction
 
 " >>>>>>>>>>>>>>>>>>>>>> Mappings <<<<<<<<<<<<<<<<<<<<<<
 
@@ -148,6 +175,9 @@ set backspace=indent,eol,start " Backspace for dummies
 
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>q :q<CR>
+nnoremap <Leader>Q :qall<CR>
+nnoremap <Leader>x :x<CR>
+nnoremap <Leader>X :xall<CR>
 nnoremap <Leader>n :tabnew<CR>
 
 nnoremap <Leader>f :noh<CR>
@@ -175,7 +205,7 @@ cno kj <c-c>
 vno v <esc>
 
 " Format the whole document
-nnoremap <F3> mzgg=G'z
+nnoremap <Leader>= mzgg=G'z
 
 " Window Navigation
 " <Leader>hljk = Move between windows
@@ -191,6 +221,9 @@ nnoremap <Leader>s <C-w>s
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! %!sudo tee > /dev/null %
 
+
+" Append base modelines
+nnoremap <silent> <Leader>ml :call AppendModeline()<CR>
 
 " ============================================================
 " |                                                          |
@@ -216,6 +249,7 @@ let NERDTreeMapCloseChildren='h' " Close  child nodes with h
 let NERDTreeQuitOnOpen=1 " Autoclose NERDTREE on file opening
 let NERDTreeMinimalUI=1 " Hides 'Press ? for help'
 let NERDTreeAutoDeleteBuffer = 1 " Auto delete buffer
+let g:NERDTreeWinSize=35
 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif " Close NERDtree if only remaining window
 
@@ -225,71 +259,71 @@ set laststatus=2 " Bugfix
 
 " Components setup
 let g:lightline = {
-      \ 'colorscheme': 'solarized',
-      \ 'mode_map': { 'c': 'NORMAL' },
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-      \   'right': [ ['syntastic', 'lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']  ]
-      \ },
-      \ 'component_function': {
-      \   'modified': 'LightlineModified',
-      \   'readonly': 'LightlineReadonly',
-      \   'fugitive': 'LightlineFugitive',
-      \   'filename': 'LightlineFilename',
-      \   'fileformat': 'LightlineFileformat',
-      \   'filetype': 'LightlineFiletype',
-      \   'fileencoding': 'LightlineFileencoding',
-      \   'mode': 'LightlineMode',
-      \ },
-      \ 'component_expand': {
-      \   'syntastic': 'SyntasticStatuslineFlag',
-      \ },
-      \ 'component_type': {
-      \   'syntastic': 'error',
-      \ },
-      \ 'separator': { 'left': '', 'right': '' },
-      \ 'subseparator': { 'left': '', 'right': '' }
-      \ }
+            \ 'colorscheme': 'wombat',
+            \ 'mode_map': { 'c': 'NORMAL' },
+            \ 'active': {
+            \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+            \   'right': [ ['lineinfo'], ['ale'], ['percent'], ['fileformat', 'fileencoding', 'filetype']  ]
+            \ },
+            \ 'component_function': {
+            \   'modified': 'LightlineModified',
+            \   'readonly': 'LightlineReadonly',
+            \   'fugitive': 'LightlineFugitive',
+            \   'filename': 'LightlineFilename',
+            \   'fileformat': 'LightlineFileformat',
+            \   'filetype': 'LightlineFiletype',
+            \   'fileencoding': 'LightlineFileencoding',
+            \   'mode': 'LightlineMode',
+            \   'ale': 'LinterStatus'
+            \ },
+            \ 'component_expand': {
+            \ },
+            \ 'component_type': {
+            \   'ale': 'error',
+            \ },
+            \ 'separator': { 'left': '', 'right': '' },
+            \ 'subseparator': { 'left': '', 'right': '' }
+            \ }
 
 function! LightlineModified()
-	return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+    return &ft =~ 'help\|vimfiler\|gundo' ? '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
 
 function! LightlineReadonly()
-	return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '' : ''
+    return &ft !~? 'help\|vimfiler\|gundo' && &readonly ? '' : ''
 endfunction
 
 function! LightlineFilename()
-	return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
-		\ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
-		\  &ft == 'unite' ? unite#get_status_string() :
-		\  &ft == 'vimshell' ? vimshell#get_status_string() :
-		\ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
-		\ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+    return ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+                \ (&ft == 'vimfiler' ? vimfiler#get_status_string() :
+                \  &ft == 'unite' ? unite#get_status_string() :
+                \  &ft == 'vimshell' ? vimshell#get_status_string() :
+                \ '' != expand('%:t') ? expand('%:t') : '[No Name]') .
+                \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
 endfunction
 
 function! LightlineFugitive()
-	if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
-		let branch = fugitive#head()
-		return branch !=# '' ? ''.branch : ''
-	endif
-	return ''
+    if &ft !~? 'vimfiler\|gundo' && exists("*fugitive#head")
+        let branch = fugitive#head()
+        return branch !=# '' ? ''.branch : ''
+    endif
+    return ''
 endfunction
 
 function! LightlineFileformat()
-	return winwidth(0) > 70 ? &fileformat : ''
+    return winwidth(0) > 70 ? &fileformat : ''
 endfunction
 
 function! LightlineFiletype()
-	return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+    return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
 endfunction
 
 function! LightlineFileencoding()
-	return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+    return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
 endfunction
 
 function! LightlineMode()
-	return winwidth(0) > 60 ? lightline#mode() : ''
+    return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 
 augroup AutoSyntastic
@@ -300,6 +334,34 @@ function! s:syntastic()
     SyntasticCheck
     call lightline#update()
 endfunction
+
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
+
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+                \   '%d∆ %d✗',
+                \   all_non_errors,
+                \   all_errors
+                \)
+endfunction
+
+" Let the lightline tell me which mod i am currently in
+
+" >>>>>>>>>>>>>>>>>>>>>> PHP-VIM  <<<<<<<<<<<<<<<<<<<<<<
+
+" Overrides php notation
+function! PhpSyntaxOverride()
+    hi! def link phpDocTags  phpDefine
+    hi! def link phpDocParam phpType
+endfunction
+
+augroup phpSyntaxOverride
+    autocmd!
+    autocmd FileType php call PhpSyntaxOverride()
+augroup END
 
 " >>>>>>>>>>>>>>>>>>>>>> EasyMotion <<<<<<<<<<<<<<<<<<<<<<
 
@@ -329,7 +391,6 @@ let g:easytags_file = '.vimtags'
 " >>>>>>>>>>>>>>>>>>>>>> vim-easytags <<<<<<<<<<<<<<<<<<<<<<
 
 let g:easytags_dynamic_files = 1
-
 let g:easytags_async = 1 " Update tags in background and don't interrupt the foreground processes
 
 " >>>>>>>>>>>>>>>>>>>>>> CTRL-P <<<<<<<<<<<<<<<<<<<<<<
@@ -344,6 +405,18 @@ let g:ycm_autoclose_preview_window_after_completion=1 " auto close notation wind
 " >>>>>>>>>>>>>>>>>>>>>> Gundo <<<<<<<<<<<<<<<<<<<<<<
 
 nnoremap <Leader>g :GundoToggle<CR>
+
+" >>>>>>>>>>>>>>>>>>>>>> Ale <<<<<<<<<<<<<<<<<<<<<<
+
+let g:ale_sign_error = '✗'
+let g:ale_sign_warning = '∆'
+
+nmap <Leader>e <Plug>(ale_previous_wrap) " Jump quickly through errors
+nmap <Leader>E <Plug>(ale_next_wrap) " Jump quickly through errors
+
+" >>>>>>>>>>>>>>>>>>>>>> vim-json <<<<<<<<<<<<<<<<<<<<<<
+
+let g:vim_json_syntax_conceal = 0 " Fukin stupid shit i wanna see dem quotes
 
 " ============================================================
 " |                                                          |

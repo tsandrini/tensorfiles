@@ -39,7 +39,7 @@ ignore-case = smart
 # startpage (List of String):
 #     The default page(s) to open at the start, separated by commas.
 #     Default: https://start.duckduckgo.com
-startpage = https://google.com/
+startpage = https://start.duckduckgo.com
 
 # yank-ignored-url-parameters (List of String):
 #     The URL parameters to strip with :yank url, separated by commas.
@@ -87,7 +87,7 @@ auto-save-interval = 15000
 #     to quote them.
 #     `{}` gets replaced by the filename of the file to be edited.
 #     Default: gvim -f "{}"
-editor = vim -f "{}"
+editor = urxvt -uc -e vim "{}"
 
 # editor-encoding (Encoding):
 #     Encoding to use for editor.
@@ -108,7 +108,7 @@ private-browsing = false
 #     'qutebrowser --help' instead.
 #     Valid values: true, false
 #     Default: false
-developer-extras = true
+developer-extras = false
 
 # print-element-backgrounds (Bool):
 #     Whether the background color and images are also drawn when the
@@ -301,7 +301,7 @@ remove-finished-downloads = -1
 #     Whether to hide the statusbar unless a message is shown.
 #     Valid values: true, false
 #     Default: false
-hide-statusbar = false
+hide-statusbar = true
 
 # statusbar-padding (Padding):
 #     Padding for statusbar (top, bottom, left, right).
@@ -321,7 +321,7 @@ statusbar-padding = 1,1,0,0
 #     * `{host}`: The host of the current web page.
 #     * `{backend}`: Either 'webkit' or 'webengine'
 #     Default: {perc}{title}{title_sep}qutebrowser
-window-title-format = {perc}{title}{title_sep}qutebrowser
+window-title-format = {perc}{title}{title_sep}
 
 # modal-js-dialog (Bool):
 #     Use standard JavaScript modal dialog for alert() and confirm()
@@ -386,7 +386,7 @@ referer-header = same-domain
 # user-agent (UserAgent):
 #     User agent to send. Empty to send the default.
 #     Default:
-user-agent = Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0
+user-agent = Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36
 
 # proxy (Proxy):
 #     The proxy to use.
@@ -618,7 +618,7 @@ new-tab-position-explicit = last
 #         default-page: Load the default page.
 #         close: Close the window.
 #     Default: ignore
-last-close = ignore
+last-close = startpage
 
 # show (String):
 #     When to show the tab bar
@@ -736,7 +736,7 @@ indicator-padding = 2,2,0,4
 #     The directory to save downloads to. An empty value selects a
 #     sensible os-specific default. Will expand environment variables.
 #     Default:
-download-directory = ~/Stažené
+download-directory = ~/Downloads
 
 # prompt-download-directory (Bool):
 #     Whether to prompt the user for the download location.
@@ -971,7 +971,7 @@ host-blocking-whitelist = piwik.org
 #     download button in the pdf.js viewer.
 #     Valid values: true, false
 #     Default: false
-enable-pdfjs = false
+enable-pdfjs = true
 
 
 # Hinting settings.
@@ -980,7 +980,7 @@ enable-pdfjs = false
 # border (String):
 #     CSS border value for hints.
 #     Default: 1px solid #E3BE23
-border = 1px solid #E3BE23
+border = 1px dashed {{ alt_black  }}
 
 # mode (String):
 #     Mode to use for hints.
@@ -1076,8 +1076,11 @@ hide-unmatched-rapid-hints = true
 # replaced by the search term
 # signs.
 [searchengines]
-DEFAULT = https://www.google.cz/search?q={}
+DEFAULT = https://duckduckgo.com/?q={}
+d= https://duckduckgo.com/?q={}
 duck = https://duckduckgo.com/?q={}
+google = https://duckduckgo.com/?q={}
+g = https://duckduckgo.com/?q={}
 
 
 # Aliases for commands.

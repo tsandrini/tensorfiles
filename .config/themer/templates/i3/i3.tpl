@@ -1,6 +1,13 @@
-set $mod Mod4
+# vim: set ts=8 sw=4 tw=0 et :
+# vim: filetype=i3
 
+# i3 configuration
+# Author: Tomáš Sandrini
+# GitHub: https://github.com/LukeSmithxyz
+
+set $mod Mod4
 set $background {{ black }}
+
 set $foreground {{ white }}
 set $gray       {{ alt_black }}
 set $primary    {{ primary }}
@@ -8,6 +15,10 @@ set $secondary  {{ secondary }}
 set $tertiary   {{ tertiary }}
 set $warning    {{ special }}
 set $terminal   urxvt -uc
+set $browser    chromium
+set $screencast --no-startup-id bash ~/.config/scripts/screencast.sh
+set $stoprec    --no-startup-id killall ffmpeg & killall screenkey
+set $fmanager   urxvt -uc -e "ranger"
 
 set $ws1  "1: "
 set $ws2  "2: "
@@ -34,6 +45,7 @@ bindsym $mod+Shift+q kill
 
 bindsym $mod+Return exec --no-startup-id $terminal
 bindsym $mod+d exec rofi --no-startup-id -show run -run-command "/bin/zsh -i -c '{cmd}'"
+bindsym $mod+c exec --no-startup-id rofi -show fb -modi fb:~/.config/scripts/rofi/rofi-file-browser.sh
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -57,7 +69,7 @@ bindsym $mod+e layout toggle split
 bindsym $mod+space focus mode_toggle
 bindsym $mod+Shift+space floating toggle
 
-bindsym $mod+a focus parent
+#bindsym $mod+a focus parent
 #bindsym $mod+d focus child
 
 bindsym $mod+1 workspace $ws1
@@ -138,10 +150,21 @@ client.urgent           $warning    $warning   $foreground $warning
 
 for_window [window_role="pop-up"] floating enable
 for_window [window_role="task_dialog"] floating enable
-for_window [instance="float"] floating enable
+for_window [title="GIMP Startup"] move workspace $ws6
+for_window [class="Gimp"] move workspace $ws6
+for_window [window_role="gimp-dock"] floating disable; move left; resize shrink width 50 px or 50ppt
+for_window [window_role="gimp-toolbox"] floating disable; move right; resize grow width 30 px or 30pptor_window [instance="float"] floating enable
 
-bindsym $mod+Shift+c reload
-bindsym $mod+Shift+r exec --no-startup-id ~/.i3/i3reset
+assign [class="Chromium"] $ws1
+
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="bubble"] floating enable
+for_window [window_role="task_dialog"] floating enable
+for_window [window_role="Preferences"] floating enable
+
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+
 
 mode "resize" {
         bindsym j resize shrink width 10 px or 10 ppt
@@ -177,15 +200,21 @@ mode "$mode_power" {
     bindsym Escape mode "default"
 }
 
-assign [class="Chromium"] $ws1
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r exec --no-startup-id ~/.config/scripts/i3/reload.sh
 
-for_window [window_role="pop-up"] floating enable
-for_window [window_role="bubble"] floating enable
-for_window [window_role="task_dialog"] floating enable
-for_window [window_role="Preferences"] floating enable
+bindsym $mod+Insert exec $screencast
+bindsym $mod+Pause exec $video
+bindsym $mod+Delete exec $stoprec
 
-for_window [window_type="dialog"] floating enable
-for_window [window_type="menu"] floating enable
+bindsym $mod+f exec $fmanager
+bindsym F1 exec --no-startup-id echo  "no need for help" > /dev/null
+bindsym Print exec --no-startup-id xfce4-screenshooter
+bindsym $mod+shift+i exec --no-startup-id i3lock-fancy
+
+bindsym $mod+n exec --no-startup-id cmus-remote --next
+bindsym $mod+p exec --no-startup-id cmus-remote --prev
+bindsym $mod+u exec --no-startup-id cmus-remote --pause
 
 bindsym XF86AudioRaiseVolume exec --no-startup-id pulseaudio-ctl up
 bindsym XF86AudioLowerVolume exec --no-startup-id pulseaudio-ctl down
@@ -193,27 +222,19 @@ bindsym XF86AudioMute exec --no-startup-id pulseaudio-ctl mute
 
 bindsym XF86MonBrightnessUp exec --no-startup-id light -A 5
 bindsym XF86MonBrightnessDown exec --no-startup-id light -U 5
-
-bindsym XF86AudioPlay exec --no-startup-id cmus-remote --play
-bindsym XF86AudioPause exec --no-startup-id cmus-remote --pause
-bindsym XF86AudioNext exec --no-startup-id cmus-remote --next
-bindsym XF86AudioPrev exec --no-startup-id cmus-remote --previous
-
-
-bindsym $mod+f exec --no-startup-id $terminal -e "ranger"
-bindsym F1 exec --no-startup-id echo  "no need for help" > /dev/null
-bindsym Print exec --no-startup-id xfce4-screenshooter
-bindsym $mod+shift+i exec --no-startup-id i3lock-fancy
-bindsym $mod+m exec --no-startup-id i3-msg 'workspace $ws4; exec --no-startup-id $terminal -e "cmus"'
-
-bindsym $mod+n exec --no-startup-id cmus-remote --next
-bindsym $mod+p exec --no-startup-id cmus-remote --prev
-bindsym $mod+u exec --no-startup-id cmus-remote --pause
+bindsym XF86ScreenSaver exec --no-startup-id i3lock-fancy
+bindsym XF86Display exec --no-startup-id arandr
+bindsym XF86Close kill
+bindsym XF86WLAN exec --no-startup-id sudo sv restart NetworkManager
 
 exec_always --no-startup-id feh --bg-scale ~/.wallpaper.png
-exec --no-startup-id compton -b &
+exec_always --no-startup-id ~/.config/scripts/screen.sh v
+exec --no-startup-id compton &
+exec --no-startup-id unclutter &
 exec --no-startup-id nm-applet &
 exec --no-startup-id dunst &
 exec --no-startup-id thermald &
 exec --no-startup-id kalu &
-exec --no-startup-id polybar main_bar &
+exec --no-startup-id polybar top_bar &
+exec --no-startup-id polybar bottom_bar &
+exec --no-startup-id xfce4-clipman &

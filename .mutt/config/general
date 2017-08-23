@@ -1,0 +1,101 @@
+source ~/.mutt/config/colors
+
+set sort     = threads
+set sort_aux = last-date-received
+
+set index_format  = "%[%b %d %H:%M]   %-15.15L   %?M?<%03M> &      ?%s"
+set status_format = "%f (%s) (%?V?limited to '%V'&no limit pattern?) (%P)"
+
+set menu_scroll
+set imap_keepalive = 300
+set mail_check = 120
+
+unset imap_passive
+
+set editor = vim
+
+
+alternative_order text/plain text/html
+auto_view text/html
+
+set edit_headers=yes
+set charset      = utf-8
+set send_charset = utf-8
+
+# Caching
+
+set mailcap_path 	= ~/.mutt/mailcap
+set header_cache = "~/.mutt/cache/headers"
+set message_cachedir = "~/.mutt/cache/bodies"
+set certificate_file = "~/.mutt/certificates"
+
+bind index,pager B sidebar-toggle-visible
+
+# Index
+
+bind index j next-entry
+bind index k previous-entry
+bind index J next-thread
+bind index K previous-thread
+
+bind index / search
+bind index ? search-reverse
+bind index n search-next
+bind index N search-opposite
+
+bind index gg first-entry
+bind index G last-entry
+
+bind index \Cd half-down
+bind index \Cu half-up
+
+bind index l collapse-thread
+bind index z collapse-all
+
+bind index r reply
+bind index a group-reply
+bind index L list-reply
+
+bind index h limit
+
+# '?' is used for search-opposite
+bind index \Ch help
+
+# Always start with threads collapsed and with the most recent thread selected
+push <collapse-all><last-entry>
+
+# Pager
+
+bind pager j next-line
+bind pager k previous-line
+
+# The mouse wheel seems to send <up><up><up>/<down><down><down> by default with
+# GNOME Terminal. Use it to scroll through messages.
+bind pager <down> next-line
+bind pager <up>   previous-line
+
+bind pager / search
+bind pager ? search-reverse
+bind pager n search-next
+bind pager N search-opposite
+
+bind pager gg top
+bind pager G bottom
+
+bind pager \Cd half-down
+bind pager \Cu half-up
+
+bind pager r reply
+bind pager a group-reply
+bind pager l list-reply
+bind pager L list-reply
+
+# '?' is used for search-opposite
+bind pager \Ch help
+
+macro index 'c' '<change-folder>?<change-dir><home>^K=<enter>'
+
+# Security
+
+bind generic,alias,attach,browser,editor,index,compose,pager,pgp,postpone ':' noop
+

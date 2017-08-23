@@ -1,11 +1,15 @@
-# This file is used for setting custom global variables
+# vim: filetype=zsh
+
+export EDITOR=vim
+export VISUAL=vim
+export DISPLAY=:0
 
 export MUSIC_DIR=$HOME/Hudba/
-export MOVIES_DIR=$HOME/Filmy/
+export MOVIES_DIR=$HOME/Movies/
 export PROJECTS_DIR=$HOME/Projekty/
 export DOSU_DIR=$HOME/DosuNotes/
 export VIDS_DIR=$HOME/Videa/
-export PICS_DIR=$HOME/Obrázky/
-export WALLPAPERS_DIR=$HOME/Obrázky/Wallpapers/
-export DOCUMENTS_DIR=$HOME/Dokumenty/
-export DOWNLOADS_DIR=$HOME/Stažené/
+export PICS_DIR=$HOME/Pictures/
+export WALLPAPERS_DIR=$HOME/Pictures/Wallpapers/
+export DOCUMENTS_DIR=$HOME/Documents/
+export DOWNLOADS_DIR=$HOME/Downloads/

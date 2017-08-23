@@ -1,18 +1,12 @@
-URxvt.allow_bold: true
-URxvt.loginShell: true
+!-------------------------------!
+!                               !
+!   Xresources by tsandrini     !
+!                               !
+!-------------------------------!
 
-URxvt*font: \
-        xft:MesloLGM Nerd Font:style=RegularForPowerline:pixelsize=17:antialias=true:hinting=true, \
-        xft:TerminessTTF Nerd Font:style=Medium:pixelsize=17:antialias=true:hinting=true
-URxvt*boldFont: \
-        xft:MesloLGM Nerd Font:style=Bold:pixelsize=17:antialias=true:hinting=true, \
-        xft:TerminessTTF Nerd Font:style=Bold:pixelsize=17:antialias=true:hinting=true
-URxvt*italicFont: \
-        xft:MesloLGM Nerd Font:style=Italic:pixelsize=17:antialias=true:hinting=true, \
-        xft:TerminessTTF Nerd Font:style=Italic:pixelsize=17:antialias=true:hinting=true
-URxvt*boldItalicFont: \
-        xft:MesloLGM Nerd Font:style=Bold Italic:pixelsize=17:antialias=true:hinting=true, \
-        xft:TerminessTTF Nerd Font:style=Bold Italic:pixelsize=17:antialias=true:hinting=true
+
+! --- \section{sys colors} --- !
+
 
 *.background: {% if background %}{{ background }}{% else %}{{ black }}{% endif %}
 *.foreground: {% if foreground %}{{ foreground }}{% else %}{{ white }}{% endif %}
@@ -45,25 +39,64 @@ URxvt*boldItalicFont: \
 ! underline when default
 *.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
 
+
+! --- \section(xft settings) -- !
+
+
+Xft.autohint: 0
 Xft*antialias: true
 Xft.hinting: true
 Xft.hintstyle: hintslight
 Xft*dpi: 96
+Xft.lcdfilter: lcddefault
+
+
+! --- \section{URXVT} --- !
+
+
+! --- \subsection{font settings} --- !
+
+URxvt*font: \
+        xft:DejaVuSansMono Nerd Font:style=Book:pixelsize=18:antialias=true:hinting:true, \
+        xft:TerminessTTF Nerd Font:style=Medium:pixelsize=13:antialias=true:hinting=true
+URxvt*boldFont: \
+        xft:DejaVuSansMono Nerd Font:style=Bold:pixelsize=18:antialias=true:hinting:true, \
+        xft:TerminessTTF Nerd Font:style=Bold:pixelsize=13:antialias=true:hinting=true
+URxvt*italicFont: \
+        xft:DejaVuSansMono Nerd Font:style=Oblique:pixelsize=18:antialias=true:hinting:true, \
+        xft:TerminessTTF Nerd Font:style=Italic:pixelsize=13:antialias=true:hinting=true
+URxvt*boldItalicFont: \
+        xft:DejaVuSansMono Nerd Font:style=Bold Oblique:pixelsize=18:antialias=true:hinting:true, \
+        xft:TerminessTTF Nerd Font:style=Bold Italic:pixelsize=13:antialias=true:hinting=true
+
+
+
+! --- \subsection{appearence} --- !
+
 
 URxvt.internalBorder: 0
 URxvt.externalBorder: 0
 
-URxvt.scrollTtyOutput:   false
-URxvt.scrollWithBuffer:  true
-URxvt.scrollTtyKeypress: true
+URxvt*scrollBar: false
+URxvt*cursorBlink: true
+URxvt*cursorUnderline: true
 
-URxvt*.saveLines: 500
-URxvt*.scrollBar: false
+URxvt*.transparent: false
+URxvt.allow_bold: true
+URxvt*background: rgba:0000/0000/0000/9999
+URxvt*depth: 32
+
+! --- \subsection{general settings} --- !
+
 
 URxvt*iso14755: false
 URxvt*iso14755_52: false
 
 URxvt.imLocate: cs_CZ.UTF-8
+
+
+! --- \subsection{extensions} --- !
+
 
 URxvt.perl-ext-common : default,selection-autotransform,url-select,keyboard-select,matcher,resize-font
 URxvt.perl-ext        : default,clipboard
@@ -71,19 +104,31 @@ URxvt.perl-ext        : default,clipboard
 URxvt.keysym.M-c:   perl:clipboard:copy
 URxvt.keysym.M-v:   perl:clipboard:paste
 
-URxvt.url-select.underline: true
-urxvt*urlLauncher: /usr/bin/chromium
-urxvt*matcher.button: 1
-urxvt*matcher.pattern.1: \\bwww\\.[\\w-]+\\.[\\w./?&@#-]*[\\w/-]
+URxvt.perl-ext-common: default,matcher
+URxvt.url-launcher: /usr/bin/xdg-open
+URxvt.matcher.button: 1
 
-URxvt*.transparent: true
-URxvt*.shading: 20
 
-URxvt*buffered: true
+! --- \subsection{performance} --- !
+
+
+URxvt.scrollTtyOutput:   false
+URxvt.scrollWithBuffer:  true
+URxvt.scrollTtyKeypress: true
+
+URxvt*.saveLines: 1000
+
+URxvt*skipBuiltinGlyphs: true
+URxvt*skipScroll: true
+
+URxvt*buffered: false
+
+
+! --- \section{rofi} --- !
 
 rofi.fullscreen: false
 rofi.fake-transparency: false
-rofi.opacity: 90
+rofi.opacity: 75
 rofi.separator-style: dash
 rofi.font: {{ fontName  }} 20
 rofi.color-enabled: true
@@ -101,4 +146,3 @@ rofi.color-window:      argb:dc111111, argb:dc111111
 rofi.color-normal:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
 rofi.color-urgent:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
 rofi.color-active:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
-
