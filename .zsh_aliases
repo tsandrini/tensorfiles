@@ -9,3 +9,6 @@ alias ll="ls -lA --group-directories-first"
 alias l="ls -lA --group-directories-first"
 alias npm-exec='PATH=$(npm bin):$PATH'
 alias untarball="tar -xvzf"
+alias art="php artisan"
+alias comp="composer"
+alias sysctl="systemctl"

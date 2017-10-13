@@ -1,7 +1,45 @@
 [user]
     email = tomas.sandrini@seznam.cz
     name = Tomáš Sandrini
+
 [alias]
+    b = branch
+    bl = branch
+    bd = branch -d
+    bdf = branch -D
+    f = fetch
+    fo = fetch origin
+    c = commit
+    ca = commit -a
+    ch = checkout
+    chb = checkout -b
+    chr = checkout --
+    chra = checkout -- .
+    cl = clone
+    ph = push
+    phu = push --set-upstream
+    phuo = push --set-upstream origin
+    phuof = push --set-upstream --force origin
+    phuf = push --set-upstream --force
+    phf = push --force
+    pl = pull
+    plf = pull --force
+    plo = pull origin
+    plof = pull origin --force
+    a = add
+    aa = add *
+    r = reset HEAD
+    ra = reset HEAD *
+    s = status
+    sh = stash
+    sha = stash apply
+    rmc = rm --cached
+    m = merge
+    mf = merge --force
+    i = init
+    d = diff
+    l = log
+
     lg = !"git lg1"
     lg1 = !"git lg1-specific --all"
     lg2 = !"git lg2-specific --all"

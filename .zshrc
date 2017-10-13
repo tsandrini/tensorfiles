@@ -1,3 +1,4 @@
+PROMPT_SUBST="true"
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -7,7 +8,7 @@ ZSH=/usr/share/oh-my-zsh/
 # Set name of the theme to load. Optionally, if you set this to "random"
 # it'll load a random theme each time that oh-my-zsh is loaded.
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="spaceship"
+ZSH_THEME="spaceship" # avit
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -51,7 +52,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow colorize colored-man-pages)
+plugins=(git git-flow colorize colored-man-pages zsh-autosuggestions)
 
 
 # User configuration
@@ -97,5 +98,18 @@ source $ZSH/oh-my-zsh.sh
 
 # Include aliases
 if [ -f ~/.zsh_aliases ]; then
-. ~/.zsh_aliases
+    source ~/.zsh_aliases
 fi
+
+if [ -f ~/.zsh_variables ]; then
+    source ~/.zsh_variables
+fi
+
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent > ~/.ssh-agent-thing
+fi
+if [[ "$SSH_AGENT_PID" == "" ]]; then
+    eval "$(<~/.ssh-agent-thing)"
+fi
+
+export WORKON_HOME=~/Env
