@@ -39,9 +39,10 @@ Plug 'kchmck/vim-coffee-script' " Coffeescript support
 
 " LANGUAGE SPECIFIC
 
-Plug 'davidhalter/jedi-vim' " jedi-vim
+"Plug 'davidhalter/jedi-vim' " jedi-vim
 Plug 'elzr/vim-json' " vim-sjon | base vim support for json is awful
 Plug 'w0rp/ale'
+Plug 'Valloric/YouCompleteMe' " Autocompletion
 
 " GIT INTERACTIONS
 Plug 'gisphm/vim-gitignore' " Gitignore | ignore 'em !

@@ -3,7 +3,6 @@
 
 # i3 configuration
 # Author: Tomáš Sandrini
-# GitHub: https://github.com/LukeSmithxyz
 
 set $mod Mod4
 set $background {{ black }}
@@ -19,6 +18,14 @@ set $browser    chromium
 set $screencast --no-startup-id bash ~/.config/scripts/screencast.sh
 set $stoprec    --no-startup-id killall ffmpeg & killall screenkey
 set $fmanager   urxvt -uc -e "ranger"
+
+set $mplayer    urxvt -uc -e "ncmpcpp"
+set $mplayerVolUp --no-startup-id mpc volume +5
+set $mplayerVolDown --no-startup-id mpc volume -5
+set $mplayerNext --no-startup-id mpc next
+set $mplayerPrevious --no-startup-id mpc prev
+set $mplayerToggle --no-startup-id mpc toggle
+set $mplayerStop --no-startup-id mpc stop
 
 set $ws1  "1: "
 set $ws2  "2: "
@@ -45,7 +52,7 @@ bindsym $mod+Shift+q kill
 
 bindsym $mod+Return exec --no-startup-id $terminal
 bindsym $mod+d exec rofi --no-startup-id -show run -run-command "/bin/zsh -i -c '{cmd}'"
-bindsym $mod+c exec --no-startup-id rofi -show fb -modi fb:~/.config/scripts/rofi/rofi-file-browser.sh
+bindsym $mod+c exec --no-startup-id rofi -show find -modi find:~/.config/scripts/rofi/rofi-file.sh
 
 bindsym $mod+h focus left
 bindsym $mod+j focus down
@@ -62,7 +69,7 @@ bindsym $mod+v split v
 
 bindsym $mod+z fullscreen
 
-bindsym $mod+s layout stacking
+# bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
 bindsym $mod+e layout toggle split
 
@@ -165,23 +172,10 @@ for_window [window_role="Preferences"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 
-
-mode "resize" {
-        bindsym j resize shrink width 10 px or 10 ppt
-        bindsym k resize grow height 10 px or 10 ppt
-        bindsym l resize shrink height 10 px or 10 ppt
-        bindsym odiaeresis resize grow width 10 px or 10 ppt
-
-        bindsym Left resize shrink width 10 px or 10 ppt
-        bindsym Down resize grow height 10 px or 10 ppt
-        bindsym Up resize shrink height 10 px or 10 ppt
-        bindsym Right resize grow width 10 px or 10 ppt
-
-        bindsym Return mode "default"
-        bindsym Escape mode "default"
-}
-
-bindsym $mod+r mode "resize"
+bindsym $mod+p resize shrink width 10 px or 10 ppt
+bindsym $mod+i resize grow height 10 px or 10 ppt
+bindsym $mod+o resize shrink height 10 px or 10 ppt
+bindsym $mod+u resize grow width 10 px or 10 ppt
 
 bindsym $mod+shift+minus move scratchpad
 bindsym $mod+minus scratchpad show
@@ -208,13 +202,18 @@ bindsym $mod+Pause exec $video
 bindsym $mod+Delete exec $stoprec
 
 bindsym $mod+f exec $fmanager
+
+bindsym $mod+m exec $mplayer
+bindsym $mod+equal exec $mplayerVolUp
+bindsym $mod+shift+equal exec $mplayerVolDown
+bindsym $mod+n exec $mplayerNext
+bindsym $mod+shift+n exec $mplayerPrevious
+bindsym $mod+s exec $mplayerToggle
+bindsym $mod+shift+s exec $mplayerStop
+
 bindsym F1 exec --no-startup-id echo  "no need for help" > /dev/null
 bindsym Print exec --no-startup-id xfce4-screenshooter
 bindsym $mod+shift+i exec --no-startup-id i3lock-fancy
-
-bindsym $mod+n exec --no-startup-id cmus-remote --next
-bindsym $mod+p exec --no-startup-id cmus-remote --prev
-bindsym $mod+u exec --no-startup-id cmus-remote --pause
 
 bindsym XF86AudioRaiseVolume exec --no-startup-id pulseaudio-ctl up
 bindsym XF86AudioLowerVolume exec --no-startup-id pulseaudio-ctl down
@@ -225,7 +224,7 @@ bindsym XF86MonBrightnessDown exec --no-startup-id light -U 5
 bindsym XF86ScreenSaver exec --no-startup-id i3lock-fancy
 bindsym XF86Display exec --no-startup-id arandr
 bindsym XF86Close kill
-bindsym XF86WLAN exec --no-startup-id sudo sv restart NetworkManager
+#bindsym XF86WLAN exec --no-startup-id sudo sv restart NetworkManager
 
 exec_always --no-startup-id feh --bg-scale ~/.wallpaper.png
 exec_always --no-startup-id ~/.config/scripts/screen.sh v

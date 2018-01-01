@@ -98,13 +98,11 @@ URxvt.imLocate: cs_CZ.UTF-8
 ! --- \subsection{extensions} --- !
 
 
-URxvt.perl-ext-common : default,selection-autotransform,url-select,keyboard-select,matcher,resize-font
-URxvt.perl-ext        : default,clipboard
+URxvt.perl-ext-common : default,selection-autotransform,url-select,keyboard-select,matcher,resize-font,clipboard
 
 URxvt.keysym.M-c:   perl:clipboard:copy
 URxvt.keysym.M-v:   perl:clipboard:paste
 
-URxvt.perl-ext-common: default,matcher
 URxvt.url-launcher: /usr/bin/xdg-open
 URxvt.matcher.button: 1
 

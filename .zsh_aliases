@@ -11,4 +11,6 @@ alias npm-exec='PATH=$(npm bin):$PATH'
 alias untarball="tar -xvzf"
 alias art="php artisan"
 alias comp="composer"
-alias sysctl="systemctl"
+alias g="git"
+
+alias thg="themer generate noname"

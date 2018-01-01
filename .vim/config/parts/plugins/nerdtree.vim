@@ -2,8 +2,8 @@
 
 " >>>>>>>>>>>>>>>>>>>>>> NERDTREE  <<<<<<<<<<<<<<<<<<<<<<
 
-noremap m :NERDTreeToggle<CR>
-noremap <Leader>m :NERDTreeFind<CR>
+nnoremap m :NERDTreeToggle<CR>
+nnoremap <Leader>m :NERDTreeFind<CR>
 
 let NERDTreeMapActivateNode='l' " Toggle child nodes with l
 let NERDTreeMapCloseChildren='h' " Close  child nodes with h
