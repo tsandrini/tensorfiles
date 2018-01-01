@@ -1,0 +1,36 @@
+include theme
+
+set recolor "true"
+
+set adjust-open "best-fit"
+
+set scroll-page-aware "true"
+set smooth-scroll "true"
+set scroll-full-overlap 0.01
+set scroll-step 100
+
+set pages-per-row 1
+
+set zoom-min 10
+set guioptions ""
+
+unmap f
+map f toggle_fullscreen
+map [fullscreen] f toggle_fullscreen
+
+unmap r
+map <C-r> reload
+
+map c recolor
+map [fullscreen] c recolor
+map u follow
+map [fullscreen] u follow
+map i toggle_index
+map [fullscreen] i toggle_index
+
+unmap zw
+unmap zb
+map zw adjust_window width
+map zb ajdust_window best-fit
+map [fullscreen] zw adjust_window width
+map [fullscreen] zb ajdust_window best-fit
