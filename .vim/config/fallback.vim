@@ -29,7 +29,7 @@ Plug 'jlanzarotta/bufexplorer'
 
 " EXUBERANT TAGS (tags integration)
 
-Plug 'xolox/vim-easytags' " Easytags | interactions with exuberant tags
+"Plug 'xolox/vim-easytags' " Easytags | interactions with exuberant tags
 Plug 'xolox/vim-misc' " Misc | idk, easytags needs it
 
 " SYNTAX

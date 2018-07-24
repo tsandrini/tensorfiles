@@ -3,7 +3,7 @@
 " >>>>>>>>>>>>>>>>>>>>>> GUI stuff <<<<<<<<<<<<<<<<<<<<<<
 
 set background=dark
-colorscheme delek
+colorscheme koehler
 
 set wrap " Enable wrapping
 set linebreak " Don't insert <EOL> at the end of the visible line

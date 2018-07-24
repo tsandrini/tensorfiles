@@ -21,7 +21,7 @@ set hidden " Avoid keeping closed buffers in background
 set dir=~/.vim/tmp " Where to store *.sw? files
 set backupdir=~/.vim/backup " Where to store backup files
 set backup
-set noswapfile
+set swapfile
 
 " Enabled undofiles
 set undodir=~/.vim/undos
