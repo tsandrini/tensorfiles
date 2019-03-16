@@ -2,7 +2,7 @@
 <html>
 <body style="background: {{ background }}; color: {{ foreground }}; font: 12px monospace;">
 <p>Default text will appear like this.</p>
- 
+
 <h3>Colors</h3>
 <ul>
 <li><p style="color: {{ white }}">White</p></li>
@@ -22,14 +22,14 @@
 <li><p style="color: {{ black }}">Black</p></li>
 <li><p style="color: {{ alt_black }}">Black (alt)</p></li>
 </ul>
- 
+
 <h3>Special</h3>
 <ul>
 <li><p style="color: {{ primary }}">Primary</p></li>
 <li><p style="color: {{ secondary }}">Secondary</p></li>
 <li><p style="color: {{ tertiary }}">Tertiary</p></li>
 </ul>
- 
+
 <h3>Wallpaper</h3>
 <ul>
 <li><p style="color: {{ red }}">Left</p></li>
@@ -37,6 +37,6 @@
 <li><p style="color: {{ yellow }}">Right</p></li>
 <li><p style="color: {{ magenta }}">Middle</p></li>
 </ul>
- 
+
 </body>
 </html>

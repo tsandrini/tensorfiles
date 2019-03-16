@@ -3,3 +3,4 @@
 " >>>>>>>>>>>>>>>>>>>>>> CTRL-P <<<<<<<<<<<<<<<<<<<<<<
 
 let g:ctrlp_map = '<Leader>p' " Chage default keybinding
+let g:ctrlp_custom_ignore=['__pycache__']

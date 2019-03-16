@@ -3,7 +3,7 @@
 " >>>>>>>>>>>>>>>>>>>>>> GUI stuff <<<<<<<<<<<<<<<<<<<<<<
 
 set background=dark
-colorscheme koehler
+colorscheme slate
 
 set wrap " Enable wrapping
 set linebreak " Don't insert <EOL> at the end of the visible line
@@ -15,7 +15,6 @@ set ruler " Enable ruler
 set rulerformat=%l\:%c " Set ruler format
 
 set nofoldenable " Prevent from folding
-set noshowmode " Don't need this with lightline
 
 set number " Show line numbers
 set relativenumber " Show relative numbers insetad of the absolute ones

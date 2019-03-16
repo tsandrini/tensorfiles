@@ -8,36 +8,36 @@
 ! --- \section{sys colors} --- !
 
 
-*.background: {% if background %}{{ background }}{% else %}{{ black }}{% endif %}
-*.foreground: {% if foreground %}{{ foreground }}{% else %}{{ white }}{% endif %}
-*.cursorColor: {{ white }}
+*.background: #0e0e0e
+*.foreground: #ffffff
+*.cursorColor: #A05465
 
 ! black
-*.color0: {{ black }}
-*.color8: {{ alt_black }}
+*.color0: #200E0C
+*.color8: #404880
 ! red
-*.color1: {{ red }}
-*.color9: {{ alt_red }}
+*.color1: #A07A91
+*.color9: #C88CC0
 ! green
-*.color2: {{ green }}
-*.color10: {{ alt_green }}
+*.color2: #E09171
+*.color10: #C86768
 ! yellow
-*.color3: {{ yellow }}
-*.color11: {{ alt_yellow }}
+*.color3: #A0749C
+*.color11: #C8A4A4
 ! blue
-*.color4: {{ blue }}
-*.color12: {{ alt_blue }}
+*.color4: #4E6CA0
+*.color12: #F6BD95
 ! magenta
-*.color5: {{ magenta }}
-*.color13: {{ alt_magenta }}
+*.color5: #5D73A0
+*.color13: #5B74C8
 ! cyan
-*.color6: {{ cyan }}
-*.color14: {{ alt_cyan }}
+*.color6: #A07B84
+*.color14: #C887C1
 ! white
-*.color7: {{ white }}
-*.color15: {{ alt_white }}
+*.color7: #A05465
+*.color15: #CAA89D
 ! underline when default
-*.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
+*.colorUL: #A05465
 
 
 ! --- \section(xft settings) -- !
@@ -128,10 +128,10 @@ rofi.fullscreen: false
 rofi.fake-transparency: false
 rofi.opacity: 75
 rofi.separator-style: dash
-rofi.font: {{ fontName  }} 20
+rofi.font: SFNS Display 20
 rofi.color-enabled: true
 rofi.width: 100
-rofi.padding: 500
+rofi.padding: 450
 rofi.hide-scrollbar: true
 rofi.location: 0
 rofi.color-enabled: true
@@ -141,6 +141,6 @@ rofi.line-margin: 5
 
 rofi.color-window:      argb:dc111111, argb:dc111111
 ! State:                'bg',          'fg',   'bgalt',       'hlbg',        'hlfg'
-rofi.color-normal:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
-rofi.color-urgent:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
-rofi.color-active:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
+rofi.color-normal:      argb:00333333, #ffffff, argb:00333333, argb:00333333, #5D73A0
+rofi.color-urgent:      argb:00333333, #ffffff, argb:00333333, argb:00333333, #5D73A0
+rofi.color-active:      argb:00333333, #ffffff, argb:00333333, argb:00333333, #5D73A0

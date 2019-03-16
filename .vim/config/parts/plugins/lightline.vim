@@ -10,7 +10,7 @@ let g:lightline = {
             \ 'mode_map': { 'c': 'NORMAL' },
             \ 'active': {
             \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-            \   'right': [ ['lineinfo'], ['ale'], ['percent'], ['fileformat', 'fileencoding', 'filetype']  ]
+            \   'right': [ ['lineinfo'], ['percent'], ['fileformat', 'fileencoding', 'filetype']  ]
             \ },
             \ 'component_function': {
             \   'modified': 'LightlineModified',
@@ -21,12 +21,8 @@ let g:lightline = {
             \   'filetype': 'LightlineFiletype',
             \   'fileencoding': 'LightlineFileencoding',
             \   'mode': 'LightlineMode',
-            \   'ale': 'LinterStatus'
             \ },
             \ 'component_expand': {
-            \ },
-            \ 'component_type': {
-            \   'ale': 'error',
             \ },
             \ 'separator': { 'left': '', 'right': '' },
             \ 'subseparator': { 'left': '', 'right': '' }
@@ -73,24 +69,24 @@ function! LightlineMode()
     return winwidth(0) > 60 ? lightline#mode() : ''
 endfunction
 
-augroup AutoSyntastic
-    autocmd!
-    autocmd BufWritePost *.c,*.cpp call s:syntastic()
-augroup END
-function! s:syntastic()
-    SyntasticCheck
-    call lightline#update()
-endfunction
+"augroup AutoSyntastic
+    "autocmd!
+    "autocmd BufWritePost *.c,*.cpp call s:syntastic()
+"augroup END
+"function! s:syntastic()
+    "SyntasticCheck
+    "call lightline#update()
+"endfunction
 
-function! LinterStatus() abort
-    let l:counts = ale#statusline#Count(bufnr(''))
+"function! LinterStatus() abort
+    "let l:counts = ale#statusline#Count(bufnr(''))
 
-    let l:all_errors = l:counts.error + l:counts.style_error
-    let l:all_non_errors = l:counts.total - l:all_errors
+    "let l:all_errors = l:counts.error + l:counts.style_error
+    "let l:all_non_errors = l:counts.total - l:all_errors
 
-    return l:counts.total == 0 ? 'OK' : printf(
-                \   '%d∆ %d✗',
-                \   all_non_errors,
-                \   all_errors
-                \)
-endfunction
+    "return l:counts.total == 0 ? 'OK' : printf(
+                "\   '%d∆ %d✗',
+                "\   all_non_errors,
+                "\   all_errors
+                "\)
+"endfunction

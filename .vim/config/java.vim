@@ -1,7 +1,8 @@
-set nocompatible " This has to be the first thing
+ "vim: set ts=8 sw=4 tw=78 et :
 
+set nocompatible " This has to be the first thing
 set secure " Shell commands not avaible in .vimrc
-set exrc " Vim can load local .vimrc
+set exrc " Prevent from reccuring itself
 
 " ============================================================
 " |                                                          |
@@ -24,14 +25,6 @@ Plug 'mhinz/vim-startify' " Startify | pretty starting CReature with usefull quo
 Plug 'scrooloose/nerdcommenter' " NERDcommenter | feels good to comment stuff
 Plug 'sjl/gundo.vim' " Gundo | smarter fork of vim undo
 Plug 'jlanzarotta/bufexplorer'
-
-" LANGUAGE SPECIFIC
-
-Plug 'plytophogy/vim-virtualenv'
-Plug 'prabirshrestha/async.vim'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/vim-lsp'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
 
 " GIT INTERACTIONS
@@ -89,6 +82,7 @@ source ~/.vim/config/parts/mappings.vim
 source ~/.vim/config/parts/plugins/nerdtree.vim
 
 
+
 source ~/.vim/config/parts/plugins/easymotion.vim
 
 
@@ -104,20 +98,16 @@ source ~/.vim/config/parts/plugins/ctrlp.vim
 source ~/.vim/config/parts/plugins/gundo.vim
 
 
-source ~/.vim/config/parts/plugins/virtualenv.vim
-
-
-source ~/.vim/config/parts/plugins/lsp_general.vim
-
-
-source ~/.vim/config/parts/plugins/lsp_python.vim
-
-
-source ~/.vim/config/parts/plugins/asynccomplete.vim
-
-
 " ============================================================
 " |                                                          |
 " |               Plugin-specific-conf END                   |
 " |                                                          |
 " ============================================================
+
+nnoremap <silent> <buffer> <leader>i :JavaImport<cr>
+nnoremap <silent> <buffer> <leader>d :JavaDocSearch -x declarations<cr>
+nnoremap <silent> <buffer> <cr> :JavaSearchContext<cr>
+
+iab cls 
+\<CR>public class Class {
+\<CR>}

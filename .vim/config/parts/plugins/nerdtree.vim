@@ -7,6 +7,7 @@ nnoremap <Leader>m :NERDTreeFind<CR>
 
 let NERDTreeMapActivateNode='l' " Toggle child nodes with l
 let NERDTreeMapCloseChildren='h' " Close  child nodes with h
+let NERDTreeIgnore=['__pycache__', '\.egg-info$']
 
 let NERDTreeQuitOnOpen=1 " Autoclose NERDTREE on file opening
 let NERDTreeMinimalUI=1 " Hides 'Press ? for help'

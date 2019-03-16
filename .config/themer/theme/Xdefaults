@@ -8,36 +8,36 @@
 ! --- \section{sys colors} --- !
 
 
-*.background: {% if background %}{{ background }}{% else %}{{ black }}{% endif %}
-*.foreground: {% if foreground %}{{ foreground }}{% else %}{{ white }}{% endif %}
-*.cursorColor: {{ white }}
+*.background: #0e0e0e
+*.foreground: #ffffff
+*.cursorColor: #B2AD9C
 
 ! black
-*.color0: {{ black }}
-*.color8: {{ alt_black }}
+*.color0: #201618
+*.color8: #805F77
 ! red
-*.color1: {{ red }}
-*.color9: {{ alt_red }}
+*.color1: #A0A098
+*.color9: #C4C8BE
 ! green
-*.color2: {{ green }}
-*.color10: {{ alt_green }}
+*.color2: #A05545
+*.color10: #C88D74
 ! yellow
-*.color3: {{ yellow }}
-*.color11: {{ alt_yellow }}
+*.color3: #A07B90
+*.color11: #C8C2AF
 ! blue
-*.color4: {{ blue }}
-*.color12: {{ alt_blue }}
+*.color4: #979EA0
+*.color12: #C3C8C6
 ! magenta
-*.color5: {{ magenta }}
-*.color13: {{ alt_magenta }}
+*.color5: #A4A7A2
+*.color13: #C87F81
 ! cyan
-*.color6: {{ cyan }}
-*.color14: {{ alt_cyan }}
+*.color6: #A29F94
+*.color14: #C8645E
 ! white
-*.color7: {{ white }}
-*.color15: {{ alt_white }}
+*.color7: #B2AD9C
+*.color15: #C87279
 ! underline when default
-*.colorUL: {% if underline %}{{ underline }}{% else %}{{ white }}{% endif %}
+*.colorUL: #B2AD9C
 
 
 ! --- \section(xft settings) -- !
@@ -128,7 +128,7 @@ rofi.fullscreen: false
 rofi.fake-transparency: false
 rofi.opacity: 75
 rofi.separator-style: dash
-rofi.font: {{ fontName  }} 20
+rofi.font: SFNS Display 20
 rofi.color-enabled: true
 rofi.width: 100
 rofi.padding: 500
@@ -141,6 +141,6 @@ rofi.line-margin: 5
 
 rofi.color-window:      argb:dc111111, argb:dc111111
 ! State:                'bg',          'fg',   'bgalt',       'hlbg',        'hlfg'
-rofi.color-normal:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
-rofi.color-urgent:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
-rofi.color-active:      argb:00333333, #ffffff, argb:00333333, argb:00333333, {{ primary }}
+rofi.color-normal:      argb:00333333, #ffffff, argb:00333333, argb:00333333, #A4A7A2
+rofi.color-urgent:      argb:00333333, #ffffff, argb:00333333, argb:00333333, #A4A7A2
+rofi.color-active:      argb:00333333, #ffffff, argb:00333333, argb:00333333, #A4A7A2

@@ -110,7 +110,7 @@ source ~/.vim/config/parts/plugins/virtualenv.vim
 source ~/.vim/config/parts/plugins/lsp_general.vim
 
 
-source ~/.vim/config/parts/plugins/lsp_python.vim
+source ~/.vim/config/parts/plugins/lsp_rust.vim
 
 
 source ~/.vim/config/parts/plugins/asynccomplete.vim

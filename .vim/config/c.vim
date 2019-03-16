@@ -1,7 +1,8 @@
-set nocompatible " This has to be the first thing
+"vim: set ts=8 sw=4 tw=78 et :
 
+set nocompatible " This has to be the first thing
 set secure " Shell commands not avaible in .vimrc
-set exrc " Vim can load local .vimrc
+set exrc " Prevent from reccuring itself
 
 " ============================================================
 " |                                                          |
@@ -33,10 +34,10 @@ Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/vim-lsp'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
-
 " GIT INTERACTIONS
 Plug 'gisphm/vim-gitignore' " Gitignore | ignore 'em !
 Plug 'Xuyuanp/nerdtree-git-plugin' " NERDtree-git | git interactions to NERDtree
+
 
 call plug#end()
 " ============================================================
@@ -89,6 +90,7 @@ source ~/.vim/config/parts/mappings.vim
 source ~/.vim/config/parts/plugins/nerdtree.vim
 
 
+
 source ~/.vim/config/parts/plugins/easymotion.vim
 
 
@@ -104,20 +106,18 @@ source ~/.vim/config/parts/plugins/ctrlp.vim
 source ~/.vim/config/parts/plugins/gundo.vim
 
 
-source ~/.vim/config/parts/plugins/virtualenv.vim
-
-
 source ~/.vim/config/parts/plugins/lsp_general.vim
 
 
-source ~/.vim/config/parts/plugins/lsp_python.vim
+source ~/.vim/config/parts/plugins/lsp_c.vim
 
 
 source ~/.vim/config/parts/plugins/asynccomplete.vim
+
 
 
 " ============================================================
 " |                                                          |
 " |               Plugin-specific-conf END                   |
 " |                                                          |
-" ============================================================
+"

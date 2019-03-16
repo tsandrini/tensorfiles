@@ -1,0 +1,4 @@
+#!/bin/bash
+
+alias startx='ssh-agent startx'
+alias ll='ls -lA --group-directories-first'

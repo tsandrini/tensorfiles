@@ -36,7 +36,8 @@ ino jk <esc>
 ino kj <esc>
 cno jk <c-c>
 cno kj <c-c>
-vno v <esc>
+vno jk <esc>
+vno kj <esc>
 
 " Format the whole document
 nnoremap <Leader>= mzgg=G'z

@@ -5,7 +5,7 @@ variables:
   special: yellow
   transparency: 20
   fontName: SFNS Display
-  fontSize: 13
+  fontSize: 12
   font: "-*-System San Francisco Display-*-*-*-*-11-*-*-*-*-*-*-*"
 plugins:
   parsers:
@@ -26,3 +26,4 @@ files:
   i3.tpl: i3.conf # i3wm stuff
   dunstrc.tpl: dunst.conf # dunst (desktop notifications)
   qutebrowser.tpl : qutebrowser.conf
+  st-config.tpl: st-config.h

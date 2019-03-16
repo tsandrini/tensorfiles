@@ -1,0 +1,26 @@
+alt_black: '#404880'
+alt_blue: '#F6BD95'
+alt_cyan: '#C887C1'
+alt_green: '#C86768'
+alt_magenta: '#5B74C8'
+alt_red: '#C88CC0'
+alt_white: '#CAA89D'
+alt_yellow: '#C8A4A4'
+background: '#0e0e0e'
+black: '#200E0C'
+blue: '#4E6CA0'
+cyan: '#A07B84'
+font: -*-System San Francisco Display-*-*-*-*-11-*-*-*-*-*-*-*
+fontName: SFNS Display
+fontSize: 13
+foreground: '#ffffff'
+green: '#E09171'
+magenta: '#5D73A0'
+primary: '#5D73A0'
+red: '#A07A91'
+secondary: '#E09171'
+special: '#A0749C'
+tertiary: '#A07A91'
+transparency: 20
+white: '#A05465'
+yellow: '#A0749C'

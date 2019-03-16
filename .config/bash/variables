@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+export EDITOR=/usr/bin/vim
+export VISUAL=/usr/bin/vim
+export DISPLAY=:0
+
+export MUSIC_DIR=$HOME/Music/
+export PROJECTS_DIR=$HOME/Projects/
