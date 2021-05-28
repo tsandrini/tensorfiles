@@ -1,0 +1,46 @@
+[global]
+    alignment = left
+    allow_markup = yes
+    bounce_freq = 0
+    browser = firefox-developer-edition
+    dmenu = dmen
+    font = SFNS Display 12
+    geometry = "425x5-40+32"
+    history_length = 20
+    horizontal_padding = 8
+    idle_threshold = 120
+    ignore_newline = no
+    indicate_hidden = yes
+    line_height = 1
+    monitor = 0
+    padding = 8
+    separator_color = frame
+    separator_height = 1
+    show_age_threshold = 60
+    show_indicators = yes
+    shrink = no
+    sort = yes
+    startup_notification = false
+    sticky_history = yes
+    transparency = 15
+    word_wrap = yes
+    follow = keyboard
+
+[frame]
+    width = 1
+    color = "{color1}"
+
+[urgency_low]
+    background = "{background}"
+    foreground = "#FFFFFF"
+    timeout = 10
+
+[urgency_normal]
+    background = "{color9}"
+    foreground = "{foreground}"
+    timeout = 20
+
+[urgency_critical]
+    background = "{color10}"
+    foreground = "{foreground}"
+    timeout = 0

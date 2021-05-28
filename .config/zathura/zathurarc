@@ -1,7 +1,3 @@
-include theme
-
-set recolor "true"
-
 set adjust-open "best-fit"
 
 set scroll-page-aware "true"
@@ -18,11 +14,6 @@ unmap f
 map f toggle_fullscreen
 map [fullscreen] f toggle_fullscreen
 
-unmap r
-map <C-r> reload
-
-map c recolor
-map [fullscreen] c recolor
 map u follow
 map [fullscreen] u follow
 map i toggle_index

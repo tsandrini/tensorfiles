@@ -1,6 +1,0 @@
-!_TAG_FILE_SORTED	2	/0=unsorted, 1=sorted, 2=foldcase/
-d	/home/tomas/.config/scripts/screen.sh	/^d() { if [[ $(xrandr -q | grep VGA1\\ con) ]]$/;"	f	language:Sh
-dual	/home/tomas/.config/scripts/screen.sh	/^dual() { xrandr --output LVDS1 --auto --output VGA1 --auto --right-of LVDS1 ;}$/;"	f	language:Sh
-laptop	/home/tomas/.config/scripts/screen.sh	/^laptop() { xrandr --output LVDS1 --auto --output VGA1 --off ;}$/;"	f	language:Sh
-param	/home/tomas/.config/scripts/screen.sh	/^param() {$/;"	f	language:Sh
-vga	/home/tomas/.config/scripts/screen.sh	/^vga() { xrandr --output VGA1 --auto --output LVDS1 --off ;}$/;"	f	language:Sh

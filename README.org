@@ -1,0 +1,25 @@
+#+NAME: dotfiles
+#+AUTHOR: tsandrini
+
+* About
+These are my personal dotfiles. They are probably not neither up to date or
+complete since I really hate this style of personal system managment and that
+is the reason (one of many) why I will be probably switching to [[https://nixos.org/][NixOS]]. That
+doesn't mean that I dislike [[https://archlinux.org/][Arch]], quite on the contrary, however, aftef all
+these years I don't really enjoy literally wasting time over and over
+wiring and fixing basic unix stuff which could be once for all solved in a nice
+declarative way :smirk-cat:.
+* Software
+I use the following software
+|--------------+--------------------------------+-------------------------------------------------------|
+| #            | Tool                           | Comment                                               |
+|--------------+--------------------------------+-------------------------------------------------------|
+| Shell        | Zsh + Oh My Zsh                | will probably switch from using OMZ (it's a bit big)  |
+| DM           | lightdm + lightdm-mini-gretter |                                                       |
+| WM           | xmonad + xmobar                | Make your life functional once again!                 |
+| Editor       | nvim                           | Sorry Moolenaar, ideas great, not the managment tho   |
+| GUI Editor   | emacs + [[https://github.com/hlissner/doom-emacs][doom-emacs]]             | The ultimate solution to everything                   |
+| Terminal     | alacritty                      | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
+| Browser      | firefox (dev-edition)          |                                                       |
+| File manager | ranger + nnn                   | will probably switch to n^3 completely                |
+|--------------+--------------------------------+-------------------------------------------------------|

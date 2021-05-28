@@ -1,16 +1,20 @@
+alias gmake="make"
+
 # Sys
 alias startx="ssh-agent startx"
 
 # Custom stuff aliases
-alias phptags="ctags -f .vimtags --languages=PHP -R ."
 alias vi="vim"
+alias vim="nvim"
 alias shutnow="shutdown now"
 alias ll="ls -lA --group-directories-first"
 alias l="ls -lA --group-directories-first"
-alias npm-exec='PATH=$(npm bin):$PATH'
+
 alias untarball="tar -xvzf"
-alias art="php artisan"
-alias comp="composer"
 alias g="git"
 
-alias thg="themer generate noname"
+alias zathura="~/.local/bin/zathura"
+
+
+. "${HOME}/.cache/wal/colors.sh"
+alias dmen='dmenu_run -nb "$color0" -nf "$color15" -sb "$color1" -sf "$color15"'

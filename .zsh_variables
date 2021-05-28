@@ -1,7 +1,15 @@
 # vim: filetype=zsh
 
-export EDITOR=vim
-export VISUAL=vim
+PATH="$PATH:/usr/lib/eclipse/plugins/org.eclim_2.8.0/bin/"
+PATH="$PATH:$HOME/.local/bin"
+
+export XDG_CONFIG_HOME=$HOME/.config
+export XDG_CACHE_HOME=$HOME/.cache
+export XDG_DATA_HOME=$HOME/.local/share
+export XDG_BIN_HOME=$HOME/.local/bin
+
+export EDITOR=nvim
+export VISUAL=nvim
 export DISPLAY=:0
 
 export MUSIC_DIR=$HOME/Hudba/
