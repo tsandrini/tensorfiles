@@ -5,10 +5,16 @@
 These are my personal dotfiles. They are probably not neither up to date or
 complete since I really hate this style of personal system managment and that
 is the reason (one of many) why I will be probably switching to [[https://nixos.org/][NixOS]]. That
-doesn't mean that I dislike [[https://archlinux.org/][Arch]], quite on the contrary, however, aftef all
+doesn't mean that I dislike [[https://archlinux.org/][Arch]], quite on the contrary, however, after all
 these years I don't really enjoy literally wasting time over and over
 wiring and fixing basic unix stuff which could be once for all solved in a nice
 declarative way :smirk-cat:.
+Apart from that, I am really enjoying xmonad so far, it's interesting what a
+significant performance difference it is from let's say i3 -- in this regard
+it's kinda similar to dwm, however, I've always hated the patching system
+of suckless software, I mean, it's really nice in theory, but when you
+constantly have to debug your setup with valgrind/gdb in order for your
+environment to work, it gets annoying really fast.
 * Software
 I use the following software
 |--------------+--------------------------------+-------------------------------------------------------|
@@ -16,10 +22,11 @@ I use the following software
 |--------------+--------------------------------+-------------------------------------------------------|
 | Shell        | Zsh + Oh My Zsh                | will probably switch from using OMZ (it's a bit big)  |
 | DM           | lightdm + lightdm-mini-gretter |                                                       |
-| WM           | xmonad + xmobar                | Make your life functional once again!                 |
-| Editor       | nvim                           | Sorry Moolenaar, ideas great, not the managment tho   |
+| WM           | [[https://github.com/xmonad/xmonad][xmonad]] + [[https://github.com/jaor/xmobar][xmobar]]                | Make your life functional once again!                 |
+| Editor       | [[https://github.com/neovim/neovim][nvim]]                           | Sorry Moolenaar, ideas great, not the managment tho   |
 | GUI Editor   | emacs + [[https://github.com/hlissner/doom-emacs][doom-emacs]]             | The ultimate solution to everything                   |
-| Terminal     | alacritty                      | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
+| Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                      | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
 | Browser      | firefox (dev-edition)          |                                                       |
-| File manager | ranger + nnn                   | will probably switch to n^3 completely                |
+| File manager | ranger + [[https://github.com/jarun/nnn][nnn]]                   | will probably switch to n^3 completely                |
+| Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                          |                                                       |
 |--------------+--------------------------------+-------------------------------------------------------|
