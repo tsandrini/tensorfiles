@@ -1,0 +1,11 @@
+#!/bin/bash
+
+wal -i $1
+
+killall dunst
+
+pywalfox update
+slick-pywal
+wal-vtop
+
+xmonad --recompile && xmonad --restart

@@ -30,3 +30,9 @@ I use the following software
 | File manager | ranger + [[https://github.com/jarun/nnn][nnn]]                   | will probably switch to n^3 completely                |
 | Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                          |                                                       |
 |--------------+--------------------------------+-------------------------------------------------------|
+
+* TODOs
+- neofetch?
+- [X] feh?
+- [ ] newsboat
+- [ ] install script, setup links during installation

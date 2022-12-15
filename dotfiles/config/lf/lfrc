@@ -1,0 +1,59 @@
+set ifs "\n"
+set filesep "\n"
+set icons true
+set ignorecase true
+set drawbox true
+set previewer lf-pv
+set cleaner lf-preview-image
+
+cmd mkdir %mkdir -p "$1"
+cmd touch %touch "$1"
+
+cmd open ${{
+    case $(file --mime-type "$f" -bL) in
+        text/*|application/json) $EDITOR "$f";;
+        *) xdg-open "$f" ;;
+    esac
+}}
+
+# Archive bindings
+cmd unarchive ${{
+  case "$f" in
+      *.zip) unzip "$f" ;;
+      *.tar.gz) tar -xzvf "$f" ;;
+      *.tar.bz2) tar -xjvf "$f" ;;
+      *.tar) tar -xvf "$f" ;;
+      *) echo "Unsupported format" ;;
+  esac
+}}
+
+cmd zip %zip -r "$f" "$f"
+cmd tar %tar cvf "$f.tar" "$f"
+cmd targz %tar cvzf "$f.tar.gz" "$f"
+cmd tarbz2 %tar cjvf "$f.tar.bz2" "$f"
+
+# Mappings
+
+# Remove some defaults
+map m
+map o
+map n
+map "'"
+map '"'
+map d
+map c
+map e
+map f
+
+map . set hidden!
+map dD delete
+map p paste
+map x cut
+map y copy
+map <enter> open
+map r rename
+map H top
+map L bottom
+map R reload
+map C clear
+map U unselect
