@@ -4,12 +4,12 @@ channel=Master
 
 [Notification]
 show_notification=true
-notification_type=0
+notification_type=1
 
 [StatusIcon]
 stepsize=5
 onclick=xterm -e 'alsamixer'
-theme=tango
+theme=Blue Bar
 use_panel_specific_icons=false
 lmb_slider=false
 mmb_mute=false
