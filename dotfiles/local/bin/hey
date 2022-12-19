@@ -1,5 +1,4 @@
 #!/bin/bash
-
 wal -i $1
 
 killall dunst
@@ -9,3 +8,8 @@ slick-pywal
 wal-vtop
 
 xmonad --recompile && xmonad --restart
+
+if pgrep -x "emacs" > /dev/null
+then
+    emacsclient -e "(progn (load-theme 'ewal-doom-one))"
+fi

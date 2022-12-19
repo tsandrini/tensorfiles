@@ -27,12 +27,6 @@ I use the following software
 | GUI Editor   | emacs + [[https://github.com/hlissner/doom-emacs][doom-emacs]]             | The ultimate solution to everything                   |
 | Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                      | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
 | Browser      | firefox (dev-edition)          |                                                       |
-| File manager | ranger + [[https://github.com/jarun/nnn][nnn]]                   | will probably switch to n^3 completely                |
+| File manager | lf                             |                                                       |
 | Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                          |                                                       |
 |--------------+--------------------------------+-------------------------------------------------------|
-
-* TODOs
-- neofetch?
-- [X] feh?
-- [ ] newsboat
-- [ ] install script, setup links during installation
