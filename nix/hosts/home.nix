@@ -30,6 +30,7 @@
 
       neovim
     ];
+    stateVersion = "23.05";
   };
 
   programs = {
