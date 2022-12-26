@@ -225,6 +225,19 @@
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
+(defun afs/org-replace-all-links-by-description (&optional start end)
+  "Find all org links and replace by their descriptions."
+  (interactive
+   (if (use-region-p) (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char (point-min))
+      (while (re-search-forward org-link-bracket-re nil t)
+        (replace-match (match-string-no-properties
+                        (if (match-end 2) 2 1)))))))
+
 (after! org
   ;; (setq org-roam-directory "~/org/org-roam")
   ;; (setq org-roam-index-file "~/org/")
