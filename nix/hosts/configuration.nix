@@ -34,6 +34,7 @@
     };
 
     systemPackages = with pkgs; [
+      git
       killall
       pciutils
       usbutils
@@ -68,12 +69,20 @@
       keep-derivations      = true
     '';
   };
+
   nixpkgs.config.allowUnfree = true;
+
+  networking = {
+    networking.networkmanager.enable = true;
+  };
+
+  programs.ssh.startAgent = true;
+
   system = {
     autoUpgrade = {
       enable = true;
       channel = "https://nixos.org/channels/nixos-unstable";
     };
-    stateVersion = "22.05";
+    stateVersion = "23.05";
   };
 }
