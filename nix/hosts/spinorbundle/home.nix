@@ -20,9 +20,5 @@
     packages = with pkgs; [
       libreoffice
     ];
-
-    services = {
-      # network-manager-applet.enable = true;
-    };
   };
 }
