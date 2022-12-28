@@ -21,7 +21,6 @@
     homeDirectory = "/home/${user}";
 
     packages = with pkgs; [
-      htop
       btop
 
       rsync

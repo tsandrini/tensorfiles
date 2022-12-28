@@ -22,6 +22,7 @@
 
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
+    supportedFilesystems = [ "btrfs" ];
 
     loader = {
       efi = {
@@ -40,8 +41,17 @@
     };
   };
 
+  hardware.enableAllFirmware = true;
+
   services = {
     tlp.enable = true;
     xserver.enable = true;
   };
+
+  # fileSystems = {
+  #   "/".options = [ "noatime" "compress=zstd" "space_cache=v2" ];
+  #   "/home".options = [ "noatime" "compress=zstd" "space_cache=v2" ];
+  #   "/.snapshots".options = [ "noatime" "compress=zstd" "space_cache=v2" ];
+  #   "/var_log".options = [ "noatime" "compress=zstd" "space_cache=v2" ];
+  # };
 }

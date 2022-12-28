@@ -36,14 +36,5 @@
             inherit inputs nixpkgs home-manager user;
           }
         );
-
-        # nixosConfiguration = import ./hosts inputs;
-
-        # nixosConfiguration = {
-        #   tsandrini = lib.nixosSystem {
-        #     inherit system;
-        #     modules = [ ./configuration.nix ];
-        #   };
-        # };
       };
 }

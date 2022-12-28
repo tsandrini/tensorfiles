@@ -34,6 +34,7 @@
     };
 
     systemPackages = with pkgs; [
+      htop
       git
       killall
       pciutils
