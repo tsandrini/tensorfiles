@@ -19,7 +19,6 @@
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
     enable = true;
-    # enableCompletion = true;
     syntaxHighlighting.enable = true;
     autosuggestions.enable = true;
     promptInit = "";
@@ -27,6 +26,10 @@
     ohMyZsh = {
       enable = true;
       theme = "spaceship";
+      customPkgs = with pkgs; [
+        spaceship-prompt
+        nix-zsh-completions
+      ];
       plugins = [
         "git"
         "git-flow"
@@ -40,19 +43,4 @@
       ls = "exa";
     };
   };
-
-  environment.systemPackages = with pkgs; [
-    zsh
-    zsh-autosuggestions
-    nix-zsh-completions
-    bat
-    exa
-    fasd
-    fd
-    fzf
-    jq
-    ripgrep
-    tldr
-    spaceship-prompts
-  ];
 }
