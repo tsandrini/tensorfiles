@@ -45,6 +45,6 @@
 
   services = {
     tlp.enable = true;
-    xserver.enable = true;
+    xserver.enable = false;
   };
 }
