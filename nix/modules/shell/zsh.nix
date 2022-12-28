@@ -19,8 +19,10 @@
   users.defaultUserShell = pkgs.zsh;
   programs.zsh = {
     enable = true;
-    enableCompletion = true;
+    # enableCompletion = true;
     syntaxHighlighting.enable = true;
+    autosuggestions.enable = true;
+    promptInit = "";
 
     ohMyZsh = {
       enable = true;
@@ -29,8 +31,6 @@
         "git-flow"
         "colorize"
         "colored-man-pages"
-        "zsh-autosuggestions"
-        "nix-zsh-completions"
       ];
     };
 
