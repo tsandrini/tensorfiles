@@ -16,23 +16,19 @@
 { config, options, pkgs, lib, ... }:
 
 {
+  home.packages = with pkgs; [
+    neovim
+  ];
+
   programs.neovim = {
     enable = true;
-    defaultEditor = true;
     viAlias = true;
     vimAlias = true;
     withPython3 = true;
     withNodeJs = true;
-
-    plugins = with pkgs.VimPlugins.nvim-tree-lua; [
-      {
-        plugin = pkgs.vim-repeat;
-        config = "";
-      }
-      {
-        plugin = pkgs.lexima-vim;
-        config = "";
-      }
+    plugins = with pkgs.vimPlugins; [
+      vim-repeat
+      lexima-vim
     ];
   };
 }

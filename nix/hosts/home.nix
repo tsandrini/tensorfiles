@@ -16,6 +16,10 @@
 { config, lib, pkgs, user, ... }:
 
 {
+  imports = [
+    (import  ../modules/editors/neovim.nix)
+  ];
+
   home = {
     username = "${user}";
     homeDirectory = "/home/${user}";
@@ -26,7 +30,6 @@
       rsync
       unzip
       unrar
-
       neovim
     ];
     stateVersion = "23.05";
@@ -35,21 +38,4 @@
   programs = {
    home-manager.enable = true;
   };
-
-  # gtk = {                                     # Theming
-  #   enable = true;
-  #   theme = {
-  #     name = "Dracula";
-  #     #name = "Catppuccin-Dark";
-  #     package = pkgs.dracula-theme;
-  #     #package = pkgs.catppuccin-gtk;
-  #   };
-  #   iconTheme = {
-  #     name = "Papirus-Dark";
-  #     package = pkgs.papirus-icon-theme;
-  #   };
-  #   font = {
-  #     name = "JetBrains Mono Medium";         # or FiraCode Nerd Font Mono Medium
-  #   };                                        # Cursor is declared under home.pointerCursor
-  # };
 }
