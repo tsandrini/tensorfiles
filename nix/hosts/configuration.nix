@@ -74,7 +74,7 @@
   nixpkgs.config.allowUnfree = true;
 
   networking = {
-    networking.networkmanager.enable = true;
+    networkmanager.enable = true;
   };
 
   programs.ssh.startAgent = true;
