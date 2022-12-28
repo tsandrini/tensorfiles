@@ -34,7 +34,7 @@ in {
       };
     };
     modules = [
-      { networking.hostname = "spinorbundle"; }
+      { networking.hostName = "spinorbundle"; }
       ./spinorbundle
       ./configuration.nix
 
