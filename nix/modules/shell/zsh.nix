@@ -26,11 +26,13 @@
 
     ohMyZsh = {
       enable = true;
+      theme = "spaceship";
       plugins = [
         "git"
         "git-flow"
         "colorize"
         "colored-man-pages"
+        "nix"
       ];
     };
 
@@ -51,5 +53,6 @@
     jq
     ripgrep
     tldr
+    spaceship-prompts
   ];
 }
