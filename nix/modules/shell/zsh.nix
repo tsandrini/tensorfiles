@@ -22,7 +22,7 @@
     syntaxHighlighting.enable = true;
     autosuggestions.enable = true;
     promptInit = "";
-    interactiveShellInit = ''
+    shellInit = ''
     touch ~/.zshrc
     '';
     ohMyZsh = {
@@ -37,18 +37,18 @@
         "git-flow"
         "colorize"
         "colored-man-pages"
-        "command-time"
         "nix"
       ];
     };
 
     shellAliases = {
-      ls = "exa -F --icons --group-directories-first";
+      ls = "exa";
       ll = "exa -F --icons --group-directories-first -la --git --header --created --modified";
       tree = "exa -F --icons --group-directories-first -la --git --header --created --modified -T";
       cat = "bat -p --wrap=never --paging=never";
       less = "bat --paging=always";
       find = "fd";
+      fd = "fd";
       grep = "ripgrep";
     };
   };
