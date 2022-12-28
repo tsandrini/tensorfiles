@@ -46,5 +46,10 @@
   services = {
     tlp.enable = true;
     xserver.enable = false;
+
+    openssh = {
+      enable = true;
+      passwordAuthentication = true;
+    };
   };
 }
