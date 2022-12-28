@@ -24,16 +24,17 @@ let
   lib = nixpkgs.lib;
 in {
 
-  spinorbundle = let hostName = "spinorbundle"; in lib.nixosSystem {
+  spinorbundle = lib.nixosSystem {
     inherit system;
     specialArgs = {
       inherit inputs user;
       host = {
-        hostName = hostName;
+        hostName = "spinorbundle";
         mainMonitor = "eDP-1";
       };
     };
     modules = [
+      { networking.hostname = "spinorbundle"; }
       ./spinorbundle
       ./configuration.nix
 
@@ -43,12 +44,12 @@ in {
         home-manager.extraSpecialArgs = {
           inherit user;
           host = {
-            hostName = hostName;
+            hostName = "spinorbundle";
             mainMonitor = "eDP-1";
           };
         };
         home-manager.users.${user} = {
-          imports = [(import ./home.nix)] ++ [(import ./${hostName}/home.nix)];
+          imports = [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)];
         };
       }
 

@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 
-{ config, lib, pkgs, inputs, user, hostName, ... }:
+{ config, lib, pkgs, inputs, user, ... }:
 
 {
   users.users.${user} = {
@@ -74,7 +74,6 @@
   nixpkgs.config.allowUnfree = true;
 
   networking = {
-    hostName = hostName;
     networkmanager.enable = true;
   };
 
