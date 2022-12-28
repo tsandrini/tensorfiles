@@ -48,7 +48,7 @@ in {
           };
         };
         home-manager.users.${user} = {
-          imports = [(import ./home.nix)] ++ [(import "./${hostName}/home.nix")];
+          imports = [(import ./home.nix)] ++ [(import ./${hostName}/home.nix)];
         };
       }
 
