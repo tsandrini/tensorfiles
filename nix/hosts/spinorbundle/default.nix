@@ -43,6 +43,10 @@
 
   hardware.enableAllFirmware = true;
 
+  environment.systemPackages = with pkgs; [
+    snapper
+  ];
+
   services = {
     tlp.enable = true;
     xserver.enable = false;
