@@ -21,9 +21,8 @@
     enable = true;
     enableCompletion = true;
     syntaxHighlighting.enable = true;
-    # histSize = 100000;
 
-    ohMyZsh = {                               # Extra plugins for zsh
+    ohMyZsh = {
       enable = true;
       plugins = [
         "git"
@@ -31,6 +30,7 @@
         "colorize"
         "colored-man-pages"
         "zsh-autosuggestions"
+        "nix-zsh-completions"
       ];
     };
 
@@ -41,7 +41,7 @@
 
   environment.systemPackages = with pkgs; [
     zsh
-    zsh-completions
+    zsh-autosuggestions
     nix-zsh-completions
     bat
     exa
