@@ -22,7 +22,9 @@
     syntaxHighlighting.enable = true;
     autosuggestions.enable = true;
     promptInit = "";
-
+    interactiveShellInit = ''
+    touch ~/.zshrc
+    '';
     ohMyZsh = {
       enable = true;
       theme = "spaceship";
@@ -35,12 +37,29 @@
         "git-flow"
         "colorize"
         "colored-man-pages"
+        "command-time"
         "nix"
       ];
     };
 
     shellAliases = {
-      ls = "exa";
+      ls = "exa -F --icons --group-directories-first";
+      ll = "exa -F --icons --group-directories-first -la --git --header --created --modified";
+      tree = "exa -F --icons --group-directories-first -la --git --header --created --modified -T";
+      cat = "bat -p --wrap=never --paging=never";
+      less = "bat --paging=always";
+      find = "fd";
+      grep = "ripgrep";
     };
   };
+
+  environment.systemPackages = with pkgs; [
+    bat
+    exa
+    fd
+    fzf
+    jq
+    ripgrep
+    tldr
+  ];
 }
