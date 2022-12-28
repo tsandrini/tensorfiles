@@ -30,7 +30,6 @@
       rsync
       unzip
       unrar
-      neovim
     ];
     stateVersion = "23.05";
   };

@@ -16,10 +16,6 @@
 { config, options, pkgs, lib, ... }:
 
 {
-  home.packages = with pkgs; [
-    neovim
-  ];
-
   programs.neovim = {
     enable = true;
     viAlias = true;
@@ -29,6 +25,16 @@
     plugins = with pkgs.vimPlugins; [
       vim-repeat
       lexima-vim
+      nvim-web-devicons
+      nnn-vim
+      vim-fugitive
+      {
+        plugin = indentLine;
+        config = ''
+        let g:indentLine_char = '┆'
+        let g:indentLine_color_term = 239
+        '':
+      }
     ];
   };
 }
