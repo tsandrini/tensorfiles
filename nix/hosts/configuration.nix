@@ -16,6 +16,11 @@
 { config, lib, pkgs, inputs, user, ... }:
 
 {
+
+  imports = [
+    (import  ../modules/shell/zsh.nix)
+  ];
+
   users.users.${user} = {
     isNormalUser = true;
     extraGroups = [ "wheel" "video" "audio" "camera" "networkmanager" ];
