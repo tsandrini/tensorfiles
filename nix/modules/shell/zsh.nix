@@ -52,7 +52,7 @@
       less = "bat --paging=always";
       find = "fd";
       fd = "fd";
-      grep = "ripgrep";
+      grep = "rg";
       fetch = "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
     };
   };
