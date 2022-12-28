@@ -29,6 +29,10 @@
         plugin = pkgs.vim-repeat;
         config = "";
       }
+      {
+        plugin = pkgs.lexima-vim;
+        config = "";
+      }
     ];
   };
 }
