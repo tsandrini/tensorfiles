@@ -25,6 +25,9 @@
     shellInit = ''
     touch ~/.zshrc
     '';
+    loginShellInit = ''
+    macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')
+    '';
     ohMyZsh = {
       enable = true;
       theme = "spaceship";
@@ -50,6 +53,7 @@
       find = "fd";
       fd = "fd";
       grep = "ripgrep";
+      fetch = "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
     };
   };
 
@@ -61,5 +65,6 @@
     jq
     ripgrep
     tldr
+    macchina
   ];
 }
