@@ -24,7 +24,6 @@
     withNodeJs = true;
     plugins = with pkgs.vimPlugins; [
       vim-repeat
-      lexima-vim
       nvim-web-devicons
       nnn-vim
       vim-fugitive
@@ -33,7 +32,21 @@
         config = ''
         let g:indentLine_char = '┆'
         let g:indentLine_color_term = 239
-        '':
+        '';
+      }
+      lexima-vim
+      {
+        plugin = vim-vsnip;
+        config = ''
+        '';
+      }
+      vim-vsnip-integ
+      friendly-snippets
+      {
+        plugin = vim-move;
+        config = ''
+        let g:move_key_modifier = "C"
+        '';
       }
     ];
   };

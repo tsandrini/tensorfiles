@@ -54,6 +54,7 @@
       fd = "fd";
       grep = "rg";
       fetch = "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
+      vim = "nvim";
     };
   };
 
