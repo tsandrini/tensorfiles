@@ -29,14 +29,16 @@
       vim-fugitive
       {
         plugin = indentLine;
+        type = "lua";
         config = ''
-        let g:indentLine_char = '┆'
-        let g:indentLine_color_term = 239
+          vim.g.indentLine_char = '┆'
+          vim.g.indentLine_color_term = 239
         '';
       }
       lexima-vim
       {
         plugin = vim-vsnip;
+        type = "lua";
         config = ''
         '';
       }
@@ -44,75 +46,38 @@
       friendly-snippets
       {
         plugin = vim-move;
+        type = "lua";
         config = ''
-        let g:move_key_modifier = "C"
+          vim.g.move_key_modifier = "C"
         '';
       }
       {
         plugin = fern-vim;
+        type = "lua";
         config = ''
-        " Disable netrw
-        let g:loaded_netrw = 0
-        let g:loaded_netrwPlugin = 0
-        let g:loaded_netrwSettings = 0
-        let g:loaded_netrwFileHandlers = 0
-
-        " Enable nerdfont
-        let g:fern#renderer = "nerdfont"
-        let g:fern#disable_default_mappings = 1
-
-        " I only use fern as a drawer opened via `m` and closed either by `q` or by
-        " selecting and opening a node
-        nnoremap <silent> m :Fern . -drawer -reveal=% -width=35 <CR><C-w>=
-
-        " Setup close action for a further "open and close" mapping
-        nnoremap <silent> <Plug>(fern-close-drawer) :<C-u>FernDo close -drawer -stay<CR>
-
-        function! s:init_fern() abort
-          " Use 'select' instead of 'edit' for default 'open' action
-          nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
-          nmap <buffer> <Plug>(fern-action-custom-open-expand-collapse) <Plug>fern#smart#leaf(<plug>(fern-action-open)<plug>(fern-close-drawer), <plug>(fern-action-expand), <plug>(fern-action-collapse))
-          nmap <buffer> q :<C-u>quit<CR>
-          nmap <buffer> n <Plug>(fern-action-new-path)
-          nmap <buffer> d <Plug>(fern-action-remove)
-          nmap <buffer> m <Plug>(fern-action-move)
-          nmap <buffer> r <Plug>(fern-action-rename)
-          nmap <buffer> R <Plug>(fern-action-reload)
-          nmap <buffer> <C-h> <Plug>(fern-action-hidden-toggle)
-          nmap <buffer> l <Plug>(fern-action-custom-open-expand-collapse)
-          nmap <buffer> h <Plug>(fern-action-collapse)
-          nmap <buffer> <2-LeftMouse> <Plug>(fern-action-custom-open-expand-collapse)
-          nmap <buffer> <CR> <Plug>(fern-action-custom-open-expand-collapse)
-        endfunction
-
-        augroup fern-custom
-          autocmd! *
-          autocmd FileType fern call s:init_fern()
-        augroup END
         '';
       }
       popup-nvim
       plenary-nvim
       {
         plugin = telescope-nvim;
+        type = "lua";
         config = ''
-        require('telescope').setup{
-          defaults = {
-            prompt_prefix = "🔍"
+          require('telescope').setup{
+            defaults = {
+              prompt_prefix = "🔍"
+            }
           }
-        }
         '';
       }
       {
         plugin = vim-easymotion;
+        type = "lua";
         config = ''
-        " Disable default mappings
-        let g:EasyMotion_do_mapping = 0
+          nvim.g.EasyMotion_do_mapping = false
+          nvim.g.EasyMotion_smartcase = true
 
-        " Enable smartcase
-        let g:EasyMotion_smartcase = 1
-
-        nmap , <Plug>(easymotion-overwin-f2)
+          vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
         '';
       }
     ];
