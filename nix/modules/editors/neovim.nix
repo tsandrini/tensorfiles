@@ -165,7 +165,7 @@
             },
             g = {
               name = "+git",
-              s = { ":Git<CR>", "git-status" }
+              s = { ":Git<CR>", "git-status" },
               b = { ":Git blame<CR>", "git-blame" },
               d = { ":Gdiff<CR>", "git-diff" },
               p = { ":Git push<CR>", "git-push" },
@@ -190,10 +190,10 @@
             },
             b = {
               name = "+bufexplorer",
-              i = { "bufexplorer-open" },
-              t = { "bufexplorer-toggle" },
-              s = { "bufexplorer-horizontal-split" },
-              v = { "bufexplorer-vertical-split" }
+              i = "bufexplorer-open",
+              t = "bufexplorer-toggle",
+              s = "bufexplorer-horizontal-split",
+              v = "bufexplorer-vertical-split"
             }
           }, { prefix = "b" })
         '';
