@@ -40,7 +40,6 @@
     };
   };
 
-  hardware.enableAllFirmware = true;
 
   environment.systemPackages = with pkgs; [
     snapper
@@ -57,7 +56,7 @@
     xserver = {
       enable = true;
       libinput.enable = true;
-      videoDrivers = [ "amdgpu" ];
+      videoDrivers = [ "intel" ];
       windowManager = {
         # default = "none+xmonad";
         xmonad = {
@@ -74,11 +73,22 @@
     };
   };
 
-  hardware.opengl.extraPackages = with pkgs; [
-    rocm-opencl-icd
-    rocm-opencl-runtime
-    amdvlk
-  ];
+  hardware = {
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver # LIBVA_DRIVER_NAME=iHD
+        vaapiIntel         # LIBVA_DRIVER_NAME=i965 (older but works better for Firefox/Chromium)
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
+
+    enableAllFirmware = true;
+    cpu.intel.updateMicrocode = true;
+  };
+
+
 
   # The whole section below handles opt-in state for /
   # which was inspired by the following blog post
