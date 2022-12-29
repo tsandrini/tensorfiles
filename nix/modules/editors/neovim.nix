@@ -71,7 +71,7 @@
         function! s:init_fern() abort
           " Use 'select' instead of 'edit' for default 'open' action
           nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
-          nmap <buffer> <Plug>(fern-action-custom-open-expand-collapse) <Plug>fern#smart#leaf(\"<plug>(fern-action-open)<plug>(fern-close-drawer)\", \"<plug>(fern-action-expand)\", \"<plug>(fern-action-collapse)\")
+          nmap <buffer> <Plug>(fern-action-custom-open-expand-collapse) <Plug>fern#smart#leaf(<plug>(fern-action-open)<plug>(fern-close-drawer), <plug>(fern-action-expand), <plug>(fern-action-collapse))
           nmap <buffer> q :<C-u>quit<CR>
           nmap <buffer> n <Plug>(fern-action-new-path)
           nmap <buffer> d <Plug>(fern-action-remove)
@@ -88,6 +88,7 @@
         augroup fern-custom
           autocmd! *
           autocmd FileType fern call s:init_fern()
+          autocmd FileType fern call glyph_pallete#apply()
         augroup END
         '';
       }
