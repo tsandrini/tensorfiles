@@ -190,10 +190,10 @@
             },
             b = {
               name = "+bufexplorer",
-              i = "bufexplorer-open",
-              t = "bufexplorer-toggle",
-              s = "bufexplorer-horizontal-split",
-              v = "bufexplorer-vertical-split"
+              i = { "bufexplorer-open" },
+              t = { "bufexplorer-toggle" },
+              s = { "bufexplorer-horizontal-split" },
+              v = { "bufexplorer-vertical-split" }
             }
           }, { prefix = "b" })
         '';
