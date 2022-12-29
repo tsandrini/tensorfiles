@@ -27,16 +27,53 @@
     withPython3 = true;
     withNodeJs = true;
     extraConfig = ''
-      vim.opt.number = true
-      vim.opt.relativenumber = true
+      set number
+      set relativenumber
 
-      vim.opt.formatoptions:append("+l")
-      vim.opt.rulerformat = "%l:%c"
-      vim.opt.foldenable = false
+      set formatoptions+=l
+      set rulerformat=%l:%c
+      set nofoldenable
 
-      vim.opt.wildmenu = true
-      vim.opt.wildmode = "full"
-      vim.opt.wildignorecase = true
+      set wildmenu
+      set wildmode=full"
+      set wildignorecase
+
+      set tabstop=8
+      set softtabstop=0
+      set expandtab
+      set shiftwidth=4
+      set smarttab
+
+      set scrolloff=5
+
+      set list
+      set listchars=tab:›\\ ,trail:•,extends:#,nbsp:.
+
+      filetype indent on
+      set smartindent
+      set shiftround
+
+      set smartcase
+      set showmatch
+
+      autocmd :BufWritePre :* ":%s/\\s\\+$//e
+
+      let mapleader="\<Space>"
+      let maplocalleader="\<space>"
+
+      ino jk <esc>
+      ino kj <esc>
+      cno jk <c-c>
+      cno kj <c-c>
+      tno jk <c-\><c-n>
+      tno kj <c-\><c-n>
+      vno jk <esc>
+      vno kj <esc>
+
+      cmap w!! %!sudo tee > /dev/null %
+
+      nnoremap J :tabprevious<CR>
+      nnoremap K :tabnext<CR>
     '';
     plugins = with pkgs.vimPlugins; [
       vim-repeat
