@@ -157,7 +157,7 @@
               n = { ":tabnew<CR>", "tab-new" },
               u = { ":UndotreeToggle<CR>", "undotree-toggle" },
               t = { ":terminal<CR>", "terminal-open" },
-              f = { ":NnnPicker %:p:h<CR>" "nnn-open" }
+              f = { ":NnnPicker %:p:h<CR>", "nnn-open" }
             }
           }, { prefix = "b" })
         '';
