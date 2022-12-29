@@ -133,6 +133,29 @@
           vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
         '';
       }
+      bufexplorer
+      undotree
+      which-key-nvim
+      {
+        plugin = lualine-nvim;
+        type = "lua";
+        config = ''
+          require('lualine').setup{
+            options = {
+              theme = "auto",
+              icons_enabled = true
+            },
+            sections = {
+              lualine_a = {{"mode", upper=true}},
+              lualine_b = {{"branch", icon=""}},
+              lualine_c = {{"filename", file_status=true}},
+              lualine_x = {"encoding", "fileformat", "filetype"},
+              lualine_y = {"progress"},
+              lualine_z = {"location"},
+            }
+          }
+        '';
+      }
     ];
   };
 }
