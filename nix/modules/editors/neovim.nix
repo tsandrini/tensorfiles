@@ -29,6 +29,12 @@
     plugins = with pkgs.vimPlugins; [
       vim-repeat
       nvim-web-devicons
+      {
+        plugin = nvim-treesitter.withAllGrammars;
+        type = "lua";
+        config = ''
+        '';
+      }
       nnn-vim
       vim-fugitive
       {
