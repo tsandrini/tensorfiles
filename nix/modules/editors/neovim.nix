@@ -74,8 +74,8 @@
         plugin = vim-easymotion;
         type = "lua";
         config = ''
-          nvim.g.EasyMotion_do_mapping = false
-          nvim.g.EasyMotion_smartcase = true
+          vim.g.EasyMotion_do_mapping = false
+          vim.g.EasyMotion_smartcase = true
 
           vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
         '';
