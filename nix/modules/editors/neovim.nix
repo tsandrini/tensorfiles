@@ -26,17 +26,20 @@
     vimAlias = true;
     withPython3 = true;
     withNodeJs = true;
+    extraConfig = ''
+    '';
     plugins = with pkgs.vimPlugins; [
       vim-repeat
-      nvim-web-devicons
-      {
-        plugin = nvim-treesitter.withAllGrammars;
-        type = "lua";
-        config = ''
-        '';
-      }
       nnn-vim
       vim-fugitive
+      popup-nvim
+      plenary-nvim
+      nvim-web-devicons
+      bufexplorer
+      undotree
+      lexima-vim
+      vim-vsnip-integ
+      friendly-snippets
       {
         plugin = indentLine;
         type = "lua";
@@ -45,20 +48,78 @@
           vim.g.indentLine_color_term = 239
         '';
       }
-      lexima-vim
       {
         plugin = vim-vsnip;
         type = "lua";
         config = ''
         '';
       }
-      vim-vsnip-integ
-      friendly-snippets
       {
         plugin = vim-move;
         type = "lua";
         config = ''
           vim.g.move_key_modifier = "C"
+        '';
+      }
+      {
+        plugin = telescope-nvim;
+        type = "lua";
+        config = ''
+          require('telescope').setup{
+            defaults = {
+              prompt_prefix = "🔍"
+            }
+          }
+        '';
+      }
+      {
+        plugin = vim-easymotion;
+        type = "lua";
+        config = ''
+          vim.g.EasyMotion_do_mapping = false
+          vim.g.EasyMotion_smartcase = true
+
+          vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+        '';
+      }
+      {
+        plugin = lualine-nvim;
+        type = "lua";
+        config = ''
+          require('lualine').setup{
+            options = {
+              theme = "auto",
+              icons_enabled = true
+            },
+            sections = {
+              lualine_a = {{"mode", upper=true}},
+              lualine_b = {{"branch", icon=""}},
+              lualine_c = {{"filename", file_status=true}},
+              lualine_x = {"encoding", "fileformat", "filetype"},
+              lualine_y = {"progress"},
+              lualine_z = {"location"},
+            }
+          }
+        '';
+      }
+      {
+        plugin = nvim-treesitter.withAllGrammars;
+        type = "lua";
+        config = ''
+          require('nvim-treesitter.configs').setup{
+            sync_install = false,
+            auto_install = false,
+            highlight = {
+              enable = true,
+              disable = { "latex" }
+            },
+            incremental_selection = {
+              enable = true
+            },
+            indent = {
+              enable = true
+            }
+          };
         '';
       }
       {
@@ -120,31 +181,6 @@
           })
         '';
       }
-      popup-nvim
-      plenary-nvim
-      {
-        plugin = telescope-nvim;
-        type = "lua";
-        config = ''
-          require('telescope').setup{
-            defaults = {
-              prompt_prefix = "🔍"
-            }
-          }
-        '';
-      }
-      {
-        plugin = vim-easymotion;
-        type = "lua";
-        config = ''
-          vim.g.EasyMotion_do_mapping = false
-          vim.g.EasyMotion_smartcase = true
-
-          vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
-        '';
-      }
-      bufexplorer
-      undotree
       {
         plugin = which-key-nvim;
         type = "lua";
@@ -202,26 +238,6 @@
               v = "bufexplorer-vertical-split"
             }
           }, { prefix = "b" })
-        '';
-      }
-      {
-        plugin = lualine-nvim;
-        type = "lua";
-        config = ''
-          require('lualine').setup{
-            options = {
-              theme = "auto",
-              icons_enabled = true
-            },
-            sections = {
-              lualine_a = {{"mode", upper=true}},
-              lualine_b = {{"branch", icon=""}},
-              lualine_c = {{"filename", file_status=true}},
-              lualine_x = {"encoding", "fileformat", "filetype"},
-              lualine_y = {"progress"},
-              lualine_z = {"location"},
-            }
-          }
         '';
       }
     ];
