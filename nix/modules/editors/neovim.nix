@@ -59,7 +59,7 @@
 
         " Enable nerdfont
         let g:fern#renderer = "nerdfont"
-        let g:fern#disable_default_mappings = true
+        let g:fern#disable_default_mappings = 1
 
         " I only use fern as a drawer opened via `m` and closed either by `q` or by
         " selecting and opening a node
@@ -67,6 +67,17 @@
 
         " Setup close action for a further "open and close" mapping
         nnoremap <silent> <Plug>(fern-close-drawer) :<C-u>FernDo close -drawer -stay<CR>
+
+        function! s:init_fern() abort
+          " Use 'select' instead of 'edit' for default 'open' action
+          nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
+          nmap <buffer> <Plug>(fern-action-custom-open-expand-collapse) <Plug>fern#smart#leaf(\"<plug>(fern-action-open)<plug>(fern-close-drawer)\", \"<plug>(fern-action-expand)\", \"<plug>(fern-action-collapse)\")
+        endfunction
+
+        augroup fern-custom
+          autocmd! *
+          autocmd FileType fern call s:init_fern()
+        augroup END
         '';
       }
     ];
