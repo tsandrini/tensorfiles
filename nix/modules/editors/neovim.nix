@@ -165,7 +165,7 @@
             },
             g = {
               name = "+git",
-              s = { ":Git<CR>" "git-status" }
+              s = { ":Git<CR>", "git-status" }
             }
           }, { prefix = "b" })
         '';
