@@ -135,7 +135,33 @@
       }
       bufexplorer
       undotree
-      which-key-nvim
+      {
+        plugin = which-key-nvim;
+        type = "lua";
+        config = ''
+          vim.api.nvim_set_option("timeoutlen", 500)
+
+          require('which-key').register({
+            {
+              name = "+general",
+              r = { ":noh<CR>", "highlights-remove" },
+              h = { "<C-w>h", "window-left" },
+              j = { "<C-w>j", "window-below" },
+              k = { "<C-w>k", "window-above" },
+              l = { "<C-w>l", "window-right" },
+              s = { "<C-w>s", "window-split-below" },
+              v = { "<C-w>v", "window-split-right" },
+              q = { ":q<CR>", "file-quit" },
+              Q = { ":qall<CR>", "file-quit-all" },
+              w = { ":w<CR>", "file-save" },
+              n = { ":tabnew<CR>", "tab-new" },
+              u = { ":UndotreeToggle<CR>", "undotree-toggle" },
+              t = { ":terminal<CR>", "terminal-open" },
+              f = { ":NnnPicker %:p:h<CR>" "nnn-open" }
+            }
+          }, { prefix = "b" })
+        '';
+      }
       {
         plugin = lualine-nvim;
         type = "lua";
