@@ -57,6 +57,7 @@
     xserver = {
       enable = true;
       libinput.enable = true;
+      videoDrivers = [ "amdgpu" ];
       windowManager = {
         # default = "none+xmonad";
         xmonad = {
@@ -71,8 +72,13 @@
         };
       };
     };
-
   };
+
+  hardware.opengl.extraPackages = with pkgs; [
+    rocm-opencl-icd
+    rocm-opencl-runtime
+    amdvlk
+  ];
 
   # The whole section below handles opt-in state for /
   # which was inspired by the following blog post
