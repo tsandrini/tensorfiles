@@ -61,7 +61,7 @@
           vim.g.loaded_netrwFileHandlers = false
 
           -- vim.g["fern#renderer"] = "nerdfont" TODO
-          vim.g.["fern#disable_default_mappings"] = true
+          vim.g["fern#disable_default_mappings"] = true
 
           vim.keymap.set(
             "n",
@@ -78,33 +78,27 @@
           )
 
           local function fern_init()
-            vim.keymap.set(
-              "n",
-              "<Plug>(fern-action-open)",
-              "<Plug>(fern-action-open:select)",
-              {silent=true, buffer=0}
-            )
+            local opts = {silent=true, buffer=0}
+            vim.keymap.set("n", "<Plug>(fern-action-open)",
+              "<Plug>(fern-action-open:select)", opts)
+
             vim.keymap.set(
               "n",
               "<Plug>(fern-action-custom-open-expand-collapse)",
-              "<Plug>fern#smart#leaf(\
-                \"<Plug>(fern-action-open)<plug>(fern-close-drawer)\",
-                \"<Plug>(fern-action-expand)\",
-                \"<Plug>(fern-action-collapse)\"
-              )",
-              {silent=true, buffer=0}
+              "fern#smart#leaf(\"<plug>(fern-action-open)<plug>(fern-close-drawer)\", \"<plug>(fern-action-expand)\", \"<plug>(fern-action-collapse)\")"
+              {silent=true, buffer=0, expr=true}
             )
-            vim.keymap.set("n", "q", ":<C-u>quit<CR>", {buffer=0})
-            vim.keymap.set("n", "n", "<Plug>(fern-action-new-path)", {buffer=0})
-            vim.keymap.set("n", "d", "<Plug>(fern-action-remove)", {buffer=0})
-            vim.keymap.set("n", "m", "<Plug>(fern-action-move)", {buffer=0})
-            vim.keymap.set("n", "r", "<Plug>(fern-action-rename)", {buffer=0})
-            vim.keymap.set("n", "R", "<Plug>(fern-action-reload)", {buffer=0})
-            vim.keymap.set("n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", {buffer=0})
-            vim.keymap.set("n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", {buffer=0})
-            vim.keymap.set("n", "h", "<Plug>(fern-action--collapse)", {buffer=0})
-            vim.keymap.set("n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", {buffer=0})
-            vim.keymap.set("n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", {buffer=0})
+            vim.keymap.set("n", "q", ":<C-u>quit<CR>", opts)
+            vim.keymap.set("n", "n", "<Plug>(fern-action-new-path)", opts)
+            vim.keymap.set("n", "d", "<Plug>(fern-action-remove)", opts)
+            vim.keymap.set("n", "m", "<Plug>(fern-action-move)", opts)
+            vim.keymap.set("n", "r", "<Plug>(fern-action-rename)", opts)
+            vim.keymap.set("n", "R", "<Plug>(fern-action-reload)", opts)
+            vim.keymap.set("n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", opts)
+            vim.keymap.set("n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+            vim.keymap.set("n", "h", "<Plug>(fern-action--collapse)", opts)
+            vim.keymap.set("n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+            vim.keymap.set("n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
           end
 
           vim.api.nvim_create_autocmd("FileType", {
