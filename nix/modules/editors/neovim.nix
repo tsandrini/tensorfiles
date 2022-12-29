@@ -16,6 +16,10 @@
 { config, options, pkgs, lib, ... }:
 
 {
+  home.packages = with pkgs; [
+    nnn
+  ];
+
   programs.neovim = {
     enable = true;
     viAlias = true;
@@ -158,6 +162,10 @@
               u = { ":UndotreeToggle<CR>", "undotree-toggle" },
               t = { ":terminal<CR>", "terminal-open" },
               f = { ":NnnPicker %:p:h<CR>", "nnn-open" }
+            },
+            g = {
+              name = "+git",
+              s = { ":Git<CR>" "git-status" }
             }
           }, { prefix = "b" })
         '';
