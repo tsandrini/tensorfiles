@@ -55,6 +55,62 @@
         plugin = fern-vim;
         type = "lua";
         config = ''
+          vim.g.loaded_netrw = false
+          vim.g.loaded_netrwPlugin = false
+          vim.g.loaded_netrwSettings = false
+          vim.g.loaded_netrwFileHandlers = false
+
+          -- vim.g["fern#renderer"] = "nerdfont" TODO
+          vim.g.["fern#disable_default_mappings"] = true
+
+          vim.keymap.set(
+            "n",
+            "m",
+            ":Fern . -drawer -reveal=% -width=35 <CR><C-w>=",
+            {noremap=true, silent=true}
+          )
+
+          vim.keymap.set(
+            "n",
+            "<Plug>(fern-close-drawer)",
+            ":<C-u>FernDo close -drawer -stay<CR>",
+            {noremap=true, silent=true}
+          )
+
+          local function fern_init()
+            vim.keymap.set(
+              "n",
+              "<Plug>(fern-action-open)",
+              "<Plug>(fern-action-open:select)",
+              {silent=true, buffer=0}
+            )
+            vim.keymap.set(
+              "n",
+              "<Plug>(fern-action-custom-open-expand-collapse)",
+              "<Plug>fern#smart#leaf(\
+                \"<Plug>(fern-action-open)<plug>(fern-close-drawer)\",
+                \"<Plug>(fern-action-expand)\",
+                \"<Plug>(fern-action-collapse)\"
+              )",
+              {silent=true, buffer=0}
+            )
+            vim.keymap.set("n", "q", ":<C-u>quit<CR>", {buffer=0})
+            vim.keymap.set("n", "n", "<Plug>(fern-action-new-path)", {buffer=0})
+            vim.keymap.set("n", "d", "<Plug>(fern-action-remove)", {buffer=0})
+            vim.keymap.set("n", "m", "<Plug>(fern-action-move)", {buffer=0})
+            vim.keymap.set("n", "r", "<Plug>(fern-action-rename)", {buffer=0})
+            vim.keymap.set("n", "R", "<Plug>(fern-action-reload)", {buffer=0})
+            vim.keymap.set("n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", {buffer=0})
+            vim.keymap.set("n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", {buffer=0})
+            vim.keymap.set("n", "h", "<Plug>(fern-action--collapse)", {buffer=0})
+            vim.keymap.set("n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", {buffer=0})
+            vim.keymap.set("n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", {buffer=0})
+          end
+
+          vim.api.nvim_create_autocmd("FileType", {
+            pattern="fern",
+            callback=fern_init
+          })
         '';
       }
       popup-nvim
