@@ -70,6 +70,9 @@
         greeters.slick = {
           enable = true;
         };
+        extraConfig = ''
+          greeter-user=${user}
+        '';
       };
     };
   };
