@@ -27,6 +27,16 @@
     withPython3 = true;
     withNodeJs = true;
     extraConfig = ''
+      vim.opt.number = true
+      vim.opt.relativenumber = true
+
+      vim.opt.formatoptions:append("+l")
+      vim.opt.rulerformat = "%l:%c"
+      vim.opt.foldenable = false
+
+      vim.opt.wildmenu = true
+      vim.opt.wildmode = "full"
+      vim.opt.wildignorecase = true
     '';
     plugins = with pkgs.vimPlugins; [
       vim-repeat
