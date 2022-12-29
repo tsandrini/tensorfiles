@@ -47,7 +47,7 @@
       set scrolloff=5
 
       set list
-      set listchars=tab:›\\ ,trail:•,extends:#,nbsp:.
+      set listchars=tab:»\\ ,trail:•,extends:#,nbsp:.
 
       filetype indent on
       set smartindent
@@ -56,7 +56,7 @@
       set smartcase
       set showmatch
 
-      autocmd :BufWritePre :* ":%s/\\s\\+$//e
+      autocmd BufWritePre * :%s/\\s\\+$//e
 
       let mapleader="\<Space>"
       let maplocalleader="\<space>"
