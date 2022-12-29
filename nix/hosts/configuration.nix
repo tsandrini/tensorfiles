@@ -23,7 +23,7 @@
 
   users.users.${user} = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "video" "audio" "camera" "networkmanager" ];
+    extraGroups = [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
     shell = pkgs.zsh;
   };
 
