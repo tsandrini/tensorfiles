@@ -67,9 +67,9 @@
       displayManager.defaultSession = "none+xmonad";
       displayManager.lightdm = {
         enable = true;
-        greeters.slick = {
-          enable = true;
-        };
+        # greeters.slick = {
+        #   enable = true;
+        # };
         extraConfig = ''
           greeter-user=${user}
         '';
