@@ -51,17 +51,22 @@
       {
         plugin = fern-vim;
         config = ''
-        -- Disable netrw
+        " Disable netrw
         let g:loaded_netrw = false
         let g:loaded_netrwPlugin = false
         let g:loaded_netrwSettings = false
         let g:loaded_netrwFileHandlers = false
 
-        -- Enable nerdfont
+        " Enable nerdfont
         let g:fern#renderer = "nerdfont"
         let g:fern#disable_default_mappings = true
 
+        " I only use fern as a drawer opened via `m` and closed either by `q` or by
+        " selecting and opening a node
         nnoremap <silent> m :Fern . -drawer -reveal=% -width=35 <CR><C-w>=
+
+        " Setup close action for a further "open and close" mapping
+        nnoremap <silent> <Plug>(fern-close-drawer) :<C-u>FernDo close -drawer -stay<CR>
         '';
       }
     ];
