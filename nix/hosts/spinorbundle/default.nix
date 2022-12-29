@@ -46,14 +46,31 @@
     snapper
   ];
 
+
   services = {
     tlp.enable = true;
-    xserver.enable = false;
-
     openssh = {
       enable = true;
       passwordAuthentication = true;
     };
+
+    xserver = {
+      enable = true;
+      windowManager = {
+        # default = "none+xmonad";
+        xmonad = {
+          enable = true;
+          enableContribAndExtras = true;
+        };
+      };
+      displayManager.lightdm = {
+        enable = true;
+        greeters.slick = {
+          enable = true;
+        };
+      };
+    };
+
   };
 
   # The whole section below handles opt-in state for /
