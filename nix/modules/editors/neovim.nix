@@ -88,8 +88,31 @@
         augroup fern-custom
           autocmd! *
           autocmd FileType fern call s:init_fern()
-          autocmd FileType fern call glyph_pallete#apply()
         augroup END
+        '';
+      }
+      popup-nvim
+      plenary-nvim
+      {
+        plugin = telescope-nvim;
+        config = ''
+        require('telescope').setup{
+          defaults = {
+            prompt_prefix = "🔍"
+          }
+        }
+        '';
+      }
+      {
+        plugin = vim-easymotion;
+        config = ''
+        " Disable default mappings
+        let g:EasyMotion_do_mapping = 0
+
+        " Enable smartcase
+        let g:EasyMotion_smartcase = 1
+
+        nmap , <Plug>(easymotion-overwin-f2)
         '';
       }
     ];
