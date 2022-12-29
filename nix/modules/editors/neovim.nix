@@ -52,10 +52,10 @@
         plugin = fern-vim;
         config = ''
         " Disable netrw
-        let g:loaded_netrw = false
-        let g:loaded_netrwPlugin = false
-        let g:loaded_netrwSettings = false
-        let g:loaded_netrwFileHandlers = false
+        let g:loaded_netrw = 0
+        let g:loaded_netrwPlugin = 0
+        let g:loaded_netrwSettings = 0
+        let g:loaded_netrwFileHandlers = 0
 
         " Enable nerdfont
         let g:fern#renderer = "nerdfont"
