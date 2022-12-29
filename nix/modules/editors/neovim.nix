@@ -30,8 +30,8 @@
       {
         plugin = indentLine;
         config = ''
-        vim.g.indentLine_char = "┆"
-        vim.g.indentLine_color_term = 239
+        let g:indentLine_char = '┆'
+        let g:indentLine_color_term = 239
         '';
       }
       lexima-vim
@@ -45,23 +45,23 @@
       {
         plugin = vim-move;
         config = ''
-        vim.g.move_key_modifier = "C"
+        let g:move_key_modifier = "C"
         '';
       }
       {
         plugin = fern-vim;
         config = ''
         -- Disable netrw
-        vim.g.loaded_netrw = false
-        vim.g.loaded_netrwPlugin = false
-        vim.g.loaded_netrwSettings = false
-        vim.g.loaded_netrwFileHandlers = false
+        let g:loaded_netrw = false
+        let g:loaded_netrwPlugin = false
+        let g:loaded_netrwSettings = false
+        let g:loaded_netrwFileHandlers = false
 
         -- Enable nerdfont
-        vim.g["fern#renderer"] = "nerdfont"
+        let g:fern#renderer = "nerdfont"
+        let g:fern#disable_default_mappings = true
 
-        -- Key mappings
-        vim.g["fern#disable_default_mappings"] = true
+        nnoremap <silent> m :Fern . -drawer -reveal=% -width=35 <CR><C-w>=
         '';
       }
     ];
