@@ -47,7 +47,7 @@
       set scrolloff=5
 
       set list
-      set listchars=tab:»\\ ,trail:•,extends:#,nbsp:.
+      set listchars=tab:»·,trail:•,extends:#,nbsp:.
 
       filetype indent on
       set smartindent
