@@ -72,6 +72,17 @@
           " Use 'select' instead of 'edit' for default 'open' action
           nmap <buffer> <Plug>(fern-action-open) <Plug>(fern-action-open:select)
           nmap <buffer> <Plug>(fern-action-custom-open-expand-collapse) <Plug>fern#smart#leaf(\"<plug>(fern-action-open)<plug>(fern-close-drawer)\", \"<plug>(fern-action-expand)\", \"<plug>(fern-action-collapse)\")
+          nmap <buffer> q :<C-u>quit<CR>
+          nmap <buffer> n <Plug>(fern-action-new-path)
+          nmap <buffer> d <Plug>(fern-action-remove)
+          nmap <buffer> m <Plug>(fern-action-move)
+          nmap <buffer> r <Plug>(fern-action-rename)
+          nmap <buffer> R <Plug>(fern-action-reload)
+          nmap <buffer> <C-h> <Plug>(fern-action-hidden-toggle)
+          nmap <buffer> l <Plug>(fern-action-custom-open-expand-collapse)
+          nmap <buffer> h <Plug>(fern-action-collapse)
+          nmap <buffer> <2-LeftMouse> <Plug>(fern-action-custom-open-expand-collapse)
+          nmap <buffer> <CR> <Plug>(fern-action-custom-open-expand-collapse)
         endfunction
 
         augroup fern-custom
