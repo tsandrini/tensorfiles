@@ -166,6 +166,34 @@
             g = {
               name = "+git",
               s = { ":Git<CR>", "git-status" }
+              b = { ":Git blame<CR>", "git-blame" },
+              d = { ":Gdiff<CR>", "git-diff" },
+              p = { ":Git push<CR>", "git-push" },
+              l = { ":Git pull<CR>", "git-pull" },
+              f = { ":Git fetch<CR>", "git-pull" },
+              a = { ":Git add *<CR>", "git-add-all" },
+              c = { ":Git commit --verbose<CR>", "git-commit-verbose" },
+              e = { ":GitMessenger<CR>", "git-messenger" }
+            },
+            p = {
+              name = "+telescope",
+              f = { ":Telescope find_files<CR>", "telescope-files" },
+              g = { ":GFiles<CR>", "telescope-git-files" },
+              b = { ":Telescope buffers<CR>", "telescope-buffers" },
+              l = { ":Colors<CR>", "telescope-colors" },
+              r = { ":Telescope live_grep<CR>", "telescope-grep" },
+              g = { ":Telescope git_commits<CR>", "telescope-commits" },
+              s = { ":Snippets<CR>", "telescope-snippets" },
+              m = { ":Telescope commands<CR>", "telescope-commands" },
+              h = { ":Telescope man_pages<CR>", "telescope-man-pages" },
+              t = { ":Telescope treesitter<CR>", "telescope-treesitter" }
+            },
+            b = {
+              name = "+bufexplorer",
+              i = "bufexplorer-open",
+              t = "bufexplorer-toggle",
+              s = "bufexplorer-horizontal-split",
+              v = "bufexplorer-vertical-split"
             }
           }, { prefix = "b" })
         '';

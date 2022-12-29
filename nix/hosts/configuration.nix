@@ -60,6 +60,12 @@
     };
   };
 
+  networking = {
+    networkmanager.enable = true;
+  };
+
+  programs.ssh.startAgent = true;
+
   nix = {
     settings.auto-optimise-store = true;
     gc = {
@@ -78,16 +84,15 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  networking = {
-    networkmanager.enable = true;
-  };
-
-  programs.ssh.startAgent = true;
-
   system = {
     autoUpgrade = {
       enable = true;
       channel = "https://nixos.org/channels/nixos-unstable";
+      allowReboot = true;
+      rebootWindow = {
+        lower = "02:00";
+        upper = "05:00";
+      };
     };
     stateVersion = "23.05";
   };
