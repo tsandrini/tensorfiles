@@ -284,7 +284,7 @@
               s = "bufexplorer-horizontal-split",
               v = "bufexplorer-vertical-split"
             }
-          }, { prefix = "b" })
+          }, { prefix = "<leader>" })
         '';
       }
     ];

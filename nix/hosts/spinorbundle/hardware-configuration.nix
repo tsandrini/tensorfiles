@@ -24,6 +24,7 @@
   boot.initrd.kernelModules = [  ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
+  boot.blacklistedKernelModules = [ "radeon" "amdgpu" ];
 
   fileSystems."/" =
     { device = "/dev/disk/by-uuid/038653da-cdc9-4501-b33e-6bd34872fc70";
