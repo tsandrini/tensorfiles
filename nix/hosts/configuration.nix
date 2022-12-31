@@ -16,10 +16,65 @@
 { config, lib, pkgs, inputs, user, ... }:
 
 {
-
   imports = [
     (import  ../modules/shell/zsh.nix)
   ];
+
+  environment.systemPackages = with pkgs; [
+    htop
+    git
+    killall
+    pciutils
+    usbutils
+    wget
+    vim
+  ];
+
+  environment.variables = {
+    TERMINAL = "xterm"; # TODO
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+
+  networking.networkmanager.enable = true;
+
+  programs.ssh.startAgent = true;
+
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 3d";
+    };
+    package = pkgs.nixVersions.unstable;
+    registry.nixpkgs.flake = inputs.nixpkgs;
+    settings.auto-optimise-store = true;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+      keep-outputs          = true
+      keep-derivations      = true
+    '';
+  };
+
+  nixpkgs.config.allowUnfree = true;
+
+  system.autoUpgrade = {
+    enable = true;
+    channel = "https://nixos.org/channels/nixos-unstable";
+    allowReboot = true;
+    rebootWindow = {
+      lower = "02:00";
+      upper = "05:00";
+    };
+  };
+  system.stateVersion = "23.05";
 
   users.users.${user} = {
     isNormalUser = true;
@@ -30,70 +85,4 @@
   time.timeZone = "Europe/Prague";
 
   i18n.defaultLocale = "en_US.UTF-8";
-
-  environment = {
-    variables = {
-      TERMINAL = "xterm"; # TODO
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-    };
-
-    systemPackages = with pkgs; [
-      htop
-      git
-      killall
-      pciutils
-      usbutils
-      wget
-      vim
-    ];
-  };
-
-  services = {
-    pipewire = {
-      enable = true;
-      alsa = {
-        enable = true;
-      };
-      pulse.enable = true;
-      jack.enable = true;
-    };
-  };
-
-  networking = {
-    networkmanager.enable = true;
-  };
-
-  programs.ssh.startAgent = true;
-
-  nix = {
-    settings.auto-optimise-store = true;
-    gc = {
-      automatic = true;
-      dates = "weekly";
-      options = "--delete-older-than 3d";
-    };
-    package = pkgs.nixVersions.unstable;
-    registry.nixpkgs.flake = inputs.nixpkgs;
-    extraOptions = ''
-      experimental-features = nix-command flakes
-      keep-outputs          = true
-      keep-derivations      = true
-    '';
-  };
-
-  nixpkgs.config.allowUnfree = true;
-
-  system = {
-    autoUpgrade = {
-      enable = true;
-      channel = "https://nixos.org/channels/nixos-unstable";
-      allowReboot = true;
-      rebootWindow = {
-        lower = "02:00";
-        upper = "05:00";
-      };
-    };
-    stateVersion = "23.05";
-  };
 }

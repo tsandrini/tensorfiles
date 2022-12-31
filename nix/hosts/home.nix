@@ -20,21 +20,19 @@
     (import  ../modules/editors/neovim.nix)
   ];
 
+  home.packages = with pkgs; [
+    btop
+
+    rsync
+    unzip
+    unrar
+  ];
+
   home = {
     username = "${user}";
     homeDirectory = "/home/${user}";
-
-    packages = with pkgs; [
-      btop
-
-      rsync
-      unzip
-      unrar
-    ];
     stateVersion = "23.05";
   };
 
-  programs = {
-   home-manager.enable = true;
-  };
+  programs.home-manager.enable = true;
 }

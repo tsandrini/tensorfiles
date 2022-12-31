@@ -20,79 +20,65 @@
     (import ./hardware-configuration.nix)
   ];
 
-  boot = {
-    kernelPackages = pkgs.linuxPackages_latest;
-
-    loader = {
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot";
-      };
-      grub = {
-        enable = true;
-        version = 2;
-        devices = [ "nodev" ];
-        efiSupport = true;
-        useOSProber = true;
-        configurationLimit = 2;
-      };
-      timeout = 1;
-    };
-  };
-
-
   environment.systemPackages = with pkgs; [
     snapper
   ];
 
+  # Boot
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.loader.efi = {
+    canTouchEfiVariables = true;
+    efiSysMountPoint = "/boot";
+  };
+  boot.loader.grub = {
+    enable = true;
+    version = 2;
+    devices = [ "nodev" ];
+    efiSupport = true;
+    useOSProber = true;
+    configurationLimit = 2;
+  };
+  boot.loader.timeout = 1;
 
-  services = {
-    tlp.enable = true;
-    openssh = {
+  # Services
+  services.tlp.enable = true;
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = true;
+  };
+
+  services.xserver = {
+    enable = true;
+    libinput.enable = true;
+    videoDrivers = [ "intel" ];
+    windowManager.xmonad = {
       enable = true;
-      passwordAuthentication = true;
+      enableContribAndExtras = true;
     };
-
-    xserver = {
+    displayManager.defaultSession = "none+xmonad";
+    displayManager.lightdm = {
       enable = true;
-      libinput.enable = true;
-      videoDrivers = [ "intel" ];
-      windowManager = {
-        # default = "none+xmonad";
-        xmonad = {
-          enable = true;
-          enableContribAndExtras = true;
-        };
-      };
-      displayManager.defaultSession = "none+xmonad";
-      displayManager.lightdm = {
-        enable = true;
-        # greeters.slick = {
-        #   enable = true;
-        # };
-        # extraConfig = ''
-        #   greeter-user=${user}
-        # '';
-      };
+      # greeters.slick = {
+      #   enable = true;
+      # };
+      # extraConfig = ''
+      #   greeter-user=${user}
+      # '';
     };
   };
 
-  hardware = {
-    opengl = {
-      enable = true;
-      extraPackages = with pkgs; [
-        intel-media-driver
-        vaapiIntel
-        vaapiVdpau
-        libvdpau-va-gl
-      ];
-    };
+  hardware.enableAllFirmware = true;
+  hardware.cpu.intel.updateMicrocode = true;
 
-    enableAllFirmware = true;
-    cpu.intel.updateMicrocode = true;
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      vaapiIntel
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
   };
-
-
 
   # The whole section below handles opt-in state for /
   # which was inspired by the following blog post
@@ -111,7 +97,6 @@
     "L /var/lib/NetworkManager/secret_key - - - - /persist/var/lib/NetworkManager/secret_key"
     "L /var/lib/NetworkManager/seen-bssids - - - - /persist/var/lib/NetworkManager/seen-bssids"
     "L /var/lib/NetworkManager/timestamps - - - - /persist/var/lib/NetworkManager/timestamps"
-    "L /var/lib/lightdm-data - - - - /persist/var/lib/lightdm-data"
   ];
 
   security.sudo.extraConfig = ''
