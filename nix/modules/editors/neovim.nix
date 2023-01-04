@@ -181,14 +181,14 @@
           -- vim.g["fern#renderer"] = "nerdfont" TODO
           vim.g["fern#disable_default_mappings"] = true
 
-          vim.keymap.set(
+          vim.api.nvim_set_keymap(
             "n",
             "m",
             ":Fern . -drawer -reveal=% -width=35 <CR><C-w>=",
             {noremap=true, silent=true}
           )
 
-          vim.keymap.set(
+          vim.api.nvim_set_keymap(
             "n",
             "<Plug>(fern-close-drawer)",
             ":<C-u>FernDo close -drawer -stay<CR>",
@@ -196,8 +196,8 @@
           )
 
           local function fern_init()
-            local opts = {silent=true, buffer=0}
-            vim.keymap.set("n", "<Plug>(fern-action-open)",
+            local opts = {silent=true}
+            vim.api.nvim_set_keymap("n", "<Plug>(fern-action-open)",
               "<Plug>(fern-action-open:select)", opts)
 
             vim.api.nvim_buf_set_keymap(
@@ -207,17 +207,17 @@
               "fern#smart#leaf('<plug>(fern-action-open)<plug>(fern-close-drawer)', '<plug>(fern-action-expand)', '<plug>(fern-action-collapse)')",
               {silent=true, expr=true}
             )
-            vim.keymap.set("n", "q", ":<C-u>quit<CR>", opts)
-            vim.keymap.set("n", "n", "<Plug>(fern-action-new-path)", opts)
-            vim.keymap.set("n", "d", "<Plug>(fern-action-remove)", opts)
-            vim.keymap.set("n", "m", "<Plug>(fern-action-move)", opts)
-            vim.keymap.set("n", "r", "<Plug>(fern-action-rename)", opts)
-            vim.keymap.set("n", "R", "<Plug>(fern-action-reload)", opts)
-            vim.keymap.set("n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", opts)
-            vim.keymap.set("n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
-            vim.keymap.set("n", "h", "<Plug>(fern-action-collapse)", opts)
-            vim.keymap.set("n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
-            vim.keymap.set("n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "q", ":<C-u>quit<CR>", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "n", "<Plug>(fern-action-new-path)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "d", "<Plug>(fern-action-remove)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "m", "<Plug>(fern-action-move)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "r", "<Plug>(fern-action-rename)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "R", "<Plug>(fern-action-reload)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "h", "<Plug>(fern-action-collapse)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+            vim.api.nvim_buf_set_keymap(0, "n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
           end
 
           local group = vim.api.nvim_create_augroup("fern_group", {clear=true})
@@ -237,6 +237,8 @@
           require('which-key').register({
             {
               name = "+general",
+              ["<leader>"] = { ":Telescope find_files<CR>", "find-files" },
+              ["/"] = { ":Telescope live_grep<CR>", "telescope-grep" },
               r = { ":noh<CR>", "highlights-remove" },
               h = { "<C-w>h", "window-left" },
               j = { "<C-w>j", "window-below" },
