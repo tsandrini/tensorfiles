@@ -72,6 +72,7 @@ import XMonad.Layout.ResizableTile
 import XMonad.Layout.Simplest
 import XMonad.Layout.SimplestFloat
 import XMonad.Layout.Spacing
+import XMonad.Layout.Spiral (spiral)
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.Tabbed
 import qualified XMonad.Layout.ToggleLayouts as T
@@ -135,16 +136,6 @@ tall =
             mySpacing 25 $
               ResizableTall 1 (3 / 100) (1 / 2) []
 
-magnifyLayout =
-  renamed [Replace "magnify"] $
-    smartBorders $
-      addTabs shrinkText myTabTheme $
-        subLayout [] (smartBorders Simplest) $
-          magnifier $
-            limitWindows 30 $
-              mySpacing 25 $
-                ResizableTall 1 (3 / 100) (1 / 2) []
-
 grid =
   renamed [Replace "grid"] $
     smartBorders $
@@ -154,6 +145,25 @@ grid =
             mySpacing 25 $
               mkToggle (single MIRROR) $
                 Grid (16 / 10)
+
+fib =
+  renamed [Replace "spiral"] $
+    smartBorders $
+      addTabs shrinkText myTabTheme $
+        subLayout [] (smartBorders Simplest) $
+          limitWindows 30 $
+            mySpacing 25 $
+              spiral (6 / 7)
+
+magnifyLayout =
+  renamed [Replace "magnify"] $
+    smartBorders $
+      addTabs shrinkText myTabTheme $
+        subLayout [] (smartBorders Simplest) $
+          magnifier $
+            limitWindows 30 $
+              mySpacing 25 $
+                ResizableTall 1 (3 / 100) (1 / 2) []
 
 floats =
   renamed [Replace "floats"] $ smartBorders $ limitWindows 20 simplestFloat
@@ -190,7 +200,7 @@ myLayoutHook =
             myDefaultLayout
   where
     myDefaultLayout =
-      withBorder myBorderWidth tall ||| magnifyLayout ||| floats ||| grid
+      withBorder myBorderWidth tall ||| withBorder myBorderWidth grid ||| withBorder myBorderWidth fib ||| magnifyLayout
 
 myStartupHook :: X ()
 myStartupHook = do
