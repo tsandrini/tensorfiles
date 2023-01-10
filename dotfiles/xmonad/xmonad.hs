@@ -1,25 +1,11 @@
 {-# OPTIONS_GHC -Wno-deprecations #-}
 
--- Base
-
--- Actions
-
--- Data
 import qualified Data.Map as M
 import Data.Maybe
   ( fromJust,
     fromMaybe,
   )
 import Data.Monoid
--- Hooks
-
--- Layout
-
--- Layout modifiers
-
--- Utilities
-
--- TODO: add some text
 import Graphics.X11.ExtraTypes.XorgDefault
 import System.Directory
 import System.Exit (exitSuccess)
@@ -216,7 +202,7 @@ myStartupHook = do
   spawnOnce
     "trayer --edge top --align right --widthtype request --padding 6 \
     \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
-    \--transparent true --alpha 0 --tint 0x282c34  --height 22 &"
+    \--transparent true --alpha 40 --tint 0x282c34  --height 22 &"
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook =
@@ -256,6 +242,10 @@ myKeys =
     -- Multimedia keys
     ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird")),
     ("<XF86HomePage>", runOrRaise myBrowser (resource =? myBrowser)),
+    ("<XF86AudioPrev>", spawn "playerctl previous"),
+    ("<XF86AudioNext>", spawn "playerctl next"),
+    ("<XF86AudioPlay>", spawn "playerctl play-pause"),
+    ("<XF86AudioStop>", spawn "playerctl stop"),
     -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
     -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),
     ("<Print>", spawn "xfce4-screenshooter")
@@ -308,15 +298,15 @@ main = do
               namedScratchpadFilterOutWorkspacePP $
                 xmobarPP
                   { ppOutput = hPutStrLn xmproc,
-                    ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]", -- Current workspace
-                    ppVisible = xmobarColor (colors !! 13) "" . clickable, -- Visible but not current workspace
-                    ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable, -- Hidden workspaces
-                    ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable, -- Hidden workspaces (no windows)
-                    ppTitle = xmobarColor (colors !! 14) "" . shorten 60, -- Title of active window
-                    ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>", -- Separator character
-                    ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!", -- Urgent workspace
-                    -- , ppExtras = [windowCount]                                     -- # of windows current workspace
-                    ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t] -- order
+                    ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
+                    ppVisible = xmobarColor (colors !! 13) "" . clickable,
+                    ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
+                    ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
+                    ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
+                    ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
+                    ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
+                    -- , ppExtras = [windowCount],
+                    ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
                   }
         }
       `additionalKeysP` myKeys

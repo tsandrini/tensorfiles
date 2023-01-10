@@ -1,39 +1,66 @@
-Config {{ font    = "xft:Ubuntu:weight=bold:pixelsize=11:antialias=true:hinting=true"
-       , additionalFonts = [ "xft:Mononoki Nerd Font:pixelsize=11:antialias=true:hinting=true"
-                           , "xft:Font Awesome 5 Free Solid:pixelsize=12"
-                           , "xft:Font Awesome 5 Brands:pixelsize=12"
-                           ]
+Config {{
+
+       -- ~Appearance~
+         font    = "xft:Ubuntu:weight=bold:pixelsize=11:antialias=true:hinting=true"
+       , additionalFonts = [ "xft:Ubuntu Nerd Font Mono:pixelsize=13:antialias=true:hinting=true" ]
+       , alpha = 200 -- alpha in [0,255]
        , bgColor = "{background}"
        , fgColor = "{foreground}"
        , position = Static {{ xpos = 0 , ypos = 0, width = 1920, height = 22 }}
+       , iconRoot = "/home/tsandrini/.xmonad/xpm/"
+
+       -- ~Layout~
+       , sepChar = "%"
+       , alignSep = "}}{{"
+       , template = " <icon=haskell_20.xpm/> <fc={color14}>|</fc> %UnsafeStdinReader% }}{{  <fc={color14}>|</fc> <fc={color1}>%uname%</fc> <fc={color14}>|</fc> %cpu% <fc={color14}>|</fc> %coretemp% <fc={color14}>|</fc> %memory% <fc={color14}>|</fc> %dynnetwork% <fc={color14}>|</fc> %disku% <fc={color14}>|</fc> %battery% <fc={color14}>|</fc> %date% <fc={color14}><fn=1>|</fn></fc> %trayerpad%"
+
+       -- ~Behaviour~
        , lowerOnStart = True
        , hideOnStart = False
        , allDesktops = True
+       , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
        , persistent = True
-       , iconRoot = "/home/tsandrini/.xmonad/xpm/"  -- default: "."
+
        , commands = [
-                    -- Time and date
-                      Run Date "<fn=2>\xf017</fn>  %b %d %Y - (%H:%M) " "date" 50
-                      -- Network up and down
-                    , Run Network "wlp3s0" ["-t", "<fn=2>\xf0ab</fn>  <rx>kb  <fn=2>\xf0aa</fn>  <tx>kb"] 20
-                      -- Cpu usage in percent
-                    , Run Cpu ["-t", "<fn=2>\xf108</fn>  cpu: (<total>%)","-H","50","--high","red"] 20
-                      -- Ram used number and percent
-                    , Run Memory ["-t", "<fn=2>\xf233</fn>  mem: <used>M (<usedratio>%)"] 20
-                      -- Disk space free
-                    , Run DiskU [("/", "<fn=2>\xf0c7</fn>  hdd: <free> free")] [] 60
-                      -- Runs custom script to check for pacman updates.
-                      -- This script is in my dotfiles repo in .local/bin.
-                    , Run Com "/home/tsandrini/.local/bin/pacupdate" [] "pacupdate" 36000
-                      -- Runs a standard shell command 'uname -r' to get kernel version
-                    , Run Com "uname" ["-r"] "" 3600
+                      Run Com "uname" ["-r", "-m"] "" 10000
+                      , Run DynNetwork
+                      ["-t"          , " <fc={foreground}><fn=1>\xf09e</fn></fc> <fc={color10}><dev></fc> <fc={color14}>|</fc> <fc={foreground}><fn=1>\xf0aa</fn></fc> <fc={color5}><rx>kB/s</fc> <fc={foreground}><fn=1>\xf0ab</fn></fc> <fc={color5}><tx>kB/s</fc> "
+                      , "--High"     , "5000"       -- units: B/s
+                      , "--high"     , "darkred"
+                      ] 20
+                      , Run Cpu
+                      [ "-t"         , " <fc={foreground}><fn=1>\xe266</fn></fc> <fc={color10}><total>%</fc> "
+                      , "--High"     , "85"         -- units: %
+                      , "--high"     , "darkred"
+                      ] 20
+                      , Run CoreTemp
+                      [ "-t"         , " <fc={foreground}><fn=1>\xf8c7</fn></fc> <fc={color5}><core0>°C</fc> "
+                      , "--High"     , "80"        -- units: °C
+                      , "--high"     , "darkred"
+                      ] 50
+                      , Run Memory
+                      [ "-t"         ," <fc={foreground}><fn=1>\xf85a</fn></fc> <fc={color1}><usedratio>%</fc>"
+                      , "--High"     , "90"        -- units: %
+                      , "--high"     , "darkred"
+                      ] 20
+                      , Run DiskU
+                      [ ("/"         , " <fc={foreground}><fn=1>\xe706</fn></fc> <fc={color1}><used>/<size> (<usedp>%)</fc> ")]
+                      [ "--High"     , "50"        -- units: %
+                      , "--high"     , "darkred"
+                      ] 200
+                      , Run Battery
+                      [ "--template" , " <acstatus> <fc={color10}><left>% (<timeleft>)</fc> "
+                      , "--Low"      , "20"        -- units: %
+                      , "--low"      , "darkred"
+                      , "--" -- battery specific options
+                      , "-o"	, "<fc={foreground}><fn=1>\xf57e</fn></fc>"  -- discharging
+                      , "-O"	, "<fc={foreground}><fn=1>\xf583</fn></fc>" -- charging
+                      , "-i"	, "<fc={foreground}><fn=1>\xf58e</fn></fc>" -- charged
+                      ] 100
+                      , Run Date "<fn=1>\xf017</fn>  <fc={color5}>%b %d %Y - (%H:%M)</fc> " "date" 50
                       -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
-                    , Run Com "/home/tsandrini/.config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
+                      , Run Com "/home/tsandrini/.config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
                       -- Prints out the left side items such as workspaces, layout, etc.
-                      -- The workspaces are 'clickable' in my configs.
-                    , Run UnsafeStdinReader
+                      , Run UnsafeStdinReader
                     ]
-       , sepChar = "%"
-       , alignSep = "}}{{"
-       , template = " <icon=haskell_20.xpm/>   <fc=#666666>|</fc> %UnsafeStdinReader% }}{{  <fc=#666666>|</fc>  <fc={color1}><fn=3></fn>  <action=`alacritty -e htop`>%uname%</action> </fc> <fc=#666666>|</fc>  <fc={color2}> <action=`alacritty -e htop`>%cpu%</action> </fc> <fc=#666666>|</fc>  <fc={color3}> <action=`alacritty -e htop`>%memory%</action> </fc> <fc=#666666>|</fc>  <fc={color4}> <action=`alacritty -e htop`>%disku%</action> </fc> <fc=#666666>|</fc>  <fc={color5}> <action=`alacritty -e sudo iftop`>%wlp3s0%</action> </fc> <fc=#666666>|</fc>   <fc={color6}><fn=2></fn>  <action=`alacritty -e sudo pacman -Syu`>%pacupdate%</action> </fc> <fc=#666666>|</fc>  <fc={color7}> <action=`emacsclient -c -a 'emacs' --eval '(doom/window-maximize-buffer(dt/year-calendar))'`>%date%</action> </fc><fc=#666666><fn=1>|</fn></fc> %trayerpad%"
        }}
