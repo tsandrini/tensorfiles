@@ -70,10 +70,6 @@ import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run (spawnPipe)
 import XMonad.Util.SpawnOnce
 
-myFont :: String
-myFont =
-  "xft:SauceCodePro Nerd Font Mono:regular:size=9:antialias=true:hinting=true"
-
 myModMask :: KeyMask
 myModMask = mod4Mask
 
@@ -82,9 +78,6 @@ myTerminal = "alacritty"
 
 myBrowser :: String
 myBrowser = "firefox-developer-edition"
-
-myEditor :: String
-myEditor = "nvim"
 
 myFileManager :: String
 myFileManager = "lf"
