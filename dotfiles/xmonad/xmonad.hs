@@ -116,56 +116,39 @@ getWalColors = do
 tall =
   renamed [Replace "tall"] $
     smartBorders $
-      addTabs shrinkText myTabTheme $
-        subLayout [] (smartBorders Simplest) $
-          limitWindows 30 $
-            mySpacing 25 $
-              ResizableTall 1 (3 / 100) (1 / 2) []
+      subLayout [] (smartBorders Simplest) $
+        limitWindows 30 $
+          mySpacing 25 $
+            ResizableTall 1 (3 / 100) (1 / 2) []
 
 grid =
   renamed [Replace "grid"] $
     smartBorders $
-      addTabs shrinkText myTabTheme $
-        subLayout [] (smartBorders Simplest) $
-          limitWindows 30 $
-            mySpacing 25 $
-              mkToggle (single MIRROR) $
-                Grid (16 / 10)
+      subLayout [] (smartBorders Simplest) $
+        limitWindows 30 $
+          mySpacing 25 $
+            mkToggle (single MIRROR) $
+              Grid (16 / 10)
 
 fib =
   renamed [Replace "spiral"] $
     smartBorders $
-      addTabs shrinkText myTabTheme $
-        subLayout [] (smartBorders Simplest) $
-          limitWindows 30 $
-            mySpacing 25 $
-              spiral (6 / 7)
+      subLayout [] (smartBorders Simplest) $
+        limitWindows 30 $
+          mySpacing 25 $
+            spiral (6 / 7)
 
 magnifyLayout =
   renamed [Replace "magnify"] $
     smartBorders $
-      addTabs shrinkText myTabTheme $
-        subLayout [] (smartBorders Simplest) $
-          magnifier $
-            limitWindows 30 $
-              mySpacing 25 $
-                ResizableTall 1 (3 / 100) (1 / 2) []
+      subLayout [] (smartBorders Simplest) $
+        magnifier $
+          limitWindows 30 $
+            mySpacing 25 $
+              ResizableTall 1 (3 / 100) (1 / 2) []
 
 floats =
   renamed [Replace "floats"] $ smartBorders $ limitWindows 20 simplestFloat
-
--- TODO: set wal colors
-myTabTheme :: Theme
-myTabTheme =
-  def
-    { fontName = myFont,
-      activeColor = "#46d9ff",
-      inactiveColor = "#313846",
-      activeBorderColor = "#46d9ff",
-      inactiveBorderColor = "#282c34",
-      activeTextColor = "#282c34",
-      inactiveTextColor = "#d0d0d0"
-    }
 
 myWorkspaceIndices :: M.Map String Integer
 myWorkspaceIndices = M.fromList $ zip myWorkspaces [1 ..] -- (,) == \x y -> (x,y)
@@ -188,8 +171,8 @@ myLayoutHook =
     myDefaultLayout =
       withBorder myBorderWidth tall ||| withBorder myBorderWidth grid ||| withBorder myBorderWidth fib ||| magnifyLayout
 
-myStartupHook :: X ()
-myStartupHook = do
+myStartupHook :: [String] -> X ()
+myStartupHook colors = do
   spawnOnce "picom &"
   spawnOnce "wal -R"
   spawnOnce "nm-applet &"
@@ -197,12 +180,15 @@ myStartupHook = do
   spawnOnce "volumeicon &"
   spawnOnce "cbatticon &"
   spawnOnce "xfce4-clipman &"
-  spawnOnce "clight-gui &"
   spawnOnce "redshift-gtk &"
+  spawnOnce "keepassxc &"
   spawnOnce
-    "trayer --edge top --align right --widthtype request --padding 6 \
-    \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
-    \--transparent true --alpha 40 --tint 0x282c34  --height 22 &"
+    ( "trayer --edge top --align right --widthtype request --padding 6 \
+      \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
+      \--transparent true --alpha 100 --height 22 --tint x"
+        ++ tail (head colors)
+        ++ " &"
+    )
 
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook =
@@ -221,15 +207,25 @@ myManageHook =
       isFullscreen --> doFullFloat
     ]
 
-myKeys :: [(String, X ())]
-myKeys =
+myKeys :: [String] -> [(String, X ())]
+myKeys colors =
   --  XMonad
   [ --("M-S-q"     , io exitSuccess)
-    ("M-S-r", spawn "xmonad --recompile"),
+    ("M-S-r", spawn "xmonad --recompile && xmonad --restart"),
     ("M-r", spawn "xmonad --restart"),
     -- Programs
     ("M-<Return>", spawn myTerminal),
-    ("M-d", spawn "~/Projects/tsandrini/dotfiles/dotfiles/config/wal/var/dmenu-pywal/dmen.sh -i -p 'Run: '"),
+    ( "M-d",
+      spawn
+        ( "dmenu_run -nb '" ++ head colors ++ "' -nf '"
+            ++ (colors !! 15)
+            ++ "' -sb '"
+            ++ (colors !! 1)
+            ++ "' -sf '"
+            ++ (colors !! 15)
+            ++ "' -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -h 22 -i -f -p 'Run: '"
+        )
+    ),
     ("M-f", spawn (myTerminal ++ " -e " ++ myFileManager)),
     ("M-S-i", spawn "i3lock-fancy"),
     -- Kill windows
@@ -285,7 +281,7 @@ main = do
         { manageHook = myManageHook <+> manageDocks,
           modMask = myModMask,
           terminal = myTerminal,
-          startupHook = myStartupHook,
+          startupHook = myStartupHook colors,
           layoutHook = myLayoutHook,
           borderWidth = myBorderWidth,
           workspaces = myWorkspaces,
@@ -309,4 +305,4 @@ main = do
                     ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
                   }
         }
-      `additionalKeysP` myKeys
+      `additionalKeysP` myKeys colors

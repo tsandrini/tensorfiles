@@ -1,4 +1,0 @@
-#!/bin/bash
-
-num=$(checkupdates | wc -l)
-echo "$num updates"
