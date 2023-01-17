@@ -23,6 +23,13 @@
 
   environment.systemPackages = with pkgs; [
     snapper
+    htop
+    git
+    killall
+    pciutils
+    usbutils
+    wget
+    vim
   ];
 
   # Boot
