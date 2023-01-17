@@ -16,9 +16,9 @@
 { config, pkgs, inputs, user, ... }:
 
 {
-  imports = with inputs.self.nixosModules; [
+  imports = with inputs.self; [
     ./hardware-configuration.nix
-    inputs.self.nixosRoles.laptop
+    nixosRoles.laptop
   ];
 
   environment.systemPackages = with pkgs; [
@@ -87,6 +87,47 @@
       vaapiVdpau
       libvdpau-va-gl
     ];
+  };
+
+  networking.networkmanager.enable = true;
+
+  programs.ssh.startAgent = true;
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    jack.enable = true;
+  };
+
+  time.timeZone = "Europe/Prague";
+
+  i18n.defaultLocale = "en_US.UTF-8";
+
+  system.autoUpgrade = {
+    enable = true;
+    channel = "https://nixos.org/channels/nixos-unstable";
+    allowReboot = true;
+    rebootWindow = {
+      lower = "02:00";
+      upper = "05:00";
+    };
+  };
+
+  nix = {
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 3d";
+    };
+    package = pkgs.nixVersions.unstable;
+    registry.nixpkgs.flake = inputs.nixpkgs;
+    settings.auto-optimise-store = true;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+      keep-outputs          = true
+      keep-derivations      = true
+    '';
   };
 
   # The whole section below handles opt-in state for /
