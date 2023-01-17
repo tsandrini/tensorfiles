@@ -1,5 +1,4 @@
-{-# OPTIONS_GHC -Wno-deprecations #-}
-
+import Control.Exception (try)
 import qualified Data.Map as M
 import Data.Maybe
   ( fromJust,
@@ -67,7 +66,7 @@ import qualified XMonad.Layout.ToggleLayouts as T
 import XMonad.Layout.WindowArranger (windowArrange)
 import XMonad.Util.EZConfig (additionalKeysP)
 import XMonad.Util.NamedScratchpad
-import XMonad.Util.Run (spawnPipe)
+import XMonad.Util.Run (safeSpawn, spawnPipe)
 import XMonad.Util.SpawnOnce
 
 myModMask :: KeyMask
@@ -166,19 +165,22 @@ myLayoutHook =
 
 myStartupHook :: [String] -> X ()
 myStartupHook colors = do
-  spawnOnce "picom &"
+  -- X init
   spawnOnce "wal -R"
-  spawnOnce "nm-applet &"
-  spawnOnce "dunst &"
-  spawnOnce "volumeicon &"
-  spawnOnce "cbatticon &"
-  spawnOnce "xfce4-clipman &"
-  spawnOnce "redshift-gtk &"
-  spawnOnce "keepassxc &"
-  spawnOnce
-    ( "trayer --edge top --align right --widthtype request --padding 6 \
+  spawn "ps -C picom > /dev/null || picom &"
+  -- Apps: base
+  spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
+  spawn "ps -C keepassxc > /dev/null || keepassxc &"
+  spawn "ps -C nm-applet > /dev/null || nm-applet &"
+  spawn "ps -C volumeicon > /dev/null || volumeicon &"
+  spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
+  spawn "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
+  -- Apps: these should restart every time
+  spawn "(killall dunst || true) && dunst &"
+  spawn
+    ( "(killall trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
       \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
-      \--transparent true --alpha 100 --height 22 --tint x"
+      \--transparent true --alpha 80 --height 22 --tint x"
         ++ tail (head colors)
         ++ " &"
     )
@@ -202,11 +204,7 @@ myManageHook =
 
 myKeys :: [String] -> [(String, X ())]
 myKeys colors =
-  --  XMonad
-  [ --("M-S-q"     , io exitSuccess)
-    ("M-S-r", spawn "xmonad --recompile && xmonad --restart"),
-    ("M-r", spawn "xmonad --restart"),
-    -- Programs
+  [ -- Programs
     ("M-<Return>", spawn myTerminal),
     ( "M-d",
       spawn
@@ -219,7 +217,8 @@ myKeys colors =
             ++ "' -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -h 22 -i -f -p 'Run: '"
         )
     ),
-    ("M-f", spawn (myTerminal ++ " -e " ++ myFileManager)),
+    -- TODO I give up, this just won't work how I want ...
+    -- ("M-f", spawn myTerminal ++ " -e ." ++ myFileManager ++ ""),
     ("M-S-i", spawn "i3lock-fancy"),
     -- Kill windows
     ("M-S-q", kill1), -- Kill the currently focused client
@@ -235,6 +234,7 @@ myKeys colors =
     ("<XF86AudioNext>", spawn "playerctl next"),
     ("<XF86AudioPlay>", spawn "playerctl play-pause"),
     ("<XF86AudioStop>", spawn "playerctl stop"),
+    ("<XF86Display>", spawn "arandr"),
     -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
     -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),
     ("<Print>", spawn "xfce4-screenshooter")
@@ -284,18 +284,17 @@ main = do
           focusedBorderColor = colors !! 12,
           logHook =
             dynamicLogWithPP $
-              namedScratchpadFilterOutWorkspacePP $
-                xmobarPP
-                  { ppOutput = hPutStrLn xmproc,
-                    ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
-                    ppVisible = xmobarColor (colors !! 13) "" . clickable,
-                    ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
-                    ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
-                    ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
-                    ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
-                    ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
-                    -- , ppExtras = [windowCount],
-                    ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
-                  }
+              xmobarPP
+                { ppOutput = hPutStrLn xmproc,
+                  ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
+                  ppVisible = xmobarColor (colors !! 13) "" . clickable,
+                  ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
+                  ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
+                  ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
+                  ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
+                  ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
+                  -- , ppExtras = [windowCount],
+                  ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
+                }
         }
       `additionalKeysP` myKeys colors
