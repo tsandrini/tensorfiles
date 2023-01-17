@@ -25,9 +25,6 @@
 
   home-manager.users.${user} = {
     home.packages = with pkgs; [
-      # ---------------
-      # | Shell tools |
-      # ---------------
       bat
       exa
       fd
@@ -36,11 +33,6 @@
       ripgrep
       tldr
       macchina
-      # ----------------
-      # | OMZ packages |
-      # ----------------
-      spaceship-prompt
-      nix-zsh-completions
     ];
     home.stateVersion = "23.05";
 
@@ -51,6 +43,10 @@
       # initExtra = '' # TODO probably not needed
       #   touch ~/.zshrc
       # '';
+      plugins = with pkgs; [
+        spaceship-prompt
+        nix-zsh-completions
+      ];
       loginExtra = ''
         macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')
       '';
