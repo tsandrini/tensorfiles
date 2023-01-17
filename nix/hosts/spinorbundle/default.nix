@@ -47,11 +47,14 @@
     useOSProber = true;
     configurationLimit = 2;
   };
-  boot.loader.timeout = 1;
 
   system.stateVersion = "23.05";
-  home-manager.users.${user}.home = {
-    stateVersion = "23.05";
+  home-manager.users.${user} = {
+    home.stateVersion = "23.05";
+    programs.zsh = {
+      enableSyntaxHighlighting = true;
+      enableAutosuggestions = true;
+    };
   };
 
   # Services
@@ -60,6 +63,7 @@
     enable = true;
     passwordAuthentication = true;
   };
+
 
   # options.services.hello.enable = true;
 
