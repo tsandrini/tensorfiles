@@ -1,4 +1,4 @@
-# --- hosts/home.nix
+# --- lib/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,26 +13,8 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 
-{ config, lib, pkgs, user, ... }:
+{ inputs, lib, nixpkgs, user, ... }:
 
 {
-  imports = [
-    (import  ../modules/editors/neovim.nix)
-  ];
 
-  home.packages = with pkgs; [
-    btop
-
-    rsync
-    unzip
-    unrar
-  ];
-
-  home = {
-    username = "${user}";
-    homeDirectory = "/home/${user}";
-    stateVersion = "23.05";
-  };
-
-  programs.home-manager.enable = true;
 }

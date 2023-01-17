@@ -49,7 +49,9 @@ in {
           };
         };
         home-manager.users.${user} = {
-          imports = [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)];
+          # imports = [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)];
+          imports = [(import ../modules)] ++ [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)]
+          ;
         };
       }
 

@@ -13,11 +13,12 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 
-{ config, pkgs, user, ... }:
+{ config, pkgs, inputs, user, ... }:
 
 {
-  imports = [
-    (import ./hardware-configuration.nix)
+  imports = with inputs.self.nixosModules; [
+    ./hardware-configuration.nix
+    inputs.self.nixosRoles.laptop
   ];
 
   environment.systemPackages = with pkgs; [
@@ -25,6 +26,7 @@
   ];
 
   # Boot
+  # TODO: probably switch to systemd boot
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.efi = {
     canTouchEfiVariables = true;
@@ -40,32 +42,39 @@
   };
   boot.loader.timeout = 1;
 
+  system.stateVersion = "23.05";
+  home-manager.users.${user}.home = {
+    stateVersion = "23.05";
+  };
+
   # Services
-  services.tlp.enable = true;
+  # services.tlp.enable = true;
   services.openssh = {
     enable = true;
     passwordAuthentication = true;
   };
 
-  services.xserver = {
-    enable = true;
-    libinput.enable = true;
-    videoDrivers = [ "intel" ];
-    windowManager.xmonad = {
-      enable = true;
-      enableContribAndExtras = true;
-    };
-    displayManager.defaultSession = "none+xmonad";
-    displayManager.lightdm = {
-      enable = true;
-      # greeters.slick = {
-      #   enable = true;
-      # };
-      # extraConfig = ''
-      #   greeter-user=${user}
-      # '';
-    };
-  };
+  # options.services.hello.enable = true;
+
+  # services.xserver = {
+  #   enable = true;
+  #   libinput.enable = true;
+  #   videoDrivers = [ "intel" ];
+  #   windowManager.xmonad = {
+  #     enable = true;
+  #     enableContribAndExtras = true;
+  #   };
+  #   displayManager.defaultSession = "none+xmonad";
+  #   displayManager.lightdm = {
+  #     enable = true;
+  #     # greeters.slick = {
+  #     #   enable = true;
+  #     # };
+  #     # extraConfig = ''
+  #     #   greeter-user=${user}
+  #     # '';
+  #   };
+  # };
 
   hardware.enableAllFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;

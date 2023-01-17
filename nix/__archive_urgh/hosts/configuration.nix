@@ -16,10 +16,6 @@
 { config, lib, pkgs, inputs, user, ... }:
 
 {
-  imports = [
-    (import  ../modules/shell/zsh.nix)
-  ];
-
   environment.systemPackages = with pkgs; [
     htop
     git
@@ -79,7 +75,6 @@
   users.users.${user} = {
     isNormalUser = true;
     extraGroups = [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
-    shell = pkgs.zsh;
   };
 
   time.timeZone = "Europe/Prague";
