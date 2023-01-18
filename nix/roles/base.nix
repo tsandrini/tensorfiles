@@ -25,7 +25,7 @@
     # -----------
     # | MODULES |
     # -----------
-    nixosModules.hello
+    # nixosModules.hello
 
 
     # ------------
