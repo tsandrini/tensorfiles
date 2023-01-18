@@ -32,32 +32,21 @@
     vim
   ];
 
-  # Boot
-  # TODO: probably switch to systemd boot
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.efi = {
     canTouchEfiVariables = true;
     efiSysMountPoint = "/boot";
   };
-  boot.loader.grub = {
+  boot.loader.systemd-boot = {
     enable = true;
-    version = 2;
-    devices = [ "nodev" ];
-    efiSupport = true;
-    useOSProber = true;
-    configurationLimit = 2;
+    configurationLimit = 3;
   };
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.loader.timeout = 1;
+  boot.loader.grub.enable = false;
 
   system.stateVersion = "23.05";
-  home-manager.users.${user} = lib.mkForce {
+  home-manager.users.${user} =  {
     home.stateVersion = "23.05";
-    programs.zsh = {
-      enableSyntaxHighlighting = true;
-      enableAutosuggestions = true;
-      shellAliases = {
-        vim = "testahhahaah";
-      };
-    };
   };
 
   # Services
@@ -67,8 +56,6 @@
     passwordAuthentication = true;
   };
 
-
-  # options.services.hello.enable = true;
 
   # services.xserver = {
   #   enable = true;
