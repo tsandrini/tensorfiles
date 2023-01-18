@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 
-{ config, pkgs, inputs, user, ... }:
+{ config, pkgs, inputs, user, lib, ... }:
 
 {
   imports = with inputs.self; [
@@ -49,7 +49,7 @@
   };
 
   system.stateVersion = "23.05";
-  home-manager.users.${user} = {
+  home-manager.users.${user} = lib.mkForce {
     home.stateVersion = "23.05";
     programs.zsh = {
       enableSyntaxHighlighting = true;
