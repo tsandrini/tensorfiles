@@ -15,12 +15,14 @@
 
 { config, pkgs, lib, inputs, user, ... }:
 
-{
-  users.defaultUserShell = pkgs.zsh;
+let
+  _ = lib.mkOverride 500;
+in {
+  users.defaultUserShell = _ pkgs.zsh;
 
   environment.variables = {
-    EDITOR = "nvim";
-    VISUAL = "nvim";
+    EDITOR = _ "nvim";
+    VISUAL = _ "nvim";
   };
 
   home-manager.users.${user} = {
@@ -34,12 +36,11 @@
       tldr
       macchina
     ];
-    home.stateVersion = "23.05";
 
     programs.zsh = {
-      enable = true;
-      enableSyntaxHighlighting = true;
-      enableAutosuggestions = true;
+      enable = _ true;
+      enableSyntaxHighlighting = _ true;
+      enableAutosuggestions = _ true;
       # initExtra = '' # TODO probably not needed
       #   touch ~/.zshrc
       # '';
@@ -47,12 +48,12 @@
       #   spaceship-prompt
       #   nix-zsh-completions
       # ];
-      loginExtra = ''
+      loginExtra = _ ''
         macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')
       '';
       oh-my-zsh = {
-        enable = true;
-        theme = "spaceship";
+        enable = _ true;
+        theme = _ "spaceship";
         plugins = [
           "git"
           "git-flow"
@@ -62,16 +63,16 @@
         ];
       };
       shellAliases = {
-        ls = "exa";
-        ll = "exa -F --icons --group-directories-first -la --git --header --created --modified";
-        tree = "exa -F --icons --group-directories-first -la --git --header --created --modified -T";
-        cat = "bat -p --wrap=never --paging=never";
-        less = "bat --paging=always";
-        find = "fd";
-        fd = "fd";
-        grep = "rg";
-        fetch = "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
-        vim = "nvim";
+        ls = _ "exa";
+        ll = _ "exa -F --icons --group-directories-first -la --git --header --created --modified";
+        tree = _ "exa -F --icons --group-directories-first -la --git --header --created --modified -T";
+        cat = _ "bat -p --wrap=never --paging=never";
+        less = _ "bat --paging=always";
+        find = _ "fd";
+        fd = _ "fd";
+        grep = _ "rg";
+        fetch = _ "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
+        vim = _ "nvim";
       };
     };
   };

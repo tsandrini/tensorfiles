@@ -15,16 +15,18 @@
 
 { config, pkgs, lib, inputs, user, ... }:
 
-{
+let
+  _ = lib.mkOverride 500;
+in {
   users.users.${user} = {
-    isNormalUser = true;
+    isNormalUser = _ true;
     extraGroups = [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
-    home = "/home/${user}";
-    description = "Hello, I really enjoy hummus with carrots.";
+    home = _ "/home/${user}";
+    description = _ "Hello, I really enjoy hummus with carrots.";
   };
 
   home-manager.users.${user}.home = {
-    username = "${user}";
-    homeDirectory = "/home/${user}";
+    username = _ "${user}";
+    homeDirectory = _ "/home/${user}";
   };
 }
