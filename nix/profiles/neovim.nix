@@ -85,8 +85,6 @@ in {
         vno jk <esc>
         vno kj <esc>
 
-        cmap w!! %!sudo tee > /dev/null %
-
         nnoremap J :tabprevious<CR>
         nnoremap K :tabnext<CR>
       '';
@@ -118,6 +116,13 @@ in {
         }
         {
           plugin = vim-move;
+          type = "lua";
+          config = ''
+            vim.g.move_key_modifier = "C"
+          '';
+        }
+        {
+          plugin = suda-vim;
           type = "lua";
           config = ''
             vim.g.move_key_modifier = "C"
