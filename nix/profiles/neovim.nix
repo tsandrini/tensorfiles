@@ -24,10 +24,15 @@ in {
     VISUAL = _ "nvim";
   };
 
+  environment.systemPackages = with pkgs; [
+    neovim
+  ];
+    
+
   home-manager.users.${user} = {
-    home.packages = with pkgs; [
-      neovim
-    ];
+    # home.packages = with pkgs; [
+    #   neovim
+    # ];
 
     programs.neovim = {
       enable = _ true;
