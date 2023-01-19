@@ -50,7 +50,7 @@ in {
       lightdm.enable = _ false;
     };
 
-    services.xserver.desktopManager.session = [
+    desktopManager.session = [
       {
         name = "home-manager";
         start = ''
