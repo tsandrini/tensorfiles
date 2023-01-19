@@ -41,10 +41,9 @@
             if type == "regular" then [{
               name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
               value = import (dir + "/${name}");
-            }] else if (builtins.readDir (dir + "/${name}"))
-            ? "default.nix" then [{
+            }] else if (builtins.readDir (dir + "/${name}")) ? "default.nix" then [{
               inherit name;
-              value = dir + "/${name}";
+              value = import (dir + "/${name}");
             }] else
               findModules (dir + "/${name}")) (builtins.readDir dir)));
 

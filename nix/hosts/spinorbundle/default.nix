@@ -16,11 +16,17 @@
 { config, pkgs, inputs, user, lib, ... }:
 
 {
+  # --------------------------
+  # | ROLES & MODULES & etc. |
+  # --------------------------
   imports = with inputs.self; [
     ./hardware-configuration.nix
     nixosRoles.laptop
   ];
 
+  # ------------------------------
+  # | ADDITIONAL SYSTEM PACKAGES |
+  # ------------------------------
   environment.systemPackages = with pkgs; [
     snapper
     htop
@@ -31,6 +37,11 @@
     wget
     vim
   ];
+
+  system.stateVersion = "23.05";
+  home-manager.users.${user} =  {
+    home.stateVersion = "23.05";
+  };
 
   boot.loader.efi = {
     canTouchEfiVariables = true;
@@ -44,10 +55,6 @@
   boot.loader.timeout = 1;
   boot.loader.grub.enable = false;
 
-  system.stateVersion = "23.05";
-  home-manager.users.${user} =  {
-    home.stateVersion = "23.05";
-  };
 
   # Services
   # services.tlp.enable = true;

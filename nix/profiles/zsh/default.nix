@@ -1,4 +1,4 @@
-# --- profiles/zsh.nix
+# --- profiles/zsh/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -41,21 +41,21 @@ in {
       enable = _ true;
       enableSyntaxHighlighting = _ true;
       enableAutosuggestions = _ true;
-      # initExtra = '' # TODO probably not needed
-      #   touch ~/.zshrc
-      # '';
-      # plugins = with pkgs; [
-      #   spaceship-prompt
-      #   nix-zsh-completions
-      # ];
       plugins = [
         {
-          name = "spaceship-prompt";
-          src = pkgs.spaceship-prompt;
+          name = "zsh-powerlevel10k";
+          src = pkgs.zsh-powerlevel10k;
+          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+        }
+        {
+          name = "powerlevel10k-config";
+          src = ./.;
+          file = "p10k.zsh";
         }
         {
           name = "nix-zsh-completions";
           src = pkgs.nix-zsh-completions;
+          file = "share/zsh/plugins/nix/nix-zsh-completions.plugin.zsh";
         }
       ];
       loginExtra = _ ''
@@ -63,13 +63,11 @@ in {
       '';
       oh-my-zsh = {
         enable = _ true;
-        theme = _ "spaceship";
         plugins = [
           "git"
           "git-flow"
           "colorize"
           "colored-man-pages"
-          "nix"
         ];
       };
       shellAliases = {
