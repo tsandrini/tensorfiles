@@ -37,5 +37,6 @@
     nixosProfiles.neovim
     nixosProfiles.xmonad
     nixosProfiles.picom # TODO cleanup afterwards
+    nixosProfiles.alacritty
   ];
 }
