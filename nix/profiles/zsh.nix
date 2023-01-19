@@ -48,6 +48,16 @@ in {
       #   spaceship-prompt
       #   nix-zsh-completions
       # ];
+      plugins = [
+        {
+          name = "spaceship-prompt";
+          src = pkgs.spaceship-prompt;
+        }
+        {
+          name = "nix-zsh-completions";
+          src = pkgs.nix-zsh-completions;
+        }
+      ];
       loginExtra = _ ''
         macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')
       '';
