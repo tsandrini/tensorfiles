@@ -33,6 +33,7 @@
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
+    # TODO cleanup
     snapper
     htop
     git
@@ -84,6 +85,13 @@
     alsa.enable = true;
     pulse.enable = true;
     jack.enable = true;
+  };
+
+  # TODO clean up
+  home-manager.users.${user} = {
+    home.packages = with pkgs; [
+      nerdfonts
+    ];
   };
 
   time.timeZone = "Europe/Prague";
