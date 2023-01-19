@@ -20,11 +20,6 @@ let
 in {
   users.defaultUserShell = _ pkgs.zsh;
 
-  environment.variables = {
-    EDITOR = _ "nvim";
-    VISUAL = _ "nvim";
-  };
-
   home-manager.users.${user} = {
     home.packages = with pkgs; [
       bat
@@ -58,6 +53,7 @@ in {
           file = "share/zsh/plugins/nix/nix-zsh-completions.plugin.zsh";
         }
       ];
+      # TODO v6.1.7 doesnt work (wait for new one?)
       loginExtra = _ ''
         macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')
       '';
@@ -80,7 +76,6 @@ in {
         fd = _ "fd";
         grep = _ "rg";
         fetch = _ "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
-        vim = _ "nvim";
       };
     };
   };

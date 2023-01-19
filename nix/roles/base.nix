@@ -31,7 +31,8 @@
     # ------------
     # | PROFILES |
     # ------------
-    nixosProfiles.zsh
     nixosProfiles.home-manager
+    nixosProfiles.zsh
+    nixosProfiles.neovim
   ];
 }
