@@ -97,6 +97,20 @@
     ];
   };
 
+  services.xserver = {
+    enable = true;
+    windowManager = {
+      # default = "xmonad";
+      xmonad = {
+        enable = true;
+        enableContribAndExtras = true;
+      };
+    };
+    # On nixos-unstable I needed to add this deprecated setting (not sure if still needed)
+    # desktopManager.default = "none";
+    displayManager.defaultSession = "none+xmonad";
+  };
+
   networking.networkmanager.enable = true;
 
   programs.ssh.startAgent = true;

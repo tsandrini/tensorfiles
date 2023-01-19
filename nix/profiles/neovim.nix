@@ -30,6 +30,7 @@ in {
     
 
   home-manager.users.${user} = {
+    # TODO: doesnt work?
     # home.packages = with pkgs; [
     #   neovim
     # ];
