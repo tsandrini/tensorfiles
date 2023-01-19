@@ -76,9 +76,9 @@ in {
       scriptPath = _ ".hm-xsession";
 
       windowManager.xmonad = {
-        xmonad.enable = _ true;
-        xmonad.config = _ ./xmonad.hs;
-        xmonad.enableContribAndExtras = _ true;
+        enable = _ true;
+        config = _ ./xmonad.hs;
+        enableContribAndExtras = _ true;
       };
     };
   };
