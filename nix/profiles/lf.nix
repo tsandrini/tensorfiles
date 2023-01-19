@@ -1,4 +1,4 @@
-# --- roles/base.nix
+# --- profiles/lf.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,31 +13,21 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 
-{ inputs, user, ... }:
+{ config, pkgs, lib, inputs, user, ... }:
 
-{
-  imports = with inputs.self; [
-    inputs.home-manager.nixosModules.home-manager {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-    }
-    { system.stateVersion = "23.05"; }
+let
+  _ = lib.mkOverride 500;
+in {
 
-    # -----------
-    # | MODULES |
-    # -----------
-    # nixosModules.hello
+  home-manager.users.${user} = {
 
-
-    # ------------
-    # | PROFILES |
-    # ------------
-    nixosProfiles.home-manager
-    nixosProfiles.zsh
-    nixosProfiles.neovim
-    nixosProfiles.xmonad
-    nixosProfiles.picom # TODO cleanup afterwards
-    nixosProfiles.alacritty
-    nixosProfiles.lf
-  ];
+    programs.lf = {
+      enable = true;
+      keybindings = {
+        m = null;
+        o = null;
+        "." = "set hidden!";
+      };
+    };
+  };
 }
