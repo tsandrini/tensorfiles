@@ -87,6 +87,8 @@
   hardware.enableAllFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
 
+  services.xserver.libinput.enable = true;
+
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [
@@ -100,15 +102,25 @@
   services.xserver = {
     enable = true;
     windowManager = {
-      # default = "xmonad";
       xmonad = {
         enable = true;
         enableContribAndExtras = true;
       };
     };
-    # On nixos-unstable I needed to add this deprecated setting (not sure if still needed)
-    # desktopManager.default = "none";
-    displayManager.defaultSession = "none+xmonad";
+
+    displayManager = {
+      defaultSession = "none+xmonad";
+      lightdm = {
+        enable = true;
+        greeters = {
+          enso.enable = true;
+        };
+        # autoLogin = {
+        #   enable = true;
+        #   user = "dooy";
+        # };
+      };
+    };
   };
 
   networking.networkmanager.enable = true;
