@@ -16,6 +16,11 @@
 { config, pkgs, inputs, user, lib, ... }:
 
 {
+  # -----------------
+  # | SPECIFICATION |
+  # -----------------
+  # Model: Lenovo B51-80
+
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
@@ -38,11 +43,6 @@
     vim
   ];
 
-  system.stateVersion = "23.05";
-  home-manager.users.${user} =  {
-    home.stateVersion = "23.05";
-  };
-
   boot.loader.efi = {
     canTouchEfiVariables = true;
     efiSysMountPoint = "/boot";
@@ -55,34 +55,12 @@
   boot.loader.timeout = 1;
   boot.loader.grub.enable = false;
 
-
   # Services
   # services.tlp.enable = true;
   services.openssh = {
     enable = true;
     passwordAuthentication = true;
   };
-
-
-  # services.xserver = {
-  #   enable = true;
-  #   libinput.enable = true;
-  #   videoDrivers = [ "intel" ];
-  #   windowManager.xmonad = {
-  #     enable = true;
-  #     enableContribAndExtras = true;
-  #   };
-  #   displayManager.defaultSession = "none+xmonad";
-  #   displayManager.lightdm = {
-  #     enable = true;
-  #     # greeters.slick = {
-  #     #   enable = true;
-  #     # };
-  #     # extraConfig = ''
-  #     #   greeter-user=${user}
-  #     # '';
-  #   };
-  # };
 
   hardware.enableAllFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
@@ -97,30 +75,6 @@
       vaapiVdpau
       libvdpau-va-gl
     ];
-  };
-
-  services.xserver = {
-    enable = true;
-    windowManager = {
-      xmonad = {
-        enable = true;
-        enableContribAndExtras = true;
-      };
-    };
-
-    displayManager = {
-      defaultSession = "none+xmonad";
-      lightdm = {
-        enable = true;
-        greeters = {
-          enso.enable = true;
-        };
-        # autoLogin = {
-        #   enable = true;
-        #   user = "dooy";
-        # };
-      };
-    };
   };
 
   networking.networkmanager.enable = true;

@@ -21,6 +21,7 @@
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
     }
+    { system.stateVersion = "23.05"; }
 
     # -----------
     # | MODULES |
@@ -34,5 +35,6 @@
     nixosProfiles.home-manager
     nixosProfiles.zsh
     nixosProfiles.neovim
+    nixosProfiles.xmonad
   ];
 }
