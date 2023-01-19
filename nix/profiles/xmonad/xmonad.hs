@@ -167,7 +167,7 @@ myStartupHook :: [String] -> X ()
 myStartupHook colors = do
   -- X init
   spawnOnce "wal -R"
-  spawn "ps -C picom > /dev/null || picom &"
+  -- spawn "ps -C picom > /dev/null || picom &"
   -- Apps: base
   spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
   spawn "ps -C keepassxc > /dev/null || keepassxc &"

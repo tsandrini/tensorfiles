@@ -46,7 +46,6 @@ in {
     home.packages = with pkgs; [
       haskellPackages.xmobar
       alacritty
-      picom
       dmenu-rs
       pywal
       alacritty
