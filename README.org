@@ -1,6 +1,20 @@
 #+NAME: dotfiles
 #+AUTHOR: tsandrini
 
+* Update [19.01.23]
+As of now I've completely commited to the nix ecosystem and I am in the process
+of rewriting everything into a [[https://nixos.org/][NixOS]] + [[https://nixos.wiki/wiki/Flakes][Flakes]] + [[https://github.com/nix-community/home-manager][Home-manager]] pipeline managing
+all of my machines. Aside from that I am experimenting with opt-in based
+filesystems as well, therefore all of this is still in the early phases
+an can be seen in the =nix/= directory and probably shouldn't be used by
+anyone else at this moment. My old symlink based configuration files of
+various applications are still all there in the =dotfiles/= folder and those
+should be working just fine and can be used elsewhere if you wish so.
+
+When all of this is going to be done I'll properly comment/cleanup the
+repository and archive the old symlink based config.
+
+Thanks <3.
 * About
 These are my personal dotfiles. They are probably not neither up to date or
 complete since I really hate this style of personal system managment and that
@@ -20,13 +34,18 @@ I use the following software
 |--------------+--------------------------------+-------------------------------------------------------|
 | #            | Tool                           | Comment                                               |
 |--------------+--------------------------------+-------------------------------------------------------|
-| Shell        | Zsh + Oh My Zsh                | will probably switch from using OMZ (it's a bit big)  |
+| Shell        | Zsh + Oh My Zsh                | I prefer fish, but need the POSIX compliance :(       |
 | DM           | lightdm + lightdm-mini-gretter |                                                       |
-| WM           | [[https://github.com/xmonad/xmonad][xmonad]] + [[https://github.com/jaor/xmobar][xmobar]]                | Make your life functional once again!                 |
-| Editor       | [[https://github.com/neovim/neovim][nvim]]                           | Sorry Moolenaar, ideas great, not the managment tho   |
-| GUI Editor   | emacs + [[https://github.com/hlissner/doom-emacs][doom-emacs]]             | The ultimate solution to everything                   |
+| WM           | [[https://github.com/xmonad/xmonad][xmonad]] + [[https://github.com/jaor/xmobar][xmobar]]                | using anything else rn feels like stone age           |
+| Editor       | [[https://github.com/neovim/neovim][nvim]]                           | sorry Moolenaar, ideas great, not the managment tho   |
+| GUI Editor   | emacs + [[https://github.com/hlissner/doom-emacs][doom-emacs]]             | (using anything else rn feels like stone age)^2       |
 | Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                      | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
 | Browser      | firefox (dev-edition)          |                                                       |
-| File manager | lf                             |                                                       |
-| Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                          |                                                       |
+| App launcher | [[https://tools.suckless.org/dmenu/][dmenu]]                          | Rofi has a nice frontend, but is practically unusable |
+| Fetch        | [[https://github.com/Macchina-CLI/macchina][macchina]]                       |                                                       |
+| File manager | [[f][lf]]                             | ranger, but actually usable                           |
+| News reader  | [[https://newsboat.org/][newsboat]]                       | modern web is barely usable for reading news D:       |
+| ls           | [[https://github.com/ogham/exa][exa]]                            | fast, ls-compatible with added features               |
+| cat          | [[https://github.com/sharkdp/bat][bat]]                            |                                                       |
+| Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                          | TODO should probably comment more on colors           |
 |--------------+--------------------------------+-------------------------------------------------------|
