@@ -19,7 +19,7 @@ let
   _ = lib.mkOverride 500;
 in {
 
-  services.getty.autologinUser = _ user;
+  # services.getty.autologinUser = _ user;
 
   services.xserver = {
     enable = true;
@@ -28,6 +28,7 @@ in {
     displayManager = {
       defaultSession = _ "home-manager";
       lightdm.enable = _ false;
+      startx.enable = _ true;
     };
 
     desktopManager.session = [
@@ -50,32 +51,6 @@ in {
       pywal
       alacritty
     ];
-
-    systemd.user.services.startx-service = {
-      Unit = {
-        Description = _ "X11 simple session starter";
-        After = [ "graphical.target" "systemd-user-sessions.service" ];
-      };
-      Service = {
-        User = _ user;
-        WorkingDirectory = _ "$HOME";
-        PAMName = _ "login";
-        Environment = _ "XDG_SESSION_TYPE=x11";
-        TTYPath = _ "/dev/tty8";
-        StandardInput = _ "tty";
-        # UnsetEnvironment = "TERM";
-        UtmpIdentifier = _ "tty8";
-        UtmpMode = _ "user";
-        StandardOutput = _ "journal";
-        ExecStartPre = _ "chvt 8";
-        ExecStart = _ "startx -- vt8 -keeptty -verbose 3 -logfile /dev/null";
-        # Restart = _ "Always"; # TODO probably not needed
-        # RestartSec = _ "3";
-      };
-      Install = {
-        WantedBy = [ "graphical.target" ];
-      };
-    };
 
     xsession = {
       enable = _ true;
