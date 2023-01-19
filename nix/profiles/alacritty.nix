@@ -19,31 +19,37 @@ let
   _ = lib.mkOverride 500;
 in {
 
-  home-manager.users.${user}.programs.alacritty = {
-    enable = _ true;
+  home-manager.users.${user} = {
+    home.packages = with pkgs; [
+      meslo-lgs-nf
+    ];
 
-    settings = {
-      window = {
-        opacity = 0.8;
-        decorations = "full";
+    programs.alacritty = {
+      enable = _ true;
+
+      settings = {
+        window = {
+          opacity = 0.8;
+          decorations = "full";
+        };
+        dynamic_title = true;
+        font = {
+          size = 7.0;
+          normal.family = "MesloLGS NF";
+        };
+        bell.duration = 0;
+        cursor.style.shape = "Block";
+        key_bindigs = [
+          { key = "V"; mods = "Alt"; action = "Paste"; }
+          { key = "C"; mods = "Alt"; action = "Copy"; }
+          { key = "L"; mods = "Control"; action = "ClearLogNotice"; }
+          { key = "L"; mods = "Control"; mode = "~Vi|~Search"; chars = "\x0c"; }
+          {
+            key = "PageUp"; mods = "Shift";
+            mode = "~Alt"; action = "ScrollPageUp";
+          }
+        ];
       };
-      dynamic_title = true;
-      font = {
-        size = "7.0";
-        # TODO
-      };
-      bell.duration = 0;
-      cursor.style.shape = "Block";
-      key_bindigs = [
-        { key = "V"; mods = "Alt"; action = "Paste"; }
-        { key = "C"; mods = "Alt"; action = "Copy"; }
-        { key = "L"; mods = "Control"; action = "ClearLogNotice"; }
-        { key = "L"; mods = "Control"; mode = "~Vi|~Search"; chars = "\x0c"; }
-        {
-          key = "PageUp"; mods = "Shift";
-          mode = "~Alt"; action = "ScrollPageUp";
-        }
-      ];
     };
   };
 }
