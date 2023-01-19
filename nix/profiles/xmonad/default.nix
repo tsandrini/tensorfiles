@@ -19,47 +19,67 @@ let
   _ = lib.mkOverride 500;
 in {
 
-  services.xserver = {
-    enable = true;
-    libinput.enable = true;
-    displayManager.defaultSession = "none+xmonad";
-    displayManager.lightdm = {
-      enable = true;
-      greeters.slick.enable = true;
-    };
-
-    windowManager.xmonad = {
-      enable = true;
-      enableContribAndExtras = true;
-      config = ./xmonad.hs;
-    };
-  };
-
-  # services.getty.autologinUser = user;
-  # services.xserver.enable = true;
-  # services.xserver.displayManager.defaultSession = "home-manager";
-  # services.xserver.libinput.enable = true;
-  # services.xserver.desktopManager.session = [
-  #   {
-  #     name = "home-manager";
-  #     start = ''
-  #       ${pkgs.runtimeShell} $HOME/.hm-xsession &
-  #       waitPID=$!
-  #     '';
-  #   }
+  # environment.systemPackages = with pkgs; [
   # ];
 
-  # home-manager.users.${user} = {
-  #   home.packages = with pkgs; [
-  #     pywal
-  #     xmobar
-  #   ];
 
-  #   xsession.enable = true;
-  #   xsession.scriptPath = ".hm-xsession";
-  #   xsession.windowManager.xmonad.enable = true;
-  #   #xsession.windowManager.xmonad.config = ./xmonad.hs;
-  #   xsession.windowManager.xmonad.enableContribAndExtras = true;
+  # services.xserver = {
+  #   enable = true;
+  #   libinput.enable = true;
+  #   displayManager.defaultSession = "none+xmonad";
+  #   displayManager.lightdm = {
+  #     enable = true;
+  #     greeters.slick.enable = true;
+  #   };
+
+  #   windowManager.xmonad = {
+  #     enable = true;
+  #     enableContribAndExtras = true;
+  #     config = ./xmonad.hs;
+  #   };
   # };
 
+  services.getty.autologinUser = _ user;
+
+  services.xserver = {
+    enable = true;
+    libinput.enable = _ true;
+
+    displayManager = {
+      defaultSession = _ "home-manager";
+      lightdm.enable = _ false;
+    };
+
+    services.xserver.desktopManager.session = [
+      {
+        name = "home-manager";
+        start = ''
+          ${pkgs.runtimeShell} $HOME/.hm-xsession &
+          waitPID=$!
+        '';
+      }
+    ];
+  };
+
+
+  home-manager.users.${user} = {
+    home.packages = with pkgs; [
+      haskellPackages.xmobar
+      picom
+      dmenu-rs
+      pywal
+      xorg.xinit
+    ];
+
+    xsession = {
+      enable = _ true;
+      scriptPath = _ ".hm-xsession";
+
+      windowManager.xmonad = {
+        xmonad.enable = _ true;
+        xmonad.config = _ ./xmonad.hs;
+        xmonad.enableContribAndExtras = _ true;
+      };
+    };
+  };
 }
