@@ -19,26 +19,6 @@ let
   _ = lib.mkOverride 500;
 in {
 
-  # environment.systemPackages = with pkgs; [
-  # ];
-
-
-  # services.xserver = {
-  #   enable = true;
-  #   libinput.enable = true;
-  #   displayManager.defaultSession = "none+xmonad";
-  #   displayManager.lightdm = {
-  #     enable = true;
-  #     greeters.slick.enable = true;
-  #   };
-
-  #   windowManager.xmonad = {
-  #     enable = true;
-  #     enableContribAndExtras = true;
-  #     config = ./xmonad.hs;
-  #   };
-  # };
-
   services.getty.autologinUser = _ user;
 
   services.xserver = {
@@ -54,32 +34,61 @@ in {
       {
         name = "home-manager";
         start = ''
-          ${pkgs.runtimeShell} $HOME/.hm-xsession &
+          ${pkgs.runtimeShell} $HOME/.xinitrc &
           waitPID=$!
         '';
       }
     ];
   };
 
-
   home-manager.users.${user} = {
     home.packages = with pkgs; [
       haskellPackages.xmobar
+      alacritty
       picom
       dmenu-rs
       pywal
-      xorg.xinit
+      alacritty
     ];
+
+    systemd.user.services.startx-service = {
+      Unit = {
+        Description = _ "X11 simple session starter";
+        After = [ "graphical.target" "systemd-user-sessions.service" ];
+      };
+      Service = {
+        User = _ user;
+        WorkingDirectory = _ "$HOME";
+        PAMName = _ "login";
+        Environment = _ "XDG_SESSION_TYPE=x11";
+        TTYPath = _ "/dev/tty8";
+        StandardInput = _ "tty";
+        # UnsetEnvironment = "TERM";
+        UtmpIdentifier = _ "tty8";
+        UtmpMode = _ "user";
+        StandardOutput = _ "journal";
+        ExecStartPre = _ "chvt 8";
+        ExecStart = _ "startx -- vt8 -keeptty -verbose 3 -logfile /dev/null";
+        # Restart = _ "Always"; # TODO probably not needed
+        # RestartSec = _ "3";
+      };
+      Install = {
+        WantedBy = [ "graphical.target" ];
+      };
+    };
 
     xsession = {
       enable = _ true;
-      scriptPath = _ ".hm-xsession";
+      scriptPath = _ ".xinitrc";
 
+      # TODO should investigate more probably
+      windowManager.command = lib.mkOverride 50 "exec xmonad";
       windowManager.xmonad = {
         enable = _ true;
         config = _ ./xmonad.hs;
         enableContribAndExtras = _ true;
       };
+
     };
   };
 }
