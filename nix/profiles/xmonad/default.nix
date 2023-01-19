@@ -19,28 +19,47 @@ let
   _ = lib.mkOverride 500;
 in {
 
-  environment.systemPackages = with pkgs; [
-    lightdm
-  ];
-
-  services = {
-    xserver = {
+  services.xserver = {
+    enable = true;
+    libinput.enable = true;
+    displayManager.defaultSession = "none+xmonad";
+    displayManager.lightdm = {
       enable = true;
+      greeters.slick.enable = true;
+    };
 
-      windowManager = {
-        xmonad = {
-          enable = true;
-          enableContribAndExtras = true;
-          config = builtins.readFile ./xmonad.hs;
-        };
-      };
-
-      displayManager = {
-        defaultSession = "none+xmonad";
-        lightdm.enable = true;
-        lightdm.greeters.mini.enable = true;
-      };
-
+    windowManager.xmonad = {
+      enable = true;
+      enableContribAndExtras = true;
+      config = ./xmonad.hs;
     };
   };
+
+  # services.getty.autologinUser = user;
+  # services.xserver.enable = true;
+  # services.xserver.displayManager.defaultSession = "home-manager";
+  # services.xserver.libinput.enable = true;
+  # services.xserver.desktopManager.session = [
+  #   {
+  #     name = "home-manager";
+  #     start = ''
+  #       ${pkgs.runtimeShell} $HOME/.hm-xsession &
+  #       waitPID=$!
+  #     '';
+  #   }
+  # ];
+
+  # home-manager.users.${user} = {
+  #   home.packages = with pkgs; [
+  #     pywal
+  #     xmobar
+  #   ];
+
+  #   xsession.enable = true;
+  #   xsession.scriptPath = ".hm-xsession";
+  #   xsession.windowManager.xmonad.enable = true;
+  #   #xsession.windowManager.xmonad.config = ./xmonad.hs;
+  #   xsession.windowManager.xmonad.enableContribAndExtras = true;
+  # };
+
 }

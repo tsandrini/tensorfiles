@@ -65,8 +65,6 @@
   hardware.enableAllFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
 
-  services.xserver.libinput.enable = true;
-
   hardware.opengl = {
     enable = true;
     extraPackages = with pkgs; [
