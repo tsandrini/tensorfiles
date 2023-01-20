@@ -45,7 +45,6 @@ in {
   home-manager.users.${user} = {
     home.packages = with pkgs; [
       haskellPackages.xmobar
-      alacritty
       dmenu-rs
       pywal
       alacritty

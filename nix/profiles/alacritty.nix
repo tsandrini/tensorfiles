@@ -39,7 +39,7 @@ in {
         };
         bell.duration = 0;
         cursor.style.shape = "Block";
-        key_bindigs = [
+        key_bindings = [
           { key = "V"; mods = "Alt"; action = "Paste"; }
           { key = "C"; mods = "Alt"; action = "Copy"; }
           { key = "L"; mods = "Control"; action = "ClearLogNotice"; }
@@ -47,6 +47,18 @@ in {
           {
             key = "PageUp"; mods = "Shift";
             mode = "~Alt"; action = "ScrollPageUp";
+          }
+          {
+            key = "PageDown"; mods = "Shift";
+            mode = "~Alt"; action = "ScrollPageDown";
+          }
+          {
+            key = "Home"; mods = "Shift";
+            mode = "~Alt"; action = "ScrollToTop";
+          }
+          {
+            key = "Home"; mods = "Shift";
+            mode = "~Alt"; action = "ScrollToTop";
           }
         ];
       };

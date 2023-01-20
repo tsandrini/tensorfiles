@@ -16,36 +16,44 @@ repository and archive the old symlink based config.
 
 Thanks <3.
 * About
-These are my personal dotfiles. They are probably not neither up to date or
-complete since I really hate this style of personal system managment and that
-is the reason (one of many) why I will be probably switching to [[https://nixos.org/][NixOS]]. That
-doesn't mean that I dislike [[https://archlinux.org/][Arch]], quite on the contrary, however, after all
-these years I don't really enjoy literally wasting time over and over
-wiring and fixing basic unix stuff which could be once for all solved in a nice
-declarative way :smirk-cat:.
-Apart from that, I am really enjoying xmonad so far, it's interesting what a
-significant performance difference it is from let's say i3 -- in this regard
-it's kinda similar to dwm, however, I've always hated the patching system
-of suckless software, I mean, it's really nice in theory, but when you
-constantly have to debug your setup with valgrind/gdb in order for your
-environment to work, it gets annoying really fast.
+Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
 * Software
 I use the following software
-|--------------+--------------------------------+-------------------------------------------------------|
-| #            | Tool                           | Comment                                               |
-|--------------+--------------------------------+-------------------------------------------------------|
-| Shell        | Zsh + Oh My Zsh                | I prefer fish, but need the POSIX compliance :(       |
-| DM           | lightdm + lightdm-mini-gretter |                                                       |
-| WM           | [[https://github.com/xmonad/xmonad][xmonad]] + [[https://github.com/jaor/xmobar][xmobar]]                | using anything else rn feels like stone age           |
-| Editor       | [[https://github.com/neovim/neovim][nvim]]                           | sorry Moolenaar, ideas great, not the managment tho   |
-| GUI Editor   | emacs + [[https://github.com/hlissner/doom-emacs][doom-emacs]]             | (using anything else rn feels like stone age)^2       |
-| Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                      | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
-| Browser      | firefox (dev-edition)          |                                                       |
-| App launcher | [[https://tools.suckless.org/dmenu/][dmenu]]                          | Rofi has a nice frontend, but is practically unusable |
-| Fetch        | [[https://github.com/Macchina-CLI/macchina][macchina]]                       |                                                       |
-| File manager | [[f][lf]]                             | ranger, but actually usable                           |
-| News reader  | [[https://newsboat.org/][newsboat]]                       | modern web is barely usable for reading news D:       |
-| ls           | [[https://github.com/ogham/exa][exa]]                            | fast, ls-compatible with added features               |
-| cat          | [[https://github.com/sharkdp/bat][bat]]                            |                                                       |
-| Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                          | TODO should probably comment more on colors           |
-|--------------+--------------------------------+-------------------------------------------------------|
+|--------------+---------------------------+-------------------------------------------------------|
+| #            | Tool                      | Comment                                               |
+|--------------+---------------------------+-------------------------------------------------------|
+| Shell        | [[https://www.zsh.org/][Zsh]] & [[https://ohmyz.sh/][OMZ]] & [[https://github.com/romkatv/powerlevel10k][Powerlevel10k]] | pw10k makes the zsh experience surprisingly pleasant  |
+| DM           | [[https://github.com/canonical/lightdm][LightDM]] or [[https://www.x.org/archive/X11R6.8.1/doc/xinit.1.html][xinit]]          |                                                       |
+| WM           | [[https://github.com/xmonad/xmonad][xmonad]] & [[https://github.com/jaor/xmobar][xmobar]]           | using anything else rn feels like stone age           |
+| Editor       | [[https://github.com/neovim/neovim][nvim]]                      | sorry Moolenaar, ideas great, not the managment tho   |
+| GUI Editor   | emacs & [[https://github.com/hlissner/doom-emacs][doom-emacs]]        | (using anything else rn feels like stone age)^2       |
+| Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                 | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
+| Browser      | firefox (dev-edition)     | qute is nice but not that secure unfortunately        |
+| App launcher | [[https://tools.suckless.org/dmenu/][dmenu]]                     | Rofi has a nice frontend, but is practically unusable |
+| Fetch        | [[https://github.com/Macchina-CLI/macchina][macchina]]                  |                                                       |
+| File manager | [[f][lf]]                        | ranger, but actually usable                           |
+| News reader  | [[https://newsboat.org/][newsboat]]                  | modern web is barely usable for reading news D:       |
+| ls           | [[https://github.com/ogham/exa][exa]]                       | fast, ls-compatible with added features               |
+| cat          | [[https://github.com/sharkdp/bat][bat]]                       |                                                       |
+| Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                     | TODO should probably comment more on colors           |
+|--------------+---------------------------+-------------------------------------------------------|
+* References
+The whole nix ecosystem is in its foundations a revolutionary piece of
+software and once you get the hang of it you feel like you've really
+conquered the art of computer wizardry, however, it's so different from
+everything that is the current status quo of compsci and thus needs
+appropriate extensive documentation/tutorials/etc... which is, however,
+currently no the case.
+
+Due to this exact reason I'm leaving here a list of resources/flakes that
+helped me to (somewhat) learn the ways of nix (TODO: maybe write more? manual.org?)
+
++ [[https://nixos.org/guides/nix-pills/][Nix Pills: obligatory pills]]
++ [[https://search.nixos.org/options][NixOS search: this should be your homepage really]]
++ [[https://mipmip.github.io/home-manager-option-search/][Home-Manager opts search: the same search but for home-manager, secondary homepage tbh]]
++ [[https://github.com/hlissner/dotfiles][hlissner/dotfiles: great resource for learning how to appropriately modularize code]]
++ [[https://github.com/notusknot/dotfiles-nix][notusknot/dotfiles-nix: a more straightforward config but with all the needed parts, great introduction to flakes, home-manager]]
++ [[https://nixos.wiki/wiki/Nix_Cookbook][Nix Cookbook: custom scripts, package wrapper scripts]]
++ [[https://github.com/balsoft/nixos-config][balsoft/nixos-config: more modularized but not overly complicated config]]
++ [[https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html][A really nice blogpost/tutorial on encrypted nixos opt-in system using btrfs]]
++ [[https://github.com/search?q=pkgs.writeShellScriptBin+language%3ANix&type=code&l=Nix][Github code search: thanks to how the nix lang works the code search should be of a huge help, included an example]]
