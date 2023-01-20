@@ -33,8 +33,64 @@ let
           odt2txt
           w3m
           lynx
+          catdoc
+          python39Packages.docx2txt
+          transmission
         ];
-        script = pkgs.writeShellScriptBin name (builtins.readFile ./lf-previewer);
+        # script = pkgs.writeShellScriptBin name (builtins.readFile ./lf-previewer);
+        script = pkgs.writeShellScriptBin name ''
+          case ''${1##*.} in
+              a|ace|alz|apk|arc|arj|bz|bz2|cab|cpio|deb|gz|iso|jar|lha|lz|lzh|lzma|lzo|\
+              rpm|rz|t7z|tar|tbz|tbz2|tgz|tlz|txz|tZ|tzo|war|xpi|xz|Z|zip|zst)
+                  bsdtar --list --file "$1" && exit ;;
+              rar)
+                  unrar lt -p- -- "$1" && exit ;;
+              7z)
+                  7z l -p -- "$1" && exit ;;
+              pdf)
+                  pdftotext -l 10 -nopgbrk -q -- "$1" - && exit ;;
+              torrent)
+                  transmission-show -- "$1" && exit ;;
+              odt|ods|odp|sxw)
+                  odt2txt "$1" && exit ;;
+              doc)
+                  catdoc "$1" && exit ;;
+              docx)
+                  docx2txt "$1" - && exit ;;
+              htm|html|xhtml)
+                  # Preview as text conversion
+                  w3m -dump "$1" ||
+                  lynx -dump -- "$1" ||
+                  elinks -dump "$1" && exit ;;
+
+              *) ;; # Go on to handle by mime type
+          esac
+
+          case "$(file -Lb --mime-type -- "$1")" in
+              # Text
+              text/*|*/xml|*/csv|*/json)
+                  # try to detect the charactor encodeing
+                  enc=$(head -n20 "$1" | uchardet)
+                  head -n 100 "$1" |
+                  { if command -v highlight > /dev/null 2>&1; then
+                      highlight -O ansi --force
+                  else
+                      cat
+                  fi } |
+                  iconv -f "''${enc:-UTF-8}" -t UTF-8 && exit ;;
+
+              image/*)
+                  lf-cleaner draw "$1" "$2" "$3" "$4" "$5" && exit 1 ;;
+
+              video/*|audio/*|application/octet-stream)
+                  mediainfo "$1" && exit ;;
+
+              *) ;; # Go on to fall back
+          esac
+
+          echo '----- File Type Classification -----'
+          file --dereference --brief -- "$1"
+        '';
     in pkgs.symlinkJoin {
       inherit name;
       paths = [ script ] ++ buildInputs;
@@ -47,7 +103,19 @@ let
         buildInputs = with pkgs; [
           ueberzug
         ];
-        script = pkgs.writeShellScriptBin name (builtins.readFile ./lf-cleaner);
+        script = pkgs.writeShellScriptBin name ''
+          ID="lf-preview"
+          [ -p "$FIFO_UEBERZUG" ] || exit 1
+
+          case "''${1:-clear}" in
+              draw)
+                  {   printf '{ "action": "add", "identifier": "%s", "path": "%s",' "$ID" "$2"
+                      printf '"width": %d, "height": %d, "x": %d, "y": %d }\n' "$3" "$4" "$5" "$6"
+                  } > "$FIFO_UEBERZUG" ;;
+              clear|*)
+                  printf '{ "action": "remove", "identifier": "%s" }\n' "$ID" > "$FIFO_UEBERZUG" ;;
+          esac
+        '';
     in pkgs.symlinkJoin {
       inherit name;
       paths = [ script ] ++ buildInputs;
@@ -80,7 +148,7 @@ let
               start_ueberzug
           fi
 
-          exec lf "$@"
+          exec ${pkgs.lf}/bin/lf "$@"
         '';
     in pkgs.symlinkJoin {
       inherit name;
