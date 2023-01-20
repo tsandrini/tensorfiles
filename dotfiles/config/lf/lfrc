@@ -52,8 +52,8 @@ map x cut
 map y copy
 map <enter> open
 map r rename
-map H top
-map L bottom
+map gg top
+map G bottom
 map R reload
 map C clear
 map U unselect

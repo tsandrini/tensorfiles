@@ -22,11 +22,62 @@ in {
   home-manager.users.${user} = {
 
     programs.lf = {
-      enable = true;
+      enable = _ true;
+      settings = {
+        ifs = _ "\n";
+        filesep = _ "\n";
+        icons = _ true;
+        ignorecase = _ true;
+        drawbox = _ true;
+      };
+      commands = {
+        mkdir = "%mkdir -p \"$1\"";
+        touch = "%touch \"$1\"";
+        open = ''
+          ''${{
+              case $(file --mime-type "$f" -bL) in
+                  text/*|application/json) $EDITOR "$f";;
+                  *) xdg-open "$f" ;;
+              esac
+             }}
+         '';
+        unarchive = ''
+          ''${{
+            case "$f" in
+                *.zip) unzip "$f" ;;
+                *.tar.gz) tar -xzvf "$f" ;;
+                *.tar.bz2) tar -xjvf "$f" ;;
+                *.tar) tar -xvf "$f" ;;
+                *) echo "Unsupported format" ;;
+            esac
+            }}
+        '';
+        zip = "%zip -r \"$f\" \"$f\"";
+        tar = "%tar cvf \"$f.tar\" \"$f\"";
+        targz = "%tar cvzf \"$f.tar.gz\" \"$f\"";
+        tarbz2 = "%tar cjvf \"$f.tar.bz2\" \"$f\"";
+      };
       keybindings = {
         m = null;
         o = null;
+        n = null;
+        "'" = null;
+        d = null;
+        c = null;
+        e = null;
+        f = null;
         "." = "set hidden!";
+        dD = "delete";
+        p = "paste";
+        x = "cut";
+        y = "copy";
+        "<enter>" = "open";
+        r = _ "rename";
+        gg = _ "top";
+        G = _ "bottom";
+        R = _ "reload";
+        C = "clear";
+        U = "unselect";
       };
     };
   };
