@@ -37,7 +37,6 @@ let
           python39Packages.docx2txt
           transmission
         ];
-        # script = pkgs.writeShellScriptBin name (builtins.readFile ./lf-previewer);
         script = pkgs.writeShellScriptBin name ''
           case ''${1##*.} in
               a|ace|alz|apk|arc|arj|bz|bz2|cab|cpio|deb|gz|iso|jar|lha|lz|lzh|lzma|lzo|\
@@ -153,13 +152,14 @@ let
     in pkgs.symlinkJoin {
       inherit name;
       paths = [ script pkgs.lf ] ++ buildInputs;
+      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
     };
 
 in {
 
   home-manager.users.${user} = {
 
-    home.file.".config/lf/icons".source = ./icons;
+    home.file.".config/lf/icons".source = _ ./icons;
 
     programs.lf = {
       enable = _ true;
@@ -167,7 +167,7 @@ in {
       # inject the package into $PATH thanks to the wrapper
       #
       # previewer.source = ./lf-previewer;
-      package = tensorlf;
+      package = _ tensorlf;
       settings = {
         ifs = _ "\\n";
         filesep = _ "\\n";
@@ -175,14 +175,14 @@ in {
         ignorecase = _ true;
         drawbox = _ true;
       };
-      extraConfig = ''
+      extraConfig = lib.mkBefore ''
         set cleaner lf-cleaner
         set previewer lf-previewer
       '';
       commands = {
-        mkdir = "%mkdir -p \"$1\"";
-        touch = "%touch \"$1\"";
-        open = ''
+        mkdir = _ "%mkdir -p \"$1\"";
+        touch = _ "%touch \"$1\"";
+        open = _ ''
           ''${{
               case $(file --mime-type "$f" -bL) in
                   text/*|application/json) $EDITOR "$f";;
@@ -190,7 +190,7 @@ in {
               esac
              }}
          '';
-        unarchive = ''
+        unarchive = _ ''
           ''${{
             case "$f" in
                 *.zip) unzip "$f" ;;
@@ -201,31 +201,31 @@ in {
             esac
             }}
         '';
-        zip = "%zip -r \"$f\" \"$f\"";
-        tar = "%tar cvf \"$f.tar\" \"$f\"";
-        targz = "%tar cvzf \"$f.tar.gz\" \"$f\"";
-        tarbz2 = "%tar cjvf \"$f.tar.bz2\" \"$f\"";
+        zip = _ "%zip -r \"$f\" \"$f\"";
+        tar = _ "%tar cvf \"$f.tar\" \"$f\"";
+        targz = _ "%tar cvzf \"$f.tar.gz\" \"$f\"";
+        tarbz2 = _ "%tar cjvf \"$f.tar.bz2\" \"$f\"";
       };
       keybindings = {
-        m = null;
-        o = null;
-        n = null;
-        d = null;
-        c = null;
-        e = null;
-        f = null;
-        "." = "set hidden!";
-        dD = "delete";
-        p = "paste";
-        x = "cut";
-        y = "copy";
-        "<enter>" = "open";
+        m = _ null;
+        o = _ null;
+        n = _ null;
+        d = _ null;
+        c = _ null;
+        e = _ null;
+        f = _ null;
+        "." = _ "set hidden!";
+        dD = _ "delete";
+        p = _ "paste";
+        x = _ "cut";
+        y = _ "copy";
+        "<enter>" = _ "open";
         r = _ "rename";
         gg = _ "top";
         G = _ "bottom";
         R = _ "reload";
-        C = "clear";
-        U = "unselect";
+        C = _ "clear";
+        U = _ "unselect";
       };
     };
   };
