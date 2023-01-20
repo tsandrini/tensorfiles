@@ -17,63 +17,99 @@
 
 let
   _ = lib.mkOverride 500;
-  tensorlf = pkgs.writeShellScriptBin "lf" ''
-    start_ueberzug() {
-        mkfifo "$FIFO_UEBERZUG" || exit 1
-        ${pkgs.ueberzug}/bin/ueberzug layer --parser json --silent < "$FIFO_UEBERZUG" &
-        exec 3>"$FIFO_UEBERZUG"
-    }
 
-    stop_ueberzug() {
-        exec 3>&-
-        rm "$FIFO_UEBERZUG" > /dev/null 2>&1
-    }
+  lf-previewer =
+    let name = "lf-previewer";
+        buildInputs = with pkgs; [
+          lf-cleaner
+          ueberzug
+          mediainfo
+          file
+          libuchardet
+          highlight
+          libarchive
+          unrar
+          _7zz
+          odt2txt
+          w3m
+          lynx
+        ];
+        script = pkgs.writeShellScriptBin name (builtins.readFile ./lf-previewer);
+    in pkgs.symlinkJoin {
+      inherit name;
+      paths = [ script ] ++ buildInputs;
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+    };
 
-    if [ -n "$DISPLAY" ] && command -v ueberzug > /dev/null; then
-        export FIFO_UEBERZUG="/tmp/lf-ueberzug-''${PPID}"
-        trap stop_ueberzug EXIT QUIT INT TERM
-        start_ueberzug
-    fi
-    exec ${pkgs.lf}/bin/lf "$@"
-  '';
-  patchedlf = pkgs.symlinkJoin {
-    name = "lf";
-    paths = [ tensorlf pkgs.lf ];
-  };
-  lf-cleaner = ./lf-cleaner;
+  lf-cleaner =
+    let name = "lf-cleaner";
+        buildInputs = with pkgs; [
+          ueberzug
+        ];
+        script = pkgs.writeShellScriptBin name (builtins.readFile ./lf-cleaner);
+    in pkgs.symlinkJoin {
+      inherit name;
+      paths = [ script ] ++ buildInputs;
+      buildInputs = [ pkgs.makeWrapper ];
+      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+    };
+
+  tensorlf =
+    let name = "lf";
+        buildInputs = with pkgs; [
+          ueberzug
+          lf-previewer
+          lf-cleaner
+        ];
+        script = pkgs.writeShellScriptBin name ''
+          start_ueberzug() {
+              mkfifo "$FIFO_UEBERZUG" || exit 1
+              ueberzug layer --parser json --silent < "$FIFO_UEBERZUG" &
+              exec 3>"$FIFO_UEBERZUG"
+          }
+
+          stop_ueberzug() {
+              exec 3>&-
+              rm "$FIFO_UEBERZUG" > /dev/null 2>&1
+          }
+
+          if [ -n "$DISPLAY" ] && command -v ueberzug > /dev/null; then
+              export FIFO_UEBERZUG="/tmp/lf-ueberzug-''${PPID}"
+              trap stop_ueberzug EXIT QUIT INT TERM
+              start_ueberzug
+          fi
+
+          exec lf "$@"
+        '';
+    in pkgs.symlinkJoin {
+      inherit name;
+      paths = [ script pkgs.lf ] ++ buildInputs;
+    };
+
 in {
 
   home-manager.users.${user} = {
-
-    home.packages = with pkgs; [
-      patchedlf
-      ueberzug
-
-      # Preview libs
-      libarchive
-      unrar
-      _7zz
-      python310Packages.pdftotext
-      # TODO ods2text
-      w3m
-      lynx
-      mediainfo
-    ];
 
     home.file.".config/lf/icons".source = ./icons;
 
     programs.lf = {
       enable = _ true;
-      previewer.source = ./lf-previewer;
+      # Use `set previewer lf-previewer` instead since we can dynamically
+      # inject the package into $PATH thanks to the wrapper
+      #
+      # previewer.source = ./lf-previewer;
+      package = tensorlf;
       settings = {
-        ifs = _ "\n";
-        filesep = _ "\n";
+        ifs = _ "\\n";
+        filesep = _ "\\n";
         icons = _ true;
         ignorecase = _ true;
         drawbox = _ true;
       };
       extraConfig = ''
-        set cleaner ${lf-cleaner}
+        set cleaner lf-cleaner
+        set previewer lf-previewer
       '';
       commands = {
         mkdir = "%mkdir -p \"$1\"";
@@ -106,7 +142,6 @@ in {
         m = null;
         o = null;
         n = null;
-        "'" = null;
         d = null;
         c = null;
         e = null;
