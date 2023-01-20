@@ -152,6 +152,7 @@ let
     in pkgs.symlinkJoin {
       inherit name;
       paths = [ script pkgs.lf ] ++ buildInputs;
+      buildInputs = [ pkgs.makeWrapper ];
       postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
     };
 
