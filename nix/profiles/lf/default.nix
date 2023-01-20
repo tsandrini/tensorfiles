@@ -21,6 +21,8 @@ in {
 
   home-manager.users.${user} = {
 
+    home.file.".config/lf/icons".source = ./icons;
+
     programs.lf = {
       enable = _ true;
       settings = {
