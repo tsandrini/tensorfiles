@@ -12,7 +12,6 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-
 {
   description = "tsandrini's fully covariant tensorfiles";
 
@@ -27,54 +26,66 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
   };
 
-  outputs = { self, nixpkgs, home-manager, ... } @ inputs:
-    let
-      user = "tsandrini";
-      lib = nixpkgs.lib;
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    ...
+  } @ inputs: let
+    user = "tsandrini";
+    lib = nixpkgs.lib;
 
-      tensorlib = import ./lib {
-        inherit (nixpkgs) lib;
-        inherit inputs nixpkgs home-manager user;
-      };
+    tensorlib = import ./lib {
+      inherit (nixpkgs) lib;
+      inherit inputs nixpkgs home-manager user;
+    };
 
-      findModules = dir:
-        builtins.concatLists (builtins.attrValues (builtins.mapAttrs
-          (name: type:
-            if type == "regular" then [{
+    findModules = dir:
+      builtins.concatLists (builtins.attrValues (builtins.mapAttrs
+        (name: type:
+          if type == "regular"
+          then [
+            {
               name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
               value = import (dir + "/${name}");
-            }] else if (builtins.readDir (dir + "/${name}")) ? "default.nix" then [{
+            }
+          ]
+          else if (builtins.readDir (dir + "/${name}")) ? "default.nix"
+          then [
+            {
               inherit name;
               value = import (dir + "/${name}");
-            }] else
-              findModules (dir + "/${name}")) (builtins.readDir dir)));
+            }
+          ]
+          else findModules (dir + "/${name}")) (builtins.readDir dir)));
 
-      mkHost = name:
-        let
-          system = lib.removeSuffix "\n" (builtins.readFile (./hosts + "/${name}/system"));
-        in lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit inputs user;
-            host.hostName = name;
-          };
-          modules = [
-            { nixpkgs.config.allowUnfree = true; }
-            { networking.hostName = name; }
-            ( ./hosts + "/${name}" )
-          ];
-        };
+    mkHost = name: let
+      system = lib.removeSuffix "\n" (builtins.readFile (./hosts + "/${name}/system"));
     in
-      {
-        nixosModules = builtins.listToAttrs (findModules ./modules);
-
-        nixosProfiles = builtins.listToAttrs (findModules ./profiles);
-
-        nixosRoles = import ./roles;
-
-        nixosConfigurations = (
-          let hosts = builtins.attrNames (builtins.readDir ./hosts);
-          in lib.genAttrs hosts mkHost
-        );
+      lib.nixosSystem {
+        inherit system;
+        specialArgs = {
+          inherit inputs user;
+          host.hostName = name;
+        };
+        modules = [
+          {nixpkgs.config.allowUnfree = true;}
+          {networking.hostName = name;}
+          (./hosts + "/${name}")
+        ];
       };
+  in {
+    nixosModules = builtins.listToAttrs (findModules ./modules);
+
+    nixosProfiles = builtins.listToAttrs (findModules ./profiles);
+
+    nixosRoles = import ./roles;
+
+    nixosConfigurations = (
+      let
+        hosts = builtins.attrNames (builtins.readDir ./hosts);
+      in
+        lib.genAttrs hosts mkHost
+    );
+  };
 }

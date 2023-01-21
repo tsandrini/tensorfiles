@@ -12,10 +12,14 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-
-{ lib, inputs, nixpkgs, home-manager,  user, ... }:
-
-let
+{
+  lib,
+  inputs,
+  nixpkgs,
+  home-manager,
+  user,
+  ...
+}: let
   system = "x86_64-linux";
   pkgs = import nixpkgs {
     inherit system;
@@ -23,7 +27,6 @@ let
   };
   lib = nixpkgs.lib;
 in {
-
   spinorbundle = lib.nixosSystem {
     inherit system;
     specialArgs = {
@@ -34,11 +37,12 @@ in {
       };
     };
     modules = [
-      { networking.hostName = "spinorbundle"; }
+      {networking.hostName = "spinorbundle";}
       ./spinorbundle
       ./configuration.nix
 
-      home-manager.nixosModules.home-manager {
+      home-manager.nixosModules.home-manager
+      {
         home-manager.useGlobalPkgs = true;
         home-manager.useUserPackages = true;
         home-manager.extraSpecialArgs = {
@@ -50,12 +54,10 @@ in {
         };
         home-manager.users.${user} = {
           # imports = [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)];
-          imports = [(import ../modules)] ++ [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)]
-          ;
+          imports =
+            [(import ../modules)] ++ [(import ./home.nix)] ++ [(import ./spinorbundle/home.nix)];
         };
       }
-
     ];
   };
-
 }

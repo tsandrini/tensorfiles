@@ -12,22 +12,23 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-
-{ inputs, user, ... }:
-
 {
+  inputs,
+  user,
+  ...
+}: {
   imports = with inputs.self; [
-    inputs.home-manager.nixosModules.home-manager {
+    inputs.home-manager.nixosModules.home-manager
+    {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
     }
-    { system.stateVersion = "23.05"; }
+    {system.stateVersion = "23.05";}
 
     # -----------
     # | MODULES |
     # -----------
     # nixosModules.hello
-
 
     # ------------
     # | PROFILES |

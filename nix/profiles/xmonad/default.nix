@@ -12,13 +12,16 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-
-{ config, pkgs, lib, inputs, user, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  user,
+  ...
+}: let
   _ = lib.mkOverride 500;
 in {
-
   # services.getty.autologinUser = _ user;
 
   services.xserver = {
@@ -61,7 +64,6 @@ in {
         config = _ ./xmonad.hs;
         enableContribAndExtras = _ true;
       };
-
     };
   };
 }

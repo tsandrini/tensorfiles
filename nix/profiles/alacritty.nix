@@ -12,13 +12,16 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-
-{ config, pkgs, lib, inputs, user, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  user,
+  ...
+}: let
   _ = lib.mkOverride 500;
 in {
-
   home-manager.users.${user} = {
     home.packages = with pkgs; [
       meslo-lgs-nf
@@ -40,25 +43,50 @@ in {
         bell.duration = 0;
         cursor.style.shape = "Block";
         key_bindings = [
-          { key = "V"; mods = "Alt"; action = "Paste"; }
-          { key = "C"; mods = "Alt"; action = "Copy"; }
-          { key = "L"; mods = "Control"; action = "ClearLogNotice"; }
-          { key = "L"; mods = "Control"; mode = "~Vi|~Search"; chars = "\x0c"; }
           {
-            key = "PageUp"; mods = "Shift";
-            mode = "~Alt"; action = "ScrollPageUp";
+            key = "V";
+            mods = "Alt";
+            action = "Paste";
           }
           {
-            key = "PageDown"; mods = "Shift";
-            mode = "~Alt"; action = "ScrollPageDown";
+            key = "C";
+            mods = "Alt";
+            action = "Copy";
           }
           {
-            key = "Home"; mods = "Shift";
-            mode = "~Alt"; action = "ScrollToTop";
+            key = "L";
+            mods = "Control";
+            action = "ClearLogNotice";
           }
           {
-            key = "Home"; mods = "Shift";
-            mode = "~Alt"; action = "ScrollToTop";
+            key = "L";
+            mods = "Control";
+            mode = "~Vi|~Search";
+            chars = "\x0c";
+          }
+          {
+            key = "PageUp";
+            mods = "Shift";
+            mode = "~Alt";
+            action = "ScrollPageUp";
+          }
+          {
+            key = "PageDown";
+            mods = "Shift";
+            mode = "~Alt";
+            action = "ScrollPageDown";
+          }
+          {
+            key = "Home";
+            mods = "Shift";
+            mode = "~Alt";
+            action = "ScrollToTop";
+          }
+          {
+            key = "Home";
+            mods = "Shift";
+            mode = "~Alt";
+            action = "ScrollToTop";
           }
         ];
       };

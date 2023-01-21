@@ -12,11 +12,15 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-
-{ config, pkgs, lib, inputs, user, ... }:
-
-with lib;
-let
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  user,
+  ...
+}:
+with lib; let
   cfg = config.tensormodules.boot;
 in {
   options.tensormodules.boot = with types; {
@@ -50,8 +54,9 @@ in {
   config = mkIf cfg.enable {
     assertions = [
       {
-        assertion = (!cfg.systemd || !cfg.grub) &&
-                    (cfg.systemd || cfg.grub);
+        assertion =
+          (!cfg.systemd || !cfg.grub)
+          && (cfg.systemd || cfg.grub);
         message = "(Exactly) one bootloader needs to be provided";
       }
     ];
@@ -68,7 +73,7 @@ in {
       configurationLimit = cfg.configurationLimit;
       version = 2;
 
-      devices = [ "nodev" ];
+      devices = ["nodev"];
       efiSupport = true;
       useOSProber = true;
     };
@@ -77,16 +82,16 @@ in {
     boot.loader.timeout = 1;
   };
 }
+# boot.loader.efi = {
+#   canTouchEfiVariables = true;
+#   efiSysMountPoint = "/boot";
+# };
+# boot.loader.grub = {
+#   enable = true;
+#   version = 2;
+#   devices = [ "nodev" ];
+#   efiSupport = true;
+#   useOSProber = true;
+#   configurationLimit = 2;
+# };
 
-  # boot.loader.efi = {
-  #   canTouchEfiVariables = true;
-  #   efiSysMountPoint = "/boot";
-  # };
-  # boot.loader.grub = {
-  #   enable = true;
-  #   version = 2;
-  #   devices = [ "nodev" ];
-  #   efiSupport = true;
-  #   useOSProber = true;
-  #   configurationLimit = 2;
-  # };
