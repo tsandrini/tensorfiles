@@ -50,6 +50,7 @@ in {
       haskellPackages.xmobar
       pywal
       alacritty
+      i3lock-fancy-rapid
     ];
 
     xsession = {
