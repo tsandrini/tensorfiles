@@ -1,4 +1,4 @@
-# --- profiles/xmonad/default.nix
+# --- profiles/dmenu-pywaled.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -21,48 +21,28 @@
   ...
 }: let
   _ = lib.mkOverride 500;
-in {
-  # services.getty.autologinUser = _ user;
-
-  services.xserver = {
-    enable = true;
-    libinput.enable = _ true;
-
-    displayManager = {
-      defaultSession = _ "home-manager";
-      lightdm.enable = _ false;
-      startx.enable = _ true;
-    };
-
-    desktopManager.session = [
-      {
-        name = "home-manager";
-        start = ''
-          ${pkgs.runtimeShell} $HOME/.xinitrc &
-          waitPID=$!
-        '';
-      }
-    ];
-  };
-
-  home-manager.users.${user} = {
-    home.packages = with pkgs; [
-      haskellPackages.xmobar
+  dmenu-pywaled = let
+    name = "dmenu_run";
+    buildInputs = with pkgs; [
       pywal
-      alacritty
     ];
+    script = pkgs.writeShellScriptBin name ''
+      . "''${HOME}/.cache/wal/colors.sh"
 
-    xsession = {
-      enable = _ true;
-      scriptPath = _ ".xinitrc";
-
-      # TODO should investigate more probably
-      windowManager.command = lib.mkOverride 50 "exec xmonad";
-      windowManager.xmonad = {
-        enable = _ true;
-        config = _ ./xmonad.hs;
-        enableContribAndExtras = _ true;
-      };
+      dmenu_run -nb "$color0" -nf "$color15" -sb "$color1" -sf "$color15"
+    '';
+  in
+    pkgs.symlinkJoin {
+      inherit name;
+      paths = [script pkgs.dmenu-rs] ++ buildInputs;
+      buildInputs = [pkgs.makeWrapper];
+      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
     };
+in {
+  home-manager.users.${user} = {
+    # home.file.".config/lf/icons".source = _ ./icons;
+    home.packages = with pkgs; [
+      dmenu-pywaled
+    ];
   };
 }

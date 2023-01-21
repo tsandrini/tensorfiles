@@ -40,5 +40,6 @@
     nixosProfiles.picom # TODO cleanup afterwards
     nixosProfiles.alacritty
     nixosProfiles.lf
+    nixosProfiles.dmenu-pywaled
   ];
 }
