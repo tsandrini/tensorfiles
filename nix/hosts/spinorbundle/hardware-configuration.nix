@@ -37,11 +37,12 @@
 
   boot.initrd.luks.devices."enc".device = "/dev/disk/by-uuid/a34dca7f-da86-485d-85a6-26c6fb945d77";
 
-  fileSystems."/home" = {
-    device = "/dev/disk/by-uuid/038653da-cdc9-4501-b33e-6bd34872fc70";
-    fsType = "btrfs";
-    options = ["subvol=home" "compress=zstd" "noatime"];
-  };
+  # Note: not using home anymore
+  # fileSystems."/home" = {
+  #   device = "/dev/disk/by-uuid/038653da-cdc9-4501-b33e-6bd34872fc70";
+  #   fsType = "btrfs";
+  #   options = ["subvol=home" "compress=zstd" "noatime"];
+  # };
 
   fileSystems."/nix" = {
     device = "/dev/disk/by-uuid/038653da-cdc9-4501-b33e-6bd34872fc70";
