@@ -18,12 +18,11 @@
   ...
 }: {
   imports = with inputs.self; [
+    # --------------------
+    # | EXTERNAL MODULES |
+    # --------------------
     inputs.home-manager.nixosModules.home-manager
     inputs.impermanence.nixosModules.impermanence
-    {
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-    }
     {system.stateVersion = "23.05";}
 
     # -----------
@@ -35,6 +34,11 @@
     # | PROFILES |
     # ------------
     nixosProfiles.home-manager
+    nixosProfiles.tty
+    nixosProfiles.system-maintenance
+    nixosProfiles.persist-btrfs
+    nixosProfiles.localization
+    nixosProfiles.networking-nm
     nixosProfiles.zsh
     nixosProfiles.neovim
     nixosProfiles.xmonad

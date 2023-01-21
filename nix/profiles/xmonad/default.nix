@@ -47,6 +47,7 @@ in {
 
   home-manager.users.${user} = {
     home.packages = with pkgs; [
+      nerdfonts
       haskellPackages.xmobar
       pywal
       alacritty

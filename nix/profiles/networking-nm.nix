@@ -1,4 +1,4 @@
-# --- profiles/home-manager.nix
+# --- profiles/networking-nm.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,38 +22,17 @@
 }: let
   _ = lib.mkOverride 500;
 in {
-  home-manager.useGlobalPkgs = _ true;
-  home-manager.useUserPackages = _ true;
-
-  users.users.${user} = {
-    isNormalUser = _ true;
-    extraGroups = ["wheel" "video" "audio" "camera" "networkmanager" "lightdm"];
-    home = _ "/home/${user}";
-    description = _ "Hello, I really enjoy hummus with carrots.";
-  };
-
-  home-manager.users.${user}.home = {
-    username = _ "${user}";
-    homeDirectory = _ "/home/${user}";
-    stateVersion = "23.05";
-  };
+  networking.networkmanager.enable = true;
 
   environment = lib.mkIf (config.environment ? persistence) {
-    persistence."/persist".users.${user} = {
+    persistence."/persist" = {
       directories = [
-        "Downloads"
-        "FiberBundle"
-        "org"
-        "Projects"
-        "ZoteroStorage"
-        {
-          directory = ".gnupg";
-          mode = "0700";
-        }
-        {
-          directory = ".ssh";
-          mode = "0700";
-        }
+        "/etc/NetworkManager/system-connections"
+      ];
+      files = [
+        "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
+        "/var/lib/NetworkManager/seen-bssids"
+        "/var/lib/NetworkManager/timestamps"
       ];
     };
   };
