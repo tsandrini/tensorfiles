@@ -22,21 +22,24 @@
 }: let
   _ = lib.mkOverride 500;
 in {
-  environment = lib.mkIf (config.environment ? persistence) {
-    persistence."/persist" = {
-      hideMounts = true;
+  environment.persistence = lib.mkIf (config.environment ? persistence) {
+    "/persist" = {
+      hideMounts = _ true;
       directories = [
         "/etc/tensorfiles"
         "/var/lib/bluetooth"
         "/var/lib/systemd/coredump"
       ];
       files = [
-        "/etc/passwd"
-        "/etc/shadow"
         "/etc/adjtime"
         "/etc/machine-id"
       ];
     };
+  };
+
+  environment.etc = {
+    passwd.source = _ "/persist/etc/passwd"; # TODO agenix?
+    shadow.source = _ "/persist/etc/shadow"; # TODO
   };
 
   security.sudo.extraConfig = _ ''
@@ -44,7 +47,7 @@ in {
     Defaults lecture = never
   '';
 
-  boot.initrd.postDeviceCommands = pkgs.lib.mkBefore ''
+  boot.initrd.postDeviceCommands = lib.mkBefore ''
     mkdir -p /mnt
 
     # We first mount the btrfs root to /mnt

@@ -38,13 +38,13 @@ in {
     stateVersion = "23.05";
   };
 
-  environment = lib.mkIf (config.environment ? persistence) {
-    persistence."/persist".users.${user} = {
+  environment.persistence = lib.mkIf (config.environment ? persistence) {
+    "/persist".users.${user} = {
       directories = [
         "Downloads"
         "FiberBundle"
-        "org"
-        "Projects"
+        "OrgBundle"
+        "ProjectBundle"
         "ZoteroStorage"
         {
           directory = ".gnupg";
