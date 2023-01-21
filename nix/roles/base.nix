@@ -19,6 +19,7 @@
 }: {
   imports = with inputs.self; [
     inputs.home-manager.nixosModules.home-manager
+    inputs.impermanence.nixosModules.impermanence
     {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;

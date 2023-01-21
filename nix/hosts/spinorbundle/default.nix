@@ -128,24 +128,54 @@
     '';
   };
 
+  environment.persistence."/persist" = {
+    hideMounts = true;
+    directories = [
+      "/etc/tensorfiles"
+      "/var/lib/bluetooth"
+      "/var/lib/systemd/coredump"
+      "/etc/NetworkManager/system-connections"
+    ];
+    files = [
+      "/etc/passwd"
+      "/etc/shadow"
+      "/etc/adjtime"
+      "/etc/machine-id"
+      "/var/lib/NetworkManager/secret_key"
+      "/var/lib/NetworkManager/seen-bssids"
+      "/var/lib/NetworkManager/timestamps"
+    ];
+    users.${user} = {
+      directories = [
+        "Downloads"
+        "FiberBundle"
+        "org"
+        "Projects"
+        "ZoteroStorage"
+        { directory = ".gnupg"; mode = "0700"; }
+        { directory = ".ssh"; mode = "0700"; }
+      ];
+    };
+  };
+
   # The whole section below handles opt-in state for /
   # which was inspired by the following blog post
   # https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html
   # ---------------------------------------------------
-  environment.etc = {
-    passwd.source = "/persist/etc/passwd"; # TODO temporary, moving to agenix
-    shadow.source = "/persist/etc/shadow"; # TODO
-    nixos.source = "/persist/etc/tensorfiles/nix"; # TODO the nix folder will be removed
-    adjtime.source = "/persist/etc/adjtime";
-    machine-id.source = "/persist/etc/machine-id";
-    "NetworkManager/system-connections".source = "/persist/etc/NetworkManager/system-connections";
-  };
+  # environment.etc = {
+  #   passwd.source = "/persist/etc/passwd"; # TODO temporary, moving to agenix
+  #   shadow.source = "/persist/etc/shadow"; # TODO
+  #   nixos.source = "/persist/etc/tensorfiles/nix"; # TODO the nix folder will be removed
+  #   adjtime.source = "/persist/etc/adjtime";
+  #   machine-id.source = "/persist/etc/machine-id";
+  #   "NetworkManager/system-connections".source = "/persist/etc/NetworkManager/system-connections";
+  # };
 
-  systemd.tmpfiles.rules = [
-    "L /var/lib/NetworkManager/secret_key - - - - /persist/var/lib/NetworkManager/secret_key"
-    "L /var/lib/NetworkManager/seen-bssids - - - - /persist/var/lib/NetworkManager/seen-bssids"
-    "L /var/lib/NetworkManager/timestamps - - - - /persist/var/lib/NetworkManager/timestamps"
-  ];
+  # systemd.tmpfiles.rules = [
+  #   "L /var/lib/NetworkManager/secret_key - - - - /persist/var/lib/NetworkManager/secret_key"
+  #   "L /var/lib/NetworkManager/seen-bssids - - - - /persist/var/lib/NetworkManager/seen-bssids"
+  #   "L /var/lib/NetworkManager/timestamps - - - - /persist/var/lib/NetworkManager/timestamps"
+  # ];
 
   security.sudo.extraConfig = ''
     # rollback results in sudo lectures after each reboot
