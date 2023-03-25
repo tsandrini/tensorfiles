@@ -12,14 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  inputs,
-  user,
-  lib,
-  ...
-}: {
+{ config, pkgs, inputs, user, lib, system, ... }: {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -46,15 +39,13 @@
     usbutils
     wget
     vim
+    inputs.agenix.defaultPackage.${system}
   ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
-  home-manager.users.${user} = {
-    home.packages = with pkgs; [
-    ];
-  };
+  home-manager.users.${user} = { home.packages = with pkgs; [ ]; };
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -76,7 +67,7 @@
   services.tlp.enable = true;
   services.openssh = {
     enable = true;
-    passwordAuthentication = true;
+    settings.PasswordAuthentication = true;
   };
 
   hardware.enableAllFirmware = true;

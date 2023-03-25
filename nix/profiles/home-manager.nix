@@ -12,38 +12,43 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
-  _ = lib.mkOverride 500;
+{ config, pkgs, lib, inputs, user, ... }:
+let _ = lib.mkOverride 500;
 in {
   home-manager.useGlobalPkgs = _ true;
   home-manager.useUserPackages = _ true;
 
   users.users.${user} = {
     isNormalUser = _ true;
-    extraGroups = ["wheel" "video" "audio" "camera" "networkmanager" "lightdm"];
+    extraGroups =
+      [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
     home = _ "/home/${user}";
     description = _ "Hello, I really enjoy hummus with carrots.";
+    passwordFile = _ config.age.secrets."passwords/users/tsandrini".path;
   };
 
-  home-manager.users.${user}.home = {
-    username = _ "${user}";
-    homeDirectory = _ "/home/${user}";
-    stateVersion = "23.05";
+  users.users.root = {
+    passwordFile = _ config.age.secrets."passwords/users/root".path;
   };
+
+  home-manager.users.${user} = {
+    home = {
+      username = _ "${user}";
+      homeDirectory = _ "/home/${user}";
+      stateVersion = "23.05";
+    };
+  };
+
+  age.secrets."passwords/users/tsandrini".file =
+    ../secrets/passwords/users/tsandrini.age;
+  age.secrets."passwords/users/root".file = ../secrets/passwords/users/root.age;
 
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {
       directories = [
         "Downloads"
         "FiberBundle"
-        "OrgBundle"
+        "org"
         "ProjectBundle"
         "ZoteroStorage"
         {

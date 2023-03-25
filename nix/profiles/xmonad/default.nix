@@ -12,15 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
-  _ = lib.mkOverride 500;
+{ config, pkgs, lib, inputs, user, ... }:
+let _ = lib.mkOverride 500;
 in {
   # services.getty.autologinUser = _ user;
 
@@ -34,15 +27,13 @@ in {
       startx.enable = _ true;
     };
 
-    desktopManager.session = [
-      {
-        name = "home-manager";
-        start = ''
-          ${pkgs.runtimeShell} $HOME/.xinitrc &
-          waitPID=$!
-        '';
-      }
-    ];
+    desktopManager.session = [{
+      name = "home-manager";
+      start = ''
+        ${pkgs.runtimeShell} $HOME/.xinitrc &
+        waitPID=$!
+      '';
+    }];
   };
 
   home-manager.users.${user} = {
@@ -52,6 +43,7 @@ in {
       pywal
       alacritty
       i3lock-fancy-rapid
+      autorandr
     ];
 
     xsession = {

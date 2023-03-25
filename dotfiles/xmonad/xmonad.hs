@@ -32,6 +32,7 @@ import XMonad.Hooks.ManageHelpers
     isFullscreen,
   )
 import XMonad.Layout.GridVariants (Grid (Grid))
+import XMonad.Layout.IndependentScreens
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.LimitWindows (limitWindows)
 import XMonad.Layout.Magnifier
@@ -234,7 +235,7 @@ myKeys colors =
     ("<XF86AudioNext>", spawn "playerctl next"),
     ("<XF86AudioPlay>", spawn "playerctl play-pause"),
     ("<XF86AudioStop>", spawn "playerctl stop"),
-    ("<XF86Display>", spawn "arandr"),
+    ("<XF86Display>", spawn "autorandr --cycle"),
     -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
     -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),
     ("<Print>", spawn "xfce4-screenshooter")
@@ -266,8 +267,10 @@ toCzech = \ks -> fromMaybe ks (M.lookup ks cz)
 
 main :: IO ()
 main = do
+  numScreens <- countScreens
   colors <- getWalColors
-  xmproc <- spawnPipe "xmobar $HOME/.config/xmobar/xmobarrc"
+  -- xmproc <- spawnPipe "xmobar $HOME/.config/xmobar/xmobarrc"
+  xmprocs <- mapM (\i -> spawnPipe $ "xmobar $HOME/.config/xmobar/xmobarrc -x " ++ show i) [0 .. numScreens - 1]
   xmonad $
     ewmh
       def
@@ -283,18 +286,36 @@ main = do
           normalBorderColor = colors !! 10,
           focusedBorderColor = colors !! 12,
           logHook =
-            dynamicLogWithPP $
-              xmobarPP
-                { ppOutput = hPutStrLn xmproc,
-                  ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
-                  ppVisible = xmobarColor (colors !! 13) "" . clickable,
-                  ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
-                  ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
-                  ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
-                  ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
-                  ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
-                  -- , ppExtras = [windowCount],
-                  ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
-                }
+            mapM_
+              ( \handle ->
+                  dynamicLogWithPP $
+                    xmobarPP
+                      { ppOutput = hPutStrLn handle,
+                        ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
+                        ppVisible = xmobarColor (colors !! 13) "" . clickable,
+                        ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
+                        ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
+                        ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
+                        ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
+                        ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
+                        -- , ppExtras = [windowCount],
+                        ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
+                      }
+              )
+              xmprocs
+              -- logHook =
+              --   dynamicLogWithPP $
+              --     xmobarPP
+              -- { ppOutput = hPutStrLn xmprocs,
+              --   ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
+              --   ppVisible = xmobarColor (colors !! 13) "" . clickable,
+              --   ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
+              --   ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
+              --   ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
+              --   ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
+              --   ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
+              --   -- , ppExtras = [windowCount],
+              --   ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
+              -- }
         }
       `additionalKeysP` myKeys colors

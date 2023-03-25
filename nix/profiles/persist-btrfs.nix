@@ -12,15 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
-  _ = lib.mkOverride 500;
+{ config, pkgs, lib, inputs, user, ... }:
+let _ = lib.mkOverride 500;
 in {
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist" = {
@@ -29,18 +22,19 @@ in {
         "/etc/tensorfiles"
         "/var/lib/bluetooth"
         "/var/lib/systemd/coredump"
+        {
+          directory = "/root/.ssh";
+          mode = "0700";
+        }
       ];
-      files = [
-        "/etc/adjtime"
-        "/etc/machine-id"
-      ];
+      files = [ "/etc/adjtime" "/etc/machine-id" ];
     };
   };
 
-  environment.etc = {
-    passwd.source = _ "/persist/etc/passwd"; # TODO agenix?
-    shadow.source = _ "/persist/etc/shadow"; # TODO
-  };
+  # environment.etc = {
+  #   passwd.source = _ "/persist/etc/passwd"; # TODO agenix?
+  #   shadow.source = _ "/persist/etc/shadow"; # TODO
+  # };
 
   security.sudo.extraConfig = _ ''
     # rollback results in sudo lectures after each reboot

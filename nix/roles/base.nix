@@ -23,6 +23,7 @@
     # --------------------
     inputs.home-manager.nixosModules.home-manager
     inputs.impermanence.nixosModules.impermanence
+    inputs.agenix.nixosModules.default
     {system.stateVersion = "23.05";}
 
     # -----------
@@ -33,18 +34,21 @@
     # ------------
     # | PROFILES |
     # ------------
-    nixosProfiles.home-manager
+    nixosProfiles.agenix
     nixosProfiles.tty
     nixosProfiles.system-maintenance
     nixosProfiles.persist-btrfs
     nixosProfiles.localization
     nixosProfiles.networking-nm
-    nixosProfiles.zsh
-    nixosProfiles.neovim
+    nixosProfiles.home-manager
     nixosProfiles.xmonad
-    nixosProfiles.picom # TODO cleanup afterwards
-    nixosProfiles.alacritty
-    nixosProfiles.lf
-    nixosProfiles.dmenu-pywaled
+    # nixosProfiles.home-xdg
+    nixosProfiles.home-zsh
+    nixosProfiles.home-neovim
+    nixosProfiles.home-pywal
+    nixosProfiles.home-picom # TODO cleanup afterwards
+    nixosProfiles.home-alacritty
+    nixosProfiles.home-lf
+    nixosProfiles.home-dmenu-pywaled
   ];
 }

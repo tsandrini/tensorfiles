@@ -12,29 +12,13 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
-  _ = lib.mkOverride 500;
+{ config, pkgs, lib, inputs, user, ... }:
+let _ = lib.mkOverride 500;
 in {
   users.defaultUserShell = _ pkgs.zsh;
 
   home-manager.users.${user} = {
-    home.packages = with pkgs; [
-      bat
-      exa
-      fd
-      fzf
-      jq
-      ripgrep
-      tldr
-      macchina
-    ];
+    home.packages = with pkgs; [ bat exa fd fzf jq ripgrep tldr nitch ];
 
     programs.zsh = {
       enable = _ true;
@@ -59,27 +43,24 @@ in {
       ];
       # TODO v6.1.7 doesnt work (wait for new one?)
       loginExtra = _ ''
-        macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')
+        nitch
       '';
       oh-my-zsh = {
         enable = _ true;
-        plugins = [
-          "git"
-          "git-flow"
-          "colorize"
-          "colored-man-pages"
-        ];
+        plugins = [ "git" "git-flow" "colorize" "colored-man-pages" ];
       };
       shellAliases = {
         ls = _ "exa";
-        ll = _ "exa -F --icons --group-directories-first -la --git --header --created --modified";
-        tree = _ "exa -F --icons --group-directories-first -la --git --header --created --modified -T";
+        ll = _
+          "exa -F --icons --group-directories-first -la --git --header --created --modified";
+        tree = _
+          "exa -F --icons --group-directories-first -la --git --header --created --modified -T";
         cat = _ "bat -p --wrap=never --paging=never";
         less = _ "bat --paging=always";
         find = _ "fd";
         fd = _ "fd";
         grep = _ "rg";
-        fetch = _ "macchina -KSU -i $(ip a | awk '/state UP/ {print $2}' | sed 's/.$//')";
+        fetch = _ "nitch";
       };
     };
   };

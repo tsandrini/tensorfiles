@@ -12,20 +12,16 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
-  _ = lib.mkOverride 500;
+{ config, pkgs, lib, inputs, user, ... }:
+let _ = lib.mkOverride 500;
 in {
   system.autoUpgrade = {
     enable = _ true;
+    # TODO set autoupgrade flake when ready
+    # flake  = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
     channel = _ "https://nixos.org/channels/nixos-unstable";
     allowReboot = _ true;
+    randomizedDelaySec = _ "5m";
     rebootWindow = {
       lower = _ "02:00";
       upper = _ "05:00";

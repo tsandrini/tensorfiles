@@ -25,68 +25,58 @@
 
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
+    agenix.url = "github:ryantm/agenix";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  } @ inputs: let
-    user = "tsandrini";
-    lib = nixpkgs.lib;
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+    let
+      user = "tsandrini";
+      lib = nixpkgs.lib;
 
-    tensorlib = import ./lib {
-      inherit (nixpkgs) lib;
-      inherit inputs nixpkgs home-manager user;
-    };
+      tensorlib = import ./lib {
+        inherit (nixpkgs) lib;
+        inherit inputs nixpkgs home-manager user;
+      };
 
-    findModules = dir:
-      builtins.concatLists (builtins.attrValues (builtins.mapAttrs
-        (name: type:
-          if type == "regular"
-          then [
-            {
+      findModules = dir:
+        builtins.concatLists (builtins.attrValues (builtins.mapAttrs
+          (name: type:
+            if type == "regular" then [{
               name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
               value = import (dir + "/${name}");
-            }
-          ]
-          else if (builtins.readDir (dir + "/${name}")) ? "default.nix"
-          then [
-            {
+            }] else if (builtins.readDir (dir + "/${name}"))
+            ? "default.nix" then [{
               inherit name;
               value = import (dir + "/${name}");
-            }
-          ]
-          else findModules (dir + "/${name}")) (builtins.readDir dir)));
+            }] else
+              findModules (dir + "/${name}")) (builtins.readDir dir)));
 
-    mkHost = name: let
-      system = lib.removeSuffix "\n" (builtins.readFile (./hosts + "/${name}/system"));
-    in
-      lib.nixosSystem {
-        inherit system;
-        specialArgs = {
-          inherit inputs user;
-          host.hostName = name;
+      mkHost = name:
+        let
+          system = lib.removeSuffix "\n"
+            (builtins.readFile (./hosts + "/${name}/system"));
+        in lib.nixosSystem {
+          inherit system;
+          specialArgs = {
+            inherit inputs user;
+            host.hostName = name;
+          };
+          modules = [
+            { nixpkgs.config.allowUnfree = true; }
+            { networking.hostName = name; }
+            (./hosts + "/${name}")
+          ];
         };
-        modules = [
-          {nixpkgs.config.allowUnfree = true;}
-          {networking.hostName = name;}
-          (./hosts + "/${name}")
-        ];
-      };
-  in {
-    nixosModules = builtins.listToAttrs (findModules ./modules);
+    in {
+      nixosModules = builtins.listToAttrs (findModules ./modules);
 
-    nixosProfiles = builtins.listToAttrs (findModules ./profiles);
+      nixosProfiles = builtins.listToAttrs (findModules ./profiles);
 
-    nixosRoles = import ./roles;
+      nixosRoles = import ./roles;
 
-    nixosConfigurations = (
-      let
-        hosts = builtins.attrNames (builtins.readDir ./hosts);
-      in
-        lib.genAttrs hosts mkHost
-    );
-  };
+      nixosConfigurations =
+        (let hosts = builtins.attrNames (builtins.readDir ./hosts);
+        in lib.genAttrs hosts mkHost);
+
+    };
 }

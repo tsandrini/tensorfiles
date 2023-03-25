@@ -33,7 +33,7 @@
   ;:neovim/nvim-lspconfig {}
   ;:glepnir/lspsaga.nvim {:mod :lspsaga}
   ;:folke/trouble.nvim {:mod :trouble}
-  :mcchrish/nnn.vim {:mod :nnn}
+  ;;:mcchrish/nnn.vim {:mod :nnn}
   :tpope/vim-fugitive {}
   ;:rhysd/git-messenger.vim {}
   :tpope/vim-surround {}

@@ -26,7 +26,7 @@ I use the following software
 | DM           | [[https://github.com/canonical/lightdm][LightDM]] or [[https://www.x.org/archive/X11R6.8.1/doc/xinit.1.html][xinit]]          |                                                       |
 | WM           | [[https://github.com/xmonad/xmonad][xmonad]] & [[https://github.com/jaor/xmobar][xmobar]]           | using anything else rn feels like stone age           |
 | Editor       | [[https://github.com/neovim/neovim][nvim]]                      | sorry Moolenaar, ideas great, not the managment tho   |
-| GUI Editor   | emacs & [[https://github.com/hlissner/doom-emacs][doom-emacs]]        | (using anything else rn feels like stone age)^2       |
+| IDE          | emacs & [[https://github.com/hlissner/doom-emacs][doom-emacs]]        | (using anything else rn feels like stone age)^2       |
 | Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                 | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
 | Browser      | firefox (dev-edition)     | qute is nice but not that secure unfortunately        |
 | App launcher | [[https://tools.suckless.org/dmenu/][dmenu]]                     | Rofi has a nice frontend, but is practically unusable |
@@ -43,7 +43,7 @@ software and once you get the hang of it you feel like you've really
 conquered the art of computer wizardry, however, it's so different from
 everything that is the current status quo of compsci and thus needs
 appropriate extensive documentation/tutorials/etc... which is, however,
-currently no the case.
+currently not the case.
 
 Due to this exact reason I'm leaving here a list of resources/flakes that
 helped me to (somewhat) learn the ways of nix (TODO: maybe write more? manual.org?)

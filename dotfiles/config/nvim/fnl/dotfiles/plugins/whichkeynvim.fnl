@@ -8,6 +8,8 @@
 (let [wk (require "which-key")]
   (wk.register {
     "<leader>" {"name" "+general"
+                "<leader>"  [ ":Telescope find_files<CR>" "find-files" ]
+                "/"  [ ":Telescope live_grep<CR>" "telescope-grep" ]
                 "r" [":noh<CR>" "highlights-remove"]
                 "h" ["<C-w>h" "window-left"]
                 "j" ["<C-w>j" "window-below"]
@@ -21,7 +23,7 @@
                 "n" [":tabnew<CR>" "tab-new"]
                 "u" [":UndotreeToggle<CR>" "undotree-toggle"]
                 "t" [":terminal<CR>" "terminal-open"]
-                "f" [":NnnPicker %:p:h<CR>" "nnn-open"]
+                ;"f" [":NnnPicker %:p:h<CR>" "nnn-open"]
                 "g" {"name" "+git"
                     "s" [":Git<CR>" "git-status"]
                     "b" [":Git blame<CR>" "git-blame"]

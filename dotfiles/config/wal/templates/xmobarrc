@@ -6,7 +6,7 @@ Config {{
        , alpha = 200 -- alpha in [0,255]
        , bgColor = "{background}"
        , fgColor = "{foreground}"
-       , position = Static {{ xpos = 0 , ypos = 0, width = 1920, height = 22 }}
+       , position = TopSize L 100 22,
        , iconRoot = "/home/tsandrini/.xmonad/xpm/"
 
        -- ~Layout~
