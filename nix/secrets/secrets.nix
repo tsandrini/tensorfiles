@@ -28,6 +28,8 @@ in {
   # ----------
   # | COMMON |
   # ----------
+  "common/passwords/users/tsandrini_default.age".publicKeys = hosts ++ users;
+  "common/passwords/users/root_default.age".publicKeys = hosts ++ users;
 
   # ---------
   # | HOSTS |

@@ -12,14 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  lib,
-  pkgs,
-  inputs,
-  user,
-  ...
-}: {
+{ config, lib, pkgs, inputs, user, ... }: {
   environment.systemPackages = with pkgs; [
     htop
     git
@@ -78,7 +71,8 @@
 
   users.users.${user} = {
     isNormalUser = true;
-    extraGroups = ["wheel" "video" "audio" "camera" "networkmanager" "lightdm"];
+    extraGroups =
+      [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
   };
 
   time.timeZone = "Europe/Prague";

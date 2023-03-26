@@ -23,12 +23,15 @@ in {
     extraGroups =
       [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
     home = _ "/home/${user}";
-    description = _ "Hello, I really enjoy hummus with carrots.";
-    passwordFile = _ config.age.secrets."passwords/users/tsandrini".path;
+    description = _
+      "life is full of pain and suffering but atleast I have a functioning computer hehe :)";
+    passwordFile =
+      _ config.age.secrets."common/passwords/users/tsandrini_default".path;
   };
 
   users.users.root = {
-    passwordFile = _ config.age.secrets."passwords/users/root".path;
+    passwordFile =
+      _ config.age.secrets."common/passwords/users/root_default".path;
   };
 
   home-manager.users.${user} = {
@@ -39,9 +42,10 @@ in {
     };
   };
 
-  age.secrets."passwords/users/tsandrini".file =
-    ../secrets/passwords/users/tsandrini.age;
-  age.secrets."passwords/users/root".file = ../secrets/passwords/users/root.age;
+  age.secrets."common/passwords/users/tsandrini_default".file =
+    ../secrets/common/passwords/users/tsandrini_default.age;
+  age.secrets."common/passwords/users/root_default".file =
+    ../secrets/common/passwords/users/root_default.age;
 
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {

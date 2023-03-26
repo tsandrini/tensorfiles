@@ -50,7 +50,6 @@
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
-
   boot.loader.efi = {
     canTouchEfiVariables = true;
     efiSysMountPoint = "/boot";
@@ -91,4 +90,15 @@
     pulse.enable = true;
     jack.enable = true;
   };
+
+  users.users.${user}.passwordFile =
+    config.age.secrets."hosts/spinorbundle/passwords/users/tsandrini".path;
+
+  users.users.root.passwordFile =
+    config.age.secrets."hosts/spinorbundle/passwords/users/root".path;
+
+  age.secrets."hosts/spinorbundle/passwords/users/tsandrini".file =
+    ../secrets/hosts/spinorbundle/passwords/users/tsandrini_default.age;
+  age.secrets."hosts/spinorbundle/passwords/users/root".file =
+    ../secrets/hosts/spinorbundle/passwords/users/root_default.age;
 }
