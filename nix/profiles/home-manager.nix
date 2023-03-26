@@ -24,7 +24,7 @@ in {
       [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
     home = _ "/home/${user}";
     description = _
-      "life is full of pain and suffering but atleast I have a functioning computer hehe :)";
+      "life is full of pain and suffering but atleast I have a functioning computer hehe";
     passwordFile =
       _ config.age.secrets."common/passwords/users/tsandrini_default".path;
   };
