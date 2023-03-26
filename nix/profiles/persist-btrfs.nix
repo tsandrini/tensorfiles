@@ -27,14 +27,9 @@ in {
           mode = "0700";
         }
       ];
-      files = [ "/etc/adjtime" "/etc/machine-id" ];
+      files = [ "/etc/passwd" "/etc/shadow" "/etc/adjtime" "/etc/machine-id" ];
     };
   };
-
-  # environment.etc = {
-  #   passwd.source = _ "/persist/etc/passwd"; # TODO agenix?
-  #   shadow.source = _ "/persist/etc/shadow"; # TODO
-  # };
 
   security.sudo.extraConfig = _ ''
     # rollback results in sudo lectures after each reboot
