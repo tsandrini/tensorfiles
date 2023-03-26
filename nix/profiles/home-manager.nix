@@ -43,9 +43,9 @@ in {
   };
 
   age.secrets."common/passwords/users/tsandrini_default".file =
-    ../../secrets/common/passwords/users/tsandrini_default.age;
+    ../secrets/common/passwords/users/tsandrini_default.age;
   age.secrets."common/passwords/users/root_default".file =
-    ../../secrets/common/passwords/users/root_default.age;
+    ../secrets/common/passwords/users/root_default.age;
 
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {
