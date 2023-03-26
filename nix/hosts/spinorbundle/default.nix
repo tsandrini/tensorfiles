@@ -39,7 +39,6 @@
     usbutils
     wget
     vim
-    inputs.agenix.defaultPackage.${system}
   ];
 
   # ----------------------------
