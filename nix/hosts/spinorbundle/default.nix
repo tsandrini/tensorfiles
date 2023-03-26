@@ -98,7 +98,7 @@
     config.age.secrets."hosts/spinorbundle/passwords/users/root".path;
 
   age.secrets."hosts/spinorbundle/passwords/users/tsandrini".file =
-    ../secrets/hosts/spinorbundle/passwords/users/tsandrini.age;
+    ../../secrets/hosts/spinorbundle/passwords/users/tsandrini.age;
   age.secrets."hosts/spinorbundle/passwords/users/root".file =
-    ../secrets/hosts/spinorbundle/passwords/users/root.age;
+    ../../secrets/hosts/spinorbundle/passwords/users/root.age;
 }
