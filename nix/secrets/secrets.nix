@@ -24,6 +24,20 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
   users = [ tsandrini ];
 in {
-  "passwords/users/tsandrini.age".publicKeys = hosts ++ users;
-  "passwords/users/root.age".publicKeys = hosts ++ users;
+
+  # ----------
+  # | COMMON |
+  # ----------
+
+  # ---------
+  # | HOSTS |
+  # ---------
+
+  # --------------------
+  # | I. #spinorbundle |
+  # --------------------
+  "hosts/spinorbundle/passwords/users/tsandrini.age".publicKeys =
+    [ spinorbundle ];
+  "hosts/spinorbundle/passwords/users/root.age".publicKeys = [ spinorbundle ];
+
 }
