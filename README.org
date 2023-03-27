@@ -43,7 +43,7 @@ I use the following software
    have spare time.
 3. [[https://apps.ankiweb.net/][anki]]: Since I have the memory of worm I try to keep my long-term
    memory of different subjects fresh using flashcards. I sync the cards
-   using their provided cloud.
+   using ankis official cloud.
 ** 2.2. Secrets
 For my day to day passwords I use a locally synced [[https://keepassxc.org/][keepassxc]] encrypted
 database and for the NixOS based secrets I use [[https://github.com/ryantm/agenix][agenix]]. I also try to avoid

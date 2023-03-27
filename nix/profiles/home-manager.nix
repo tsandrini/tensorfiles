@@ -18,6 +18,8 @@ in {
   home-manager.useGlobalPkgs = _ true;
   home-manager.useUserPackages = _ true;
 
+  users.mutableUsers = _ false;
+
   users.users.${user} = {
     isNormalUser = _ true;
     extraGroups =

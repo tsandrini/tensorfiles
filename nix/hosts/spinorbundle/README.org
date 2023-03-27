@@ -9,6 +9,7 @@ TODO specs?
 First things first, I can't read this tty crap
 
 #+begin_src shell
+sudo su
 setfont ter-132n
 #+end_src
 
@@ -83,9 +84,10 @@ mount -o noatime,compress=zstd,subvol=log /dev/mapper/enc /mnt/var/log
 mount /dev/disk/by-label/boot /mnt/boot
 #+end_src
 
-Now you should either start an ssh-agent (=eval `ssh-agent`=) and add the
+/Notenote/: At this stage you should either start an ssh-agent
+(=eval `ssh-agent`=) and add the
 appropriate keys (=ssh-add /root/.ssh/id_ed25519=) or in case you don't want
-to use that you should patch the config with your desired way of handling
+to use agenix you should patch the config with your desired way of handling
 secrets and default passwords.
 
 Now we can proceed to install the desired =nixosConfiguration= of our flake.

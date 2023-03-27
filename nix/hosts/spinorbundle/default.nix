@@ -29,21 +29,7 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    # TODO cleanup
-    snapper
-    htop
-    git
-    killall
-    pciutils
-    usbutils
-    wget
-    vim
-    exfat
-    dosfstools
-    exfatprogs
-    udisks
-  ];
+  environment.systemPackages = with pkgs; [ ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
