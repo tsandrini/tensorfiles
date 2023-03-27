@@ -1,11 +1,12 @@
 #+NAME: dotfiles
 #+AUTHOR: tsandrini
 
-* About
+* 1. About
 Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
 
 [[./nix/var/showcase_1.png]]
-* Software
+[[./nix/var/showcase_2.png]]
+* 2. Software
 I use the following software
 |--------------+---------------------------+-------------------------------------------------------|
 | #            | Tool                      | Comment                                               |
@@ -26,8 +27,8 @@ I use the following software
 | Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                     | TODO should probably comment more on colors           |
 |--------------+---------------------------+-------------------------------------------------------|
 
-** Academics [TODO: comment more?]
-1. **[[https://www.orgroam.com/][org-roam]]**: This is the heart of everything that I do, TODOs, daily
+** 2.1. Academics [TODO: comment more?]
+1. [[https://www.orgroam.com/][org-roam]]: This is the heart of everything that I do, TODOs, daily
    journals, scratchpads, notetaking and personal research wiki. The internal
    wiki is interlinked with zotero entries as well as anki cards.
 
@@ -36,14 +37,14 @@ I use the following software
    + anki connection: [[https://github.com/louietan/anki-editor][org-anki-editor]]
 
    [[./nix/var/showcase_org_roam_ui.png]]
-2. **[[https://www.zotero.org/][zotero]]**: This is my backend for all of my bibliography as well as the
+2. [[https://www.zotero.org/][zotero]]: This is my backend for all of my bibliography as well as the
    individual =.pdf= files. As of now I keep them up to date between machines
    using [[https://syncthing.net/][syncthing]], but I'll probably set up a personal cloud when I'll
    have spare time.
-3. **[[https://apps.ankiweb.net/][anki]]**: Since I have the memory of worm I try to keep my long-term
+3. [[https://apps.ankiweb.net/][anki]]: Since I have the memory of worm I try to keep my long-term
    memory of different subjects fresh using flashcards. I sync the cards
    using their provided cloud.
-** Secrets
+** 2.2. Secrets
 For my day to day passwords I use a locally synced [[https://keepassxc.org/][keepassxc]] encrypted
 database and for the NixOS based secrets I use [[https://github.com/ryantm/agenix][agenix]]. I also try to avoid
 using any globally available pubkeys and rather tend to use machine specific
@@ -51,8 +52,8 @@ ones instead (for obvious reasons).
 
 /Note/: plz no pwn xd, if you see any vulnerabilities please DM me instead,
 thanks <3.
-* Installation
-* Troubleshooting
+* 3. Installation
+* 4. Troubleshooting
 ** "Write error: disk full" during =nixos-install=
 If you get any error of this kind during the installation of this flake
 you have most likely run out of =$TMPDIR= space. This is usually due
@@ -81,7 +82,7 @@ tmpfs, for example
 #+begin_src shell
 mount -o remount,size=15G /tmp
 #+end_src
-* References
+* 5. References
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you've really
 conquered the art of computer wizardry, however, it's so different from
