@@ -31,6 +31,8 @@ in {
     };
   };
 
+  environment.systemPackages = with pkgs; [ snapper ];
+
   security.sudo.extraConfig = _ ''
     # rollback results in sudo lectures after each reboot
     Defaults lecture = never

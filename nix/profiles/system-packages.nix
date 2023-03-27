@@ -1,4 +1,4 @@
-# --- profiles/tty.nix
+# --- roles/base.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,9 +15,21 @@
 { config, pkgs, lib, inputs, user, ... }:
 let _ = lib.mkOverride 500;
 in {
-  console = {
-    enable = _ true;
-    useXkbConfig = _ true;
-    font = _ "ter-132n";
-  };
+  environment.systemPackages = with pkgs; [
+    # BASE UTILS
+    git
+    htop
+    wget
+    curl
+    killall
+    vim
+    # HW
+    #
+    exfat
+    dosfstools
+    exfatprogs
+    udisks
+    pciutils
+    usbutils
+  ];
 }

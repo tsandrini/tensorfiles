@@ -35,6 +35,7 @@
     nixosProfiles.agenix
     nixosProfiles.tty
     nixosProfiles.system-maintenance
+    nixosProfiles.system-packages
     nixosProfiles.persist-btrfs
     nixosProfiles.localization
     nixosProfiles.networking-nm

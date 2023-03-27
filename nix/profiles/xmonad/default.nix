@@ -15,10 +15,8 @@
 { config, pkgs, lib, inputs, user, ... }:
 let _ = lib.mkOverride 500;
 in {
-  # services.getty.autologinUser = _ user;
-
   services.xserver = {
-    enable = true;
+    enable = _ true;
     libinput.enable = _ true;
 
     displayManager = {
@@ -28,8 +26,8 @@ in {
     };
 
     desktopManager.session = [{
-      name = "home-manager";
-      start = ''
+      name = _ "home-manager";
+      start = lib.mkBefore ''
         ${pkgs.runtimeShell} $HOME/.xinitrc &
         waitPID=$!
       '';

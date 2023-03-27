@@ -53,6 +53,7 @@ ones instead (for obvious reasons).
 /Note/: plz no pwn xd, if you see any vulnerabilities please DM me instead,
 thanks <3.
 * 3. Installation
+TODO
 * 4. Troubleshooting
 ** "Write error: disk full" during =nixos-install=
 If you get any error of this kind during the installation of this flake

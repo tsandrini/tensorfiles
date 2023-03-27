@@ -12,16 +12,9 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
-  _ = lib.mkOverride 500;
+{ config, pkgs, lib, inputs, user, ... }:
+let _ = lib.mkOverride 500;
 in {
-  time.timeZone = "Europe/Prague";
-  i18n.defaultLocale = "en_US.UTF-8";
+  time.timeZone = _ "Europe/Prague";
+  i18n.defaultLocale = _ "en_US.UTF-8";
 }
