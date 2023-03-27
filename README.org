@@ -1,22 +1,10 @@
 #+NAME: dotfiles
 #+AUTHOR: tsandrini
 
-* Update [19.01.23]
-As of now I've completely commited to the nix ecosystem and I am in the process
-of rewriting everything into a [[https://nixos.org/][NixOS]] + [[https://nixos.wiki/wiki/Flakes][Flakes]] + [[https://github.com/nix-community/home-manager][Home-manager]] pipeline managing
-all of my machines. Aside from that I am experimenting with opt-in based
-filesystems as well, therefore all of this is still in the early phases
-an can be seen in the =nix/= directory and probably shouldn't be used by
-anyone else at this moment. My old symlink based configuration files of
-various applications are still all there in the =dotfiles/= folder and those
-should be working just fine and can be used elsewhere if you wish so.
-
-When all of this is going to be done I'll properly comment/cleanup the
-repository and archive the old symlink based config.
-
-Thanks <3.
 * About
 Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
+
+[[./nix/var/showcase_1.png]]
 * Software
 I use the following software
 |--------------+---------------------------+-------------------------------------------------------|
@@ -30,13 +18,69 @@ I use the following software
 | Terminal     | [[https://github.com/alacritty/alacritty][alacritty]]                 | sorry [[https://st.suckless.org/][st]], I am really liking the rust experience more |
 | Browser      | firefox (dev-edition)     | qute is nice but not that secure unfortunately        |
 | App launcher | [[https://tools.suckless.org/dmenu/][dmenu]]                     | Rofi has a nice frontend, but is practically unusable |
-| Fetch        | [[https://github.com/Macchina-CLI/macchina][macchina]]                  |                                                       |
+| Fetch        | [[https://github.com/ssleert/nitch][nitch]]                     | whatsup my fellow nimmers                             |
 | File manager | [[f][lf]]                        | ranger, but actually usable                           |
 | News reader  | [[https://newsboat.org/][newsboat]]                  | modern web is barely usable for reading news D:       |
 | ls           | [[https://github.com/ogham/exa][exa]]                       | fast, ls-compatible with added features               |
 | cat          | [[https://github.com/sharkdp/bat][bat]]                       |                                                       |
 | Colors uwu?  | [[https://github.com/dylanaraps/pywal][pywal]]                     | TODO should probably comment more on colors           |
 |--------------+---------------------------+-------------------------------------------------------|
+
+** Academics [TODO: comment more?]
+1. **[[https://www.orgroam.com/][org-roam]]**: This is the heart of everything that I do, TODOs, daily
+   journals, scratchpads, notetaking and personal research wiki. The internal
+   wiki is interlinked with zotero entries as well as anki cards.
+
+   + TODOs: [[https://orgmode.org/manual/Agenda-Views.html][org-agenda]]
+   + visualization: [[https://github.com/org-roam/org-roam-ui][org-roam-ui]]
+   + anki connection: [[https://github.com/louietan/anki-editor][org-anki-editor]]
+
+   [[./nix/var/showcase_org_roam_ui.png]]
+2. **[[https://www.zotero.org/][zotero]]**: This is my backend for all of my bibliography as well as the
+   individual =.pdf= files. As of now I keep them up to date between machines
+   using [[https://syncthing.net/][syncthing]], but I'll probably set up a personal cloud when I'll
+   have spare time.
+3. **[[https://apps.ankiweb.net/][anki]]**: Since I have the memory of worm I try to keep my long-term
+   memory of different subjects fresh using flashcards. I sync the cards
+   using their provided cloud.
+** Secrets
+For my day to day passwords I use a locally synced [[https://keepassxc.org/][keepassxc]] encrypted
+database and for the NixOS based secrets I use [[https://github.com/ryantm/agenix][agenix]]. I also try to avoid
+using any globally available pubkeys and rather tend to use machine specific
+ones instead (for obvious reasons).
+
+/Note/: plz no pwn xd, if you see any vulnerabilities please DM me instead,
+thanks <3.
+* Installation
+* Troubleshooting
+** "Write error: disk full" during =nixos-install=
+If you get any error of this kind during the installation of this flake
+you have most likely run out of =$TMPDIR= space. This is usually due
+to =$TMPDIR= being set up as a RAM based tmpfs and thus not having enough
+RAM for nix store cache during installation.
+
+The most clean & general solution to this would be to create a minimal
+based installation and then run a =nixos-rebuild= (and I still might do that)
+but that kind of defeats the purpose of what I am aiming for which would be
+to run =nixos-install=, a single command, and end up with a fully prepared
+system.
+
+Considering that a quick workaround is to navigate =$TMPDIR= to a different
+folder (this might slow the installation process if you redirect it to a
+spinning disk tmp filesystem, however, assuming you have a decent bandwidth
+is's still just by minutes)
+
+#+begin_src shell
+mkdir -p /mnt/tmp
+USER=$USER TMPDIR="/mnt/tmp" nixos-install --root /mnt --flake .#$HOST
+#+end_src
+
+A different solution in case you have more spare RAM would be to remount
+tmpfs, for example
+
+#+begin_src shell
+mount -o remount,size=15G /tmp
+#+end_src
 * References
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you've really
