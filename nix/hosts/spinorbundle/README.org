@@ -114,3 +114,18 @@ now you should be ready to go and pray!
 #+begin_src shell
 reboot # hehe
 #+end_src
+
+* 3. Troubleshooting
+** Root partition fails to be labeled
+First try
+
+#+begin_src shell
+btrfs filesystem label /mnt root
+#+end_src
+
+if =btrfs filesystem show /dev/mapper/enc= is correctly outputting the label
+while =lsblk -f= not run the following command
+
+#+begin_src shell
+udevadm trigger
+#+end_src

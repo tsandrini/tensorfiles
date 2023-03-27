@@ -16,10 +16,10 @@
 let _ = lib.mkOverride 500;
 in {
   environment.systemPackages = with pkgs; [
-    # inputs.agenix.defaultPackage.x86_64-linux # TODO delete
     inputs.agenix.packages.x86_64-linux.default
     age
   ];
 
-  age.identityPaths = [ "/root/.ssh/id_ed25519" ];
+  age.identityPaths =
+    [ "/persist/root/.ssh/id_ed25519" "/root/.ssh/id_ed25519" ];
 }
