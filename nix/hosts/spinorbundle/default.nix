@@ -39,6 +39,10 @@
     usbutils
     wget
     vim
+    exfat
+    dosfstools
+    exfatprogs
+    udisks
   ];
 
   # ----------------------------
