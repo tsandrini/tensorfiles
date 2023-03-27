@@ -97,8 +97,8 @@ nix-shell -p git nixFlakes pywal
 export USER="my_user"
 export HOST="spinorbundle"
 
-mkdir -p /mnt/{etc,tmp}
-git clone https://github.com/tsandrini/tensorfiles /mnt/etc/tensorfiles
+mkdir -p /mnt/{persist/etc,tmp}
+git clone https://github.com/tsandrini/tensorfiles /mnt/persist/etc/tensorfiles
 cd /mnt/etc/tensorfiles/nix
 
 # in case you have made any changes to the flake don't forget to add them

@@ -22,9 +22,9 @@ in {
     wget
     curl
     killall
+    openssl
     vim
     # HW
-    #
     exfat
     dosfstools
     exfatprogs

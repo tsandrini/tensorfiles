@@ -27,14 +27,7 @@ in {
           mode = "0700";
         }
       ];
-      files = [
-        # "/etc/passwd"
-        # "/etc/group"
-        # "/etc/gshadow"
-        # "/etc/shadow"
-        "/etc/adjtime"
-        "/etc/machine-id"
-      ];
+      files = [ "/etc/adjtime" "/etc/machine-id" ];
     };
   };
 
