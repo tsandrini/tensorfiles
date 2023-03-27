@@ -28,7 +28,7 @@ in {
     description = _
       "life is full of pain and suffering but atleast I have a functioning computer hehe";
     passwordFile =
-      _ config.age.secrets."common/passwords/users/tsandrini_default".path;
+      _ config.age.secrets."common/passwords/users/${user}_default".path;
   };
 
   users.users.root = {
@@ -44,8 +44,8 @@ in {
     };
   };
 
-  age.secrets."common/passwords/users/tsandrini_default".file =
-    ../secrets/common/passwords/users/tsandrini_default.age;
+  age.secrets."common/passwords/users/${user}_default".file =
+    ../secrets/common/passwords/users/${user}_default.age;
   age.secrets."common/passwords/users/root_default".file =
     ../secrets/common/passwords/users/root_default.age;
 

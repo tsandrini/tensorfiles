@@ -81,13 +81,13 @@
   };
 
   users.users.${user}.passwordFile =
-    config.age.secrets."hosts/spinorbundle/passwords/users/tsandrini".path;
+    config.age.secrets."hosts/spinorbundle/passwords/users/${user}".path;
 
   users.users.root.passwordFile =
     config.age.secrets."hosts/spinorbundle/passwords/users/root".path;
 
-  age.secrets."hosts/spinorbundle/passwords/users/tsandrini".file =
-    ../../secrets/hosts/spinorbundle/passwords/users/tsandrini.age;
+  age.secrets."hosts/spinorbundle/passwords/users/${user}".file =
+    ../../secrets/hosts/spinorbundle/passwords/users/${user}.age;
   age.secrets."hosts/spinorbundle/passwords/users/root".file =
     ../../secrets/hosts/spinorbundle/passwords/users/root.age;
 }
