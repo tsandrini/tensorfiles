@@ -26,7 +26,7 @@ in {
     };
 
     desktopManager.session = [{
-      name = _ "home-manager";
+      name = "home-manager";
       start = ''
         ${pkgs.runtimeShell} $HOME/.xinitrc &
         waitPID=$!
