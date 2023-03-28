@@ -167,12 +167,12 @@ myLayoutHook =
 myStartupHook :: [String] -> X ()
 myStartupHook colors = do
   -- X init
-  -- spawnOnce "wal -R"
+  spawnOnce "wal -R"
   -- spawn "ps -C picom > /dev/null || picom &"
   -- Apps: base
-  spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
+  -- spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
   -- spawn "ps -C keepassxc > /dev/null || keepassxc &"
-  spawn "ps -C nm-applet > /dev/null || nm-applet &"
+  -- spawn "ps -C nm-applet > /dev/null || nm-applet &"
   spawn "ps -C volumeicon > /dev/null || volumeicon &"
   spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
   spawn "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"

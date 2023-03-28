@@ -117,6 +117,9 @@ in {
       };
     };
 
+    services.network-manager-applet.enable = _ true;
+    services.redshift.tray = _ true;
+
     # xmobar source
     home.file."${cfg.xdg.configHome}/wal/templates/xmobarrc".source =
       _ ./templates/xmobarrc;
