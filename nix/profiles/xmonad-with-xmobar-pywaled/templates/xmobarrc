@@ -59,7 +59,7 @@ Config {{
                       ] 100
                       , Run Date "<fn=1>\xf017</fn>  <fc={color5}>%b %d %Y - (%H:%M)</fc> " "date" 50
                       -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
-                      , Run Com "/home/tsandrini/.config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 20
+                      , Run Com "trayer-padding-icon" [] "trayerpad" 20
                       -- Prints out the left side items such as workspaces, layout, etc.
                       , Run UnsafeStdinReader
                     ]

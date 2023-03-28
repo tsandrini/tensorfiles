@@ -17,7 +17,7 @@ let
   _ = lib.mkOverride 500;
   cfg = config.home-manager.users.${user};
 
-  trayerPaddingIcon = pkgs.writeShellScriptBin "trayer-padding-icon.sh" ''
+  trayer-padding-icon = pkgs.writeShellScriptBin "trayer-padding-icon" ''
     #!/bin/sh
     # Copied from https://github.com/jaor/xmobar/issues/239#issuecomment-233206552
     # Detects the width of running trayer-srg window (xprop name 'panel')
@@ -97,6 +97,7 @@ in {
       alacritty
       i3lock-fancy-rapid
       autorandr
+      trayer-padding-icon
     ];
 
     xsession = {
@@ -119,8 +120,8 @@ in {
     ];
 
     # xmobar trayer padding icon generator
-    home.file."${cfg.xdg.configHome}/xmobar/trayer-padding-icon.sh".source =
-      _ trayerPaddingIcon;
+    # home.file."${cfg.xdg.configHome}/xmobar/trayer-padding-icon.sh".source =
+    #   _ trayerPaddingIcon;
 
     # lil haskell icon ^^
     home.file."${cfg.home.homeDirectory}/.xmonad/xpm/haskell_20.xpm".source =
