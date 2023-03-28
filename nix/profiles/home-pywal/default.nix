@@ -17,6 +17,8 @@ let
   _ = lib.mkOverride 500;
   cfg = config.home-manager.users.${user};
 in {
+  nixpkgs.config.permittedInsecurePackages = [ "python-2.7.18.6" ];
+
   home-manager.users.${user} = {
     home.packages = with pkgs; [ pywal python2 ];
 
