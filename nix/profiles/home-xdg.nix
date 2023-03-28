@@ -13,33 +13,30 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { config, pkgs, lib, inputs, user, ... }:
-let
-  _ = lib.mkOverride 500;
-  cfg = config.home-manager.users.${user};
+let _ = lib.mkOverride 500;
 in {
   home-manager.users.${user} = {
 
-    # TOD
     xdg = {
       enable = _ true;
-      cfgHome = _ "${cfg.home.homeDirectory}/.cfg";
-      cacheHome = _ "${cfg.home.homeDirectory}/.cache";
-      dataHome = _ "${cfg.home.homeDirectory}/.local/share";
-      stateHome = _ "${cfg.home.homeDirectory}/.local/state";
+      configHome = _ "/home/${user}/.config";
+      cacheHome = _ "/home/${user}/.cache";
+      dataHome = _ "/home/${user}/.local/share";
+      stateHome = _ "/home/${user}/.local/state";
 
       mime.enable = _ true;
       mimeApps = { enable = _ true; };
     };
   };
 
-  environment.persistence = lib.mkIf (config.environment ? persistence) {
-    "/persist".users.${user} = {
-      directories = [
-        # Config files should be dynamically provided by home-manager
-        #".config"
-        ".cache"
-      ];
-    };
-  };
+  # environment.persistence = lib.mkIf (config.environment ? persistence) {
+  #   "/persist".users.${user} = {
+  #     directories = [
+  #       # Config files should be dynamically provided by home-manager
+  #       #".config"
+  #       ".cache"
+  #     ];
+  #   };
+  # };
 
 }

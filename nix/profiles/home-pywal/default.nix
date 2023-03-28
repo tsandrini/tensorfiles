@@ -1,4 +1,4 @@
-# --- profiles/pywal.nix
+# --- profiles/home-pywal/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

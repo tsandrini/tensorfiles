@@ -1,4 +1,4 @@
-# --- profiles/xmonad/default.nix
+# --- profiles/xmonad-with-xmobar-pywaled/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

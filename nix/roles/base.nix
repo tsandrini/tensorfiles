@@ -13,6 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs, user, ... }: {
+  # TODO will decouple when I'll have most of the stuff done
   imports = with inputs.self; [
     # --------------------
     # | EXTERNAL MODULES |
@@ -40,8 +41,8 @@
     nixosProfiles.localization
     nixosProfiles.networking-nm
     nixosProfiles.home-manager
-    nixosProfiles.xmonad
-    # nixosProfiles.home-xdg
+    nixosProfiles.xmonad-with-xmobar-pywaled
+    nixosProfiles.home-xdg
     nixosProfiles.home-zsh
     nixosProfiles.home-neovim
     nixosProfiles.home-pywal
