@@ -2,7 +2,8 @@
 #+AUTHOR: tsandrini
 
 * 1. About
-Secondary windows dualbooted laptop running btrfs based opt-in filesystem.
+Secondary windows (papa needs his occasional osu! grind) dualbooted laptop
+running btrfs based opt-in filesystem.
 
 TODO specs?
 * 2. Installation
@@ -55,7 +56,7 @@ Now we can proceed to create btrfs subvolumes. We'll be making a few of them
 
 /Note/: You may consider also having a =/mnt/home= subvolume preserved between
 boots since it's easier to maintain, however, I decided to flush the =/home=
-directory between boots as well and recostruct it using =home-manager= so
+directory between boots as well and reconstruct it using =home-manager= so
 I am omitting the =/mnt/home= subvolume parts.
 
 #+begin_src shell
@@ -97,7 +98,7 @@ nix-shell -p git nixFlakes pywal
 export USER="my_user"
 export HOST="spinorbundle"
 
-mkdir -p /mnt/{persist/etc,tmp}
+mkdir -p /mnt/{tmp,persist/etc,persist/home/$USER/.cache}
 git clone https://github.com/tsandrini/tensorfiles /mnt/persist/etc/tensorfiles
 cd /mnt/etc/tensorfiles/nix
 
@@ -105,7 +106,12 @@ cd /mnt/etc/tensorfiles/nix
 # to the git staged cache
 # git add *
 
+# the whole setup builds on pywal and its colorscheme generation so we have to
+# generate some initial structure and copy it to a persistenst storage
+# otherwise xinit & startx and the whole X server won't work properly
 wal -i var/example-wallpaper.png
+cp -r /root/.cache/wal /persist/home/$USER/.cache/
+
 TMPDIR="/mnt/tmp" USER=$USER nixos-install --root /mnt --flake .#$HOST
 #+end_src
 
@@ -129,3 +135,8 @@ while =lsblk -f= not run the following command
 #+begin_src shell
 udevadm trigger
 #+end_src
+
+beware that in some cases this might update the partition tables even of your
+live installation drive resulting in a bunch of =SQUASHFS ERROR= in which
+case the fastest solution would be to just try again with a freshly flashed
+drive (or you can fix it manually via =wipefs= of course).

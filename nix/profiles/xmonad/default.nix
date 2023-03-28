@@ -38,6 +38,7 @@ in {
     home.packages = with pkgs; [
       nerdfonts
       haskellPackages.xmobar
+      feh
       pywal
       alacritty
       i3lock-fancy-rapid
