@@ -24,6 +24,9 @@ in {
 
     home.packages = with pkgs; [ pywal ];
 
+    home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =
+      _ ./templates/Xresources;
+
     programs.zsh.initExtra = lib.mkIf (cfg.programs.zsh.enable) ''
       # Import colorscheme from 'wal' asynchronously
       # &   # Run the process in the background.
