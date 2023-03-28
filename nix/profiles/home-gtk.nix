@@ -15,7 +15,10 @@
 { config, pkgs, lib, inputs, user, ... }:
 let _ = lib.mkOverride 500;
 in {
+
   home-manager.users.${user} = {
+    home.packages = with pkgs; [ dconf ];
+
     gtk = {
       enable = _ true;
       theme = {
@@ -27,7 +30,6 @@ in {
         name = _ "Arc";
         package = _ pkgs.arc-icon-theme;
       };
-
     };
   };
 }
