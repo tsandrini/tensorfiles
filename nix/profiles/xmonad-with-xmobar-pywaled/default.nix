@@ -123,7 +123,7 @@ in {
       _ trayerPaddingIcon;
 
     # lil haskell icon ^^
-    home.file."${cfg.xdg.configHome}/.xmonad/xpm/haskell_20.xpm".source =
+    home.file."${cfg.home.homeDirectory}/.xmonad/xpm/haskell_20.xpm".source =
       _ ./xpm/haskell_20.xpm;
   };
 }
