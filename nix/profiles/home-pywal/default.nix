@@ -18,12 +18,11 @@ let
   cfg = config.home-manager.users.${user};
 in {
   home-manager.users.${user} = {
-    home.packages = with pkgs; [ pywal python2 ];
+    home.packages = with pkgs; [ pywal ];
 
     # Setup general templates
     home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =
       _ ./templates/Xresources;
-
     systemd.user.tmpfiles.rules = [
       "L ${cfg.home.homeDirectory}/.Xresources - - - - ${cfg.xdg.cacheHome}/wal/Xresources"
     ];
