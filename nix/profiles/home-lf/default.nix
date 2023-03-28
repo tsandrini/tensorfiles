@@ -12,15 +12,10 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  pkgs,
-  lib,
-  inputs,
-  user,
-  ...
-}: let
+{ config, pkgs, lib, inputs, user, ... }:
+let
   _ = lib.mkOverride 500;
+  cfg = config.home-manager.users.${user};
 
   lf-previewer = let
     name = "lf-previewer";
@@ -94,19 +89,16 @@
       echo '----- File Type Classification -----'
       file --dereference --brief -- "$1"
     '';
-  in
-    pkgs.symlinkJoin {
-      inherit name;
-      paths = [script] ++ buildInputs;
-      buildInputs = [pkgs.makeWrapper];
-      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
-    };
+  in pkgs.symlinkJoin {
+    inherit name;
+    paths = [ script ] ++ buildInputs;
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+  };
 
   lf-cleaner = let
     name = "lf-cleaner";
-    buildInputs = with pkgs; [
-      ueberzug
-    ];
+    buildInputs = with pkgs; [ ueberzug ];
     script = pkgs.writeShellScriptBin name ''
       ID="lf-preview"
       [ -p "$FIFO_UEBERZUG" ] || exit 1
@@ -120,21 +112,16 @@
               printf '{ "action": "remove", "identifier": "%s" }\n' "$ID" > "$FIFO_UEBERZUG" ;;
       esac
     '';
-  in
-    pkgs.symlinkJoin {
-      inherit name;
-      paths = [script] ++ buildInputs;
-      buildInputs = [pkgs.makeWrapper];
-      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
-    };
+  in pkgs.symlinkJoin {
+    inherit name;
+    paths = [ script ] ++ buildInputs;
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+  };
 
   tensorlf = let
     name = "lf";
-    buildInputs = with pkgs; [
-      ueberzug
-      lf-previewer
-      lf-cleaner
-    ];
+    buildInputs = with pkgs; [ ueberzug lf-previewer lf-cleaner ];
     script = pkgs.writeShellScriptBin name ''
       start_ueberzug() {
           mkfifo "$FIFO_UEBERZUG" || exit 1
@@ -155,16 +142,15 @@
 
       exec ${pkgs.lf}/bin/lf "$@"
     '';
-  in
-    pkgs.symlinkJoin {
-      inherit name;
-      paths = [script pkgs.lf] ++ buildInputs;
-      buildInputs = [pkgs.makeWrapper];
-      postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
-    };
+  in pkgs.symlinkJoin {
+    inherit name;
+    paths = [ script pkgs.lf ] ++ buildInputs;
+    buildInputs = [ pkgs.makeWrapper ];
+    postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+  };
 in {
   home-manager.users.${user} = {
-    home.file.".config/lf/icons".source = _ ./icons;
+    home.file."${cfg.xdg.configHome}/lf/icons".source = _ ./icons;
 
     programs.lf = {
       enable = _ true;
@@ -185,8 +171,8 @@ in {
         set previewer lf-previewer
       '';
       commands = {
-        mkdir = _ "%mkdir -p \"$1\"";
-        touch = _ "%touch \"$1\"";
+        mkdir = _ ''%mkdir -p "$1"'';
+        touch = _ ''%touch "$1"'';
         open = _ ''
           ''${{
               case $(file --mime-type "$f" -bL) in
@@ -206,10 +192,10 @@ in {
             esac
             }}
         '';
-        zip = _ "%zip -r \"$f\" \"$f\"";
-        tar = _ "%tar cvf \"$f.tar\" \"$f\"";
-        targz = _ "%tar cvzf \"$f.tar.gz\" \"$f\"";
-        tarbz2 = _ "%tar cjvf \"$f.tar.bz2\" \"$f\"";
+        zip = _ ''%zip -r "$f" "$f"'';
+        tar = _ ''%tar cvf "$f.tar" "$f"'';
+        targz = _ ''%tar cvzf "$f.tar.gz" "$f"'';
+        tarbz2 = _ ''%tar cjvf "$f.tar.bz2" "$f"'';
       };
       keybindings = {
         m = _ null;

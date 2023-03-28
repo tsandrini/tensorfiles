@@ -18,14 +18,14 @@ let
   cfg = config.home-manager.users.${user};
 in {
   home-manager.users.${user} = {
-    # TODO session variables
-    #  https://nixos.wiki/wiki/Environment_variables
-    # programs.pywal.enable = _ true; # TODO
-
     home.packages = with pkgs; [ pywal ];
 
+    # Setup general templates
     home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =
       _ ./templates/Xresources;
+    systemd.user.tmpfiles.rules = [
+      "L ${cfg.home.homeDirectory}/.Xresources - - - - ${cfg.xdg.cacheHome}/wal/Xresources"
+    ];
 
     programs.zsh.initExtra = lib.mkIf (cfg.programs.zsh.enable) ''
       # Import colorscheme from 'wal' asynchronously
