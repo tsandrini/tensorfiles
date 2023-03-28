@@ -24,7 +24,7 @@ in {
       latitude = _ 50.1386267;
       longitude = _ 14.4295628;
       temperature.day = _ 5500;
-      temperature.night = _ 4500;
+      temperature.night = _ 4000;
     };
   };
 }

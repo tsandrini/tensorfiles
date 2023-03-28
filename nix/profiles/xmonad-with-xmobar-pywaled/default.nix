@@ -90,18 +90,18 @@ in {
 
   home-manager.users.${user} = {
     home.packages = with pkgs; [
-      nerdfonts
-      haskellPackages.xmobar
-      feh
-      pywal
-      alacritty
-      i3lock-fancy-rapid
-      autorandr
       trayer-padding-icon
+      haskellPackages.xmobar
+      i3lock-fancy-rapid
+      playerctl
+      autorandr
+      nerdfonts
+      feh
       trayer
       cbatticon
       volumeicon
       xfce.xfce4-clipman-plugin
+      xfce.xfce4-screenshooter
     ];
 
     xsession = {
@@ -124,10 +124,6 @@ in {
     systemd.user.tmpfiles.rules = [
       "L ${cfg.xdg.configHome}/xmobar/xmobarrc - - - - ${cfg.xdg.cacheHome}/wal/xmobarrc"
     ];
-
-    # xmobar trayer padding icon generator
-    # home.file."${cfg.xdg.configHome}/xmobar/trayer-padding-icon.sh".source =
-    #   _ trayerPaddingIcon;
 
     # lil haskell icon ^^
     home.file."${cfg.home.homeDirectory}/.xmonad/xpm/haskell_20.xpm".source =

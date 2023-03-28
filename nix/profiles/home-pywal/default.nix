@@ -18,7 +18,7 @@ let
   cfg = config.home-manager.users.${user};
 in {
   home-manager.users.${user} = {
-    home.packages = with pkgs; [ pywal ];
+    home.packages = with pkgs; [ pywal python2 ];
 
     # Setup general templates
     home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =
