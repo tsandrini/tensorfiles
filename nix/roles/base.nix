@@ -50,5 +50,6 @@
     nixosProfiles.home-alacritty
     nixosProfiles.home-lf
     nixosProfiles.home-dmenu-pywaled
+    nixosProfiles.home-redshift
   ];
 }
