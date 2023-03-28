@@ -98,6 +98,11 @@ in {
       i3lock-fancy-rapid
       autorandr
       trayer-padding-icon
+      trayer
+      cbatticon
+      volumeicon
+      redshift
+      xfce.xfce4-clipman-plugin
     ];
 
     xsession = {

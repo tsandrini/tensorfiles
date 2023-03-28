@@ -167,17 +167,17 @@ myLayoutHook =
 myStartupHook :: [String] -> X ()
 myStartupHook colors = do
   -- X init
-  spawnOnce "wal -R"
+  -- spawnOnce "wal -R"
   -- spawn "ps -C picom > /dev/null || picom &"
   -- Apps: base
   spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
-  spawn "ps -C keepassxc > /dev/null || keepassxc &"
+  -- spawn "ps -C keepassxc > /dev/null || keepassxc &"
   spawn "ps -C nm-applet > /dev/null || nm-applet &"
   spawn "ps -C volumeicon > /dev/null || volumeicon &"
   spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
   spawn "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
   -- Apps: these should restart every time
-  spawn "(killall dunst || true) && dunst &"
+  -- spawn "(killall dunst || true) && dunst &"
   spawn
     ( "(killall trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
       \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
