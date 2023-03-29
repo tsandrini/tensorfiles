@@ -46,11 +46,12 @@
     nixosProfiles.home-zsh
     nixosProfiles.home-neovim
     nixosProfiles.home-pywal
-    nixosProfiles.home-picom # TODO cleanup afterwards
+    nixosProfiles.home-picom
     nixosProfiles.home-alacritty
     nixosProfiles.home-lf
     nixosProfiles.home-dmenu-pywaled
     nixosProfiles.home-redshift
+    nixosProfiles.home-dunst-pywaled
     nixosProfiles.home-gtk
   ];
 }
