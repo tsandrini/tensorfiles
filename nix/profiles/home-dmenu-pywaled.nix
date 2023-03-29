@@ -24,7 +24,7 @@ let
       . "''${HOME}/.cache/wal/colors.sh"
 
       #${pkgs.dmenu}/bin/dmenu_run -w -nb "$color0" --nf "$color15" --sb "$color1" --sf "$color15"
-      #${pkgs.dmenu}/bin/dmenu_run -nb "$color0" -nf "$color15" -sb "$color1" -sf "$color15"
+      ${pkgs.dmenu}/bin/dmenu_run -nb "$color0" -nf "$color15" -sb "$color1" -sf "$color15"
     '';
   in pkgs.symlinkJoin {
     inherit name;
@@ -35,7 +35,6 @@ let
   };
 in {
   home-manager.users.${user} = {
-    # home.file.".config/lf/icons".source = _ ./icons;
     home.packages = with pkgs; [ dmenu-pywaled ];
   };
 }
