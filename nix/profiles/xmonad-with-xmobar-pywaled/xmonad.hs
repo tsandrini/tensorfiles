@@ -173,16 +173,14 @@ myStartupHook colors = do
   -- spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
   -- spawn "ps -C keepassxc > /dev/null || keepassxc &"
   -- spawn "ps -C nm-applet > /dev/null || nm-applet &"
-  -- spawn "ps -C volumeicon > /dev/null || volumeicon &"
-  -- spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
+  spawn "ps -C volumeicon > /dev/null || volumeicon &"
+  spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
   -- spawn "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
-  spawnOnce "volumeicon &"
-  spawnOnce "cbatticon &"
-  spawnOnce "xfce4-clipman &"
+  spawnOnce "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
   -- Apps: these should restart every time
-  spawn "(killall dunst || true) && dunst &"
+  spawn "(pkill dunst || true) && dunst &"
   spawn
-    ( "(killall trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
+    ( "(pkill trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
       \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
       \--transparent true --alpha 80 --height 22 --tint x"
         ++ tail (head colors)
