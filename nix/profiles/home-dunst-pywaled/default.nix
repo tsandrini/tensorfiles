@@ -24,7 +24,11 @@ in {
     home.file."${cfg.xdg.configHome}/wal/templates/dunstrc".source =
       _ ./templates/dunstrc;
     systemd.user.tmpfiles.rules = [
-      "L ${cfg.xdg.configHome}/dunt/dunstrc - - - - ${cfg.xdg.cacheHome}/wal/dunstrc"
+      "L ${cfg.xdg.configHome}/dunst/dunstrc - - - - ${cfg.xdg.cacheHome}/wal/dunstrc"
     ];
+
+    # simple hack, create a blank file so home-manager will set up the dir
+    # structure for us
+    home.file."${cfg.xdg.configHome}/dunst/blank".text = _ "";
   };
 }
