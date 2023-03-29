@@ -207,7 +207,7 @@ myKeys :: [String] -> [(String, X ())]
 myKeys colors =
   [ -- Programs
     ("M-<Return>", spawn myTerminal),
-    ("M-d", spawn "dmenu_run -i -f --fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '"),
+    ("M-d", spawn "dmenu_run -i -f -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '"),
     -- TODO I give up, this just won't work how I want ...
     -- ("M-f", spawn myTerminal ++ " -e ." ++ myFileManager ++ ""),
     ("M-S-i", spawn "i3lock-fancy-rapid 5 'pixel'"),

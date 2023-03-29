@@ -14,6 +14,8 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { config, pkgs, lib, inputs, user, ... }:
 let
+  # TODO wait for dmenu-rs fix PR to be merged
+  # https://github.com/NixOS/nixpkgs/pull/223667
   _ = lib.mkOverride 500;
   dmenu-pywaled = let
     name = "dmenu_run";
@@ -21,10 +23,12 @@ let
     script = pkgs.writeShellScriptBin name ''
       . "''${HOME}/.cache/wal/colors.sh"
 
-      ${pkgs.dmenu}/bin/dmenu_run -w -nb "$color0" --nf "$color15" --sb "$color1" --sf "$color15"
+      #${pkgs.dmenu}/bin/dmenu_run -w -nb "$color0" --nf "$color15" --sb "$color1" --sf "$color15"
+      #${pkgs.dmenu}/bin/dmenu_run -nb "$color0" -nf "$color15" -sb "$color1" -sf "$color15"
     '';
   in pkgs.symlinkJoin {
     inherit name;
+    # paths = [ script pkgs.dmenu-rs ] ++ buildInputs;
     paths = [ script pkgs.dmenu ] ++ buildInputs;
     buildInputs = [ pkgs.makeWrapper ];
     postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
