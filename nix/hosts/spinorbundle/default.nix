@@ -83,6 +83,16 @@
   # TEST
   services.home-assistant = {
     enable = true;
+    config = {
+      frontend = { };
+      http = {
+        use_x_forwarded_for = true;
+        trusted_proxies = [
+          "127.0.0.1"
+          "::1"
+        ];
+      };
+    };
   };
 
 
