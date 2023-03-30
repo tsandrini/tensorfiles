@@ -80,10 +80,15 @@
     jack.enable = true;
   };
 
-  # TEST
   services.home-assistant = {
     enable = true;
+    port = 8123;
+    extraComponents = [
+      "met"
+      "radio_browser"
+    ];
     config = {
+      default_config = {};
       frontend = { };
       http = {
         use_x_forwarded_for = true;
@@ -94,7 +99,6 @@
       };
     };
   };
-
 
   users.users.${user}.passwordFile =
     config.age.secrets."hosts/spinorbundle/passwords/users/${user}".path;
