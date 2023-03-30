@@ -80,6 +80,12 @@
     jack.enable = true;
   };
 
+  # TEST
+  services.home-assistant = {
+    enable = true;
+  };
+
+
   users.users.${user}.passwordFile =
     config.age.secrets."hosts/spinorbundle/passwords/users/${user}".path;
 

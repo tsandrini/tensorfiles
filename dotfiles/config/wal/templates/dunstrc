@@ -51,7 +51,7 @@
 [urgency_low]
     background = "{background}"
     foreground = "#FFFFFF"
-    timeout = 0
+    timeout = 15
 
 [urgency_normal]
     background = "{color9}"
