@@ -20,7 +20,7 @@ I use the following software
 | Browser      | firefox (dev-edition)     | qute is nice but not that secure unfortunately        |
 | App launcher | [[https://tools.suckless.org/dmenu/][dmenu]]                     | Rofi has a nice frontend, but is practically unusable |
 | Fetch        | [[https://github.com/ssleert/nitch][nitch]]                     | whatsup my fellow nimmers                             |
-| File manager | [[f][lf]]                        | ranger, but actually usable                           |
+| File manager | [[https://github.com/gokcehan/lf][lf]]                            | ranger, but actually usable                           |
 | News reader  | [[https://newsboat.org/][newsboat]]                  | modern web is barely usable for reading news D:       |
 | ls           | [[https://github.com/ogham/exa][exa]]                       | fast, ls-compatible with added features               |
 | cat          | [[https://github.com/sharkdp/bat][bat]]                       |                                                       |
