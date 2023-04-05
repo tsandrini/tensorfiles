@@ -17,7 +17,7 @@
     follow = keyboard
 
     # TEXT
-    font = Iosevka 11
+    font = Iosevka 10
     line_height = 1
     markup = full
     alignment = center

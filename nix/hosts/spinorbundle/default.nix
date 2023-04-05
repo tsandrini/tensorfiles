@@ -47,6 +47,7 @@
     enable = true;
     configurationLimit = 3;
   };
+  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.timeout = 1;
   boot.loader.grub.enable = false;

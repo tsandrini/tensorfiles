@@ -23,8 +23,8 @@ in {
       provider = _ "manual";
       latitude = _ 50.1386267;
       longitude = _ 14.4295628;
-      temperature.day = _ 5500;
-      temperature.night = _ 4000;
+      temperature.day = _ 4500;
+      temperature.night = _ 5500;
     };
   };
 }
