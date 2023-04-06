@@ -39,10 +39,10 @@
     nixosProfiles.system-packages
     nixosProfiles.persist-btrfs
     nixosProfiles.localization
-    nixosProfiles.networking-nm
+    # nixosProfiles.networking-nm
     nixosProfiles.home-manager
-    nixosProfiles.xmonad-with-xmobar-pywaled
-    nixosProfiles.home-xdg
+    # nixosProfiles.xmonad-with-xmobar-pywaled
+    # nixosProfiles.home-xdg
     nixosProfiles.home-zsh
     nixosProfiles.home-neovim
     nixosProfiles.home-pywal
