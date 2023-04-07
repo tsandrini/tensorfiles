@@ -26,6 +26,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
     agenix.url = "github:ryantm/agenix";
+    nur.url = "github:nix-community/NUR";
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
@@ -62,7 +63,15 @@
             host.hostName = name;
           };
           modules = [
+            # TODO this should a be part of lib, not profiles or modules
             { nixpkgs.config.allowUnfree = true; }
+            {
+              nixpkgs.config.packageOverrides = pkgs: {
+                nur = import inputs.nur {
+                  inherit pkgs;
+                };
+              };
+            }
             { networking.hostName = name; }
             (./hosts + "/${name}")
           ];

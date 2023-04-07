@@ -59,6 +59,63 @@ in {
     programs.firefox = {
       enable = _ true;
       package = _ pkgs.firefox-devedition-bin;
+
+      profiles.tsandrini = {
+        name = _ "tsandrini";
+        isDefault = _ true;
+        extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+          # missing: https-everywhere
+          # BASE
+          ublock-origin
+          noscript
+          cookie-autodelete
+          privacy-badger
+          keepassxc-browser
+          enhancer-for-youtube
+          vimium-c
+          pywalfox
+
+          # DEV related
+          vue-js-devtools
+        ];
+        id = _ 0;
+        settings = {
+          # ~ UI
+          "browser.uidensity" = _ 1;
+          "browser.toolbars.bookmarks.visibility" = _ "always";
+
+          "browser.contentblocking.category" = _ "strict";
+          "browser.discovery.enabled" = _ false;
+
+          # Let Nix manage extensions
+          "extensions.update.enabled" = _ false;
+          "extensions.ui.locale.hidden" = _ true;
+          "extensions.ui.sitepermission.hidden" = _ true;
+          "privacy.donottrackheader.enabled" = _ true;
+
+          # ~ Telemetry
+          "browser.newtabpage.activity-stream.feeds.telemetry" = _ false;
+          "browser.newtabpage.activity-stream.telemetry" = _ false;
+          "browser.ping-centre.telemetry" = _ false;
+          "toolkit.telemetry.archive.enabled" = _ false;
+          "toolkit.telemetry.bhrPing.enabled" = _ false;
+          "toolkit.telemetry.enabled" = _ false;
+          "toolkit.telemetry.firstShutdownPing.enabled" = _ false;
+          "toolkit.telemetry.hybridContent.enabled" = _ false;
+          "toolkit.telemetry.newProfilePing.enabled" = _ false;
+          "toolkit.telemetry.reportingpolicy.firstRun" = _ false;
+          "toolkit.telemetry.shutdownPingSender.enabled" = _ false;
+          "toolkit.telemetry.unified" = _ false;
+          "toolkit.telemetry.updatePing.enabled" = _ false;
+
+          # ~ User testing
+          "experiments.activeExperiment" = _ false;
+          "experiments.enabled" = _ false;
+          "experiments.supported" = _ false;
+          "network.allow-experiments" = _ false;
+          "extensions.experiments.enabled" = _ false;
+        };
+      };
     };
   };
 
