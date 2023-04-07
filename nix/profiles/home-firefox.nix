@@ -61,7 +61,7 @@ in {
       package = _ pkgs.firefox-devedition-bin;
 
       profiles.default = {
-        # id = _ 0;
+        id = _ 0;
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # missing: https-everywhere
           # BASE
@@ -117,14 +117,11 @@ in {
     };
   };
 
-  # environment.persistence = lib.mkIf (config.environment ? persistence) {
-  #   "/persist".users.${user} = {
-  #     directories = [
-  #       # Config files should be dynamically provided by home-manager
-  #       #".config"
-  #       ".cache"
-  #     ];
-  #   };
-  # };
-
+  environment.persistence = lib.mkIf (config.environment ? persistence) {
+    "/persist".users.${user} = {
+      directories = [
+        ".mozilla/firefox/default"
+      ];
+    };
+  };
 }
