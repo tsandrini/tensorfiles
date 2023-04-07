@@ -62,6 +62,8 @@ in {
 
       profiles.default = {
         id = _ 0;
+        isDefault = _ true;
+        extraConfig = _ "";
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # missing: https-everywhere
           # BASE
@@ -81,15 +83,22 @@ in {
           # ~ UI
           "browser.uidensity" = _ 1;
           "browser.toolbars.bookmarks.visibility" = _ "always";
+          "devtools.theme" = _ "dark";
 
           "browser.contentblocking.category" = _ "strict";
           "browser.discovery.enabled" = _ false;
 
+
           # Let Nix manage extensions
+          "app.update.auto" = _ false;
           "extensions.update.enabled" = _ false;
           "extensions.ui.locale.hidden" = _ true;
           "extensions.ui.sitepermission.hidden" = _ true;
+          "extensions.screenshots.disabled" = _ true;
+          "extensions.autoDisableScopes" = _ 0;
           "privacy.donottrackheader.enabled" = _ true;
+
+          "browser.download.dir" = _ "${cfg.home.homeDirectory}/Downloads";
 
           # ~ Telemetry
           "browser.newtabpage.activity-stream.feeds.telemetry" = _ false;
