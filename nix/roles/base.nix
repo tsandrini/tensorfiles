@@ -54,6 +54,6 @@
     nixosProfiles.home-redshift
     nixosProfiles.home-dunst-pywaled
     nixosProfiles.home-gtk
-    # nixosProfiles.home-firefox
+    nixosProfiles.home-firefox
   ];
 }
