@@ -58,7 +58,9 @@ in {
 
     programs.firefox = {
       enable = _ true;
-      package = _ pkgs.firefox-devedition-bin;
+      package = pkgs.firefox-devedition-bin.override {
+        cfg.enableTridactylNative = true;
+      };
 
       profiles.default = {
         id = _ 0;
@@ -73,7 +75,8 @@ in {
           privacy-badger
           keepassxc-browser
           enhancer-for-youtube
-          vimium-c
+          # vimium-c
+          tridactyl
           pywalfox
 
           # DEV related
