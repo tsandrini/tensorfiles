@@ -60,9 +60,8 @@ in {
       enable = _ true;
       package = _ pkgs.firefox-devedition-bin;
 
-      profiles.tsandrini = {
-        name = _ "tsandrini";
-        isDefault = _ true;
+      profiles.default = {
+        id = _ 0;
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # missing: https-everywhere
           # BASE
@@ -78,7 +77,6 @@ in {
           # DEV related
           vue-js-devtools
         ];
-        id = _ 0;
         settings = {
           # ~ UI
           "browser.uidensity" = _ 1;
