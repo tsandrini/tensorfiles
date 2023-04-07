@@ -61,7 +61,7 @@ in {
       package = _ pkgs.firefox-devedition-bin;
 
       profiles.default = {
-        id = _ 0;
+        # id = _ 0;
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # missing: https-everywhere
           # BASE
