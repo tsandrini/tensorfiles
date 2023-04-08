@@ -56,42 +56,37 @@ in {
       "x-scheme-handler/webcal" = _ "firefox.desktop";
     };
 
-    # Setting up native-messaging with tridactyl gracefuly taken
-    # from https://github.com/balsoft/nixos-config (thank you <3)
-    home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
-      tridactyl = with pkgs.nimPackages;
-        buildNimPackage {
-          pname = "tridactyl_native";
-          version = "dev";
-          nimBinOnly = true;
-          src = inputs.tridactyl-native-messenger;
-          buildInputs = [ tempfile ];
-        };
-    in builtins.toJSON {
-      name = _ "tridactyl";
-      description = _ "Tridactyl native command handler";
-      path = _ "${tridactyl}/bin/native_main";
-      type = _ "stdio";
-
-      allowed_extensions = [
-        "tridactyl.vim@cmcaine.co.uk"
-        "tridactyl.vim.betas@cmcaine.co.uk"
-        "tridactyl.vim.betas.nonewtab@cmcaine.co.uk"
-      ];
-    };
-
-    home.file."${cfg.xdg.configHome}/tridactyl/tridactylrc".text = _ ''
-      js tri.config.set("editorcmd", "alacritty -e nvim")
-    '';
-
     programs.firefox = {
       enable = _ true;
-      package = pkgs.firefox-devedition-bin.override {
-        cfg.enableTridactylNative = true;
+      # package = pkgs.firefox-devedition-bin;
+      package = pkgs.wrapFirefox pkgs.firefox-devedition-bin-unwrapped {
+          extraPolicies = {
+              CaptivePortal = false;
+              DisableFirefoxStudies = true;
+              DisablePocket = true;
+              DisableTelemetry = true;
+              DisableFirefoxAccounts = false;
+              NoDefaultBookmarks = true;
+              OfferToSaveLogins = false;
+              OfferToSaveLoginsDefault = false;
+              PasswordManagerEnabled = false;
+              FirefoxHome = {
+                  Search = true;
+                  Pocket = false;
+                  Snippets = false;
+                  TopSites = false;
+                  Highlights = false;
+              };
+              UserMessaging = {
+                  ExtensionRecommendations = false;
+                  SkipOnboarding = true;
+              };
+          };
       };
 
-      profiles.default = {
+      profiles.${user} = {
         id = _ 0;
+        name = _ "${user}";
         isDefault = _ true;
         extraConfig = _ "";
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
@@ -110,8 +105,13 @@ in {
           # DEV related
           vue-js-devtools
         ];
+        search = {
+          force = _ true;
+          default = _ "DuckDuckGo";
+        };
         settings = {
           # ~ UI
+          "general.smoothScroll" = _ true;
           "browser.uidensity" = _ 1;
           "browser.toolbars.bookmarks.visibility" = _ "always";
           "devtools.theme" = _ "dark";
@@ -159,7 +159,7 @@ in {
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {
       directories = [
-        ".mozilla/firefox/default"
+        ".mozilla/firefox/${user}"
       ];
     };
   };
