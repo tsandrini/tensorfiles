@@ -56,6 +56,34 @@ in {
       "x-scheme-handler/webcal" = _ "firefox.desktop";
     };
 
+    # Setting up native-messaging with tridactyl gracefuly taken
+    # from https://github.com/balsoft/nixos-config (thank you <3)
+    home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
+      tridactyl = with pkgs.nimPackages;
+        buildNimPackage {
+          pname = "tridactyl_native";
+          version = "dev";
+          nimBinOnly = true;
+          src = inputs.tridactyl-native-messenger;
+          buildInputs = [ tempfile ];
+        };
+    in builtins.toJSON {
+      name = _ "tridactyl";
+      description = _ "Tridactyl native command handler";
+      path = _ "${tridactyl}/bin/native_main";
+      type = _ "stdio";
+
+      allowed_extensions = [
+        "tridactyl.vim@cmcaine.co.uk"
+        "tridactyl.vim.betas@cmcaine.co.uk"
+        "tridactyl.vim.betas.nonewtab@cmcaine.co.uk"
+      ];
+    };
+
+    home.file."${cfg.xdg.configHome}/tridactyl/tridactylrc".text = _ ''
+      js tri.config.set("editorcmd", "alacritty -e nvim")
+    '';
+
     programs.firefox = {
       enable = _ true;
       package = pkgs.firefox-devedition-bin.override {
@@ -90,7 +118,6 @@ in {
 
           "browser.contentblocking.category" = _ "strict";
           "browser.discovery.enabled" = _ false;
-
 
           # Let Nix manage extensions
           "app.update.auto" = _ false;

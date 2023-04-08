@@ -27,6 +27,11 @@
     impermanence.url = "github:nix-community/impermanence";
     agenix.url = "github:ryantm/agenix";
     nur.url = "github:nix-community/NUR";
+
+    tridactyl-native-messenger = {
+      url = "github:tridactyl/native_messenger";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
