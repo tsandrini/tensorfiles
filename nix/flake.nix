@@ -28,6 +28,11 @@
     agenix.url = "github:ryantm/agenix";
     nur.url = "github:nix-community/NUR";
 
+    arkenfox-user-js = {
+      url = "github:arkenfox/user.js";
+      flake = false;
+    };
+
     tridactyl-native-messenger = {
       url = "github:tridactyl/native_messenger";
       flake = false;

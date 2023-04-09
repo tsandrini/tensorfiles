@@ -88,18 +88,20 @@ in {
         id = _ 0;
         name = _ "default";
         isDefault = _ true;
-        extraConfig = _ "";
+        extraConfig = builtins.readFile "${inputs.arkenfox-user-js}/user.js";
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-          # missing: https-everywhere
-          # BASE
+          # ~ Privacy & content blocking
           ublock-origin
           noscript
           cookie-autodelete
           privacy-badger
+          decentraleyes
+          clearurls
+
+          # ~ Utils
           keepassxc-browser
-          enhancer-for-youtube
-          # vimium-c
           tridactyl
+          enhancer-for-youtube
           pywalfox
 
           # DEV related
@@ -144,26 +146,50 @@ in {
         settings = {
           # ~ UI
           "general.smoothScroll" = _ true;
-          "browser.uidensity" = _ 1;
           "browser.toolbars.bookmarks.visibility" = _ "always";
+          "browser.uidensity" = _ 1;
           "devtools.theme" = _ "dark";
           "browser.download.panel.shown" = _ true;
           "browser.theme.content-theme" = _ 0;
           "browser.theme.toolbar-theme" = _ 0;
 
-          "browser.contentblocking.category" = _ "strict";
+          # ~ General settings
           "browser.discovery.enabled" = _ false;
-
-          # Let Nix manage extensions
-          "app.update.auto" = _ false;
-          "extensions.update.enabled" = _ false;
           "extensions.ui.locale.hidden" = _ true;
           "extensions.ui.sitepermission.hidden" = _ true;
           "extensions.screenshots.disabled" = _ true;
           "extensions.autoDisableScopes" = _ 0;
-          "privacy.donottrackheader.enabled" = _ true;
-
           "browser.download.dir" = _ "${cfg.home.homeDirectory}/Downloads";
+
+          # Let Nix manage extensions
+          "app.update.auto" = _ false;
+          "extensions.update.enabled" = _ false;
+
+          # ~ General privacy settings
+          "browser.contentblocking.category" = _ "strict";
+          "privacy.resistFingerprinting" = _ true;
+          "privacy.donottrackheader.enabled" = _ true;
+          "privacy.trackingprotection.enabled" = _ true;
+          "privacy.trackingprotection.cryptomining.enabled" = _ true;
+          "browser.send_pings" = _ false;
+          "browser.urlbar.speculativeConnect.enabled" = _ false;
+          "dom.event.clipboardevents.enabled" = _ false;
+          "media.eme.enabled" = _ false;
+          "media.gmp-widevinecdm.enabled" = _ false;
+          "media.navigator.enabled" = _ false;
+          "network.cookie.cookieBehavior" = _ 1;
+          "network.http.referer.XOriginPolicy" = _ 2;
+          "network.http.referer.XOriginTrimmingPolicy" = _ 2;
+          "webgl.disabled" = _ true;
+          "browser.sessionstore.privacy_level" = _ 2;
+          "beacon.enabled" = _ false;
+          "browser.safebrowsing.downloads.remote.enabled" = _ false;
+          "network.dns.disablePrefetch" = _ true;
+          "network.dns.disablePrefetchFromHTTPS" = _ true;
+          "network.predictor.enabled" = _ false;
+          "network.predictor.enable-prefetch" = _ false;
+          "network.prefetch-next" = _ false;
+          "network.IDN_show_punycode" = _ true;
 
           # ~ Telemetry
           "browser.newtabpage.activity-stream.feeds.telemetry" = _ false;
@@ -197,15 +223,10 @@ in {
           "services.sync.engine.tabs" = _ true;
           "services.sync.engine.addons" = _ false;
           "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs";
-          "identity.fxaccounts.account.device.name" = _ "${user}";
-          "identity.fxaccounts.lastSignedInUserHash" = _ config.age.secrets."common/passwords/programs/firefox/${user}_ffsync".path;
         };
       };
     };
   };
-
-  age.secrets."common/passwords/programs/firefox/${user}_ffsync".file =
-    ../secrets/common/passwords/programs/firefox/${user}_ffsync.age;
 
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {

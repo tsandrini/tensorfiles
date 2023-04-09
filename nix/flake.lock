@@ -19,6 +19,22 @@
         "type": "github"
       }
     },
+    "arkenfox-user-js": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1680151825,
+        "narHash": "sha256-EutseXvFnDkYq95GWiGrTFqI4fqybvsPQlVV0Wy5tFU=",
+        "owner": "arkenfox",
+        "repo": "user.js",
+        "rev": "c84c419544cbbe4442190cc6325b926b519d8db5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "arkenfox",
+        "repo": "user.js",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -143,6 +159,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "arkenfox-user-js": "arkenfox-user-js",
         "home-manager": "home-manager",
         "impermanence": "impermanence",
         "nixos-hardware": "nixos-hardware",
