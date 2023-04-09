@@ -32,11 +32,6 @@
       url = "github:arkenfox/user.js";
       flake = false;
     };
-
-    tridactyl-native-messenger = {
-      url = "github:tridactyl/native_messenger";
-      flake = false;
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:

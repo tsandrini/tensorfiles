@@ -164,24 +164,7 @@
         "impermanence": "impermanence",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
-        "nur": "nur",
-        "tridactyl-native-messenger": "tridactyl-native-messenger"
-      }
-    },
-    "tridactyl-native-messenger": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1680877417,
-        "narHash": "sha256-Mpliz/aoOSmLql28+Jxkck0cyuiNa0IHbmtJJXvsLnw=",
-        "owner": "tridactyl",
-        "repo": "native_messenger",
-        "rev": "a9932863bf6efaabb6c4112cdd5dd49ce8c74ef6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "tridactyl",
-        "repo": "native_messenger",
-        "type": "github"
+        "nur": "nur"
       }
     },
     "utils": {

@@ -1,4 +1,4 @@
-# --- profiles/home-firefox.nix
+# --- profiles/home-firefox/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -56,56 +56,37 @@ in {
       "x-scheme-handler/webcal" = _ "firefox.desktop";
     };
 
-    home.file.".mozilla/native-messaging-hosts/tridactyl.json".text = let
-      tridactyl = with pkgs.nimPackages;
-        buildNimPackage {
-          pname = "tridactyl_native";
-          version = "dev";
-          nimBinOnly = true;
-          src = inputs.tridactyl-native-messenger;
-          buildInputs = [ regex unicodedb tempfile ];
-        };
-    in builtins.toJSON {
-      name = "tridactyl";
-      description = "Tridactyl native command handler";
-      path = "${tridactyl}/bin/native_main";
-      type = "stdio";
-
-      allowed_extensions = [
-        "tridactyl.vim@cmcaine.co.uk"
-        "tridactyl.vim.betas@cmcaine.co.uk"
-        "tridactyl.vim.betas.nonewtab@cmcaine.co.uk"
-      ];
-    };
-
-    home.file."${cfg.xdg.configHome}/tridactyl/tridactylrc".text = ''
-      js tri.config.set("editorcmd", "alacritty -e nvim")
-    '';
-
     programs.firefox = {
       enable = _ true;
+      package = pkgs.firefox.override {
+        extraPolicies."3rdparty".Extensions = {
+          "uBlock0@raymondhill.net" = {
+            # uBlock settings are written in JSON to be more compatible with the
+            # backup format. This checks the syntax.
+            adminSettings =
+              builtins.fromJSON (builtins.readFile ./ublock-settings.json);
+          };
+        };
+      };
       profiles.default = {
         id = _ 0;
         name = _ "default";
         isDefault = _ true;
-        extraConfig = builtins.readFile "${inputs.arkenfox-user-js}/user.js";
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # ~ Privacy & content blocking
           ublock-origin
-          noscript
-          cookie-autodelete
-          privacy-badger
-          decentraleyes
-          clearurls
+          multi-account-containers
 
           # ~ Utils
           keepassxc-browser
           tridactyl
-          enhancer-for-youtube
+          behave
+          header-editor
           pywalfox
+          # enhancer-for-youtube
 
           # DEV related
-          vue-js-devtools
+          # vue-js-devtools
         ];
         search = {
           force = _ true;
@@ -154,59 +135,16 @@ in {
           "browser.theme.toolbar-theme" = _ 0;
 
           # ~ General settings
-          "browser.discovery.enabled" = _ false;
           "extensions.ui.locale.hidden" = _ true;
           "extensions.ui.sitepermission.hidden" = _ true;
           "extensions.screenshots.disabled" = _ true;
-          "extensions.autoDisableScopes" = _ 0;
           "browser.download.dir" = _ "${cfg.home.homeDirectory}/Downloads";
 
           # Let Nix manage extensions
           "app.update.auto" = _ false;
           "extensions.update.enabled" = _ false;
 
-          # ~ General privacy settings
-          "browser.contentblocking.category" = _ "strict";
-          "privacy.resistFingerprinting" = _ true;
-          "privacy.donottrackheader.enabled" = _ true;
-          "privacy.trackingprotection.enabled" = _ true;
-          "privacy.trackingprotection.cryptomining.enabled" = _ true;
-          "browser.send_pings" = _ false;
-          "browser.urlbar.speculativeConnect.enabled" = _ false;
-          "dom.event.clipboardevents.enabled" = _ false;
-          "media.eme.enabled" = _ false;
-          "media.gmp-widevinecdm.enabled" = _ false;
-          "media.navigator.enabled" = _ false;
-          "network.cookie.cookieBehavior" = _ 1;
-          "network.http.referer.XOriginPolicy" = _ 2;
-          "network.http.referer.XOriginTrimmingPolicy" = _ 2;
-          "webgl.disabled" = _ true;
-          "browser.sessionstore.privacy_level" = _ 2;
-          "beacon.enabled" = _ false;
-          "browser.safebrowsing.downloads.remote.enabled" = _ false;
-          "network.dns.disablePrefetch" = _ true;
-          "network.dns.disablePrefetchFromHTTPS" = _ true;
-          "network.predictor.enabled" = _ false;
-          "network.predictor.enable-prefetch" = _ false;
-          "network.prefetch-next" = _ false;
-          "network.IDN_show_punycode" = _ true;
-
-          # ~ Telemetry
-          "browser.newtabpage.activity-stream.feeds.telemetry" = _ false;
-          "browser.newtabpage.activity-stream.telemetry" = _ false;
-          "browser.ping-centre.telemetry" = _ false;
-          "toolkit.telemetry.archive.enabled" = _ false;
-          "toolkit.telemetry.bhrPing.enabled" = _ false;
-          "toolkit.telemetry.enabled" = _ false;
-          "toolkit.telemetry.firstShutdownPing.enabled" = _ false;
-          "toolkit.telemetry.hybridContent.enabled" = _ false;
-          "toolkit.telemetry.newProfilePing.enabled" = _ false;
-          "toolkit.telemetry.reportingpolicy.firstRun" = _ false;
-          "toolkit.telemetry.shutdownPingSender.enabled" = _ false;
-          "toolkit.telemetry.unified" = _ false;
-          "toolkit.telemetry.updatePing.enabled" = _ false;
-
-          # ~ User testing
+          # # ~ User testing
           "experiments.activeExperiment" = _ false;
           "experiments.enabled" = _ false;
           "experiments.supported" = _ false;
@@ -224,6 +162,14 @@ in {
           "services.sync.engine.addons" = _ false;
           "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs";
         };
+
+        # Download areknfox-user-js and append overrides (order matters)
+        #
+        # Note: I try to keep general purpose config in the settings
+        # attrset listed above
+        extraConfig = (builtins.readFile "${inputs.arkenfox-user-js}/user.js") + (''
+          user_pref("extensions.autoDisableScopes", 0);
+        '');
       };
     };
   };
