@@ -84,9 +84,9 @@ in {
 
     programs.firefox = {
       enable = _ true;
-      profiles.${user} = {
+      profiles.default = {
         id = _ 0;
-        name = _ "${user}";
+        name = _ "default";
         isDefault = _ true;
         extraConfig = _ "";
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
@@ -114,11 +114,24 @@ in {
                 template = "https://search.nixos.org/packages";
                 params = [
                   { name = "type"; value = "packages"; }
+                  { name = "channel"; value = "unstable"; }
                   { name = "query"; value = "{searchTerms}"; }
                 ];
               }];
               icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
               definedAliases = [ "@np" ];
+            };
+            "Nix Options" = {
+              urls = [{
+                template = "https://search.nixos.org/options";
+                params = [
+                  { name = "type"; value = "packages"; }
+                  { name = "channel"; value = "unstable"; }
+                  { name = "query"; value = "{searchTerms}"; }
+                ];
+              }];
+              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              definedAliases = [ "@no" ];
             };
             "NixOS Wiki" = {
               urls = [{ template = "https://nixos.wiki/index.php?search={searchTerms}"; }];
@@ -170,6 +183,18 @@ in {
           "experiments.supported" = _ false;
           "network.allow-experiments" = _ false;
           "extensions.experiments.enabled" = _ false;
+
+          # ~ Ff sync
+          "services.sync.username" = _ "tomas.sandrini@seznam.cz";
+          "services.sync.engine.passwords" = _ false;
+          "services.sync.engine.prefs" = _ false;
+          "services.sync.engine.history" = _ true;
+          "services.sync.engine.creditcards" = _ false;
+          "services.sync.engine.bookmarks" = _ true;
+          "services.sync.engine.tabs" = _ true;
+          "services.sync.engine.addons" = _ false;
+          "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs";
+
         };
       };
     };
@@ -178,7 +203,7 @@ in {
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {
       directories = [
-        ".mozilla/firefox/${user}"
+        ".mozilla/firefox/default"
       ];
     };
   };
