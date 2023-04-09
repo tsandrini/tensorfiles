@@ -63,7 +63,7 @@ in {
           version = "dev";
           nimBinOnly = true;
           src = inputs.tridactyl-native-messenger;
-          buildInputs = [ tempfile ];
+          buildInputs = [ regex unicodedb tempfile ];
         };
     in builtins.toJSON {
       name = "tridactyl";
