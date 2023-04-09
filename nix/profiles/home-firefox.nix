@@ -147,6 +147,9 @@ in {
           "browser.uidensity" = _ 1;
           "browser.toolbars.bookmarks.visibility" = _ "always";
           "devtools.theme" = _ "dark";
+          "browser.download.panel.shown" = _ true;
+          "browser.theme.content-theme" = _ 0;
+          "browser.theme.toolbar-theme" = _ 0;
 
           "browser.contentblocking.category" = _ "strict";
           "browser.discovery.enabled" = _ false;
@@ -194,11 +197,15 @@ in {
           "services.sync.engine.tabs" = _ true;
           "services.sync.engine.addons" = _ false;
           "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs";
-
+          "identity.fxaccounts.account.device.name" = _ "${user}";
+          "identity.fxaccounts.lastSignedInUserHash" = _ config.age.secrets."common/passwords/programs/firefox/${user}_ffsync".path;
         };
       };
     };
   };
+
+  age.secrets."common/passwords/programs/firefox/${user}_ffsync".file =
+    ../secrets/common/passwords/programs/firefox/${user}_ffsync.age;
 
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {

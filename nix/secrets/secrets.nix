@@ -30,6 +30,7 @@ in {
   # ----------
   "common/passwords/users/tsandrini_default.age".publicKeys = hosts ++ users;
   "common/passwords/users/root_default.age".publicKeys = hosts ++ users;
+  "common/passwords/programs/firefox/tsandrini_ffsync.age".publicKeys = hosts ++ users;
 
   # ---------
   # | HOSTS |
@@ -41,5 +42,4 @@ in {
   "hosts/spinorbundle/passwords/users/tsandrini.age".publicKeys =
     [ spinorbundle ];
   "hosts/spinorbundle/passwords/users/root.age".publicKeys = [ spinorbundle ];
-
 }
