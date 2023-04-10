@@ -276,6 +276,26 @@
               }
             ];
           }
+          {
+            name = "Výuka - Josef Málek";
+            url = "https://www2.karlin.mff.cuni.cz/~malek/new/index.php?title=V%C3%BDuka";
+          }
+          {
+            name = "Studijní plány (Karolínka), 2019/2020 – Bc. studium zahájené v roce 2019";
+            url = "https://www.mff.cuni.cz/cs/studenti/bc-a-mgr-studium/studijni-plany/verze-pro-tisk/studijni-plany-karolinka-2019-2020-bc-studium.pdf";
+          }
+          {
+            name = "Praktikum";
+            url = "http://praktikum.brejlovec.net/index.php";
+          }
+          {
+            name = "DISTANČNÍ výuka | Katedra tělesné výchovy";
+            url = "https://ktv.mff.cuni.cz/distancni-vyuka/";
+          }
+          {
+            name = "Základní fyzikální praktikum [Základní fyzikální praktikum]";
+            url = "https://physics.mff.cuni.cz/vyuka/zfp/";
+          }
         ];
       }
       # ~ /phil/

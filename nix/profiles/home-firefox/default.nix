@@ -199,6 +199,11 @@ in {
           user_pref("browser.startup.page", 3);
           user_pref("privacy.clearOnShutdown.history", false);
           user_pref("privacy.clearOnShutdown.downloads", false);
+
+          // 4504: TODO figure out some alternative since I cannot stand
+          // how it works by default but I'd like to have it
+          // enabled at some point
+          user_pref("privacy.resistFingerprinting.letterboxing", false);
         '');
       };
     };
