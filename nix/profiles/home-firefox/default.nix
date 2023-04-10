@@ -65,7 +65,7 @@ in {
           DisablePocket = true;
           DisableTelemetry = true;
           DisableFirefoxAccounts = false;
-          NoDefaultBookmarks = true;
+          # NoDefaultBookmarks = true;
           OfferToSaveLogins = false;
           OfferToSaveLoginsDefault = false;
           PasswordManagerEnabled = false;
@@ -193,6 +193,12 @@ in {
         # attrset listed above
         extraConfig = (builtins.readFile "${inputs.arkenfox-user-js}/user.js") + (''
           user_pref("extensions.autoDisableScopes", 0);
+
+          // 2811: sanitize everything but keep history & downloads and
+          // also enable session restore
+          user_pref("browser.startup.page", 3);
+          user_pref("privacy.clearOnShutdown.history", false);
+          user_pref("privacy.clearOnShutdown.downloads", false);
         '');
       };
     };
