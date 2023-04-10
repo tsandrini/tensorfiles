@@ -59,12 +59,34 @@ in {
     programs.firefox = {
       enable = _ true;
       package = pkgs.firefox.override {
-        extraPolicies."3rdparty".Extensions = {
-          "uBlock0@raymondhill.net" = {
-            # uBlock settings are written in JSON to be more compatible with the
-            # backup format. This checks the syntax.
-            adminSettings =
-              builtins.fromJSON (builtins.readFile ./ublock-settings.json);
+        extraPolicies = {
+          CaptivePortal = false;
+          DisableFirefoxStudies = true;
+          DisablePocket = true;
+          DisableTelemetry = true;
+          DisableFirefoxAccounts = false;
+          NoDefaultBookmarks = true;
+          OfferToSaveLogins = false;
+          OfferToSaveLoginsDefault = false;
+          PasswordManagerEnabled = false;
+          FirefoxHome = {
+            Search = true;
+            Pocket = false;
+            Snippets = false;
+            TopSites = false;
+            Highlights = false;
+          };
+          UserMessaging = {
+            ExtensionRecommendations = false;
+            SkipOnboarding = true;
+          };
+          "3rdparty".Extensions = {
+            "uBlock0@raymondhill.net" = {
+              # uBlock settings are written in JSON to be more compatible with the
+              # backup format. This checks the syntax.
+              adminSettings =
+                builtins.fromJSON (builtins.readFile ./ublock-settings.json);
+            };
           };
         };
       };
@@ -75,6 +97,7 @@ in {
         extensions = with pkgs.nur.repos.rycee.firefox-addons; [
           # ~ Privacy & content blocking
           ublock-origin
+          skip-redirect
           multi-account-containers
 
           # ~ Utils
@@ -88,6 +111,7 @@ in {
           # DEV related
           # vue-js-devtools
         ];
+        bookmarks = import ./bookmarks.nix;
         search = {
           force = _ true;
           default = _ "DuckDuckGo";
