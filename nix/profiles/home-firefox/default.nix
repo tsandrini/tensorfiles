@@ -181,10 +181,10 @@ in {
           "services.sync.engine.prefs" = _ false;
           "services.sync.engine.history" = _ true;
           "services.sync.engine.creditcards" = _ false;
-          "services.sync.engine.bookmarks" = _ true;
+          "services.sync.engine.bookmarks" = _ false;
           "services.sync.engine.tabs" = _ true;
           "services.sync.engine.addons" = _ false;
-          "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs";
+          "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs,bookmarks";
         };
 
         # Download areknfox-user-js and append overrides (order matters)
