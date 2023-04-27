@@ -12,21 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  pkgs,
-  lib,
-  # Whether the mozilla manifest should be installed globally or
-  # in the target user home directory.
-  # Since in NixOS mostly everything is global (`root` based) by default
-  # and also because without using home-manager it doesn't integrate very well
-  # with per-user configuration the default value is true
-  global ? true
-}:
+{ pkgs, lib,
+# Whether the mozilla manifest should be installed globally or
+# in the target user home directory.
+# Since in NixOS mostly everything is global (`root` based) by default
+# and also because without using home-manager it doesn't integrate very well
+# with per-user configuration the default value is true
+global ? true }:
 
 with pkgs.python3.pkgs;
 buildPythonApplication rec {
   pname = "pywalfox";
-  version = "2.7.4 ";
+  version = "2.7.4";
 
   src = fetchPypi {
     inherit pname version;
@@ -52,10 +49,10 @@ buildPythonApplication rec {
   '';
 
   meta = with lib; {
-    homepage    = "https://github.com/Frewacom/pywalfox-native";
+    homepage = "https://github.com/Frewacom/pywalfox-native";
     description = "Native app used alongside the Pywalfox addon.";
-    license     = licenses.gpl3;
+    license = licenses.gpl3;
     platforms = [ "x86_64-linux" ];
-    maintainers = [];
+    maintainers = [ ];
   };
 }
