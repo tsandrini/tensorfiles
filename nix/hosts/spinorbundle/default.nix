@@ -29,7 +29,8 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = with pkgs;
+    [ inputs.self.packages.${system}.pywalfox-native ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
