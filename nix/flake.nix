@@ -73,7 +73,7 @@
         in lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit inputs user;
+            inherit inputs user system;
             host.hostName = name;
           };
           modules = [
