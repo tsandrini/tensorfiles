@@ -26,6 +26,7 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
     agenix.url = "github:ryantm/agenix";
+
     nur.url = "github:nix-community/NUR";
 
     arkenfox-user-js = {
@@ -44,16 +45,24 @@
         inherit inputs nixpkgs home-manager user;
       };
 
-      findModules = dir:
+      # TODO I keep patching this function but I should probably
+      # just decouple the logic and move it elsewhere
+      findModules = dir: args:
         builtins.concatLists (builtins.attrValues (builtins.mapAttrs
           (name: type:
             if type == "regular" then [{
               name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
-              value = import (dir + "/${name}");
+              value = if args == { } then
+                import (dir + "/${name}")
+              else
+                import (dir + "/${name}") args;
             }] else if (builtins.readDir (dir + "/${name}"))
             ? "default.nix" then [{
               inherit name;
-              value = import (dir + "/${name}");
+              value = if args == { } then
+                import (dir + "/${name}")
+              else
+                import (dir + "/${name}") args;
             }] else
               findModules (dir + "/${name}")) (builtins.readDir dir)));
 
@@ -72,9 +81,7 @@
             { nixpkgs.config.allowUnfree = true; }
             {
               nixpkgs.config.packageOverrides = pkgs: {
-                nur = import inputs.nur {
-                  inherit pkgs;
-                };
+                nur = import inputs.nur { inherit pkgs; };
               };
             }
             { networking.hostName = name; }
@@ -82,9 +89,16 @@
           ];
         };
     in {
-      nixosModules = builtins.listToAttrs (findModules ./modules);
 
-      nixosProfiles = builtins.listToAttrs (findModules ./profiles);
+      packages = lib.genAttrs [ "x86_64-linux" ] (system:
+        builtins.listToAttrs (findModules ./pkgs {
+          inherit lib;
+          pkgs = nixpkgs.legacyPackages.${system};
+        }));
+
+      nixosModules = builtins.listToAttrs (findModules ./modules { });
+
+      nixosProfiles = builtins.listToAttrs (findModules ./profiles { });
 
       nixosRoles = import ./roles;
 

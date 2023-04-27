@@ -120,28 +120,50 @@ in {
               urls = [{
                 template = "https://search.nixos.org/packages";
                 params = [
-                  { name = "type"; value = "packages"; }
-                  { name = "channel"; value = "unstable"; }
-                  { name = "query"; value = "{searchTerms}"; }
+                  {
+                    name = "type";
+                    value = "packages";
+                  }
+                  {
+                    name = "channel";
+                    value = "unstable";
+                  }
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
                 ];
               }];
-              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              icon =
+                "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
               definedAliases = [ "@np" ];
             };
             "Nix Options" = {
               urls = [{
                 template = "https://search.nixos.org/options";
                 params = [
-                  { name = "type"; value = "packages"; }
-                  { name = "channel"; value = "unstable"; }
-                  { name = "query"; value = "{searchTerms}"; }
+                  {
+                    name = "type";
+                    value = "packages";
+                  }
+                  {
+                    name = "channel";
+                    value = "unstable";
+                  }
+                  {
+                    name = "query";
+                    value = "{searchTerms}";
+                  }
                 ];
               }];
-              icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
+              icon =
+                "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
               definedAliases = [ "@no" ];
             };
             "NixOS Wiki" = {
-              urls = [{ template = "https://nixos.wiki/index.php?search={searchTerms}"; }];
+              urls = [{
+                template = "https://nixos.wiki/index.php?search={searchTerms}";
+              }];
               iconUpdateURL = "https://nixos.wiki/favicon.png";
               updateInterval = 24 * 60 * 60 * 1000;
               definedAliases = [ "@nw" ];
@@ -184,36 +206,40 @@ in {
           "services.sync.engine.bookmarks" = _ false;
           "services.sync.engine.tabs" = _ true;
           "services.sync.engine.addons" = _ false;
-          "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs,bookmarks";
+          "services.sync.declinedEngines" =
+            _ "passwords,creditcards,addons,prefs,bookmarks";
         };
 
         # Download areknfox-user-js and append overrides (order matters)
         #
         # Note: I try to keep general purpose config in the settings
         # attrset listed above
-        extraConfig = (builtins.readFile "${inputs.arkenfox-user-js}/user.js") + (''
-          user_pref("extensions.autoDisableScopes", 0);
+        extraConfig = (builtins.readFile "${inputs.arkenfox-user-js}/user.js")
+          + (''
+            user_pref("extensions.autoDisableScopes", 0);
 
-          // 2811: sanitize everything but keep history & downloads and
-          // also enable session restore
-          user_pref("browser.startup.page", 3);
-          user_pref("privacy.clearOnShutdown.history", false);
-          user_pref("privacy.clearOnShutdown.downloads", false);
+            // 2811: sanitize everything but keep history & downloads and
+            // also enable session restore
+            user_pref("browser.startup.page", 3);
+            user_pref("privacy.clearOnShutdown.history", false);
+            user_pref("privacy.clearOnShutdown.downloads", false);
 
-          // 4504: TODO figure out some alternative since I cannot stand
-          // how it works by default but I'd like to have it
-          // enabled at some point
-          user_pref("privacy.resistFingerprinting.letterboxing", false);
-        '');
+            // 4504: TODO figure out some alternative since I cannot stand
+            // how it works by default but I'd like to have it
+            // enabled at some point
+            user_pref("privacy.resistFingerprinting.letterboxing", false);
+
+            // 4510: I cannot f*ing stand light theme
+            user_pref("browser.display.use_system_colors", true);
+          '');
       };
     };
   };
 
   environment.persistence = lib.mkIf (config.environment ? persistence) {
     "/persist".users.${user} = {
-      directories = [
-        ".mozilla/firefox/default"
-      ];
+      directories = [ ".mozilla/firefox/default" ];
     };
   };
+
 }

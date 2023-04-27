@@ -18,13 +18,11 @@
     # --------------------
     # | EXTERNAL MODULES |
     # --------------------
+    { system.stateVersion = "23.05"; }
     inputs.home-manager.nixosModules.home-manager
     inputs.impermanence.nixosModules.impermanence
     inputs.agenix.nixosModules.default
     inputs.nur.nixosModules.nur
-    {
-      system.stateVersion = "23.05";
-    }
 
     # -----------
     # | MODULES |
