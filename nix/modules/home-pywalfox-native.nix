@@ -38,9 +38,9 @@ in {
           Documentation = [ "https://github.com/Frewacom/pywalfox-native" ];
         };
         Service = {
-          ExecStartPre = "${pywalfox-native}/bin/pywalfox install";
-          ExecStart = "${pywalfox-native}/bin/pywalfox start";
-          ExecStartPost = "${pywalfox-native}/bin/pywalfox uninstall";
+          ExecStartPre = "exec ${pywalfox-native}/bin/pywalfox install";
+          ExecStart = "exec ${pywalfox-native}/bin/pywalfox start";
+          ExecStartPost = "exec ${pywalfox-native}/bin/pywalfox uninstall";
           Restart = "on-failure";
           RestartSec = "5";
         };
