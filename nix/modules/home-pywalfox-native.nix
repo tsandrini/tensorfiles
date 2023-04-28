@@ -33,7 +33,19 @@ in {
       home.packages = with pkgs; [ pywalfox-native ];
 
       systemd.user.services.pywalfox-native = {
-
+        Unit = {
+          Description = "Native app used alongside the Pywalfox addon.";
+          Documentation = [ "https://github.com/Frewacom/pywalfox-native" ];
+        };
+        Service = {
+          ExecStartPre = "python3 pywalfox install";
+          ExecStart = "python3 pywalfox start";
+          ExecStartPost = "python3 pywalfox uninstall";
+          Restart = "on-failure";
+          RestartSec = "5";
+        };
+        # Install.WantedBy = [ "default.target" ];
+        Install.WantedBy = [ "graphical-session.target" ];
       };
     };
   };
