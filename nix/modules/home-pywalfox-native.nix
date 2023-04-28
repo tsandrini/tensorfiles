@@ -14,7 +14,9 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { config, pkgs, lib, inputs, user, ... }:
 with lib;
-let cfg = config.tensormodules.home-pywalfox-native;
+let
+  cfg = config.tensormodules.home-pywalfox-native;
+  pywalfox-native = inputs.self.packages.${system}.pywalfox-native;
 in {
   options.tensormodules.home-pywalfox-native = with types; {
     enable = mkBoolOpt false;
@@ -26,5 +28,13 @@ in {
     #   message = "(Exactly) one bootloader needs to be provided";
     # }];
 
+    home-manager.users.${user} = {
+
+      home.packages = with pkgs; [ pywalfox-native ];
+
+      systemd.user.services.pywalfox-native = {
+
+      };
+    };
   };
 }

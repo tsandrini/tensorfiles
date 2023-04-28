@@ -44,14 +44,17 @@ buildPythonApplication rec {
   #     - /usr/lib/mozilla/native-messaging-hosts
   #     - .mozilla/native-messaging-hosts
   #
-  postPatch = ''
-    python3 pywalfox install ${if global then "--global" else ""}
-  '';
+  # postPatch = ''
+  #     python -c "import pywalfox.config; print(pywalfox.config)"
+  #     PYTHONPATH=$PWD:${src}/src/pywalfox/pywalfox:$PYTHONPATH python ${src}/pywalfox install ${
+  #       if global then "--global" else ""
+  #     }
+  #   # '';
 
   meta = with lib; {
     homepage = "https://github.com/Frewacom/pywalfox-native";
     description = "Native app used alongside the Pywalfox addon.";
-    license = licenses.gpl3;
+    license = licenses.mpl20;
     platforms = [ "x86_64-linux" ];
     maintainers = [ ];
   };
