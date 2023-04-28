@@ -94,7 +94,7 @@ in {
       haskellPackages.xmobar
       i3lock-fancy-rapid
       playerctl
-      autorandr
+      # autorandr
       nerdfonts
       feh
       trayer
