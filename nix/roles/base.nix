@@ -28,6 +28,10 @@
     # | MODULES |
     # -----------
     # nixosModules.hello
+    nixosModules.home-pywalfox-native
+    {
+      tensormodules.home-pywalfox-native.enable = true;
+    }
 
     # ------------
     # | PROFILES |
@@ -45,7 +49,6 @@
     nixosProfiles.home-zsh
     nixosProfiles.home-neovim
     nixosProfiles.home-pywal
-    nixosProfiles.home-pywalfox-native
     nixosProfiles.home-picom
     nixosProfiles.home-alacritty
     nixosProfiles.home-lf
