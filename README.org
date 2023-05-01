@@ -54,7 +54,28 @@ ones instead (for obvious reasons).
 thanks <3.
 * 3. Installation
 TODO
-* 4. Troubleshooting
+* 4. (rough) Roadmap
+- [ ] **organization**
+  - [ ] finish doc
+  - [ ] decouple [[file:nix/roles/base.nix]]
+  - [ ] decouple [[file:nix/flake.nix]]
+  - [ ] move [[file:nix/]] to be the project root
+- [ ] **implementation**
+  - [ ] syncthing (local version)
+  - [ ] syncthing (remote)
+  - [ ] searx (remote)
+  - [ ] newsboat
+  - [ ] thunderbird
+  - [ ] zotero
+  - [ ] anki
+  - [ ] emacs
+  - [ ] discord
+  - [ ] misc? vlc? libre?
+- [ ] **machines**
+  - [ ] jetbundle
+  - [ ] pi
+  - [ ] server
+* 5. Troubleshooting
 ** "Write error: disk full" during =nixos-install=
 If you get any error of this kind during the installation of this flake
 you have most likely run out of =$TMPDIR= space. This is usually due
@@ -83,7 +104,7 @@ tmpfs, for example
 #+begin_src shell
 mount -o remount,size=15G /tmp
 #+end_src
-* 5. References
+* 6. References
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you've really
 conquered the art of computer wizardry, however, it's so different from
