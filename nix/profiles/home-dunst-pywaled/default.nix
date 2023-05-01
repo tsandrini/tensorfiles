@@ -18,7 +18,11 @@ let
   cfg = config.home-manager.users.${user};
 in {
   home-manager.users.${user} = {
-    home.packages = with pkgs; [ dunst ];
+    home.packages = with pkgs; [
+      dunst
+      iosevka
+      (nerdfonts.override { fonts = [ "Iosevka" ]; })
+    ];
 
     # Setup general templates
     home.file."${cfg.xdg.configHome}/wal/templates/dunstrc".source =

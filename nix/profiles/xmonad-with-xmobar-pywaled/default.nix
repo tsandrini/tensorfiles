@@ -95,7 +95,9 @@ in {
       i3lock-fancy-rapid
       playerctl
       # autorandr
-      nerdfonts
+      # nerdfonts
+      ubuntu_font_family
+      (nerdfonts.override { fonts = [ "Ubuntu" "UbuntuMono" ]; })
       feh
       trayer
       cbatticon

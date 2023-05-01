@@ -46,6 +46,8 @@ in {
       homeDirectory = _ "/home/${user}";
       stateVersion = "23.05";
     };
+
+    fonts.fontconfig.enable = _ true;
   };
 
   age.secrets."common/passwords/users/${user}_default".file =
