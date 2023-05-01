@@ -1,4 +1,4 @@
-# --- modules/home-pywalfox-native.nix
+# --- profiles/home-pywalfox-native.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,29 +13,21 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { config, pkgs, lib, inputs, system, user, ... }:
-with lib;
 let
-  cfg = config.tensormodules.home-pywalfox-native;
+  _ = lib.mkOverride 500;
   pywalfox-native = inputs.self.packages.${system}.pywalfox-native;
   pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
     ${pywalfox-native}/bin/pywalfox start
   '';
 in {
-  options.tensormodules.home-pywalfox-native = with types; {
-    enable = mkEnableOption "Pywalfox-native messenger module";
-  };
 
-  config = mkIf cfg.enable {
+  home-manager.users.${user} = {
 
-    home-manager.users.${user} = {
+    home.packages = with pkgs; [ pywalfox-native ];
 
-      home.packages = with pkgs; [ pywalfox-native ];
-
-      home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
-        builtins.replaceStrings [ "<path>" ]
-        [ "${pywalfox-wrapper}/bin/pywalfox-wrapper" ] (builtins.readFile
-          "${pywalfox-native}/lib/python3.10/site-packages/pywalfox/assets/manifest.json");
-
-    };
+    home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
+      builtins.replaceStrings [ "<path>" ]
+      [ "${pywalfox-wrapper}/bin/pywalfox-wrapper" ] (builtins.readFile
+        "${pywalfox-native}/lib/python3.10/site-packages/pywalfox/assets/manifest.json");
   };
 }

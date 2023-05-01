@@ -12,13 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, lib,
-# Whether the mozilla manifest should be installed globally or
-# in the target user home directory.
-# Since in NixOS mostly everything is global (`root` based) by default
-# and also because without using home-manager it doesn't integrate very well
-# with per-user configuration the default value is true
-global ? true }:
+{ pkgs, lib }:
 
 with pkgs.python3.pkgs;
 buildPythonApplication rec {
@@ -30,26 +24,11 @@ buildPythonApplication rec {
     sha256 = "59e73d7e27389574fb801634e03d8471f09bfe062865cad803f68c456680ed66";
   };
 
+  propagatedBuildInputs = [ setuptools ];
+
   # No tests included
   doCheck = false;
   pythonImportsCheck = [ "pywalfox" ];
-
-  # TODO: the manifest file is going to get deleted by the opt in fs
-  #
-  # `pywalfox install does 2 things`
-  # 0. (optional) remove existing manifest
-  # 1. copy_manifest
-  #   This copies the mozilla manifest file into its target location which is
-  #   either one of
-  #     - /usr/lib/mozilla/native-messaging-hosts
-  #     - .mozilla/native-messaging-hosts
-  #
-  # postPatch = ''
-  #     python -c "import pywalfox.config; print(pywalfox.config)"
-  #     PYTHONPATH=$PWD:${src}/src/pywalfox/pywalfox:$PYTHONPATH python ${src}/pywalfox install ${
-  #       if global then "--global" else ""
-  #     }
-  #   # '';
 
   meta = with lib; {
     homepage = "https://github.com/Frewacom/pywalfox-native";
