@@ -48,6 +48,7 @@
     nixosProfiles.home-pywalfox-native
     nixosProfiles.home-picom
     nixosProfiles.home-alacritty
+    nixosProfiles.home-newsboat
     nixosProfiles.home-lf
     nixosProfiles.home-dmenu-pywaled
     nixosProfiles.home-redshift
