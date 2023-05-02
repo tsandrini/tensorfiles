@@ -50,6 +50,7 @@ in {
         plugins = [ "git" "git-flow" "colorize" "colored-man-pages" ];
       };
       shellAliases = {
+        sudo = _ "sudo ";
         ls = _ "exa";
         ll = _
           "exa -F --icons --group-directories-first -la --git --header --created --modified";
