@@ -60,11 +60,11 @@ TODO
   - [ ] decouple [[file:nix/roles/base.nix]]
   - [ ] decouple [[file:nix/flake.nix]]
   - [ ] move [[file:nix/]] to be the project root
-- [ ] **implementation**
+- [-] **implementation**
   - [ ] syncthing (local version)
   - [ ] syncthing (remote)
   - [ ] searx (remote)
-  - [ ] newsboat
+  - [X] newsboat
   - [ ] thunderbird
   - [ ] zotero
   - [ ] anki

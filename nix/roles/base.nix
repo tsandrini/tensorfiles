@@ -42,6 +42,7 @@
     nixosProfiles.xmonad-with-xmobar-pywaled
     nixosProfiles.home-manager
     nixosProfiles.home-xdg
+    nixosProfiles.home-git
     nixosProfiles.home-zsh
     nixosProfiles.home-neovim
     nixosProfiles.home-pywal
