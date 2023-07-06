@@ -20,7 +20,7 @@ in {
   nixpkgs.config.permittedInsecurePackages = [ "python-2.7.18.6" ];
 
   home-manager.users.${user} = {
-    home.packages = with pkgs; [ pywal python2 ];
+    home.packages = with pkgs; [ pywal ];
 
     # Setup general templates
     home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =

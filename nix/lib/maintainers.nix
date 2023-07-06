@@ -1,4 +1,4 @@
-# --- lib/default.nix
+# --- lib/maintainers.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,8 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, lib, inputs, user, ... }: {
-  licenses = import ./licenses.nix { inherit pkgs lib; };
-  maintainers = import ./maintainers.nix { inherit pkgs lib; };
-  modules = import ./modules.nix { inherit pkgs lib inputs user; };
+{ pkgs, lib, ... }: {
+  tsandrini = {
+    email = "tomas.sandrini@seznam.cz";
+    name = "Tomáš Sandrini";
+    github = "tsandrini";
+    githubId = 21975189;
+  };
 }

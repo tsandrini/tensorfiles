@@ -35,76 +35,33 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, ... }@inputs:
     let
+      inherit (lib.tensorfiles.modules) mapModules mkPkgs mkHost;
+
       user = "tsandrini";
-      lib = nixpkgs.lib;
 
-      tensorlib = import ./lib {
-        inherit (nixpkgs) lib;
-        inherit inputs nixpkgs home-manager user;
-      };
-
-      # TODO I keep patching this function but I should probably
-      # just decouple the logic and move it elsewhere
-      findModules = dir: args:
-        builtins.concatLists (builtins.attrValues (builtins.mapAttrs
-          (name: type:
-            if type == "regular" then [{
-              name = builtins.elemAt (builtins.match "(.*)\\.nix" name) 0;
-              value = if args == { } then
-                import (dir + "/${name}")
-              else
-                import (dir + "/${name}") args;
-            }] else if (builtins.readDir (dir + "/${name}"))
-            ? "default.nix" then [{
-              inherit name;
-              value = if args == { } then
-                import (dir + "/${name}")
-              else
-                import (dir + "/${name}") args;
-            }] else
-              findModules (dir + "/${name}")) (builtins.readDir dir)));
-
-      mkHost = name:
-        let
-          system = lib.removeSuffix "\n"
-            (builtins.readFile (./hosts + "/${name}/system"));
-        in lib.nixosSystem {
-          inherit system;
-          specialArgs = {
-            inherit inputs user system;
-            host.hostName = name;
-          };
-          modules = [
-            # TODO this should a be part of lib, not profiles or modules
-            { nixpkgs.config.allowUnfree = true; }
-            {
-              nixpkgs.config.packageOverrides = pkgs: {
-                nur = import inputs.nur { inherit pkgs; };
-              };
-            }
-            { networking.hostName = name; }
-            (./hosts + "/${name}")
-          ];
+      lib = nixpkgs.lib.extend (self: super: {
+        tensorfiles = import ./lib {
+          inherit inputs user;
+          pkgs = nixpkgs;
+          lib = self;
         };
+      });
+
     in {
+      overlays = mapModules ./overlays import;
 
       packages = lib.genAttrs [ "x86_64-linux" ] (system:
-        builtins.listToAttrs (findModules ./pkgs {
-          inherit lib;
-          pkgs = nixpkgs.legacyPackages.${system};
-        }));
+        let systemPkgs = mkPkgs nixpkgs system [ ];
+        in mapModules ./pkgs (p: systemPkgs.callPackage p { inherit lib; }));
 
-      nixosModules = builtins.listToAttrs (findModules ./modules { });
+      nixosModules = mapModules ./modules import;
 
-      nixosProfiles = builtins.listToAttrs (findModules ./profiles { });
+      nixosProfiles = mapModules ./profiles import;
 
-      nixosRoles = import ./roles;
+      nixosRoles = mapModules ./roles import;
 
-      nixosConfigurations =
-        (let hosts = builtins.attrNames (builtins.readDir ./hosts);
-        in lib.genAttrs hosts mkHost);
-
+      nixosConfigurations = mapModules ./hosts mkHost;
     };
 }

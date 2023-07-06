@@ -12,9 +12,9 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, lib }:
+{ lib, python3, ... }:
 
-with pkgs.python3.pkgs;
+with python3.pkgs;
 buildPythonApplication rec {
   pname = "pywalfox";
   version = "2.7.4";
@@ -35,6 +35,6 @@ buildPythonApplication rec {
     description = "Native app used alongside the Pywalfox addon.";
     license = licenses.mpl20;
     platforms = [ "x86_64-linux" ];
-    maintainers = [ ];
+    maintainers = with tensorfiles.maintainers; [ tsandrini ];
   };
 }
