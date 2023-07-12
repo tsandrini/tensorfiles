@@ -27,7 +27,7 @@ with builtins; rec {
       in if v == "directory" && pathExists "${path}/default.nix" then
         nameValuePair n (fn path)
       else if v == "directory" then
-        nameValuePair n (mapModules' path fn)
+        nameValuePair n (mapModules path fn)
       else if v == "regular" && n != "default.nix" && hasSuffix ".nix" n then
         nameValuePair (removeSuffix ".nix" n) (fn path)
       else

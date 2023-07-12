@@ -1,4 +1,4 @@
-# --- modules/testModule.nix
+# --- modules/misc/nix.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,24 +12,32 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  lib,
-  pkgs,
-  config,
-  ...
-}:
-with lib; let
-  cfg = config.hello;
+{ config, lib, pkgs, inputs, ... }:
+with builtins;
+with lib;
+let
+  cfg = config.tensorfiles.misc.nix;
+  _ = mkOverride 500;
 in {
-  options.hello = {
-    enable = mkEnableOption "hello service";
-    greeter = mkOption {
-      type = types.str;
-      default = "world";
-    };
+  options.tensorfiles.misc.nix = with types; {
+    enable = mkEnableOption (mdDoc ''
+      Module predefining certain nix lang & nix package manager
+      defaults
+    '');
   };
 
-  config =
-    mkIf cfg.enable {
+  config = mkIf cfg.enable (mkMerge [({
+    nix = {
+      package = _ pkgs.nixVersions.unstable;
+      registry.nixpkgs.flake = _ inputs.nixpkgs;
+      settings.auto-optimise-store = _ true;
+      extraOptions = mkBefore ''
+        experimental-features = nix-command flakes
+        keep-outputs          = true
+        keep-derivations      = true
+      '';
     };
+  })]);
+
+  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
 }
