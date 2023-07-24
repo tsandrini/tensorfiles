@@ -1,4 +1,4 @@
-# --- modules/misc/nix.nix
+# --- modules/tasks/nix-garbage-collect.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,33 +12,24 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, ... }:
 with builtins;
 with lib;
 let
-  cfg = config.tensorfiles.misc.nix;
+  cfg = config.tensorfiles.tasks.nix-garbage-collect;
   _ = mkOverride 500;
 in {
-  # TODO Modularize unstable/stable branches into an enum option
-  options.tensorfiles.misc.nix = with types; {
+  options.tensorfiles.tasks.nix-garbage-collect = with types; {
     enable = mkEnableOption (mdDoc ''
-      Module predefining certain nix lang & nix package manager
-      defaults
+      Module enabling & configuring periodic nix store garbage collection
     '');
   };
 
   config = mkIf cfg.enable (mkMerge [({
-    nix = {
-      enable = _ true;
-      checkConfig = _ true;
-      package = _ pkgs.nixVersions.unstable;
-      registry.nixpkgs.flake = _ inputs.nixpkgs;
-      settings.auto-optimise-store = _ true;
-      extraOptions = mkBefore ''
-        experimental-features = nix-command flakes
-        keep-outputs          = true
-        keep-derivations      = true
-      '';
+    nix.gc = {
+      automatic = _ true;
+      dates = _ "weekly";
+      options = _ "--delete-older-than 3d";
     };
   })]);
 

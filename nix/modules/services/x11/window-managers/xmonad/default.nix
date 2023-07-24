@@ -1,4 +1,4 @@
-# --- modules/misc/nix.nix
+# --- modules/services/x11/window-managers/xmonad/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,35 +12,39 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, system, ... }:
 with builtins;
 with lib;
 let
-  cfg = config.tensorfiles.misc.nix;
+  cfg = config.tensorfiles.services.x11.window-managers.xmonad;
   _ = mkOverride 500;
+  persistenceCheck = (cfg.persistence)
+    && (config ? tensorfiles.system.persistence)
+    && (config.tensorfiles.system.persistence.enable);
 in {
-  # TODO Modularize unstable/stable branches into an enum option
-  options.tensorfiles.misc.nix = with types; {
+  options.tensorfiles.services.x11.window-managers.xmonad = with types; {
     enable = mkEnableOption (mdDoc ''
-      Module predefining certain nix lang & nix package manager
-      defaults
+      Module predefining & setting up agenix for handling secrets
     '');
+
+    persistence = mkEnableOption (mdDoc ''
+      Whether to autoappend files/folders to the persistence system.
+      Note that this will get executed only if
+
+      1. persistence = true;
+      2. tensorfiles.system.persistence module is loaded
+      3. tensorfiles.system.persistence.enable = true;
+    '') // {
+      default = true;
+    };
   };
 
-  config = mkIf cfg.enable (mkMerge [({
-    nix = {
-      enable = _ true;
-      checkConfig = _ true;
-      package = _ pkgs.nixVersions.unstable;
-      registry.nixpkgs.flake = _ inputs.nixpkgs;
-      settings.auto-optimise-store = _ true;
-      extraOptions = mkBefore ''
-        experimental-features = nix-command flakes
-        keep-outputs          = true
-        keep-derivations      = true
-      '';
-    };
-  })]);
+  config = mkIf cfg.enable (mkMerge [
+    ({
+      #
+      #
+    })
+  ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
 }

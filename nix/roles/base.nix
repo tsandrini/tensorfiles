@@ -18,11 +18,11 @@
     # --------------------
     # | EXTERNAL MODULES |
     # --------------------
-    { system.stateVersion = "23.05"; }
-    inputs.home-manager.nixosModules.home-manager
-    inputs.impermanence.nixosModules.impermanence
-    inputs.agenix.nixosModules.default
-    inputs.nur.nixosModules.nur
+    # { system.stateVersion = "23.05"; }
+    # inputs.home-manager.nixosModules.home-manager
+    # inputs.impermanence.nixosModules.impermanence
+    # inputs.agenix.nixosModules.default
+    # inputs.nur.nixosModules.nur
 
     # -----------
     # | MODULES |
@@ -32,13 +32,13 @@
     # ------------
     # | PROFILES |
     # ------------
-    nixosProfiles.agenix
-    nixosProfiles.tty
-    nixosProfiles.system-maintenance
-    nixosProfiles.system-packages
-    nixosProfiles.persist-btrfs
-    nixosProfiles.localization
-    nixosProfiles.networking-nm
+    # nixosProfiles.agenix
+    # nixosProfiles.tty
+    # nixosProfiles.system-maintenance
+    # nixosProfiles.system-packages
+    # nixosProfiles.persist-btrfs
+    # nixosProfiles.localization
+    # nixosProfiles.networking-nm
     nixosProfiles.xmonad-with-xmobar-pywaled
     nixosProfiles.home-manager
     nixosProfiles.home-xdg

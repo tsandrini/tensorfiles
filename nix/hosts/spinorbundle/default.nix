@@ -24,7 +24,7 @@
   imports = with inputs.self; [
     ./hardware-configuration.nix
     nixosRoles.laptop
-    nixosModules.misc.nix
+    nixosModules.profiles.base
   ];
 
   # ------------------------------
