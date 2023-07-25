@@ -44,10 +44,14 @@ in {
         ```nix
         home.enable = true;
         home.settings."root" = {
-          withAutocompletions = false;
+          myOption = false;
+          otherOption.name = "test1";
+          # etc...
         };
         home.settings."myUser" = {
-          withAutocompletions = true;
+          myOption = true;
+          otherOption.name = "test2";
+          # etc...
         };
         ```
       '');
@@ -153,10 +157,14 @@ in {
           ```nix
           home.enable = true;
           home.settings."root" = {
-            withAutocompletions = false;
+            myOption = false;
+            otherOption.name = "test1";
+            # etc...
           };
           home.settings."myUser" = {
-            withAutocompletions = true;
+            myOption = true;
+            otherOption.name = "test2";
+            # etc...
           };
           ```
         '';
@@ -166,11 +174,13 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     ({
-      assertions = [{
-        assertion = cfg.home.enable && (hasAttr "home-manager" config);
-        message =
-          "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
-      }];
+      assertions = [
+        (mkIf cfg.home.enable {
+          assertion = cfg.home.enable && (hasAttr "home-manager" config);
+          message =
+            "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
+        })
+      ];
     })
     ({ users.defaultUserShell = _ cfg.package; })
     (mkIf cfg.home.enable {

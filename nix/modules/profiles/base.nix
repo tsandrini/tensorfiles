@@ -82,6 +82,7 @@ in {
     inputs.nur.nixosModules.nur
 
     misc.nix
+    misc.xdg
 
     programs.git
     programs.shells.zsh
@@ -104,8 +105,8 @@ in {
       #   #
       # };
       tensorfiles.misc = mkIf cfg.modulesAutoenable.misc {
-        #
         nix.enable = _ true;
+        xdg.enable = _ true;
       };
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
         git.enable = _ true;
@@ -131,6 +132,7 @@ in {
     (mkIf (cfg.modulesAutoenable.enable && cfg.modulesAutoenable.homeSettings) {
       tensorfiles.programs.shells.zsh.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
+      tensorfiles.misc.xdg.home.enable = _ true;
     })
     ({
       # TODO move this

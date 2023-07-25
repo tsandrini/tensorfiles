@@ -22,7 +22,7 @@ in {
   # TODO add non-hm nixos only based configuration
   options.tensorfiles.programs.git = with types; {
     enable = mkEnableOption (mdDoc ''
-      Enable zsh configuration module
+      Enable git configuration module
     '');
 
     home = {
@@ -35,10 +35,14 @@ in {
         ```nix
         home.enable = true;
         home.settings."root" = {
-          withAutocompletions = false;
+          myOption = false;
+          otherOption.name = "test1";
+          # etc...
         };
         home.settings."myUser" = {
-          withAutocompletions = true;
+          myOption = true;
+          otherOption.name = "test2";
+          # etc...
         };
         ```
       '');
@@ -51,7 +55,9 @@ in {
               type = nullOr str;
               default = null;
               description = mdDoc ''
-                TODO
+                Username that should be used for commits and credentials.
+                If none provided, the top level name for the home-manager
+                will be used.
               '';
             };
 
@@ -59,9 +65,9 @@ in {
               type = addCheck str (str:
                 match "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}" str
                 != null);
-              default = "tomas.sandrini@seznam.cz";
+              default = "tomas.sandrini@seznam.cz"; # TODO remove
               description = mdDoc ''
-                TODO
+                Email that should be used for commits and credentials.
               '';
             };
           };
@@ -76,10 +82,14 @@ in {
           ```nix
           home.enable = true;
           home.settings."root" = {
-            withAutocompletions = false;
+            myOption = false;
+            otherOption.name = "test1";
+            # etc...
           };
           home.settings."myUser" = {
-            withAutocompletions = true;
+            myOption = true;
+            otherOption.name = "test2";
+            # etc...
           };
           ```
         '';
@@ -89,11 +99,13 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     ({
-      assertions = [{
-        assertion = cfg.home.enable && (hasAttr "home-manager" config);
-        message =
-          "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
-      }];
+      assertions = [
+        (mkIf cfg.home.enable {
+          assertion = cfg.home.enable && (hasAttr "home-manager" config);
+          message =
+            "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
+        })
+      ];
     })
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
