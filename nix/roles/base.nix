@@ -43,7 +43,7 @@
     nixosProfiles.home-manager
     nixosProfiles.home-xdg
     nixosProfiles.home-git
-    nixosProfiles.home-zsh
+    # nixosProfiles.home-zsh
     nixosProfiles.home-neovim
     nixosProfiles.home-pywal
     nixosProfiles.home-pywalfox-native

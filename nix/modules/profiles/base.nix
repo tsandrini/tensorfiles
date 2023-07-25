@@ -124,6 +124,11 @@ in {
         rootPartition = _ "/dev/mapper/enc";
       };
 
+      tensorfiles.programs.shells.zsh = {
+        #
+        home.enable = _ true;
+      };
+
       time.timeZone = _ "Europe/Prague";
       i18n.defaultLocale = _ "en_US.UTF-8";
 

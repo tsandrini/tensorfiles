@@ -21,12 +21,12 @@ let
 in {
   options.tensorfiles.programs.shells.zsh = with types; rec {
     enable = mkEnableOption (mdDoc ''
-      TODO
+      Enable zsh configuration module
     '');
 
     home = {
       enable = mkEnableOption (mdDoc ''
-        TODO
+        Enable zsh multi-user configuration via home-manager.
       '');
 
       settings = mkOption {
@@ -120,7 +120,7 @@ in {
             dummy = null;
           };
         };
-        description = "Settings for my service";
+        description = mdDoc "Settings for my service";
       };
     };
   };

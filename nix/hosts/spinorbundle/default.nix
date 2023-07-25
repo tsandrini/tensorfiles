@@ -27,6 +27,8 @@
     nixosModules.profiles.base
   ];
 
+  tensorfiles.profiles.base.enable = true;
+
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
