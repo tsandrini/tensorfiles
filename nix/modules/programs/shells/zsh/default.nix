@@ -117,7 +117,6 @@ in {
         default = {
           "${user}" = {
             # this should hopefully be enough? #TODO test
-            dummy = null;
           };
         };
         description = mdDoc "Settings for my service";
