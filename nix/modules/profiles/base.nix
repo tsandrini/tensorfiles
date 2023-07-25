@@ -145,7 +145,6 @@ in {
         wget
         curl
         jq
-        ripgrep
         killall
         openssl
         vim
