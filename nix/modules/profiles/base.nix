@@ -21,7 +21,7 @@ let
   #       profile level = 400
   _ = mkOverride 400;
 in {
-  # TODO find a better place for the stateVersion declaratoin
+  # TODO find a better place for the stateVersion expression
   options.tensorfiles.profiles.base = with types; {
     enable = mkEnableOption (mdDoc ''
       Base profile, WIP, will probably be decoupled in the future
@@ -34,33 +34,42 @@ in {
         default = true;
       };
 
-      hardware =
-        mkEnableOption (mdDoc "Autoenabling all of the hardware/ modules") // {
+      hardware = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/hardware/ NixOS modules") // {
           default = true;
         };
-      misc = mkEnableOption (mdDoc "Autoenabling all of the misc/ modules") // {
+      misc = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/misc/ NixOS modules") // {
+          default = true;
+        };
+      programs = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/programs/ NixOS modules") // {
+          default = true;
+        };
+      security = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/security/ NixOS modules") // {
+          default = true;
+        };
+      services = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/services/ NixOS modules") // {
+          default = true;
+        };
+      system = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/system/ NixOS modules") // {
+          default = true;
+        };
+      tasks = mkEnableOption
+        (mdDoc "Autoenabling all of the modules/tasks/ NixOS modules") // {
+          default = true;
+        };
+
+      homeSettings = mkEnableOption (mdDoc ''
+        Autoenables all of the multi-user home-manager home.settings
+        configuration. This basically just sets `home.enable = true;` for all
+        of the modules that support it.
+      '') // {
         default = true;
       };
-      programs =
-        mkEnableOption (mdDoc "Autoenabling all of the programs/ modules") // {
-          default = true;
-        };
-      security =
-        mkEnableOption (mdDoc "Autoenabling all of the security/ modules") // {
-          default = true;
-        };
-      services =
-        mkEnableOption (mdDoc "Autoenabling all of the services/ modules") // {
-          default = true;
-        };
-      system = mkEnableOption (mdDoc "Autoenabling all of the system/ modules")
-        // {
-          default = true;
-        };
-      tasks = mkEnableOption (mdDoc "Autoenabling all of the tasks/ modules")
-        // {
-          default = true;
-        };
     };
   };
 
@@ -74,6 +83,7 @@ in {
 
     misc.nix
 
+    programs.git
     programs.shells.zsh
 
     security.agenix
@@ -88,7 +98,7 @@ in {
   ];
 
   config = mkIf cfg.enable (mkMerge [
-    ({ system.stateVersion = "23.05"; })
+    ({ system.stateVersion = _ "23.05"; })
     (mkIf cfg.modulesAutoenable.enable {
       # tensorfiles.hardware = mkIf cfg.modulesAutoenable.hardware {
       #   #
@@ -98,7 +108,7 @@ in {
         nix.enable = _ true;
       };
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
-        #
+        git.enable = _ true;
         shells.zsh.enable = _ true;
       };
       tensorfiles.security = mkIf cfg.modulesAutoenable.security {
@@ -118,15 +128,15 @@ in {
         system-autoupgrade.enable = _ true;
       };
     })
+    (mkIf (cfg.modulesAutoenable.enable && cfg.modulesAutoenable.homeSettings) {
+      tensorfiles.programs.shells.zsh.home.enable = _ true;
+      tensorfiles.programs.git.home.enable = _ true;
+    })
     ({
+      # TODO move this
       tensorfiles.system.persistence.btrfsWipe = {
         enable = _ true;
         rootPartition = _ "/dev/mapper/enc";
-      };
-
-      tensorfiles.programs.shells.zsh = {
-        #
-        home.enable = _ true;
       };
 
       time.timeZone = _ "Europe/Prague";

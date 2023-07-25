@@ -36,7 +36,7 @@ in {
 
     home = {
       enable = mkEnableOption (mdDoc ''
-        Enable zsh multi-user configuration via home-manager.
+        Enable multi-user configuration via home-manager.
 
         The configuration is then done via the settings option with the toplevel
         attribute being the name of the user, for example:
