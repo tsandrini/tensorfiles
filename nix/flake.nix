@@ -50,6 +50,8 @@
       });
 
     in {
+      lib = lib.tensorfiles;
+
       overlays = mapModules ./overlays import;
 
       packages = lib.genAttrs [ "x86_64-linux" ] (system:

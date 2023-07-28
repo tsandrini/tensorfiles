@@ -18,32 +18,30 @@ with lib;
 let
   cfg = config.tensorfiles.services.networking.networkmanager;
   _ = mkOverride 500;
-  persistenceCheck = (cfg.persistence)
-    && (config ? tensorfiles.system.persistence)
-    && (config.tensorfiles.system.persistence.enable);
+  persistenceCheck = cfg.persistence.enable
+    && (tensorfiles.modules.ifPersistenceEnabled config);
 in {
   options.tensorfiles.services.networking.networkmanager = with types; {
     enable = mkEnableOption (mdDoc ''
       Module predefining & setting up agenix for handling secrets
     '');
 
-    persistence = mkEnableOption (mdDoc ''
-      Whether to autoappend files/folders to the persistence system.
-      Note that this will get executed only if
+    persistence = {
+      enable = mkEnableOption (mdDoc ''
+        Whether to autoappend files/folders to the persistence system.
+        Note that this will get executed only if
 
-      1. persistence = true;
-      2. tensorfiles.system.persistence module is loaded
-      3. tensorfiles.system.persistence.enable = true;
-    '') // {
-      default = true;
+        1. persistence = true;
+        2. tensorfiles.system.persistence module is loaded
+        3. tensorfiles.system.persistence.enable = true;
+      '') // {
+        default = true;
+      };
     };
   };
 
   config = mkIf cfg.enable (mkMerge [
-    ({
-      networking.networkmanager.enable = _ true;
-      #
-    })
+    ({ networking.networkmanager.enable = _ true; })
     (mkIf persistenceCheck {
       environment.persistence."/persist" = {
         directories = [ "/etc/NetworkManager/system-connections" ];

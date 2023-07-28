@@ -12,14 +12,19 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, lib, inputs, user, ... }:
-with lib;
+{ pkgs, lib, self, inputs, user ? "root", ... }:
+let
+  inherit (self.attrsets) mapFilterAttrs;
+  inherit (self.strings) dirnameFromPath;
+in with lib;
 with builtins; rec {
 
-  mapFilterAttrs = pred: f: attrs: filterAttrs pred (mapAttrs' f attrs);
+  ifPersistenceEnabled = cfg:
+    (cfg ? tensorfiles.system.persistence)
+    && (cfg.tensorfiles.system.persistence.enable);
 
-  dirnameFromPath = dir:
-    trivial.pipe dir [ toString (strings.splitString "/") lists.last ];
+  ifAgenixEnabled = cfg:
+    (cfg ? tensorfiles.security.agenix) && (cfg.tensorfiles.security.agenix);
 
   mapModules = dir: fn:
     mapFilterAttrs (n: v: v != null && !(hasPrefix "_" n)) (n: v:
@@ -45,7 +50,7 @@ with builtins; rec {
           nur = import inputs.nur { pkgs = final; };
         };
       in extraOverlays ++ [ pkgsOverlay nurOverlay ]
-      ++ (lib.attrValues inputs.self.overlays);
+      ++ (attrValues inputs.self.overlays);
     };
 
   mkHost = dir:
@@ -53,21 +58,18 @@ with builtins; rec {
       name = dirnameFromPath dir;
       system = removeSuffix "\n" (readFile "${dir}/system");
       systemPkgs = mkPkgs inputs.nixpkgs system [ ];
-    in lib.nixosSystem {
+    in nixosSystem {
       inherit system;
       pkgs = systemPkgs;
       specialArgs = {
-        inherit inputs user system;
+        inherit inputs lib system user;
         host.hostName = name;
       };
       modules = [
-        { nixpkgs.config.allowUnfree = true; }
-        { networking.hostName = name; }
         {
-          # TODO cleanup -> maybe overlay?
-          # nixpkgs.config.packageOverrides = pkgs: {
-          #   nur = import inputs.nur { inherit pkgs; };
-          # };
+          nixpkgs.config.allowUnfree = true;
+          nixpkgs.pkgs = systemPkgs;
+          networking.hostName = name;
         }
         (dir)
       ];

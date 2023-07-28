@@ -12,8 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, lib, inputs, user, ... }: {
-  licenses = import ./licenses.nix { inherit pkgs lib; };
-  maintainers = import ./maintainers.nix { inherit pkgs lib; };
-  modules = import ./modules.nix { inherit pkgs lib inputs user; };
-}
+{ pkgs, lib, inputs, user ? "root", ... }:
+let
+  inherit (modules) mapModules;
+
+  modules = import ./modules.nix {
+    inherit pkgs lib inputs user;
+    self.attrsets = import ./attrsets.nix { inherit lib; };
+    self.strings = import ./strings.nix { inherit lib; };
+  };
+
+  tensorfiles = lib.makeExtensible (self:
+    with self;
+    mapModules ./. (file: import file { inherit pkgs lib self inputs user; }));
+in tensorfiles.extend
+(self: super: lib.foldr (a: b: a // b) { } (lib.attrValues super))

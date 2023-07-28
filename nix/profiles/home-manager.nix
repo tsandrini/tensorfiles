@@ -31,10 +31,6 @@ in {
       _ config.age.secrets."common/passwords/users/${user}_default".path;
   };
 
-  security.sudo.extraConfig = lib.mkBefore ''
-    Defaults  lecture="never"
-  '';
-
   users.users.root = {
     passwordFile =
       _ config.age.secrets."common/passwords/users/root_default".path;
