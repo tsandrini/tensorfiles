@@ -21,24 +21,15 @@ let
   persistenceCheck = cfg.persistence.enable
     && (tensorfiles.modules.ifPersistenceEnabled config);
 in {
-  options.tensorfiles.services.networking.networkmanager = with types; {
-    enable = mkEnableOption (mdDoc ''
-      Module predefining & setting up agenix for handling secrets
-    '');
+  options.tensorfiles.services.networking.networkmanager = with types;
+    with tensorfiles.options; {
 
-    persistence = {
       enable = mkEnableOption (mdDoc ''
-        Whether to autoappend files/folders to the persistence system.
-        Note that this will get executed only if
+        Module predefining & setting up agenix for handling secrets
+      '');
 
-        1. persistence = true;
-        2. tensorfiles.system.persistence module is loaded
-        3. tensorfiles.system.persistence.enable = true;
-      '') // {
-        default = true;
-      };
+      persistence = { enable = mkPersistenceEnableOption; };
     };
-  };
 
   config = mkIf cfg.enable (mkMerge [
     ({ networking.networkmanager.enable = _ true; })
