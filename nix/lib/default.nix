@@ -14,14 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { pkgs, lib, inputs, user ? "root", ... }:
 let
-  # inherit (modules) mapModules;
   inherit (bootstrap) mapModules';
-
-  # modules = import ./modules.nix {
-  #   inherit pkgs lib inputs user;
-  #   self.attrsets = import ./attrsets.nix { inherit lib; };
-  #   self.strings = import ./strings.nix { inherit lib; };
-  # };
 
   bootstrap = import ./_bootstrap-lib.nix { inherit lib; };
 

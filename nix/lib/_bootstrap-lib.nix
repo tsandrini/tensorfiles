@@ -16,6 +16,10 @@
 with lib;
 with builtins; rec {
 
+  # This file should provide the bare minimum to bootstrap the lib, namely the
+  # mapModules' function to enable properly loading the library files and its
+  # functions
+
   mapFilterAttrs' = pred: f: attrs: filterAttrs pred (mapAttrs' f attrs);
 
   mapModules' = dir: fn:

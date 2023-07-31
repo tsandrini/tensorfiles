@@ -19,10 +19,12 @@ let
 in with lib;
 with builtins; rec {
 
+  # TODO maybe create lib/nixos?
   isPersistenceEnabled = cfg:
     (cfg ? tensorfiles.system.persistence)
     && (cfg.tensorfiles.system.persistence.enable);
 
+  # TODO maybe create lib/nixos?
   isAgenixEnabled = cfg:
     (cfg ? tensorfiles.security.agenix) && (cfg.tensorfiles.security.agenix);
 
