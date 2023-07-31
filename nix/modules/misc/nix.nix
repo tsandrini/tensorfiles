@@ -22,8 +22,8 @@ in {
   # TODO Modularize unstable/stable branches into an enum option
   options.tensorfiles.misc.nix = with types; {
     enable = mkEnableOption (mdDoc ''
-      Module predefining certain nix lang & nix package manager
-      defaults
+      Enables NixOS module that configures/handles defaults regarding nix
+      language & nix package manager.
     '');
   };
 

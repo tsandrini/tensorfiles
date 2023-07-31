@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, user ? "root", ... }:
+{ config, lib, pkgs, ... }:
 with builtins;
 with lib;
 let
@@ -20,73 +20,25 @@ let
   _ = mkOverride 500;
 in {
   # TODO add non-hm nixos only based configuration
-  options.tensorfiles.misc.xdg = with types; {
-    enable = mkEnableOption (mdDoc ''
-      Enable xdg configuration module
-    '');
-
-    home = {
+  options.tensorfiles.misc.xdg = with types;
+    with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Enable multi-user configuration via home-manager.
-
-        The configuration is then done via the settings option with the toplevel
-        attribute being the name of the user, for example:
-
-        ```nix
-        home.enable = true;
-        home.settings."root" = {
-          myOption = false;
-          otherOption.name = "test1";
-          # etc...
-        };
-        home.settings."myUser" = {
-          myOption = true;
-          otherOption.name = "test2";
-          # etc...
-        };
-        ```
+        Enables NixOS module that configures/handles the xdg toolset.
       '');
 
-      settings = mkOption {
-        type = attrsOf (submodule ({ name, ... }: {
-          options = {
-            #
-          };
-        }));
-        # Note: It's sufficient to just create the toplevel attribute and the
-        # rest will be automatically populated with the default option values.
-        default = { "${user}" = { }; };
-        description = mdDoc ''
-          The configuration is then done via the settings option with the toplevel
-          attribute being the name of the user, for example:
+      home = {
+        enable = mkHomeEnableOption;
 
-          ```nix
-          home.enable = true;
-          home.settings."root" = {
-            myOption = false;
-            otherOption.name = "test1";
-            # etc...
-          };
-          home.settings."myUser" = {
-            myOption = true;
-            otherOption.name = "test2";
-            # etc...
-          };
-          ```
-        '';
+        settings = mkHomeSettingsOption {
+          #
+        };
       };
     };
-  };
 
   config = mkIf cfg.enable (mkMerge [
     ({
-      assertions = [
-        (mkIf cfg.home.enable {
-          assertion = cfg.home.enable && (hasAttr "home-manager" config);
-          message =
-            "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
-        })
-      ];
+      assertions = with tensorfiles.asserts;
+        [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:

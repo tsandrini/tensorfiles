@@ -19,11 +19,11 @@ let
 in with lib;
 with builtins; rec {
 
-  ifPersistenceEnabled = cfg:
+  isPersistenceEnabled = cfg:
     (cfg ? tensorfiles.system.persistence)
     && (cfg.tensorfiles.system.persistence.enable);
 
-  ifAgenixEnabled = cfg:
+  isAgenixEnabled = cfg:
     (cfg ? tensorfiles.security.agenix) && (cfg.tensorfiles.security.agenix);
 
   mapModules = dir: fn:

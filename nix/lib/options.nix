@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ lib, ... }:
+{ lib, user ? "root", ... }:
 with lib;
 with lib.types;
 with builtins; rec {
@@ -33,4 +33,66 @@ with builtins; rec {
       3. tensorfiles.system.persistence.enable = true;
     '';
   };
+
+  mkHomeEnableOption = mkOption {
+    type = bool;
+    default = true;
+    example = false;
+    description = mdDoc ''
+      Enable multi-user configuration via home-manager.
+
+      The configuration is then done via the settings option with the toplevel
+      attribute being the name of the user, for example:
+
+      ```nix
+      home.enable = true;
+      home.settings."root" = {
+        myOption = false;
+        otherOption.name = "test1";
+        # etc...
+      };
+      home.settings."myUser" = {
+        myOption = true;
+        otherOption.name = "test2";
+        # etc...
+      };
+      ```
+    '';
+  };
+
+  mkHomeSettingsOption = options:
+    mkOption {
+      type = attrsOf (submodule ({ name, ... }: { inherit options; }));
+      # Note: It's sufficient to just create the toplevel attribute and the
+      # rest will be automatically populated with the default option values.
+      default = { "${user}" = { }; };
+      example = {
+        "root" = {
+          myOption = false;
+          otherOption.name = "test1";
+        };
+        "myUser" = {
+          myOption = true;
+          otherOption.name = "test2";
+        };
+      };
+      description = mdDoc ''
+        The configuration is then done via the settings option with the toplevel
+        attribute being the name of the user, for example:
+
+        ```nix
+        home.enable = true;
+        home.settings."root" = {
+          myOption = false;
+          otherOption.name = "test1";
+          # etc...
+        };
+        home.settings."myUser" = {
+          myOption = true;
+          otherOption.name = "test2";
+          # etc...
+        };
+        ```
+      '';
+    };
 }

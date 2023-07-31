@@ -12,20 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, system, ... }:
+{ config, lib, pkgs, ... }:
 with builtins;
 with lib;
 let
   cfg = config.tensorfiles.services.networking.networkmanager;
   _ = mkOverride 500;
-  persistenceCheck = cfg.persistence.enable
-    && (tensorfiles.modules.ifPersistenceEnabled config);
 in {
   options.tensorfiles.services.networking.networkmanager = with types;
     with tensorfiles.options; {
 
       enable = mkEnableOption (mdDoc ''
-        Module predefining & setting up agenix for handling secrets
+        Enables NixOS module that configures/handles the networkmanager service.
       '');
 
       persistence = { enable = mkPersistenceEnableOption; };
@@ -33,16 +31,18 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     ({ networking.networkmanager.enable = _ true; })
-    (mkIf persistenceCheck {
-      environment.persistence."/persist" = {
-        directories = [ "/etc/NetworkManager/system-connections" ];
-        files = [
-          "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
-          "/var/lib/NetworkManager/seen-bssids"
-          "/var/lib/NetworkManager/timestamps"
-        ];
-      };
-    })
+    (mkIf (cfg.persistence.enable
+      && (tensorfiles.modules.isPersistenceEnabled config)) {
+
+        environment.persistence."/persist" = {
+          directories = [ "/etc/NetworkManager/system-connections" ];
+          files = [
+            "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
+            "/var/lib/NetworkManager/seen-bssids"
+            "/var/lib/NetworkManager/timestamps"
+          ];
+        };
+      })
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

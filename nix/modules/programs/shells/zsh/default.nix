@@ -20,167 +20,118 @@ let
   _ = mkOverride 500;
 in {
   # TODO add non-hm nixos only based configuration
-  options.tensorfiles.programs.shells.zsh = with types; {
-    enable = mkEnableOption (mdDoc ''
-      Enable zsh configuration module
-    '');
-
-    package = mkOption {
-      type = package;
-      default = pkgs.zsh;
-      description = mdDoc ''
-        The zsh package (derivation or path) that should be used for the
-        internals of this module.
-      '';
-    };
-
-    home = {
+  options.tensorfiles.programs.shells.zsh = with types;
+    with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Enable multi-user configuration via home-manager.
-
-        The configuration is then done via the settings option with the toplevel
-        attribute being the name of the user, for example:
-
-        ```nix
-        home.enable = true;
-        home.settings."root" = {
-          myOption = false;
-          otherOption.name = "test1";
-          # etc...
-        };
-        home.settings."myUser" = {
-          myOption = true;
-          otherOption.name = "test2";
-          # etc...
-        };
-        ```
+        Enables NixOS module that configures/handles the zsh shell.
       '');
 
-      settings = mkOption {
-        type = attrsOf (submodule ({ name, ... }: {
-          options = {
+      package = mkOption {
+        type = package;
+        default = pkgs.zsh;
+        description = mdDoc ''
+          The zsh package (derivation or path) that should be used for the
+          internals of this module.
+        '';
+      };
 
-            withAutocompletions = mkOption {
-              type = bool;
+      home = {
+        enable = mkHomeEnableOption;
+
+        settings = mkHomeSettingsOption {
+
+          withAutocompletions = mkOption {
+            type = bool;
+            default = true;
+            description = mdDoc ''
+              Whether to enable autosuggestions/autocompletion related code
+            '';
+          };
+
+          p10k = {
+            enable = mkEnableOption (mdDoc ''
+              Whether to enable the powerlevel10k theme (and plugins) related
+              code.
+            '') // {
               default = true;
+            };
+
+            cfgSrc = mkOption {
+              type = path;
+              default = ./.;
               description = mdDoc ''
-                Whether to enable autosuggestions/autocompletion related code
+                Path (or ideally, path inside a derivation) for the p10k.zsh
+                configuration file
+
+                Note: This should point just to the target directory. If you
+                want to change the default filename of the `p10k.zsh` file,
+                modify the cfgFile option.
               '';
             };
 
-            p10k = {
-              enable = mkEnableOption (mdDoc ''
-                Whether to enable the powerlevel10k theme (and plugins) related
-                code.
-              '') // {
-                default = true;
-              };
+            cfgFile = mkOption {
+              type = str;
+              default = "p10k.zsh";
+              description = mdDoc ''
+                Potential override of the p10k.zsh config filename.
+              '';
+            };
+          };
 
-              cfgSrc = mkOption {
-                type = path;
-                default = ./.;
-                description = mdDoc ''
-                  Path (or ideally, path inside a derivation) for the p10k.zsh
-                  configuration file
-
-                  Note: This should point just to the target directory. If you
-                  want to change the default filename of the `p10k.zsh` file,
-                  modify the cfgFile option.
-                '';
-              };
-
-              cfgFile = mkOption {
-                type = str;
-                default = "p10k.zsh";
-                description = mdDoc ''
-                  Potential override of the p10k.zsh config filename.
-                '';
-              };
+          oh-my-zsh = {
+            enable = mkEnableOption (mdDoc ''
+              Whether to enable the oh-my-zsh framework related code
+            '') // {
+              default = true;
             };
 
-            oh-my-zsh = {
-              enable = mkEnableOption (mdDoc ''
-                Whether to enable the oh-my-zsh framework related code
-              '') // {
-                default = true;
-              };
-
-              plugins = mkOption {
-                type = listOf str;
-                default = [ "git" "git-flow" "colorize" "colored-man-pages" ];
-                description = mdDoc ''
-                  oh-my-zsh plugins that are enabled by default
-                '';
-              };
+            plugins = mkOption {
+              type = listOf str;
+              default = [ "git" "git-flow" "colorize" "colored-man-pages" ];
+              description = mdDoc ''
+                oh-my-zsh plugins that are enabled by default
+              '';
             };
+          };
 
-            shellAliases = {
-              lsToExa = mkOption {
-                type = bool;
-                default = true;
-                description = mdDoc ''
-                  Enable predefined shell aliases
-                '';
-              };
-              catToBat = mkOption {
-                type = bool;
-                default = true;
-                description = mdDoc ''
-                  Remap the cat related commands to its reworked edition bat.
-                '';
-              };
-              findToFd = mkOption {
-                type = bool;
-                default = true;
-                description = mdDoc ''
-                  Remap the find related commands to its reworked edition fd.
-                '';
-              };
-              grepToRipgrep = mkOption {
-                type = bool;
-                default = true;
-                description = mdDoc ''
-                  Remap the find related commands to its reworked edition fd.
-                '';
-              };
+          shellAliases = {
+            lsToExa = mkOption {
+              type = bool;
+              default = true;
+              description = mdDoc ''
+                Enable predefined shell aliases
+              '';
             };
-
+            catToBat = mkOption {
+              type = bool;
+              default = true;
+              description = mdDoc ''
+                Remap the cat related commands to its reworked edition bat.
+              '';
+            };
+            findToFd = mkOption {
+              type = bool;
+              default = true;
+              description = mdDoc ''
+                Remap the find related commands to its reworked edition fd.
+              '';
+            };
+            grepToRipgrep = mkOption {
+              type = bool;
+              default = true;
+              description = mdDoc ''
+                Remap the find related commands to its reworked edition fd.
+              '';
+            };
           };
-        }));
-        # Note: It's sufficient to just create the toplevel attribute and the
-        # rest will be automatically populated with the default option values.
-        default = { "${user}" = { }; };
-        description = mdDoc ''
-          The configuration is then done via the settings option with the toplevel
-          attribute being the name of the user, for example:
-
-          ```nix
-          home.enable = true;
-          home.settings."root" = {
-            myOption = false;
-            otherOption.name = "test1";
-            # etc...
-          };
-          home.settings."myUser" = {
-            myOption = true;
-            otherOption.name = "test2";
-            # etc...
-          };
-          ```
-        '';
+        };
       };
     };
-  };
 
   config = mkIf cfg.enable (mkMerge [
     ({
-      assertions = [
-        (mkIf cfg.home.enable {
-          assertion = cfg.home.enable && (hasAttr "home-manager" config);
-          message =
-            "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
-        })
-      ];
+      assertions = with tensorfiles.asserts;
+        [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     ({ users.defaultUserShell = _ cfg.package; })
     (mkIf cfg.home.enable {

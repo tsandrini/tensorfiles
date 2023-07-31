@@ -93,6 +93,7 @@ in {
     services.x11.window-managers.xmonad
 
     system.persistence
+    # system.users
 
     tasks.system-autoupgrade
     tasks.nix-garbage-collect
@@ -121,7 +122,7 @@ in {
         x11.window-managers.xmonad.enable = _ true;
       };
       tensorfiles.system = mkIf cfg.modulesAutoenable.system {
-        #
+        # users.enable = _ true;
         persistence.enable = _ true;
       };
       tensorfiles.tasks = mkIf cfg.modulesAutoenable.tasks {

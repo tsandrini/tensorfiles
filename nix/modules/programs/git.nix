@@ -20,92 +20,41 @@ let
   _ = mkOverride 500;
 in {
   # TODO add non-hm nixos only based configuration
-  options.tensorfiles.programs.git = with types; {
-    enable = mkEnableOption (mdDoc ''
-      Enable git configuration module
-    '');
-
-    home = {
+  options.tensorfiles.programs.git = with types;
+    with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Enable multi-user configuration via home-manager.
-
-        The configuration is then done via the settings option with the toplevel
-        attribute being the name of the user, for example:
-
-        ```nix
-        home.enable = true;
-        home.settings."root" = {
-          myOption = false;
-          otherOption.name = "test1";
-          # etc...
-        };
-        home.settings."myUser" = {
-          myOption = true;
-          otherOption.name = "test2";
-          # etc...
-        };
-        ```
+        Enables NixOS module that configures/handles the git program.
       '');
 
-      settings = mkOption {
-        type = attrsOf (submodule ({ name, ... }: {
-          options = {
+      home = {
+        enable = mkHomeEnableOption;
 
-            userName = mkOption {
-              type = nullOr str;
-              default = null;
-              description = mdDoc ''
-                Username that should be used for commits and credentials.
-                If none provided, the top level name for the home-manager
-                will be used.
-              '';
-            };
+        settings = mkHomeSettingsOption {
+          userName = mkOption {
+            type = nullOr str;
+            default = null;
+            description = mdDoc ''
+              Username that should be used for commits and credentials.
+              If none provided, the top level name for the home-manager
+              will be used.
+            '';
+          };
 
-            userEmail = mkOption {
-              type = addCheck str (str:
-                match "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}" str
-                != null);
-              default = "tomas.sandrini@seznam.cz"; # TODO remove
-              description = mdDoc ''
-                Email that should be used for commits and credentials.
-              '';
-            };
+          userEmail = mkOption {
+            type = tensorfiles.types.email;
+            default = "tomas.sandrini@seznam.cz"; # TODO remove
+            description = mdDoc ''
+              Email that should be used for commits and credentials.
+            '';
           };
-        }));
-        # Note: It's sufficient to just create the toplevel attribute and the
-        # rest will be automatically populated with the default option values.
-        default = { "${user}" = { }; };
-        description = mdDoc ''
-          The configuration is then done via the settings option with the toplevel
-          attribute being the name of the user, for example:
-
-          ```nix
-          home.enable = true;
-          home.settings."root" = {
-            myOption = false;
-            otherOption.name = "test1";
-            # etc...
-          };
-          home.settings."myUser" = {
-            myOption = true;
-            otherOption.name = "test2";
-            # etc...
-          };
-          ```
-        '';
+        };
       };
     };
-  };
 
   config = mkIf cfg.enable (mkMerge [
     ({
-      assertions = [
-        (mkIf cfg.home.enable {
-          assertion = cfg.home.enable && (hasAttr "home-manager" config);
-          message =
-            "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
-        })
-      ];
+      assertions = with tensorfiles.asserts;
+        [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
@@ -171,7 +120,6 @@ in {
                 "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'";
             };
           };
-
         });
     })
   ]);
