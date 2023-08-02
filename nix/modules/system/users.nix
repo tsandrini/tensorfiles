@@ -18,6 +18,7 @@ with lib;
 let
   inherit (tensorfiles.modules)
     mkOverrideAtModuleLevel isPersistenceEnabled isAgenixEnabled;
+  inherit (tensorfiles.attrsets) mapToAttrsAndMerge;
 
   cfg = config.tensorfiles.system.users;
   _ = mkOverrideAtModuleLevel;
@@ -38,6 +39,12 @@ in {
         usual home related directories, however, in case that you have an opt-in
         filesystem with a persistent home, you should set
         `persistence.enable = false`
+
+        (Agenix) This module uses the following secrets
+        1. `common/passwords/users/$user_default`
+          User passwords. They are meant to be defaults that should be later
+          configured and changed appropriately on each host, which would ideally be
+          `hosts/$host/passwords/users/$user`
       '');
 
       persistence = { enable = mkPersistenceEnableOption; };
@@ -153,10 +160,11 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.home.enable && (isAgenixEnabled config)) {
-      age.secrets = genAttrs (attrNames cfg.home.settings) (_user:
-        (nameValuePair "common/passwords/users/${_user}_default" {
+      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user: {
+        "common/passwords/users/${_user}_default" = {
           file = _ ../../secrets/common/passwords/users/${_user}_default.age;
-        }));
+        };
+      });
     })
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.home.enable && (isPersistenceEnabled config))

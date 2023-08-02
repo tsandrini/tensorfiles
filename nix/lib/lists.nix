@@ -1,4 +1,4 @@
-# --- lib/attrsets.nix
+# --- lib/lists.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,10 +16,6 @@
 with lib;
 with builtins; rec {
 
-  mapFilterAttrs = pred: f: attrs: filterAttrs pred (mapAttrs' f attrs);
-
-  mergeAttrs = attrs: foldl' (acc: elem: acc // elem) { } attrs;
-
-  # mapToAttrsAndMerge :: (a -> {b}) -> [a] -> {c}
-  mapToAttrsAndMerge = list: f: mergeAttrs (map f list);
+  # flipMap :: [a] -> (a -> b) -> [b]
+  flipMap = flip map;
 }
