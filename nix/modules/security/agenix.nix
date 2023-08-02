@@ -57,7 +57,10 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf (isPersistenceEnabled config)
       (let persistence = config.tensorfiles.system.persistence;
-      in { age.identityPaths = [ "${persistence.persistentRoot}" ]; }))
+      in {
+        age.identityPaths =
+          [ "${persistence.persistentRoot}/root/.ssh/id_ed25519" ];
+      }))
     # |----------------------------------------------------------------------| #
   ]);
 
