@@ -26,7 +26,8 @@ with builtins; rec {
 
   # TODO maybe create lib/nixos?
   isAgenixEnabled = cfg:
-    (cfg ? tensorfiles.security.agenix) && (cfg.tensorfiles.security.agenix);
+    (cfg ? tensorfiles.security.agenix)
+    && (cfg.tensorfiles.security.agenix.enable);
 
   # <nixpkgs>/lib/modules.nix priorities:
   # mkOptionDefault = 1500: priority of option defaults

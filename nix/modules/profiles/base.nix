@@ -1,4 +1,4 @@
-# --- /profiles/base.nix
+# --- modules/profiles/base.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

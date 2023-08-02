@@ -131,10 +131,6 @@ in {
             "/etc/tensorfiles"
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
             "/var/lib/systemd/coredump"
-            {
-              directory = "/root/.ssh";
-              mode = "0700";
-            }
           ];
           files = [ "/etc/adjtime" "/etc/machine-id" ];
         };

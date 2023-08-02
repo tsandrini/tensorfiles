@@ -73,11 +73,12 @@ in {
             type = nullOr str;
             default = "OrgBundle";
             description = mdDoc ''
-              The usual downloads home dir.
+              Central directory for the organization of your whole life!
+              Org-mode, org-roam, org-agenda, and much more!
               Path is relative to the given user home directory.
 
-              If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.downloadsDir = null;`
+              If you'd like to disable the features of the org dir, just
+              set it to null, ie `home.settings.$user.orgDir = null;`
             '';
           };
 
@@ -85,11 +86,11 @@ in {
             type = nullOr str;
             default = "ProjectBundle";
             description = mdDoc ''
-              The usual downloads home dir.
+              TODO
               Path is relative to the given user home directory.
 
               If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.downloadsDir = null;`
+              set it to null, ie `home.settings.$user.projectsDir = null;`
             '';
           };
 
@@ -97,11 +98,11 @@ in {
             type = nullOr str;
             default = "FiberBundle";
             description = mdDoc ''
-              The usual downloads home dir.
+              TODO
               Path is relative to the given user home directory.
 
               If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.downloadsDir = null;`
+              set it to null, ie `home.settings.$user.miscDataDir = null;`
             '';
           };
         };
@@ -135,6 +136,7 @@ in {
         });
     })
     # |----------------------------------------------------------------------| #
+    # TODO TODO TODO TODO
     (mkIf cfg.home.enable {
       users.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
@@ -142,25 +144,31 @@ in {
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
           extraGroups = [ "video" "audio" "camera" ]
-            ++ (optional userCfg.isSudoer [ "wheel" ]);
-          home = _ "/home/${_user}";
+            ++ (optional userCfg.isSudoer "wheel");
+          home = (if _user != "root" then "/home/${_user}" else "/root");
+
+          passwordFile = (mkIf (isAgenixEnabled config) (_
+            config.age.secrets."common/passwords/users/${_user}_default".path));
         });
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && (isAgenixEnabled cfg)) {
+    (mkIf (cfg.home.enable && (isAgenixEnabled config)) {
       age.secrets = genAttrs (attrNames cfg.home.settings) (_user:
-        nameValuePair "common/passwords/users/${_user}_default" {
-          file = ../../secrets/common/passwords/users/${_user}_default.age;
-        });
+        (nameValuePair "common/passwords/users/${_user}_default" {
+          file = _ ../../secrets/common/passwords/users/${_user}_default.age;
+        }));
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && (isPersistenceEnabled cfg))
+    (mkIf (cfg.home.enable && (isPersistenceEnabled config))
       (let persistence = config.tensorfiles.system.persistence;
       in {
         environment.persistence."${persistence.persistentRoot}".users =
           genAttrs (attrNames cfg.home.settings) (_user:
             let userCfg = cfg.home.settings."${_user}";
             in {
+              # settings this to `config.users.users.${_user}.home;`
+              # unfortunetaly results in infinite recursion
+              home = (if _user != "root" then "/home/${_user}" else "/root");
               directories = [
                 {
                   directory = ".gnupg";

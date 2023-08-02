@@ -67,9 +67,7 @@ in {
     (mkIf cfg.home.enable {
       users.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
-        in {
-          extraGroups = optional userCfg.addUserToGroup [ "networkmanager" ];
-        });
+        in { extraGroups = optional userCfg.addUserToGroup "networkmanager"; });
     })
     # |----------------------------------------------------------------------| #
   ]);
