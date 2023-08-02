@@ -16,17 +16,22 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel isPersistenceEnabled;
+
   cfg = config.tensorfiles.security.agenix;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO conditional persistence
   options.tensorfiles.security.agenix = with types; {
     enable = mkEnableOption (mdDoc ''
-      Module predefining & setting up agenix for handling secrets
+      Enables NixOS module that configures/handles the agenix security module.
+      By doing so, you enhance other modules with the option to automatically
+      configure their various secrets/passwords via agenix.
     '');
   };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({
       assertions = [
         {
@@ -41,14 +46,19 @@ in {
         }
       ];
     })
+    # |----------------------------------------------------------------------| #
     ({
       environment.systemPackages = with pkgs; [
         inputs.agenix.packages.${system}.default
         age
       ];
-      age.identityPaths =
-        [ "/persist/root/.ssh/id_ed25519" "/root/.ssh/id_ed25519" ];
+      age.identityPaths = [ "/root/.ssh/id_ed25519" ];
     })
+    # |----------------------------------------------------------------------| #
+    (mkIf (isPersistenceEnabled config)
+      (let persistence = config.tensorfiles.system.persistence;
+      in { age.identityPaths = [ "${persistence.persistentRoot}" ]; }))
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

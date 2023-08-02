@@ -40,7 +40,7 @@
     # nixosProfiles.localization
     # nixosProfiles.networking-nm
     nixosProfiles.xmonad-with-xmobar-pywaled
-    nixosProfiles.home-manager
+    # nixosProfiles.home-manager
     # nixosProfiles.home-xdg
     # nixosProfiles.home-git
     # nixosProfiles.home-zsh

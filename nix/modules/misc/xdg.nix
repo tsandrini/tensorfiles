@@ -16,8 +16,10 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.misc.xdg;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO add non-hm nixos only based configuration
   options.tensorfiles.misc.xdg = with types;
@@ -36,10 +38,12 @@ in {
     };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({
       assertions = with tensorfiles.asserts;
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
@@ -56,6 +60,7 @@ in {
           };
         });
     })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

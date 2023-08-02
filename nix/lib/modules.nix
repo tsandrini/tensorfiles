@@ -28,6 +28,15 @@ with builtins; rec {
   isAgenixEnabled = cfg:
     (cfg ? tensorfiles.security.agenix) && (cfg.tensorfiles.security.agenix);
 
+  # <nixpkgs>/lib/modules.nix priorities:
+  # mkOptionDefault = 1500: priority of option defaults
+  # mkDefault = 1000: used in config sections of non-user modules to set a default
+  # mkImageMediaOverride = 60:
+  # mkForce = 50:
+  # mkVMOverride = 10: used by ‘nixos-rebuild build-vm’
+  mkOverrideAtModuleLevel = mkOverride 500;
+  mkOverrideAtProfileLevel = mkOverride 400;
+
   mapModules = dir: fn:
     mapFilterAttrs (n: v: v != null && !(hasPrefix "_" n)) (n: v:
       let path = "${toString dir}/${n}";

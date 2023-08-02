@@ -1,4 +1,4 @@
-# --- modules/profiles/base.nix
+# --- /profiles/base.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,75 +12,69 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, ... }:
+{ config, lib, pkgs, inputs, user ? "root", ... }:
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
+
   cfg = config.tensorfiles.profiles.base;
-  # Note: module level = 500
-  #       profile level = 400
-  _ = mkOverride 400;
+  _ = mkOverrideAtProfileLevel;
 in {
   # TODO find a better place for the stateVersion expression
-  options.tensorfiles.profiles.base = with types; {
-    enable = mkEnableOption (mdDoc ''
-      Base profile, WIP, will probably be decoupled in the future
-    '');
-
-    modulesAutoenable = {
+  options.tensorfiles.profiles.base = with types;
+    with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Autoenabling of the imported modules
-      '') // {
-        default = true;
-      };
+        Base profile, WIP, will probably be decoupled in the future
+      '');
 
-      hardware = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/hardware/ NixOS modules") // {
-          default = true;
-        };
-      misc = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/misc/ NixOS modules") // {
-          default = true;
-        };
-      programs = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/programs/ NixOS modules") // {
-          default = true;
-        };
-      security = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/security/ NixOS modules") // {
-          default = true;
-        };
-      services = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/services/ NixOS modules") // {
-          default = true;
-        };
-      system = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/system/ NixOS modules") // {
-          default = true;
-        };
-      tasks = mkEnableOption
-        (mdDoc "Autoenabling all of the modules/tasks/ NixOS modules") // {
-          default = true;
-        };
+      modulesAutoenable = {
+        enable = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling of the imported modules
+        '');
 
-      homeSettings = mkEnableOption (mdDoc ''
-        Autoenables all of the multi-user home-manager home.settings
-        configuration. This basically just sets `home.enable = true;` for all
-        of the modules that support it.
-      '') // {
-        default = true;
+        hardware = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/hardware/ NixOS modules
+        '');
+
+        misc = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/misc/ NixOS modules
+        '');
+
+        programs = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/programs/ NixOS modules
+        '');
+
+        security = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/security/ NixOS modules
+        '');
+
+        services = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/services/ NixOS modules
+        '');
+
+        system = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/system/ NixOS modules
+        '');
+
+        tasks = mkAlreadyEnabledOption (mdDoc ''
+          Autoenabling all of the modules/tasks/ NixOS modules
+        '');
+
+        homeSettings = mkAlreadyEnabledOption (mdDoc ''
+          Autoenables all of the multi-user home-manager home.settings
+          configuration. This basically just sets `home.enable = true;` for all
+          of the modules that support it.
+        '');
       };
     };
-  };
 
-  # TODO import
-  # cleanup
-  imports = with inputs.self.nixosModules; [
-    inputs.impermanence.nixosModules.impermanence
-    inputs.home-manager.nixosModules.home-manager
-    inputs.agenix.nixosModules.default
-    inputs.nur.nixosModules.nur
-
+  imports = (with inputs; [
+    impermanence.nixosModules.impermanence
+    home-manager.nixosModules.home-manager
+    agenix.nixosModules.default
+    nur.nixosModules.nur
+  ]) ++ (with inputs.self.nixosModules; [
     misc.nix
     misc.xdg
 
@@ -93,14 +87,16 @@ in {
     services.x11.window-managers.xmonad
 
     system.persistence
-    # system.users
+    system.users
 
     tasks.system-autoupgrade
     tasks.nix-garbage-collect
-  ];
+  ]);
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({ system.stateVersion = _ "23.05"; })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.modulesAutoenable.enable {
       # tensorfiles.hardware = mkIf cfg.modulesAutoenable.hardware {
       #   #
@@ -122,7 +118,7 @@ in {
         x11.window-managers.xmonad.enable = _ true;
       };
       tensorfiles.system = mkIf cfg.modulesAutoenable.system {
-        # users.enable = _ true;
+        users.enable = _ true;
         persistence.enable = _ true;
       };
       tensorfiles.tasks = mkIf cfg.modulesAutoenable.tasks {
@@ -130,16 +126,25 @@ in {
         system-autoupgrade.enable = _ true;
       };
     })
+    # |----------------------------------------------------------------------| #
     (mkIf (cfg.modulesAutoenable.enable && cfg.modulesAutoenable.homeSettings) {
       tensorfiles.programs.shells.zsh.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
       tensorfiles.misc.xdg.home.enable = _ true;
+      tensorfiles.system.users.home.enable = _ true;
     })
+    # |----------------------------------------------------------------------| #
     ({
       # TODO move this
       tensorfiles.system.persistence.btrfsWipe = {
         enable = _ true;
         rootPartition = _ "/dev/mapper/enc";
+      };
+
+      # Init also the root user even if not used elsewhere
+      tensorfiles.system.users.home.settings."root" = { isSudoer = _ false; };
+      tensorfiles.system.users.home.settings."tsandrini" = {
+        isSudoer = _ true;
       };
 
       time.timeZone = _ "Europe/Prague";
@@ -153,7 +158,6 @@ in {
 
       environment.systemPackages = with pkgs; [
         # BASE UTILS
-        git
         htop
         wget
         curl
@@ -170,6 +174,7 @@ in {
         usbutils
       ];
     })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

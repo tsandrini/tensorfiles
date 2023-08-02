@@ -16,8 +16,10 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.programs.shells.zsh;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO add non-hm nixos only based configuration
   options.tensorfiles.programs.shells.zsh = with types;
@@ -49,12 +51,10 @@ in {
           };
 
           p10k = {
-            enable = mkEnableOption (mdDoc ''
+            enable = mkAlreadyEnabledOption (mdDoc ''
               Whether to enable the powerlevel10k theme (and plugins) related
               code.
-            '') // {
-              default = true;
-            };
+            '');
 
             cfgSrc = mkOption {
               type = path;
@@ -79,11 +79,9 @@ in {
           };
 
           oh-my-zsh = {
-            enable = mkEnableOption (mdDoc ''
+            enable = mkAlreadyEnabledOption (mdDoc ''
               Whether to enable the oh-my-zsh framework related code
-            '') // {
-              default = true;
-            };
+            '');
 
             plugins = mkOption {
               type = listOf str;
@@ -129,11 +127,14 @@ in {
     };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({
       assertions = with tensorfiles.asserts;
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
+    # |----------------------------------------------------------------------| #
     ({ users.defaultUserShell = _ cfg.package; })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
@@ -169,30 +170,34 @@ in {
               })
             ];
             loginExtra = _ "${pkgs.nitch}/bin/nitch";
-            shellAliases = mkMerge [
-              (mkIf userCfg.shellAliases.lsToExa {
-                ls = _ "${pkgs.exa}/bin/exa";
-                ll = _
-                  "${pkgs.exa}/bin/exa -F --icons --group-directories-first -la --git --header --created --modified";
-                tree = _
-                  "${pkgs.exa}/bin/exa -F --icons --group-directories-first -la --git --header --created --modified -T";
-              })
-              (mkIf userCfg.shellAliases.catToBat {
-                cat = _ "${pkgs.bat}/bin/bat -p --wrap=never --paging=never";
-                less = _ "${pkgs.bat}/bin/bat --paging=always";
-              })
-              (mkIf userCfg.shellAliases.findToFd {
-                find = _ "${pkgs.fd}/bin/fd";
-                fd = _ "${pkgs.fd}/bin/fd";
-              })
-              (mkIf userCfg.shellAliases.grepToRipgrep {
-                grep = _ "${pkgs.ripgrep}/bin/rg";
-              })
-              { fetch = _ "${pkgs.nitch}/bin/nitch"; }
-            ];
           };
+
+          # TODO move to users
+          home.shellAliases = mkMerge [
+            { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+            (mkIf userCfg.shellAliases.lsToExa {
+              ls = _ "${pkgs.exa}/bin/exa";
+              ll = _
+                "${pkgs.exa}/bin/exa -F --icons --group-directories-first -la --git --header --created --modified";
+              tree = _
+                "${pkgs.exa}/bin/exa -F --icons --group-directories-first -la --git --header --created --modified -T";
+            })
+            (mkIf userCfg.shellAliases.catToBat {
+              cat = _ "${pkgs.bat}/bin/bat -p --wrap=never --paging=never";
+              less = _ "${pkgs.bat}/bin/bat --paging=always";
+            })
+            (mkIf userCfg.shellAliases.findToFd {
+              find = _ "${pkgs.fd}/bin/fd";
+              fd = _ "${pkgs.fd}/bin/fd";
+            })
+            (mkIf userCfg.shellAliases.grepToRipgrep {
+              grep = _ "${pkgs.ripgrep}/bin/rg";
+            })
+            { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+          ];
         });
     })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

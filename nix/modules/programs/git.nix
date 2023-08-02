@@ -16,10 +16,13 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.programs.git;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO add non-hm nixos only based configuration
+  # TODO change default email for home.settings.userEmail
   options.tensorfiles.programs.git = with types;
     with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
@@ -52,10 +55,12 @@ in {
     };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({
       assertions = with tensorfiles.asserts;
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let
@@ -122,6 +127,7 @@ in {
           };
         });
     })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

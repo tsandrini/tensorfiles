@@ -16,153 +16,152 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules)
+    mkOverrideAtModuleLevel isPersistenceEnabled isAgenixEnabled;
+
   cfg = config.tensorfiles.system.users;
-  _ = mkOverride 500;
-  mergeAttrs = attrs: foldl' (acc: elem: acc // elem) { } attrs;
-  persistenceCheck = (cfg.persistence)
-    && (config ? tensorfiles.system.persistence)
-    && (config.tensorfiles.system.persistence.enable);
-  agenixCheck = (cfg.agenix) && (config ? tensorfiles.security.agenix)
-    && (config.tensorfiles.security.agenix);
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO move bluetooth dir to hardware
-  options.tensorfiles.system.users = with types; {
-    enable = mkEnableOption (mdDoc ''
-      Module predefining certain nix lang & nix package manager
-      defaults
-    '');
-
-    persistence = mkEnableOption (mdDoc ''
-      Whether to autoappend files/folders to the persistence system.
-      Note that this will get executed only if
-
-      1. persistence = true;
-      2. tensorfiles.system.persistence module is loaded
-      3. tensorfiles.system.persistence.enable = true;
-    '') // {
-      default = true;
-    };
-
-    agenix = mkEnableOption (mdDoc ''
-      Whether to enable setting password as passwordFiles from agenix.
-      The folder structure for individual users should follow the convention:
-
-      - `secrets/common/passwords/users/$user_default.age`
-
-      if this is not okay for you, you should set the password manually yourself
-      instead.
-
-      Note that this will get executed only if
-
-      1. agenix = true;
-      2. tensorfiles.security.agenix module is loaded
-      3. tensorfiles.security.agenix.enable = true;
-    '') // {
-      default = true;
-    };
-
-    home = {
+  # TODO pass also root user
+  # TODO move .gpg and .ssh to ssh-agent? or not?
+  # TODO zotero
+  # TODO move fontconfig elsewhere
+  options.tensorfiles.system.users = with types;
+    with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Enable multi-user configuration via home-manager.
+        Enables NixOS module that sets up the basis for the userspace, that is
+        declarative management, basis for the home directories and also
+        configures home-manager, persistence, agenix if they are enabled.
 
-        The configuration is then done via the settings option with the toplevel
-        attribute being the name of the user, for example:
-
-        ```nix
-        home.enable = true;
-        home.settings."root" = {
-          myOption = false;
-          otherOption.name = "test1";
-          # etc...
-        };
-        home.settings."myUser" = {
-          myOption = true;
-          otherOption.name = "test2";
-          # etc...
-        };
-        ```
+        (Persistence) The users module will automatically append and set up the
+        usual home related directories, however, in case that you have an opt-in
+        filesystem with a persistent home, you should set
+        `persistence.enable = false`
       '');
 
-      settings = mkOption {
-        type = attrsOf (submodule ({ name, ... }: {
-          options = {
+      persistence = { enable = mkPersistenceEnableOption; };
 
-            #
-          };
-        }));
-        # Note: It's sufficient to just create the toplevel attribute and the
-        # rest will be automatically populated with the default option values.
-        default = { "${user}" = { }; };
-        description = mdDoc ''
-          The configuration is then done via the settings option with the toplevel
-          attribute being the name of the user, for example:
+      agenix = { enable = mkAgenixEnableOption; };
 
-          ```nix
-          home.enable = true;
-          home.settings."root" = {
-            myOption = false;
-            otherOption.name = "test1";
-            # etc...
+      home = {
+        enable = mkHomeEnableOption;
+
+        settings = mkHomeSettingsOption {
+
+          isSudoer = mkOption {
+            type = bool;
+            default = true;
+            description = mdDoc ''
+              Add user to sudoers (ie the `wheel` group)
+            '';
           };
-          home.settings."myUser" = {
-            myOption = true;
-            otherOption.name = "test2";
-            # etc...
+
+          downloadsDir = mkOption {
+            type = nullOr str;
+            default = "Downloads";
+            description = mdDoc ''
+              The usual downloads home dir.
+              Path is relative to the given user home directory.
+
+              If you'd like to disable the features of the downloads dir, just
+              set it to null, ie `home.settings.$user.downloadsDir = null;`
+            '';
           };
-          ```
-        '';
+
+          orgDir = mkOption {
+            type = nullOr str;
+            default = "OrgBundle";
+            description = mdDoc ''
+              The usual downloads home dir.
+              Path is relative to the given user home directory.
+
+              If you'd like to disable the features of the downloads dir, just
+              set it to null, ie `home.settings.$user.downloadsDir = null;`
+            '';
+          };
+
+          projectsDir = mkOption {
+            type = nullOr str;
+            default = "ProjectBundle";
+            description = mdDoc ''
+              The usual downloads home dir.
+              Path is relative to the given user home directory.
+
+              If you'd like to disable the features of the downloads dir, just
+              set it to null, ie `home.settings.$user.downloadsDir = null;`
+            '';
+          };
+
+          miscDataDir = mkOption {
+            type = nullOr str;
+            default = "FiberBundle";
+            description = mdDoc ''
+              The usual downloads home dir.
+              Path is relative to the given user home directory.
+
+              If you'd like to disable the features of the downloads dir, just
+              set it to null, ie `home.settings.$user.downloadsDir = null;`
+            '';
+          };
+        };
       };
     };
-  };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({
-      assertions = [
-        {
-          assertion = hasAttr "persistence" config.environment;
-          message =
-            "environment.persistence missing, please install and import the impermanence module";
-        }
-        (mkIf cfg.home.enable {
-          assertion = cfg.home.enable && (hasAttr "home-manager" config);
-          message =
-            "home configuration enabled, however, home-manager missing, please install and import the home-manager module";
-        })
-      ];
+      assertions = with tensorfiles.asserts;
+        [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
+    # |----------------------------------------------------------------------| #
     ({ users.mutableUsers = _ false; })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.useGlobalPkgs = _ true;
       home-manager.useUserPackages = _ true;
     })
-    (mkIf cfg.home.enable (let
-      mkModuleForUser = _user:
-        let userCfg = cfg.home.settings.${_user};
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.home.enable {
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
+        let userCfg = cfg.home.settings."${_user}";
         in {
-          home-manager.users.${_user} = {
-            home = {
-              username = _ "${_user}";
-              homeDirectory = _ "/home/${_user}";
-              stateVersion = _ "23.05";
-            };
-            fonts.fontconfig.enable = _ true;
+          home = {
+            username = _ "${_user}";
+            homeDirectory = _ "/home/${_user}";
+            stateVersion = _ "23.05";
           };
-
-          users.users.${_user} = {
-            isNormalUser = _ true;
-            extraGroups =
-              [ "wheel" "video" "audio" "camera" "networkmanager" "lightdm" ];
-            home = _ "/home/${_user}";
-          };
-
-          environment.persistence = mkIf persistenceCheck {
-            "/persist".users.${user} = {
+          fonts.fontconfig.enable = _ true;
+        });
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.home.enable {
+      users.users = genAttrs (attrNames cfg.home.settings) (_user:
+        let userCfg = cfg.home.settings."${_user}";
+        in {
+          isNormalUser = _ (_user != "root");
+          isSystemUser = _ (_user == "root");
+          extraGroups = [ "video" "audio" "camera" ]
+            ++ (optional userCfg.isSudoer [ "wheel" ]);
+          home = _ "/home/${_user}";
+        });
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.home.enable && (isAgenixEnabled cfg)) {
+      age.secrets = genAttrs (attrNames cfg.home.settings) (_user:
+        nameValuePair "common/passwords/users/${_user}_default" {
+          file = ../../secrets/common/passwords/users/${_user}_default.age;
+        });
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.home.enable && (isPersistenceEnabled cfg))
+      (let persistence = config.tensorfiles.system.persistence;
+      in {
+        environment.persistence."${persistence.persistentRoot}".users =
+          genAttrs (attrNames cfg.home.settings) (_user:
+            let userCfg = cfg.home.settings."${_user}";
+            in {
               directories = [
-                "Downloads"
-                "FiberBundle"
-                "org"
-                "ProjectBundle"
-                "ZoteroStorage"
                 {
                   directory = ".gnupg";
                   mode = "0700";
@@ -171,20 +170,14 @@ in {
                   directory = ".ssh";
                   mode = "0700";
                 }
-              ];
-            };
-          };
-
-          age.secrets = mkIf agenixCheck {
-            "common/passwords/users/${_user}_default".file =
-              _ ../../secrets/common/passwords/users/${_user}_default.age;
-          };
-        };
-    in mergeAttrs (map mkModuleForUser (attrNames cfg.home.settings))))
-    # -------------------------
-    # (mkIf (persistenceCheck && !cfg.home.enable) {
-    #   #
-    # })
+              ] ++ (optional (userCfg.downloadsDir != null)
+                userCfg.downloadsDir)
+                ++ (optional (userCfg.orgDir != null) userCfg.orgDir)
+                ++ (optional (userCfg.projectsDir != null) userCfg.projectsDir)
+                ++ (optional (userCfg.miscDataDir != null) userCfg.miscDataDir);
+            });
+      }))
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

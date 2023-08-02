@@ -16,22 +16,29 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.tasks.nix-garbage-collect;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.tasks.nix-garbage-collect = with types; {
     enable = mkEnableOption (mdDoc ''
-      Module enabling & configuring periodic nix store garbage collection
+      Enables NixOS module that configures the task handling periodix nix store
+      garbage collection.
     '');
   };
 
-  config = mkIf cfg.enable (mkMerge [({
-    nix.gc = {
-      automatic = _ true;
-      dates = _ "weekly";
-      options = _ "--delete-older-than 3d";
-    };
-  })]);
+  config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
+    ({
+      nix.gc = {
+        automatic = _ true;
+        dates = _ "weekly";
+        options = _ "--delete-older-than 3d";
+      };
+    })
+    # |----------------------------------------------------------------------| #
+  ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
 }

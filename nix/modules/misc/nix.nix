@@ -16,8 +16,10 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.misc.nix;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO Modularize unstable/stable branches into an enum option
   options.tensorfiles.misc.nix = with types; {
@@ -27,20 +29,24 @@ in {
     '');
   };
 
-  config = mkIf cfg.enable (mkMerge [({
-    nix = {
-      enable = _ true;
-      checkConfig = _ true;
-      package = _ pkgs.nixVersions.unstable;
-      registry.nixpkgs.flake = _ inputs.nixpkgs;
-      settings.auto-optimise-store = _ true;
-      extraOptions = mkBefore ''
-        experimental-features = nix-command flakes
-        keep-outputs          = true
-        keep-derivations      = true
-      '';
-    };
-  })]);
+  config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
+    ({
+      nix = {
+        enable = _ true;
+        checkConfig = _ true;
+        package = _ pkgs.nixVersions.unstable;
+        registry.nixpkgs.flake = _ inputs.nixpkgs;
+        settings.auto-optimise-store = _ true;
+        extraOptions = mkBefore ''
+          experimental-features = nix-command flakes
+          keep-outputs          = true
+          keep-derivations      = true
+        '';
+      };
+    })
+    # |----------------------------------------------------------------------| #
+  ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
 }

@@ -16,8 +16,10 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel isPersistenceEnabled;
+
   cfg = config.tensorfiles.services.networking.networkmanager;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.services.networking.networkmanager = with types;
     with tensorfiles.options; {
@@ -27,14 +29,32 @@ in {
       '');
 
       persistence = { enable = mkPersistenceEnableOption; };
+
+      home = {
+        enable = mkHomeEnableOption;
+
+        settings = mkHomeSettingsOption {
+
+          addUserToGroup = mkOption {
+            type = bool;
+            default = true;
+            description = mdDoc ''
+              Whether the given user should be added to the
+              `networkmanager` group.
+            '';
+          };
+        };
+      };
     };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({ networking.networkmanager.enable = _ true; })
-    (mkIf (cfg.persistence.enable
-      && (tensorfiles.modules.isPersistenceEnabled config)) {
-
-        environment.persistence."/persist" = {
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.persistence.enable && (isPersistenceEnabled config))
+      (let persistence = config.tensorfiles.system.persistence;
+      in {
+        environment.persistence."${persistence.persistentRoot}" = {
           directories = [ "/etc/NetworkManager/system-connections" ];
           files = [
             "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
@@ -42,7 +62,16 @@ in {
             "/var/lib/NetworkManager/timestamps"
           ];
         };
-      })
+      }))
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.home.enable {
+      users.users = genAttrs (attrNames cfg.home.settings) (_user:
+        let userCfg = cfg.home.settings."${_user}";
+        in {
+          extraGroups = optional userCfg.addUserToGroup [ "networkmanager" ];
+        });
+    })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

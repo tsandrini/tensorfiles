@@ -16,14 +16,17 @@
 with builtins;
 with lib;
 let
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.system.persistence;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   # TODO move bluetooth dir to hardware
   options.tensorfiles.system.persistence = with types; {
     enable = mkEnableOption (mdDoc ''
-      Module predefining certain nix lang & nix package manager
-      defaults
+      Enables NixOS module that configures/handles the persistence ecosystem.
+      Doing so enables other modules to automatically use the persistence instead
+      of manually having to set it up yourself.
     '');
 
     disableSudoLectures = mkOption {
@@ -32,6 +35,18 @@ in {
       description = mdDoc ''
         Whether to disable the default sudo lectures that would be
         otherwise printed every time on login
+      '';
+    };
+
+    persistentRoot = mkOption {
+      type = path;
+      default = "/persist";
+      description = mdDoc ''
+        Path on the already mounted filesystem for the persistent root, that is,
+        a root where we should store the persistent files and against which should
+        we link the temporary files against.
+
+        This is usually simply just /persist.
       '';
     };
 
@@ -99,6 +114,7 @@ in {
   };
 
   config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
     ({
       assertions = [{
         assertion = hasAttr "persistence" config.environment;
@@ -106,9 +122,10 @@ in {
           "environment.persistence missing, please install and import the impermanence module";
       }];
     })
+    # |----------------------------------------------------------------------| #
     ({
       environment.persistence = {
-        "/persist" = {
+        "${cfg.persistentRoot}" = {
           hideMounts = _ true;
           directories = [
             "/etc/tensorfiles"
@@ -123,12 +140,14 @@ in {
         };
       };
     })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.disableSudoLectures {
       security.sudo.extraConfig = mkBefore ''
         # rollback results in sudo lectures after each reboot
         Defaults lecture = never
       '';
     })
+    # |----------------------------------------------------------------------| #
     (mkIf cfg.btrfsWipe.enable {
       boot.initrd.postDeviceCommands = with cfg.btrfsWipe;
         mkBefore ''
@@ -170,6 +189,7 @@ in {
           umount ${mountpoint}
         '';
     })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];

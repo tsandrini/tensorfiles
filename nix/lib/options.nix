@@ -17,21 +17,45 @@ with lib;
 with lib.types;
 with builtins; rec {
 
-  mkPersistenceEnableOption = mkOption {
-    type = bool;
+  mkAlreadyEnabledOption = description:
+    (mkEnableOption description) // {
+      default = true;
+    };
+
+  mkPersistenceEnableOption = mkEnableOption (mdDoc ''
+    Whether to autoappend files/folders to the persistence system.
+    For more info on the persistence system refer to the system.persistence
+    NixOS module documentation.
+
+    Note that this will get executed only if
+
+    1. persistence.enable = true;
+    2. tensorfiles.system.persistence module is loaded
+    3. tensorfiles.system.persistence.enable = true;
+  '') // {
     default = true;
-    example = false;
-    description = mdDoc ''
-      Whether to autoappend files/folders to the persistence system.
-      For more info on the persistence system refer to the system.persistence
-      NixOS module documentation.
+  };
 
-      Note that this will get executed only if
+  mkAgenixEnableOption = mkEnableOption (mdDoc ''
+    Whether to enable the agenix ecosystem for handling secrets, which includes
 
-      1. persistence.enable = true;
-      2. tensorfiles.system.persistence module is loaded
-      3. tensorfiles.system.persistence.enable = true;
-    '';
+    a. passwords
+    b. keys
+    c. certificates
+
+    There is a preferred way to organize secrets (see example at
+    github:tsandrini/tensorfiles), however, most modules will accept a path
+    override if you wish to do so. For this you should look into the `agenix`
+    related options of the appropriate modules. If this is not okay for you, you
+    should set the password manually yourself instead.
+
+    Note that this will get executed only if
+
+    1. agenix = true;
+    2. tensorfiles.security.agenix module is loaded
+    3. tensorfiles.security.agenix.enable = true;
+  '') // {
+    default = true;
   };
 
   mkHomeEnableOption = mkOption {
