@@ -4,8 +4,8 @@
 * 1. About
 Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
 
-[[./nix/var/showcase_1.png]]
-[[./nix/var/showcase_2.png]]
+[[./etc/showcase_1.png]]
+[[./etc/showcase_2.png]]
 * 2. Software
 I use the following software
 |--------------+---------------------------+-------------------------------------------------------|
@@ -36,7 +36,7 @@ I use the following software
    + visualization: [[https://github.com/org-roam/org-roam-ui][org-roam-ui]]
    + anki connection: [[https://github.com/louietan/anki-editor][org-anki-editor]]
 
-   [[./nix/var/showcase_org_roam_ui.png]]
+   [[./etc/showcase_org_roam_ui.png]]
 2. [[https://www.zotero.org/][zotero]]: This is my backend for all of my bibliography as well as the
    individual =.pdf= files. As of now I keep them up to date between machines
    using [[https://syncthing.net/][syncthing]], but I'll probably set up a personal cloud when I'll
