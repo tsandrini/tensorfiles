@@ -40,7 +40,7 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption {
+        settings = mkHomeSettingsOption (_user: {
 
           withAutocompletions = mkOption {
             type = bool;
@@ -93,6 +93,7 @@ in {
           };
 
           shellAliases = {
+
             lsToExa = mkOption {
               type = bool;
               default = true;
@@ -122,7 +123,7 @@ in {
               '';
             };
           };
-        };
+        });
       };
     };
 

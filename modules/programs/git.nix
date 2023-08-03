@@ -17,6 +17,7 @@ with builtins;
 with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.types) email;
 
   cfg = config.tensorfiles.programs.git;
   _ = mkOverrideAtModuleLevel;
@@ -32,7 +33,7 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption {
+        settings = mkHomeSettingsOption (_user: {
           userName = mkOption {
             type = nullOr str;
             default = null;
@@ -44,13 +45,13 @@ in {
           };
 
           userEmail = mkOption {
-            type = tensorfiles.types.email;
+            type = email;
             default = "tomas.sandrini@seznam.cz"; # TODO remove
             description = mdDoc ''
               Email that should be used for commits and credentials.
             '';
           };
-        };
+        });
       };
     };
 

@@ -54,13 +54,26 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOptionFunc (_user: {
+        settings = mkHomeSettingsOption (_user: {
 
           isSudoer = mkOption {
             type = bool;
             default = true;
             description = mdDoc ''
               Add user to sudoers (ie the `wheel` group)
+            '';
+          };
+
+          initDirectoryStructure = mkOption {
+            type = bool;
+            default = true;
+            description = mdDoc ''
+              Whether to automatically create all the directories. Home-manager
+              doesn't do this automatically unless you need to populate it with
+              files, so this option might be useful.
+
+              This is achieved by creating an empty `.blank` file inside the
+              directories, thanks to this we preserve the overall purity.
             '';
           };
 
@@ -72,9 +85,12 @@ in {
             '';
           };
 
-          configHome = mkOption {
-            type = str;
-            default = ".config";
+          configDir = mkOption {
+            type = path;
+            default = (if _user != "root" then
+              "/home/${_user}/.config"
+            else
+              "/root/.config");
             description = mdDoc ''
               The usual downloads home dir.
               Path is relative to the given user home directory.
@@ -84,12 +100,51 @@ in {
             '';
           };
 
-          downloadsDir = mkOption {
-            type = nullOr str;
-            default = "Downloads";
+          cacheDir = mkOption {
+            type = path;
+            default = (if _user != "root" then
+              "/home/${_user}/.cache"
+            else
+              "/root/.cache");
+            description = mdDoc ''
+              TODO
+            '';
+          };
+
+          appDataDir = mkOption {
+            type = path;
+            default = (if _user != "root" then
+              "/home/${_user}/.local/share"
+            else
+              "/root/.local/share");
             description = mdDoc ''
               The usual downloads home dir.
               Path is relative to the given user home directory.
+
+              If you'd like to disable the features of the downloads dir, just
+              set it to null, ie `home.settings.$user.downloadsDir = null;`
+            '';
+          };
+
+          appStateDir = mkOption {
+            type = path;
+            default = (if _user != "root" then
+              "/home/${_user}/.local/state"
+            else
+              "/root/.local/state");
+            description = mdDoc ''
+              TODO
+            '';
+          };
+
+          downloadsDir = mkOption {
+            type = nullOr path;
+            default = (if _user != "root" then
+              "/home/${_user}/Downloads"
+            else
+              "/root/Downloads");
+            description = mdDoc ''
+              The usual downloads home dir.
 
               If you'd like to disable the features of the downloads dir, just
               set it to null, ie `home.settings.$user.downloadsDir = null;`
@@ -97,12 +152,14 @@ in {
           };
 
           orgDir = mkOption {
-            type = nullOr str;
-            default = "OrgBundle";
+            type = nullOr path;
+            default = (if _user != "root" then
+              "/home/${_user}/OrgBundle"
+            else
+              "/root/OrgBundle");
             description = mdDoc ''
               Central directory for the organization of your whole life!
               Org-mode, org-roam, org-agenda, and much more!
-              Path is relative to the given user home directory.
 
               If you'd like to disable the features of the org dir, just
               set it to null, ie `home.settings.$user.orgDir = null;`
@@ -110,11 +167,13 @@ in {
           };
 
           projectsDir = mkOption {
-            type = nullOr str;
-            default = "ProjectBundle";
+            type = nullOr path;
+            default = (if _user != "root" then
+              "/home/${_user}/ProjectBundle"
+            else
+              "/root/ProjectBundle");
             description = mdDoc ''
               TODO
-              Path is relative to the given user home directory.
 
               If you'd like to disable the features of the downloads dir, just
               set it to null, ie `home.settings.$user.projectsDir = null;`
@@ -122,11 +181,13 @@ in {
           };
 
           miscDataDir = mkOption {
-            type = nullOr str;
-            default = "FiberBundle";
+            type = nullOr path;
+            default = (if _user != "root" then
+              "/home/${_user}/FiberBundle"
+            else
+              "/root/FiberBundle");
             description = mdDoc ''
               TODO
-              Path is relative to the given user home directory.
 
               If you'd like to disable the features of the downloads dir, just
               set it to null, ie `home.settings.$user.miscDataDir = null;`
@@ -156,11 +217,27 @@ in {
         in {
           home = {
             username = _ "${_user}";
-            # homeDirectory = _ "/home/${_user}";
             homeDirectory = _ userCfg.homeDir;
             stateVersion = _ "23.05";
           };
+
           fonts.fontconfig.enable = _ true;
+
+          home.file = mkIf userCfg.initDirectoryStructure {
+            "${userCfg.configDir}/.blank".text = mkBefore "";
+            "${userCfg.cacheDir}/.blank".text = mkBefore "";
+            "${userCfg.appDataDir}/.blank".text = mkBefore "";
+            "${userCfg.appStateDir}/.blank".text = mkBefore "";
+
+            "${userCfg.downloadsDir}/.blank".text =
+              mkIf (userCfg.downloadsDir != null) (mkBefore "");
+            "${userCfg.orgDir}/.blank".text =
+              mkIf (userCfg.orgDir != null) (mkBefore "");
+            "${userCfg.projectsDir}/.blank".text =
+              mkIf (userCfg.projectsDir != null) (mkBefore "");
+            "${userCfg.miscDataDir}/.blank".text =
+              mkIf (userCfg.miscDataDir != null) (mkBefore "");
+          };
         });
     })
     # |----------------------------------------------------------------------| #
@@ -173,7 +250,6 @@ in {
           isSystemUser = _ (_user == "root");
           extraGroups = [ "video" "audio" "camera" ]
             ++ (optional userCfg.isSudoer "wheel");
-          # home = (if _user != "root" then "/home/${_user}" else "/root");
           home = _ userCfg.homeDir;
 
           passwordFile = (mkIf (isAgenixEnabled config) (_
@@ -196,9 +272,6 @@ in {
           genAttrs (attrNames cfg.home.settings) (_user:
             let userCfg = cfg.home.settings."${_user}";
             in {
-              # settings this to `config.users.users.${_user}.home;`
-              # unfortunetaly results in infinite recursion
-              # home = (if _user != "root" then "/home/${_user}" else "/root");
               home = userCfg.homeDir;
               directories = [
                 {

@@ -33,7 +33,7 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption {
+        settings = mkHomeSettingsOption (_user: {
 
           addUserToGroup = mkOption {
             type = bool;
@@ -43,7 +43,7 @@ in {
               `networkmanager` group.
             '';
           };
-        };
+        });
       };
     };
 

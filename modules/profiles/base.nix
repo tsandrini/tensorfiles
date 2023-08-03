@@ -141,11 +141,15 @@ in {
         rootPartition = _ "/dev/mapper/enc";
       };
 
+      # TODO fix this
       # Init also the root user even if not used elsewhere
       tensorfiles.system.users.home.settings."root" = { isSudoer = _ false; };
       tensorfiles.system.users.home.settings."tsandrini" = {
         isSudoer = _ true;
       };
+
+      tensorfiles.misc.xdg.home.settings."root" = { };
+      tensorfiles.misc.xdg.home.settings."tsandrini" = { };
 
       time.timeZone = _ "Europe/Prague";
       i18n.defaultLocale = _ "en_US.UTF-8";

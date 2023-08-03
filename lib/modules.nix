@@ -29,6 +29,9 @@ with builtins; rec {
     (cfg ? tensorfiles.security.agenix)
     && (cfg.tensorfiles.security.agenix.enable);
 
+  isUsersSystemEnabled = cfg:
+    (cfg ? tensorfiles.system.users) && (cfg.tensorfiles.system.users.enable);
+
   # <nixpkgs>/lib/modules.nix priorities:
   # mkOptionDefault = 1500: priority of option defaults
   # mkDefault = 1000: used in config sections of non-user modules to set a default

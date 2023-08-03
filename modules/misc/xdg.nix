@@ -16,7 +16,7 @@
 with builtins;
 with lib;
 let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel isUsersSystemEnabled;
 
   cfg = config.tensorfiles.misc.xdg;
   _ = mkOverrideAtModuleLevel;
@@ -31,9 +31,7 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption {
-          #
-        };
+        settings = mkHomeSettingsOption (_user: { });
       };
     };
 
@@ -44,16 +42,33 @@ in {
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.home.enable {
+    (mkIf (cfg.home.enable && (isUsersSystemEnabled config)) {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
+        let users = config.tensorfiles.system.users;
         in {
           xdg = {
             enable = _ true;
-            configHome = _ "/home/${_user}/.config";
-            cacheHome = _ "/home/${_user}/.cache";
-            dataHome = _ "/home/${_user}/.local/share";
-            stateHome = _ "/home/${_user}/.local/state";
+            configHome = _ users.home.settings.${_user}.configDir;
+            cacheHome = _ users.home.settings.${_user}.cacheDir;
+            dataHome = _ users.home.settings.${_user}.appDataDir;
+            stateHome = _ users.home.settings.${_user}.appStateDir;
+
+            mime.enable = _ true;
+            mimeApps = { enable = _ true; };
+          };
+        });
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.home.enable && !(isUsersSystemEnabled config)) {
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
+        let homeDir = if _user != "root" then "/home/${_user}" else "/root";
+        in {
+          xdg = {
+            enable = _ true;
+            configHome = _ "${home}/.config";
+            cacheHome = _ "${home}/.cache";
+            dataHome = _ "${home}/.local/share";
+            stateHome = _ "${home}/.local/state";
 
             mime.enable = _ true;
             mimeApps = { enable = _ true; };

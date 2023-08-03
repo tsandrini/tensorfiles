@@ -84,9 +84,7 @@ with builtins; rec {
     '';
   };
 
-  mkHomeSettingsOption = options: mkHomeSettingsOptionFunc (_: options);
-
-  mkHomeSettingsOptionFunc = generatorFunction:
+  mkHomeSettingsOption = generatorFunction:
     mkOption {
       type = attrsOf
         (submodule ({ name, ... }: { options = (generatorFunction name); }));
