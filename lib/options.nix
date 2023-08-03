@@ -84,9 +84,12 @@ with builtins; rec {
     '';
   };
 
-  mkHomeSettingsOption = options:
+  mkHomeSettingsOption = options: mkHomeSettingsOptionFunc (_: options);
+
+  mkHomeSettingsOptionFunc = generatorFunction:
     mkOption {
-      type = attrsOf (submodule ({ name, ... }: { inherit options; }));
+      type = attrsOf
+        (submodule ({ name, ... }: { options = (generatorFunction name); }));
       # Note: It's sufficient to just create the toplevel attribute and the
       # rest will be automatically populated with the default option values.
       default = { "${user}" = { }; };

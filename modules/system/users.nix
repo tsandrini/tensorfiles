@@ -54,13 +54,33 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption {
+        settings = mkHomeSettingsOptionFunc (_user: {
 
           isSudoer = mkOption {
             type = bool;
             default = true;
             description = mdDoc ''
               Add user to sudoers (ie the `wheel` group)
+            '';
+          };
+
+          homeDir = mkOption {
+            type = path;
+            default = (if _user != "root" then "/home/${_user}" else "/root");
+            description = mdDoc ''
+              TODO
+            '';
+          };
+
+          configHome = mkOption {
+            type = str;
+            default = ".config";
+            description = mdDoc ''
+              The usual downloads home dir.
+              Path is relative to the given user home directory.
+
+              If you'd like to disable the features of the downloads dir, just
+              set it to null, ie `home.settings.$user.downloadsDir = null;`
             '';
           };
 
@@ -112,7 +132,7 @@ in {
               set it to null, ie `home.settings.$user.miscDataDir = null;`
             '';
           };
-        };
+        });
       };
     };
 
@@ -136,7 +156,8 @@ in {
         in {
           home = {
             username = _ "${_user}";
-            homeDirectory = _ "/home/${_user}";
+            # homeDirectory = _ "/home/${_user}";
+            homeDirectory = _ userCfg.homeDir;
             stateVersion = _ "23.05";
           };
           fonts.fontconfig.enable = _ true;
@@ -152,7 +173,8 @@ in {
           isSystemUser = _ (_user == "root");
           extraGroups = [ "video" "audio" "camera" ]
             ++ (optional userCfg.isSudoer "wheel");
-          home = (if _user != "root" then "/home/${_user}" else "/root");
+          # home = (if _user != "root" then "/home/${_user}" else "/root");
+          home = _ userCfg.homeDir;
 
           passwordFile = (mkIf (isAgenixEnabled config) (_
             config.age.secrets."common/passwords/users/${_user}_default".path));
@@ -176,7 +198,8 @@ in {
             in {
               # settings this to `config.users.users.${_user}.home;`
               # unfortunetaly results in infinite recursion
-              home = (if _user != "root" then "/home/${_user}" else "/root");
+              # home = (if _user != "root" then "/home/${_user}" else "/root");
+              home = userCfg.homeDir;
               directories = [
                 {
                   directory = ".gnupg";

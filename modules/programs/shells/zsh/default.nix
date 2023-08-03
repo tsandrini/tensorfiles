@@ -139,8 +139,8 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
         in {
-          home.packages = with userCfg.shellAliases;
-            with pkgs;
+          home.packages = with pkgs;
+            with userCfg.shellAliases;
             [ nitch ] ++ (optional lsToExa exa) ++ (optional catToBat bat)
             ++ (optional findToFd fd) ++ (optional grepToRipgrep ripgrep);
 
@@ -172,7 +172,6 @@ in {
             loginExtra = _ "${pkgs.nitch}/bin/nitch";
           };
 
-          # TODO move to users
           home.shellAliases = mkMerge [
             { fetch = _ "${pkgs.nitch}/bin/nitch"; }
             (mkIf userCfg.shellAliases.lsToExa {
