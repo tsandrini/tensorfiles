@@ -17,7 +17,8 @@ with builtins;
 with lib;
 let
   inherit (tensorfiles.modules)
-    mkOverrideAtModuleLevel isPersistenceEnabled isAgenixEnabled;
+    mkOverrideAtModuleLevel isPersistenceEnabled isAgenixEnabled
+    absolutePathToRelativeHome;
   inherit (tensorfiles.attrsets) mapToAttrsAndMerge;
 
   cfg = config.tensorfiles.system.users;
@@ -270,7 +271,12 @@ in {
       in {
         environment.persistence."${persistence.persistentRoot}".users =
           genAttrs (attrNames cfg.home.settings) (_user:
-            let userCfg = cfg.home.settings."${_user}";
+            let
+              userCfg = cfg.home.settings."${_user}";
+              toRelative = (flip absolutePathToRelativeHome) {
+                inherit _user;
+                cfg = config;
+              };
             in {
               home = userCfg.homeDir;
               directories = [
@@ -283,10 +289,13 @@ in {
                   mode = "0700";
                 }
               ] ++ (optional (userCfg.downloadsDir != null)
-                userCfg.downloadsDir)
-                ++ (optional (userCfg.orgDir != null) userCfg.orgDir)
-                ++ (optional (userCfg.projectsDir != null) userCfg.projectsDir)
-                ++ (optional (userCfg.miscDataDir != null) userCfg.miscDataDir);
+                (toRelative userCfg.downloadsDir))
+                ++ (optional (userCfg.orgDir != null)
+                  (toRelative userCfg.orgDir))
+                ++ (optional (userCfg.projectsDir != null)
+                  (toRelative userCfg.projectsDir))
+                ++ (optional (userCfg.miscDataDir != null)
+                  (toRelative userCfg.miscDataDir));
             });
       }))
     # |----------------------------------------------------------------------| #

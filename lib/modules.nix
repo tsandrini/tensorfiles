@@ -19,18 +19,86 @@ let
 in with lib;
 with builtins; rec {
 
-  # TODO maybe create lib/nixos?
+  /* Check whether the persistence system is enabled, that is whether
+
+     1. The `tensorfiles.system.persistence` modul is imported
+     2. It is also enabled
+
+     Type: isPersistenceEnabled :: AttrSet -> Bool
+  */
   isPersistenceEnabled = cfg:
     (cfg ? tensorfiles.system.persistence)
     && (cfg.tensorfiles.system.persistence.enable);
 
-  # TODO maybe create lib/nixos?
+  /* Check whether the agenix system is enabled, that is whether
+
+     1. The `tensorfiles.security.agenix` modul is imported
+     2. It is also enabled
+
+     Type: isAgenixEnabled :: AttrSet -> Bool
+  */
   isAgenixEnabled = cfg:
     (cfg ? tensorfiles.security.agenix)
     && (cfg.tensorfiles.security.agenix.enable);
 
+  /* Check whether the agenix system is enabled, that is whether
+
+     1. The `tensorfiles.system.users` modul is imported
+     2. It is also enabled
+
+     Type: isUsersSystemEnabled :: AttrSet -> Bool
+  */
   isUsersSystemEnabled = cfg:
     (cfg ? tensorfiles.system.users) && (cfg.tensorfiles.system.users.enable);
+
+  /* Transforms an absolute path to a one relative to the given user home
+     directory. It basically functions as a case handler for
+     `lib.strings.removePreffix` to handle a variety of different cases.
+
+      1. If you pass `cfg = config;` then the function will load the `homeDir`
+         specified in the users system module (tensorfiles.system.users).
+         Note that the module has to be also enabled.
+      2. You can instead just pass the username directly instead, in that case
+         it will remove either `/home/$user` or `/root` depending on the provided
+         user.
+      3. You can also just pass the `home`. In that case it behaves basically just
+         like a direct call to `lib.strings.removePrefix`
+      4. You can omit passing any variables, in that case the function will try to
+         parse the user that has been passed for the initialization of the whole
+         lib/ (if any was provided). If no user was provided in this manner, it
+         will fallback to /root.
+
+     Example:
+       absolutePathToRelativeHome "/home/myUser/myDir/file.txt" { cfg = config; user = "myUser"; }
+        -> "myDir/file.txt"
+
+       absolutePathToRelativeHome "/home/myUser/myDir/file.txt" { user = "myUser"; }
+        -> "myDir/file.txt"
+
+       absolutePathToRelativeHome "/root/myDir/file.txt" { user = "root"; }
+        -> "myDir/file.txt"
+
+       absolutePathToRelativeHome "/var/myUserHome/myDir/file.txt" { home = "/var/myUserHome"; }
+        -> "myDir/file.txt"
+
+       absolutePathToRelativeHome "/home/myUser/myDir/file.txt" {} -> "myDir/file.txt"
+
+     Type:
+       absolutePathToRelativeHome :: String -> { _user :: String; home :: String; cfg :: AttrSet } -> String
+  */
+  absolutePathToRelativeHome = path:
+    { _user ? user, home ? null, cfg ? null }:
+    if (cfg != null && (isUsersSystemEnabled cfg)) then
+      (strings.removePrefix
+        (cfg.tensorfiles.system.users.home.settings.${_user}.homeDir + "/")
+        path)
+    else
+      (let
+        home = (if home != null then
+          home
+        else
+          (if _user != "root" then "/home/${_user}" else "/root")) + "/";
+      in (strings.removePrefix home path));
 
   # <nixpkgs>/lib/modules.nix priorities:
   # mkOptionDefault = 1500: priority of option defaults
