@@ -16,6 +16,14 @@
 with lib;
 with builtins; rec {
 
-  # flipMap :: [a] -> (a -> b) -> [b]
+  /* Map function with flipped arguments.
+
+     Example:
+      flipMap (x: x * x) [ 1 2 3 ]
+        -> [ 1 4 9 ]
+
+     Type:
+      flipMap :: (a -> b) -> [a] -> [b]
+  */
   flipMap = flip map;
 }

@@ -24,7 +24,8 @@ with builtins; rec {
      1. The `tensorfiles.system.persistence` modul is imported
      2. It is also enabled
 
-     Type: isPersistenceEnabled :: AttrSet -> Bool
+     Type:
+      isPersistenceEnabled :: AttrSet -> Bool
   */
   isPersistenceEnabled = cfg:
     (cfg ? tensorfiles.system.persistence)
@@ -35,7 +36,8 @@ with builtins; rec {
      1. The `tensorfiles.security.agenix` modul is imported
      2. It is also enabled
 
-     Type: isAgenixEnabled :: AttrSet -> Bool
+     Type:
+      isAgenixEnabled :: AttrSet -> Bool
   */
   isAgenixEnabled = cfg:
     (cfg ? tensorfiles.security.agenix)
@@ -46,7 +48,8 @@ with builtins; rec {
      1. The `tensorfiles.system.users` modul is imported
      2. It is also enabled
 
-     Type: isUsersSystemEnabled :: AttrSet -> Bool
+     Type:
+      isUsersSystemEnabled :: AttrSet -> Bool
   */
   isUsersSystemEnabled = cfg:
     (cfg ? tensorfiles.system.users) && (cfg.tensorfiles.system.users.enable);
@@ -106,9 +109,54 @@ with builtins; rec {
   # mkImageMediaOverride = 60:
   # mkForce = 50:
   # mkVMOverride = 10: used by ‘nixos-rebuild build-vm’
+
+  /* mkOverride function with a preset priority set for all of the nixos
+     modules.
+
+     Type:
+       mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }
+  */
   mkOverrideAtModuleLevel = mkOverride 500;
+
+  /* mkOverride function with a preset priority set for all of the nixos
+     profiles, that is, modules that preconfigure other modules.
+
+     Type:
+       mkOverrideAtProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }
+  */
   mkOverrideAtProfileLevel = mkOverride 400;
 
+  /* Recursively read a directory and apply a provided function to every `.nix`
+     file. Returns an attrset that reflects the filenames and directory
+     structure of the root.
+
+     Notes:
+      1. Files and directories starting with the `_` prefix will be completely
+         ignored.
+      2. If a directory with a `myDir/default.nix` file will be encountered,
+         the function will be applied to the `myDir/default.nix` file
+         instead of recursively loading `myDir` and applying it to every file.
+
+     Example:
+       mapModules ./modules import
+        -> {
+          hardware = {
+            moduleA = { ... };
+          };
+          system = {
+            moduleB = { ... };
+          };
+        }
+
+       mapModules ./hosts (host: mkHostCustomFunction myArg host)
+        -> {
+          hostA = { ... };
+          hostB = { ... };
+        }
+
+     Type:
+       mapModules :: Path -> (Path -> AttrSet a) -> { name :: String; value :: AttrSet a; }
+  */
   mapModules = dir: fn:
     mapFilterAttrs (n: v: v != null && !(hasPrefix "_" n)) (n: v:
       let path = "${toString dir}/${n}";
@@ -121,6 +169,21 @@ with builtins; rec {
       else
         nameValuePair "" null) (readDir dir);
 
+  /* Custom nixpkgs constructor. Its purpose is to import provided nixpkgs
+     while setting the target platform and all over the needed overlays.
+
+     Example:
+      mkPkgs <nixpkgs> "x86_64-linux" []
+        -> { ... }
+
+      mkPkgs inputs.nixpkgs "aarch64-linux" [ (final: prev: {
+        customPkgs = inputs.customPkgs { pkgs = final; };
+      }) ]
+        -> { ... }
+
+     Type:
+       mkPkgs :: AttrSet -> String -> [(AttrSet -> AttrSet -> AttrSet)] -> Attrset
+  */
   mkPkgs = pkgs: system: extraOverlays:
     import pkgs {
       inherit system;
@@ -132,10 +195,29 @@ with builtins; rec {
         nurOverlay = final: prev: {
           nur = import inputs.nur { pkgs = final; };
         };
-      in extraOverlays ++ [ pkgsOverlay nurOverlay ]
-      ++ (attrValues inputs.self.overlays);
+      in [ pkgsOverlay ] ++ (optional (inputs ? nur) nurOverlay)
+      ++ (attrValues inputs.self.overlays) ++ extraOverlays;
     };
 
+  /* Custom host (that is, nixosSystem) constructor. It expects a target host
+     dir path as its first argument, that is, not a `.nix` file, but a directory.
+     The reasons for this are the following:
+
+     1. Each host gets its specifically constructed version of nixpkgs for its
+        target platform, which is specified in the `myHostDir/system` file.
+     2. Apart from some main host `.nix` file almost every host has some
+        `hardware-configuration.nix` thus implying a host directory structure
+        holding atleast 2 files + the system file.
+
+     This means that the minimal required structure for a host dir is
+     - myHostDir/
+       - (required) default.nix
+       - (required) system
+       - (optional) hardware-configuration.nix
+
+     Type:
+       mkHost :: Path -> Attrset
+  */
   mkHost = dir:
     let
       name = dirnameFromPath dir;
