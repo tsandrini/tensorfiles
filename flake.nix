@@ -56,7 +56,8 @@
 
       packages = lib.genAttrs [ "x86_64-linux" ] (system:
         let systemPkgs = mkPkgs nixpkgs system [ ];
-        in mapModules ./pkgs (p: systemPkgs.callPackage p { inherit lib; }));
+        in mapModules ./pkgs
+        (p: systemPkgs.callPackage p { inherit lib inputs; }));
 
       nixosModules = mapModules ./modules import;
 

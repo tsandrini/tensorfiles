@@ -19,12 +19,28 @@ with builtins; rec {
   /* Apply a map to every attribute of an attrset and then filter the resulting
      attrset based on a given predicate function.
 
-     Type:
-       mapFilterAttrs :: (AttrSet b -> Bool) -> (AttrSet a -> AttrSet b) -> AttrSet a -> AttrSet b
+     Type: mapFilterAttrs :: (AttrSet b -> Bool) -> (AttrSet a -> AttrSet b) -> AttrSet a -> AttrSet b
   */
-  mapFilterAttrs = pred: f: attrs: filterAttrs pred (mapAttrs' f attrs);
+  mapFilterAttrs =
+    # Predicate used for filtering
+    pred:
+    # Transformer
+    f:
+    # Attrs
+    attrs:
+    filterAttrs pred (mapAttrs' f attrs);
 
   /* Recursively merges a list of attrsets.
+     TODO **testing bold**
+     TODO *testing italic*
+
+     > testing quotation?
+
+     ```
+     testing code block?
+     ```
+
+     Type: mergeAttrs :: [AttrSet] -> AttrSet
 
      Example:
        mergeAttrs [
@@ -32,7 +48,7 @@ with builtins; rec {
         { keyB = 10; keyC = "hey"; nestedKey = { A = null; }; }
         { nestedKey = { A = 3; B = 4; }; }
        ]
-         -> {
+       => {
            keyA = 1;
            keyB = 10;
            keyC = "hey";
@@ -41,11 +57,11 @@ with builtins; rec {
              B = 4;
            };
          }
-
-     Type:
-       mergeAttrs :: [AttrSet] -> AttrSet
   */
-  mergeAttrs = attrs: foldl' (acc: elem: acc // elem) { } attrs;
+  mergeAttrs =
+    # eh dunno test test
+    attrs:
+    foldl' (acc: elem: acc // elem) { } attrs;
 
   /* Given a list of elements, applies a transformation to each of the element
      to an attrset and then recursively merges the resulting attrset.
@@ -63,4 +79,26 @@ with builtins; rec {
       mapToAttrsAndMerge :: [a] -> (a -> AttrSet) -> AttrSet
   */
   mapToAttrsAndMerge = list: f: mergeAttrs (map f list);
+
+  /* Recursivelly flattens a nested attrset into a list of just its values.
+
+     Example:
+       flatten {
+         keyA = 10;
+         keyB = "str20";
+         keyC = {
+           keyD = false;
+           keyE = {
+             a = 10;
+             b = "20";
+             c = false;
+           };
+         };
+       }
+         -> [ 10 "str20" false 10 "20" false ]
+
+     Type:
+       flatten :: AttrSet a -> [a]
+  */
+  flatten = attrs: collect (x: !isAttrs x) attrs;
 }

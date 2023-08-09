@@ -131,7 +131,7 @@ with builtins; rec {
      structure of the root.
 
      Notes:
-      1. Files and directories starting with the `_` prefix will be completely
+      1. Files and directories starting with the `_` or `.git` prefix will be completely
          ignored.
       2. If a directory with a `myDir/default.nix` file will be encountered,
          the function will be applied to the `myDir/default.nix` file
@@ -158,7 +158,8 @@ with builtins; rec {
        mapModules :: Path -> (Path -> AttrSet a) -> { name :: String; value :: AttrSet a; }
   */
   mapModules = dir: fn:
-    mapFilterAttrs (n: v: v != null && !(hasPrefix "_" n)) (n: v:
+    mapFilterAttrs
+    (n: v: v != null && !(hasPrefix "_" n) && !(hasPrefix ".git" n)) (n: v:
       let path = "${toString dir}/${n}";
       in if v == "directory" && pathExists "${path}/default.nix" then
         nameValuePair n (fn path)

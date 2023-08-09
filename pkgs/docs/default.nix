@@ -1,0 +1,164 @@
+# --- pkgs/docs/default.nix
+#
+# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# URL:     https://github.com/tsandrini/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ lib, pkgs, inputs, stdenv, mkdocs, pandoc, python3, python310Packages
+, runCommand, nixosOptionsDoc, nixdoc, ... }:
+let
+  inherit (lib.tensorfiles.attrsets) flatten;
+  inherit (lib.tensorfiles.modules) mapModules;
+
+  lib-doc = let
+    libsets = [
+      {
+        name = "asserts";
+        description = "assertion functions";
+      }
+      {
+        name = "attrsets";
+        description = "attribute set functions";
+      }
+      {
+        name = "strings";
+        description = "string manipulation functions";
+      }
+      {
+        name = "options";
+        description = "NixOS / nixpkgs option handling";
+      }
+      {
+        name = "modules";
+        description = "general modularity functions";
+      }
+      {
+        name = "lists";
+        description = "list manipulation functions";
+      }
+      {
+        name = "types";
+        description = "additional types definitions";
+      }
+    ];
+  in stdenv.mkDerivation {
+    name = "tensorfiles-lib-docs";
+    src = ../../lib;
+
+    buildInputs = [ nixdoc pandoc python3 ];
+    installPhase = ''
+      function docgen {
+        name=$1
+        baseName=$2
+        description=$3
+        if [[ -e "../lib/$baseName.nix" ]]; then
+          path="$baseName.nix"
+        else
+          path="$baseName/default.nix"
+        fi
+
+        # First we parse the doccoments in the xml docbook format
+        nixdoc --category "$name" --description "lib.$name: $description" --file "$path" > "$out/$name.xml"
+
+        # Then we convert the docbook xml to smart markdown
+        pandoc -f docbook -t markdown -s "$out/$name.xml" -o "$out/$name.md"
+
+        # Remove agressive pandoc escaping
+        sed -i 's/\\//g' "$out/$name.md"
+
+        # The following commands properly parse and convert the Example blocks
+        # into markdowns code blocks
+        sed -i 's/^[ \t]*```/```/g' "$out/$name.md"
+        python -c "import re, sys; print(re.sub(r'(?sm)\`\`\`([^\`]+)\`\`\`', (lambda x: '\`\`\`' + '\n'.join([line.lstrip() for line in str(x.group(1)).split('\n')]) + '\`\`\`'), sys.stdin.read()));" < "$out/$name.md" > tmp.md && mv tmp.md $out/$name.md
+
+        # Add links to the source file
+        fullPath="$src/$path"
+        echo "" >> "$out/$name.md"
+        echo "Declared by:" >> "$out/$name.md"
+        echo "- [$fullPath]($fullPath)" >> "$out/$name.md"
+        echo "" >> "$out/$name.md"
+
+        cat "$out/$name.md" >> "$out/index.md"
+      }
+
+      mkdir -p "$out"
+
+      # Run the docgen function for every libset
+      ${lib.concatMapStrings ({ name, baseName ? name, description }: ''
+        docgen ${name} ${baseName} ${lib.escapeShellArg description}
+      '') libsets}
+
+    '';
+  };
+
+  options-doc = let
+    eval = lib.evalModules {
+      modules = (flatten (mapModules ../../modules/misc (x: x)))
+        ++ (flatten (mapModules ../../modules/programs (x: x)))
+        ++ (flatten (mapModules ../../modules/services (x: x)))
+        ++ (flatten (mapModules ../../modules/system (x: x)))
+        ++ (flatten (mapModules ../../modules/tasks (x: x)))
+        ++ (flatten (mapModules ../../modules/security (x: x)));
+      check = false;
+      specialArgs = {
+        # TODO: Warning!!!!
+        # This is very bad practice and should be usually avoided at all costs,
+        # but modules cannot be easily evaluated otherwise. In the future it would
+        # be probably best to just create the inputs manually directly here.
+        inherit lib pkgs inputs;
+        user = "root";
+        system = "x86_64-linux";
+      };
+    };
+    optionsDoc = nixosOptionsDoc { inherit (eval) options; };
+  in runCommand "options-doc.md" { } ''
+    cat ${optionsDoc.optionsCommonMark} >> $out
+    sed -i "s/\\\./\./g" $out
+  '';
+in stdenv.mkDerivation {
+  src = ./.;
+  name = "tensorfiles-docs";
+
+  buildInput = [ options-doc lib-doc ];
+
+  nativeBuildInputs = with python310Packages; [
+    setuptools
+    mkdocs
+    mkdocs-material
+    mkdocs-macros
+    # I've had issues while trying to include files from the /nix/store
+    # using the jinja macros so just for this I've included the markdown-include
+    # package
+    markdown-include
+    pygments
+    cairosvg
+  ];
+
+  buildPhase = ''
+    ln -s ${options-doc} "./docs/nixos-options.md"
+    ln -s ${lib-doc}/index.md "./docs/lib.md"
+    mkdocs build
+  '';
+
+  installPhase = ''
+    mv site $out
+    cp -v docs/lib.md $out/lib.md # TODO remove
+    cp -v docs/nixos-options.md $out/nixos-options.md
+  '';
+
+  meta = with lib; {
+    homepage = "https://github.com/tsandrini/tensorfiles";
+    description = "";
+    license = licenses.mit;
+    platforms = [ "x86_64-linux" ];
+    maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  };
+}

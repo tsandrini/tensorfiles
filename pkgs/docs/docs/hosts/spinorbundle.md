@@ -1,65 +1,72 @@
-#+NAME: spinorbundle
-#+AUTHOR: tsandrini
+# Table of Contents
 
-* 1. About
+1. [About](#about)
+2. [Installation](#installation)
+3. [Troubleshooting](#troubleshooting)
+    1. [Root partition fails to be labeled](#troubleshooting.root-part-label)
+
+# 1. About {#about}
+
 Secondary windows (papa needs his occasional osu! grind) dualbooted laptop
 running btrfs based opt-in filesystem.
 
 TODO specs?
-* 2. Installation
+
+# 2. Installation {#installation}
+
 First things first, I can't read this tty crap
 
-#+begin_src shell
+```bash
 sudo su
 setfont ter-132n
-#+end_src
+```
 
-Much better, now set up a main root partition on =/dev/sdaX= and a swap
-partition on =/dev/sdaY=
+Much better, now set up a main root partition on `/dev/sdaX` and a swap
+partition on `/dev/sdaY`
 
-#+begin_src shell
+```bash
 cgdisk /dev/sda
-#+end_src
+```
 
-then encrypt the main partition using luks and open it
+then encrypt the main partition using LUKS and open it
 
-#+begin_src shell
+```bash
 cryptsetup --verify-passphrase -v luksFormat /dev/sdaX
 cryptsetup open /dev/sdaX enc
-#+end_src
+```
 
-format the partitions and don't forget to *label them*!
+format the partitions and don't forget to **label them**!
 
-#+begin_src shell
+```bash
 mkswap -L swap /dev/sdaY
 swapon /dev/disk/by-label/swap
 mkfs.btrfs -L root /dev/mapper/enc
 cryptsetup config /dev/sdX --label root_crypt
-#+end_src
+```
 
-also if your win boot partition =/dev/sdaZ= is not labeled yet, go ahead and
+also if your win boot partition `/dev/sdaZ` is not labeled yet, go ahead and
 label it
 
-#+begin_src shell
+```bash
 fatlabel /dev/sdaZ boot
-#+end_src
+```
 
 Now we can proceed to create btrfs subvolumes. We'll be making a few of them
 
-1. =/mnt/root=: main subvolume, flushed on every boot
-2. =/mnt/nix=: subvolume holding =/nix/store= - easily reconstructible, but
-   worth caching and thus will be persistent between boots
-3. =/mnt/persist=: subvolume holding all of the needed permanent data and main
-   mount point for [[https://github.com/nix-community/impermanence][impermanence]]
-4. =/mnt/var/log=: low data priority, but worth preserving between boots due
-   to possible error logs
+1. `/mnt/root`: main subvolume, flushed on every boot
+2. `/mnt/nix`: subvolume holding `/nix/store` - easily reconstructible, but
+    worth caching and thus will be persistent between boots
+3. `/mnt/persist`: subvolume holding all of the needed permanent data and main
+    mount point for [impermanence](https://github.com/nix-community/impermanence)
+4. `/mnt/var/log`: low data priority, but worth preserving between boots due
+    to possible error logs
 
-/Note/: You may consider also having a =/mnt/home= subvolume preserved between
-boots since it's easier to maintain, however, I decided to flush the =/home=
-directory between boots as well and reconstruct it using =home-manager= so
-I am omitting the =/mnt/home= subvolume parts.
+*Note*: You may consider also having a `/mnt/home` subvolume preserved between
+boots since it's easier to maintain, however, I decided to flush the `/home`
+directory between boots as well and reconstruct it using `home-manager` so
+I am omitting the `/mnt/home` subvolume parts.
 
-#+begin_src shell
+```bash
 mount -t btrfs /dev/mapper/enc /mnt
 btrfs su cr /mnt/root
 btrfs su cr /mnt/nix
@@ -68,13 +75,13 @@ btrfs su cr /mnt/log
 
 btrfs su snapshot -r /mnt/root /mnt/root-blank
 umount /mnt
-#+end_src
+```
 
 Now we proceed to mount all the previously created subvolumes, feel free
 to modify the btrfs mountflags if needed but don't forget to patch
-=hardware-configuration.nix= afterwards
+`hardware-configuration.nix` afterwards
 
-#+begin_src shell
+```bash
 mount -o noatime,compress=zstd,subvol=root /dev/mapper/enc /mnt
 
 mkdir -p /mnt/{nix,persist,var/log,boot}
@@ -83,17 +90,17 @@ mount -o noatime,compress=zstd,subvol=persist /dev/mapper/enc /mnt/persist
 mount -o noatime,compress=zstd,subvol=log /dev/mapper/enc /mnt/var/log
 
 mount /dev/disk/by-label/boot /mnt/boot
-#+end_src
+```
 
-/Notenote/: At this stage you should either start an ssh-agent
-(=eval `ssh-agent`=) and add the
-appropriate keys (=ssh-add /root/.ssh/id_ed25519=) or in case you don't want
+*Notenote*: At this stage you should either start an ssh-agent
+(``eval `ssh-agent` ``) and add the
+appropriate keys (`ssh-add /root/.ssh/id_ed25519`) or in case you don't want
 to use agenix you should patch the config with your desired way of handling
 secrets and default passwords.
 
-Now we can proceed to install the desired =nixosConfiguration= of our flake.
+Now we can proceed to install the desired `nixosConfiguration` of our flake.
 
-#+begin_src shell
+```bash
 nix-shell -p git nixFlakes pywal
 export USER="my_user"
 export HOST="spinorbundle"
@@ -113,30 +120,32 @@ wal -i var/example-wallpaper.png
 cp -r /root/.cache/wal /persist/home/$USER/.cache/
 
 TMPDIR="/mnt/tmp" USER=$USER nixos-install --root /mnt --flake .#$HOST
-#+end_src
+```
 
 now you should be ready to go and pray!
 
-#+begin_src shell
+```bas
 reboot # hehe
-#+end_src
+```
 
-* 3. Troubleshooting
-** Root partition fails to be labeled
+# 3. Troubleshooting {#troubleshooting}
+
+## Root partition fails to be labeled {#troubleshooting.root-part-label}
+
 First try
 
-#+begin_src shell
+```bash
 btrfs filesystem label /mnt root
-#+end_src
+```
 
-if =btrfs filesystem show /dev/mapper/enc= is correctly outputting the label
-while =lsblk -f= not run the following command
+if `btrfs filesystem show /dev/mapper/enc` is correctly outputting the label
+while `lsblk -f` not run the following command
 
-#+begin_src shell
+```bash
 udevadm trigger
-#+end_src
+```
 
 beware that in some cases this might update the partition tables even of your
-live installation drive resulting in a bunch of =SQUASHFS ERROR= in which
+live installation drive resulting in a bunch of `SQUASHFS ERROR` in which
 case the fastest solution would be to just try again with a freshly flashed
-drive (or you can fix it manually via =wipefs= of course).
+drive (or you can fix it manually via `wipefs` of course).
