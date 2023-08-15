@@ -14,8 +14,8 @@
 
 Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
 
-![img](assets/images/showcase_1.png)
-![img](assets/images/showcase_2.png)
+![img](pkgs/docs/docs/assets/images/showcase_1.png)
+![img](pkgs/docs/docs/assets/images/showcase_2.png)
 
 # 2. Software {#software}
 
@@ -49,7 +49,7 @@ TODO comment more?
     - TODOs: [org-agenda](https://orgmode.org/manual/Agenda-Views.html)
     - visualization: [org-roam-ui](https://github.com/org-roam/org-roam-ui)
     - anki connection: [org-anki-editor](https://github.com/louietan/anki-editor)
-    ![img](assets/images/showcase_org_roam_ui.png)
+    ![img](pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
 2. [zotero](https://www.zotero.org/): This is my backend for all of my bibliography as well as the
    individual `.pdf` files. As of now I keep them up to date between machines
    using [syncthing](https://syncthing.net/), but I&rsquo;ll probably set up a personal cloud when I&rsquo;ll

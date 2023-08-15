@@ -13,10 +13,19 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { lib, pkgs, inputs, stdenv, mkdocs, pandoc, python3, python310Packages
-, runCommand, nixosOptionsDoc, nixdoc, ... }:
+, runCommand, nixosOptionsDoc, nixdoc, writeText, ... }:
 let
   inherit (lib.tensorfiles.attrsets) flatten;
   inherit (lib.tensorfiles.modules) mapModules;
+
+  READMEs = let
+    readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
+  in {
+    main = readmeToDerivation ../../README.md;
+    hosts = {
+      "spinorbundle" = readmeToDerivation ../../hosts/spinorbundle/README.md;
+    };
+  };
 
   lib-doc = let
     libsets = [
@@ -50,7 +59,7 @@ let
       }
     ];
   in stdenv.mkDerivation {
-    name = "tensorfiles-lib-docs";
+    name = "tensorfiles-docs-lib";
     src = ../../lib;
 
     buildInputs = [ nixdoc pandoc python3 ];
@@ -101,12 +110,13 @@ let
 
   options-doc = let
     eval = lib.evalModules {
-      modules = (flatten (mapModules ../../modules/misc (x: x)))
-        ++ (flatten (mapModules ../../modules/programs (x: x)))
-        ++ (flatten (mapModules ../../modules/services (x: x)))
-        ++ (flatten (mapModules ../../modules/system (x: x)))
-        ++ (flatten (mapModules ../../modules/tasks (x: x)))
-        ++ (flatten (mapModules ../../modules/security (x: x)));
+      modules = let loadModulesInDir = dir: flatten (mapModules dir (x: x));
+      in (loadModulesInDir ../../modules/misc)
+      ++ (loadModulesInDir ../../modules/programs)
+      ++ (loadModulesInDir ../../modules/services)
+      ++ (loadModulesInDir ../../modules/system)
+      ++ (loadModulesInDir ../../modules/tasks)
+      ++ (loadModulesInDir ../../modules/security);
       check = false;
       specialArgs = {
         # TODO: Warning!!!!
@@ -127,13 +137,13 @@ in stdenv.mkDerivation {
   src = ./.;
   name = "tensorfiles-docs";
 
-  buildInput = [ options-doc lib-doc ];
+  buildInput = [ options-doc lib-doc ]
+    ++ (with READMEs; [ main hosts."spinorbundle" ]);
 
   nativeBuildInputs = with python310Packages; [
     setuptools
     mkdocs
     mkdocs-material
-    mkdocs-macros
     # I've had issues while trying to include files from the /nix/store
     # using the jinja macros so just for this I've included the markdown-include
     # package
@@ -143,14 +153,25 @@ in stdenv.mkDerivation {
   ];
 
   buildPhase = ''
-    ln -s ${options-doc} "./docs/nixos-options.md"
-    ln -s ${lib-doc}/index.md "./docs/lib.md"
+    mkdir -p docs docs/hosts
+
+    cp -v ${READMEs.main} docs/index.md
+    cp -v ${READMEs.hosts."spinorbundle"} docs/hosts/spinorbundle.md
+
+    cp -v ${options-doc} docs/nixos-options.md
+    cp -v ${lib-doc}/index.md docs/lib.md
+
+    # Patches
+    find . -type f -exec sed -i "s|pkgs/docs/docs/||g" {} +
+
     mkdocs build
   '';
 
   installPhase = ''
-    mv site $out
-    cp -v docs/lib.md $out/lib.md # TODO remove
+    mv -v site $out
+
+    # TODO remove
+    cp -v docs/lib.md $out/lib.md
     cp -v docs/nixos-options.md $out/nixos-options.md
   '';
 
