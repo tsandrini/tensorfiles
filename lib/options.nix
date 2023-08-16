@@ -17,11 +17,20 @@ with lib;
 with lib.types;
 with builtins; rec {
 
+  /* Creates an enableOption (ie `mkEnableOption`), however, already
+     preenabled.
+
+     *Type*: `String -> Option`
+  */
   mkAlreadyEnabledOption = description:
     (mkEnableOption description) // {
       default = true;
     };
 
+  /* Creates an already enabled module enableOption with
+
+     *Type*: `Option`
+  */
   mkPersistenceEnableOption = mkEnableOption (mdDoc ''
     Whether to autoappend files/folders to the persistence system.
     For more info on the persistence system refer to the system.persistence
@@ -30,7 +39,9 @@ with builtins; rec {
     Note that this will get executed only if
 
     1. persistence.enable = true;
+
     2. tensorfiles.system.persistence module is loaded
+
     3. tensorfiles.system.persistence.enable = true;
   '') // {
     default = true;
@@ -68,7 +79,7 @@ with builtins; rec {
       The configuration is then done via the settings option with the toplevel
       attribute being the name of the user, for example:
 
-      ```nix
+      ```
       home.enable = true;
       home.settings."root" = {
         myOption = false;
@@ -105,7 +116,7 @@ with builtins; rec {
         The configuration is then done via the settings option with the toplevel
         attribute being the name of the user, for example:
 
-        ```nix
+        ```
         home.enable = true;
         home.settings."root" = {
           myOption = false;

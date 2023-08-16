@@ -16,15 +16,15 @@
 with lib;
 with builtins; rec {
 
-  /* Map _function_ <b>with</b> __flipped arguments__.
+  /* Map function with flipped arguments.
+
+     *Type*: flipMap :: (a -> b) -> [a] -> [b]
 
      Example:
-     ```nix title="flipmap example" linenums="1"
+     ```nix title="Example" linenums="1"
      flipmap (x: x * x) [ 1 2 3 ]
-       => [ 1 4 9 ]
+     => [ 1 4 9 ]
      ```
-
-     Type: flipMap :: (a -> b) -> [a] -> [b]
   */
   flipMap = flip map;
 }

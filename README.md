@@ -1,23 +1,23 @@
 # Table of Contents
 
-1. [About](#about)
-2. [Software](#software)
-    1. [Academics](#software.academics)
-    2. [Secrets](#software.secrets)
-3. [Installation](#installation)
-4. [(rough) Roadmap](#roadmap)
-5. [Troubleshooting](#troubleshooting)
-    1. [`Write error: disk full;` during `nixos-install`](#troubleshooting.write-disk-err)
-6. [References](#references)
+1. [About](#1-about)
+2. [Software](#2-software)
+    1. [Academics](#21-academics)
+    2. [Secrets](#22-secrets)
+3. [Installation](#3-installation)
+4. [(rough) Roadmap](#4-rough-roadmap)
+5. [Troubleshooting](#5-troubleshooting)
+    1. [`Write error: disk full;` during `nixos-install`](#write-error-disk-full-during-nixos-install)
+6. [References](#6-references)
 
-# 1. About {#about}
+# 1. About
 
 Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
 
 ![img](pkgs/docs/docs/assets/images/showcase_1.png)
 ![img](pkgs/docs/docs/assets/images/showcase_2.png)
 
-# 2. Software {#software}
+# 2. Software 
 
 I use the following software
 
@@ -39,7 +39,7 @@ I use the following software
 | Colors uwu?  | [pywal](https://github.com/dylanaraps/pywal)                     | TODO should probably comment more on colors           |
 
 
-## 2.1. Academics {#software.academics}
+## 2.1. Academics 
 
 TODO comment more?
 
@@ -58,7 +58,7 @@ TODO comment more?
    memory of different subjects fresh using flashcards. I sync the cards
    using ankis official cloud.
 
-## 2.2. Secrets {#software.secrets}
+## 2.2. Secrets 
 
 For my day to day passwords I use a locally synced [keepassxc](https://keepassxc.org/) encrypted
 database and for the NixOS based secrets I use [agenix](https://github.com/ryantm/agenix). I also try to avoid
@@ -68,11 +68,11 @@ ones instead (for obvious reasons).
 *Note*: plz no pwn xd, if you see any vulnerabilities please DM me instead,
 thanks <3.
 
-# 3. Installation {#installation}
+# 3. Installation 
 
 TODO
 
-# 4. (rough) Roadmap {#roadmap}
+# 4. (rough) Roadmap 
 
 - [-] ****organization****
     - [ ] finish doc
@@ -95,9 +95,9 @@ TODO
     - [ ] pi
     - [ ] server
 
-# 5. Troubleshooting {#troubleshooting}
+# 5. Troubleshooting
 
-## `Write error: disk full;` during `nixos-install` {#troubleshooting.write-disk-err}
+## `Write error: disk full;` during `nixos-install` 
 
 If you get any error of this kind during the installation of this flake
 you have most likely run out of `$TMPDIR` space. This is usually due
@@ -127,7 +127,7 @@ tmpfs, for example
 mount -o remount,size=15G /tmp
 ```
 
-# 6. References {#references}
+# 6. References 
 
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you&rsquo;ve really

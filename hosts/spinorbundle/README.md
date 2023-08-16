@@ -1,18 +1,18 @@
 # Table of Contents
 
-1. [About](#about)
-2. [Installation](#installation)
-3. [Troubleshooting](#troubleshooting)
-    1. [Root partition fails to be labeled](#troubleshooting.root-part-label)
+1. [About](#1-about)
+2. [Installation](#2-installation)
+3. [Troubleshooting](#3-troubleshooting)
+    1. [Root partition fails to be labeled](#root-partition-fails-to-be-labeled)
 
-# 1. About {#about}
+# 1. About 
 
 Secondary windows (papa needs his occasional osu! grind) dualbooted laptop
 running btrfs based opt-in filesystem.
 
 TODO specs?
 
-# 2. Installation {#installation}
+# 2. Installation 
 
 First things first, I can't read this tty crap
 
@@ -128,9 +128,9 @@ now you should be ready to go and pray!
 reboot # hehe
 ```
 
-# 3. Troubleshooting {#troubleshooting}
+# 3. Troubleshooting
 
-## Root partition fails to be labeled {#troubleshooting.root-part-label}
+## Root partition fails to be labeled 
 
 First try
 

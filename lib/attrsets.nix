@@ -19,86 +19,77 @@ with builtins; rec {
   /* Apply a map to every attribute of an attrset and then filter the resulting
      attrset based on a given predicate function.
 
-     Type: mapFilterAttrs :: (AttrSet b -> Bool) -> (AttrSet a -> AttrSet b) -> AttrSet a -> AttrSet b
+     *Type*: mapFilterAttrs :: (AttrSet b -> Bool) -> (AttrSet a -> AttrSet b) -> AttrSet a -> AttrSet b
   */
   mapFilterAttrs =
     # Predicate used for filtering
     pred:
-    # Transformer
+    # Function used for transforming the given AttrSets
     f:
-    # Attrs
+    # Initial attrset
     attrs:
     filterAttrs pred (mapAttrs' f attrs);
 
   /* Recursively merges a list of attrsets.
-     TODO **testing bold**
-     TODO *testing italic*
 
-     > testing quotation?
-
-     ```
-     testing code block?
-     ```
-
-     Type: mergeAttrs :: [AttrSet] -> AttrSet
+     *Type*: mergeAttrs :: [AttrSet] -> AttrSet
 
      Example:
-       mergeAttrs [
-        { keyA = 1; keyB = 3; }
-        { keyB = 10; keyC = "hey"; nestedKey = { A = null; }; }
-        { nestedKey = { A = 3; B = 4; }; }
-       ]
-       => {
-           keyA = 1;
-           keyB = 10;
-           keyC = "hey";
-           nestedKey = {
-             A = 3;
-             B = 4;
-           };
-         }
+     ```nix title="Example" linenums="1"
+     mergeAttrs [
+      { keyA = 1; keyB = 3; }
+      { keyB = 10; keyC = "hey"; nestedKey = { A = null; }; }
+      { nestedKey = { A = 3; B = 4; }; }
+     ]
+     => { keyA = 1; keyB = 10; keyC = "hey"; nestedKey = { A = 3; B = 4; };}
+     ```
   */
   mergeAttrs =
-    # eh dunno test test
+    # The list of attrsets
     attrs:
     foldl' (acc: elem: acc // elem) { } attrs;
 
   /* Given a list of elements, applies a transformation to each of the element
      to an attrset and then recursively merges the resulting attrset.
 
-     Example:
-       mapToAttrsAndMerge [ 1 2 3 ] (x: { "key_${toString x}": x * x })
-       ->
-        {
-          "key_1" = 1;
-          "key_2" = 4;
-          "key_3" = 9;
-        }
+     *Type*: mapToAttrsAndMerge :: [a] -> (a -> AttrSet) -> AttrSet
 
-     Type:
-      mapToAttrsAndMerge :: [a] -> (a -> AttrSet) -> AttrSet
+     Example:
+     ```nix title="Example" linenums="1"
+     mapToAttrsAndMerge [ 1 2 3 ] (x: { "key_${toString x}": x * x })
+       => { "key_1" = 1; "key_2" = 4; "key_3" = 9; }
+     ```
   */
-  mapToAttrsAndMerge = list: f: mergeAttrs (map f list);
+  mapToAttrsAndMerge =
+    # Initial list of elements
+    list:
+    # Function used for transforming the initial elements to attrsets
+    f:
+    mergeAttrs (map f list);
 
   /* Recursivelly flattens a nested attrset into a list of just its values.
 
-     Example:
-       flatten {
-         keyA = 10;
-         keyB = "str20";
-         keyC = {
-           keyD = false;
-           keyE = {
-             a = 10;
-             b = "20";
-             c = false;
-           };
-         };
-       }
-         -> [ 10 "str20" false 10 "20" false ]
+     *Type*: flatten :: AttrSet a -> [a]
 
-     Type:
-       flatten :: AttrSet a -> [a]
+     Example:
+     ```nix title="Example" linenums="1"
+     flatten {
+       keyA = 10;
+       keyB = "str20";
+       keyC = {
+         keyD = false;
+         keyE = {
+           a = 10;
+           b = "20";
+           c = false;
+         };
+       };
+     }
+      => [ 10 "str20" false 10 "20" false ]
+     ```
   */
-  flatten = attrs: collect (x: !isAttrs x) attrs;
+  flatten =
+    # Initial nested attrset
+    attrs:
+    collect (x: !isAttrs x) attrs;
 }

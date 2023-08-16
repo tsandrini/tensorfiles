@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { lib, pkgs, inputs, stdenv, mkdocs, pandoc, python3, python310Packages
-, runCommand, nixosOptionsDoc, nixdoc, writeText, ... }:
+, runCommand, nixosOptionsDoc, nixdoc, writeText, perl, ... }:
 let
   inherit (lib.tensorfiles.attrsets) flatten;
   inherit (lib.tensorfiles.modules) mapModules;
@@ -57,6 +57,14 @@ let
         name = "types";
         description = "additional types definitions";
       }
+      {
+        name = "maintainers";
+        description = "tensorfiles maintainers";
+      }
+      {
+        name = "licenses";
+        description = "tensorfiles licenses";
+      }
     ];
   in stdenv.mkDerivation {
     name = "tensorfiles-docs-lib";
@@ -75,7 +83,7 @@ let
         fi
 
         # First we parse the doccoments in the xml docbook format
-        nixdoc --category "$name" --description "lib.$name: $description" --file "$path" > "$out/$name.xml"
+        nixdoc --category "$name" --description "**lib.$name**: $description" --file "$path" > "$out/$name.xml"
 
         # Then we convert the docbook xml to smart markdown
         pandoc -f docbook -t markdown -s "$out/$name.xml" -o "$out/$name.md"
@@ -85,8 +93,10 @@ let
 
         # The following commands properly parse and convert the Example blocks
         # into markdowns code blocks
-        sed -i 's/^[ \t]*```/```/g' "$out/$name.md"
-        python -c "import re, sys; print(re.sub(r'(?sm)\`\`\`([^\`]+)\`\`\`', (lambda x: '\`\`\`' + '\n'.join([line.lstrip() for line in str(x.group(1)).split('\n')]) + '\`\`\`'), sys.stdin.read()));" < "$out/$name.md" > tmp.md && mv tmp.md $out/$name.md
+        # sed -i 's/^[ \t]*```/```/g' "$out/$name.md"
+        # python -c "import re, sys; print(re.sub(r'(?sm)\`\`\`([^\`]+)\`\`\`', (lambda x: '\`\`\`' + '\n'.join([line.lstrip() for line in str(x.group(1)).split('\n')]) + '\`\`\`'), sys.stdin.read()));" < "$out/$name.md" > tmp.md && mv tmp.md $out/$name.md
+
+        # sed -E -i 's/Types:\s+(.*)$/^^Types^^: `\1`/g' "$out/$name.md"
 
         # Add links to the source file
         fullPath="$src/$path"
@@ -104,7 +114,6 @@ let
       ${lib.concatMapStrings ({ name, baseName ? name, description }: ''
         docgen ${name} ${baseName} ${lib.escapeShellArg description}
       '') libsets}
-
     '';
   };
 
@@ -132,6 +141,7 @@ let
   in runCommand "options-doc.md" { } ''
     cat ${optionsDoc.optionsCommonMark} >> $out
     sed -i "s/\\\./\./g" $out
+    ${perl}/bin/perl -i -0777 -pe 's/```\n(.*?)\n```/```nix linenums="1"\n\1\n```/gs' $out
   '';
 in stdenv.mkDerivation {
   src = ./.;
@@ -177,7 +187,7 @@ in stdenv.mkDerivation {
 
   meta = with lib; {
     homepage = "https://github.com/tsandrini/tensorfiles";
-    description = "";
+    description = "The combined Documentation of the whole tensorfiles flake.";
     license = licenses.mit;
     platforms = [ "x86_64-linux" ];
     maintainers = with tensorfiles.maintainers; [ tsandrini ];

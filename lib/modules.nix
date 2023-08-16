@@ -21,37 +21,43 @@ with builtins; rec {
 
   /* Check whether the persistence system is enabled, that is whether
 
-     1. The `tensorfiles.system.persistence` modul is imported
+     1. The `tensorfiles.system.persistence` module is imported
+
      2. It is also enabled
 
-     Type:
-      isPersistenceEnabled :: AttrSet -> Bool
+     *Type*: `isPersistenceEnabled :: AttrSet -> Bool`
   */
-  isPersistenceEnabled = cfg:
+  isPersistenceEnabled =
+    # (AttrSet) An AttrSet with the already parsed NixOS config
+    cfg:
     (cfg ? tensorfiles.system.persistence)
     && (cfg.tensorfiles.system.persistence.enable);
 
   /* Check whether the agenix system is enabled, that is whether
 
-     1. The `tensorfiles.security.agenix` modul is imported
+     1. The `tensorfiles.security.agenix` moduls is imported
+
      2. It is also enabled
 
-     Type:
-      isAgenixEnabled :: AttrSet -> Bool
+     *Type*: `isAgenixEnabled :: AttrSet -> Bool`
   */
-  isAgenixEnabled = cfg:
+  isAgenixEnabled =
+    # (AttrSet) An AttrSet with the already parsed NixOS config
+    cfg:
     (cfg ? tensorfiles.security.agenix)
     && (cfg.tensorfiles.security.agenix.enable);
 
   /* Check whether the agenix system is enabled, that is whether
 
-     1. The `tensorfiles.system.users` modul is imported
+     1. The `tensorfiles.system.users` module is imported
+
      2. It is also enabled
 
-     Type:
-      isUsersSystemEnabled :: AttrSet -> Bool
+     *Type*: `isUsersSystemEnabled :: AttrSet -> Bool`
   */
-  isUsersSystemEnabled = cfg:
+  isUsersSystemEnabled =
+    # (AttrSet) An AttrSet with the already parsed NixOS config
+    cfg:
     (cfg ? tensorfiles.system.users) && (cfg.tensorfiles.system.users.enable);
 
   /* Transforms an absolute path to a one relative to the given user home
@@ -61,36 +67,47 @@ with builtins; rec {
       1. If you pass `cfg = config;` then the function will load the `homeDir`
          specified in the users system module (tensorfiles.system.users).
          Note that the module has to be also enabled.
+
       2. You can instead just pass the username directly instead, in that case
-         it will remove either `/home/$user` or `/root` depending on the provided
-         user.
+         it will remove either `/home/$user` or `/root` depending on the provided user.
+
       3. You can also just pass the `home`. In that case it behaves basically just
          like a direct call to `lib.strings.removePrefix`
+
       4. You can omit passing any variables, in that case the function will try to
          parse the user that has been passed for the initialization of the whole
          lib/ (if any was provided). If no user was provided in this manner, it
          will fallback to /root.
 
+     *Type*: `absolutePathToRelativeHome :: Path -> { _user :: String; home :: String; cfg :: AttrSet } -> String`
+
      Example:
-       absolutePathToRelativeHome "/home/myUser/myDir/file.txt" { cfg = config; user = "myUser"; }
-        -> "myDir/file.txt"
+     ```nix title="Example" linenums="1"
+      absolutePathToRelativeHome "/home/myUser/myDir/file.txt" { cfg = config; user = "myUser"; }
+        => "myDir/file.txt"
 
-       absolutePathToRelativeHome "/home/myUser/myDir/file.txt" { user = "myUser"; }
-        -> "myDir/file.txt"
+      absolutePathToRelativeHome "/home/myUser/myDir/file.txt" { user = "myUser"; }
+        => "myDir/file.txt"
 
-       absolutePathToRelativeHome "/root/myDir/file.txt" { user = "root"; }
-        -> "myDir/file.txt"
+      absolutePathToRelativeHome "/root/myDir/file.txt" { user = "root"; }
+        => "myDir/file.txt"
 
-       absolutePathToRelativeHome "/var/myUserHome/myDir/file.txt" { home = "/var/myUserHome"; }
-        -> "myDir/file.txt"
+      absolutePathToRelativeHome "/var/myUserHome/myDir/file.txt" { home = "/var/myUserHome"; }
+        => "myDir/file.txt"
 
-       absolutePathToRelativeHome "/home/myUser/myDir/file.txt" {} -> "myDir/file.txt"
-
-     Type:
-       absolutePathToRelativeHome :: String -> { _user :: String; home :: String; cfg :: AttrSet } -> String
+      absolutePathToRelativeHome "/home/myUser/myDir/file.txt" {} => "myDir/file.txt"
+      ```
   */
-  absolutePathToRelativeHome = path:
-    { _user ? user, home ? null, cfg ? null }:
+  absolutePathToRelativeHome =
+    # (Path) The absolute path that should be transformed to a relative one
+    path:
+    {
+    # (String) Username that will be used to parse the homedir. Default: module level user if provided, otherwise "root"
+    _user ? user,
+    # (Path) In case of a nontraditional /home structure, you can provide the full homedir path. Default: null
+    home ? null,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attrset enabled parsing homedir directly via the usersSystem module. Default: null
+    cfg ? null }:
     if (cfg != null && (isUsersSystemEnabled cfg)) then
       (strings.removePrefix
         (cfg.tensorfiles.system.users.home.settings.${_user}.homeDir + "/")
@@ -113,16 +130,14 @@ with builtins; rec {
   /* mkOverride function with a preset priority set for all of the nixos
      modules.
 
-     Type:
-       mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }
+     *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
   */
   mkOverrideAtModuleLevel = mkOverride 500;
 
   /* mkOverride function with a preset priority set for all of the nixos
      profiles, that is, modules that preconfigure other modules.
 
-     Type:
-       mkOverrideAtProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }
+     *Type*: `mkOverrideAtProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
   */
   mkOverrideAtProfileLevel = mkOverride 400;
 
@@ -131,33 +146,30 @@ with builtins; rec {
      structure of the root.
 
      Notes:
+
       1. Files and directories starting with the `_` or `.git` prefix will be completely
          ignored.
+
       2. If a directory with a `myDir/default.nix` file will be encountered,
          the function will be applied to the `myDir/default.nix` file
          instead of recursively loading `myDir` and applying it to every file.
 
+     *Type*: `mapModules :: Path -> (Path -> AttrSet a) -> { name :: String; value :: AttrSet a; }`
+
      Example:
-       mapModules ./modules import
-        -> {
-          hardware = {
-            moduleA = { ... };
-          };
-          system = {
-            moduleB = { ... };
-          };
-        }
+     ```nix title="Example" linenums="1"
+     mapModules ./modules import
+       => { hardware = { moduleA = { ... }; }; system = { moduleB = { ... }; }; }
 
-       mapModules ./hosts (host: mkHostCustomFunction myArg host)
-        -> {
-          hostA = { ... };
-          hostB = { ... };
-        }
-
-     Type:
-       mapModules :: Path -> (Path -> AttrSet a) -> { name :: String; value :: AttrSet a; }
+     mapModules ./hosts (host: mkHostCustomFunction myArg host)
+       => { hostA = { ... }; hostB = { ... }; }
+     ```
   */
-  mapModules = dir: fn:
+  mapModules =
+    # (Path) Root directory on which should the recursive mapping be applied
+    dir:
+    # (Path -> AttrSet a) Function that transforms node paths to their custom attrsets
+    fn:
     mapFilterAttrs
     (n: v: v != null && !(hasPrefix "_" n) && !(hasPrefix ".git" n)) (n: v:
       let path = "${toString dir}/${n}";
@@ -173,19 +185,26 @@ with builtins; rec {
   /* Custom nixpkgs constructor. Its purpose is to import provided nixpkgs
      while setting the target platform and all over the needed overlays.
 
+     *Type*: `mkPkgs :: AttrSet -> String -> [(AttrSet -> AttrSet -> AttrSet)] -> Attrset`
+
      Example:
-      mkPkgs <nixpkgs> "x86_64-linux" []
-        -> { ... }
+     ```nix title="Example" linenums="1"
+     mkPkgs <nixpkgs> "x86_64-linux" []
+       => { ... }
 
-      mkPkgs inputs.nixpkgs "aarch64-linux" [ (final: prev: {
-        customPkgs = inputs.customPkgs { pkgs = final; };
-      }) ]
-        -> { ... }
-
-     Type:
-       mkPkgs :: AttrSet -> String -> [(AttrSet -> AttrSet -> AttrSet)] -> Attrset
+     mkPkgs inputs.nixpkgs "aarch64-linux" [ (final: prev: {
+       customPkgs = inputs.customPkgs { pkgs = final; };
+     }) ]
+       => { ... }
+     ```
   */
-  mkPkgs = pkgs: system: extraOverlays:
+  mkPkgs =
+    # (AttrSet) TODO (this is probably not an actual attrset?)
+    pkgs:
+    # (String) System string identifier (eg: "x86_64-linux", "aarch64-linux", "aarch64-darwin")
+    system:
+    # ([AttrSet -> AttrSet -> AttrSet]) Extra overlays that should be applied to the created pkgs
+    extraOverlays:
     import pkgs {
       inherit system;
       config.allowUnfree = true;
@@ -206,6 +225,7 @@ with builtins; rec {
 
      1. Each host gets its specifically constructed version of nixpkgs for its
         target platform, which is specified in the `myHostDir/system` file.
+
      2. Apart from some main host `.nix` file almost every host has some
         `hardware-configuration.nix` thus implying a host directory structure
         holding atleast 2 files + the system file.
@@ -216,10 +236,11 @@ with builtins; rec {
        - (required) system
        - (optional) hardware-configuration.nix
 
-     Type:
-       mkHost :: Path -> Attrset
+     *Type*: `mkHost :: Path -> Attrset`
   */
-  mkHost = dir:
+  mkHost =
+    # (Path) Path to the root directory further providing the "system" and "default.nix" files
+    dir:
     let
       name = dirnameFromPath dir;
       system = removeSuffix "\n" (readFile "${dir}/system");
