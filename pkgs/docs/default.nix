@@ -120,13 +120,12 @@ let
   options-doc = let
     eval = lib.evalModules {
       modules = let loadModulesInDir = dir: flatten (mapModules dir (x: x));
-      in (loadModulesInDir ../../modules/misc)
+      in [{ _module.check = false; }] ++ (loadModulesInDir ../../modules/misc)
       ++ (loadModulesInDir ../../modules/programs)
       ++ (loadModulesInDir ../../modules/services)
       ++ (loadModulesInDir ../../modules/system)
       ++ (loadModulesInDir ../../modules/tasks)
       ++ (loadModulesInDir ../../modules/security);
-      check = false;
       specialArgs = {
         # TODO: Warning!!!!
         # This is very bad practice and should be usually avoided at all costs,

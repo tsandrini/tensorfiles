@@ -27,7 +27,8 @@ with builtins; rec {
       default = true;
     };
 
-  /* Creates an already enabled module enableOption with
+  /* Creates an enableOption targeted for the management of the persistence
+     system.
 
      *Type*: `Option`
   */
@@ -47,11 +48,18 @@ with builtins; rec {
     default = true;
   };
 
+  /* Creates an enableOption targeted for the management of the agenix
+     security system.
+
+     *Type*: `Option`
+  */
   mkAgenixEnableOption = mkEnableOption (mdDoc ''
     Whether to enable the agenix ecosystem for handling secrets, which includes
 
     a. passwords
+
     b. keys
+
     c. certificates
 
     There is a preferred way to organize secrets (see example at
@@ -63,12 +71,19 @@ with builtins; rec {
     Note that this will get executed only if
 
     1. agenix = true;
+
     2. tensorfiles.security.agenix module is loaded
+
     3. tensorfiles.security.agenix.enable = true;
   '') // {
     default = true;
   };
 
+  /* Creates an enableOption targeted for the management of the home
+     system.
+
+     *Type*: `Option`
+  */
   mkHomeEnableOption = mkOption {
     type = bool;
     default = true;
@@ -77,25 +92,19 @@ with builtins; rec {
       Enable multi-user configuration via home-manager.
 
       The configuration is then done via the settings option with the toplevel
-      attribute being the name of the user, for example:
-
-      ```
-      home.enable = true;
-      home.settings."root" = {
-        myOption = false;
-        otherOption.name = "test1";
-        # etc...
-      };
-      home.settings."myUser" = {
-        myOption = true;
-        otherOption.name = "test2";
-        # etc...
-      };
-      ```
+      attribute being the name of the user, for more info please refer to the
+      documentation and example of the `settings` option.
     '';
   };
 
-  mkHomeSettingsOption = generatorFunction:
+  /* Creates an enableOption targeted for the management of the home
+     system.
+
+     *Type*: `(String -> AttrSet a) -> Option`
+  */
+  mkHomeSettingsOption =
+    # (String -> AttrSet a) Function that, given a username, yields all of the home related options for that given user
+    generatorFunction:
     mkOption {
       type = attrsOf
         (submodule ({ name, ... }: { options = (generatorFunction name); }));
@@ -111,24 +120,18 @@ with builtins; rec {
           myOption = true;
           otherOption.name = "test2";
         };
+        # just initialize the defaults
+        "myOtherUser" = { };
       };
       description = mdDoc ''
-        The configuration is then done via the settings option with the toplevel
-        attribute being the name of the user, for example:
+        Multiuser home-manager configuration option submodule.
+        Enables doing hm module level configurations via simple attrsets.
 
-        ```
-        home.enable = true;
-        home.settings."root" = {
-          myOption = false;
-          otherOption.name = "test1";
-          # etc...
-        };
-        home.settings."myUser" = {
-          myOption = true;
-          otherOption.name = "test2";
-          # etc...
-        };
-        ```
+        In the case of an enabled home configuration, but not passing any
+        concrete values, ie. meaning that `home.enable = true`, however,
+        `home.settings` is left unchanged, it will be populated with the
+        default values specific to each module using the user provided
+        during the initialization of `lib.tensorfiles.options` (by default "root").
       '';
     };
 }
