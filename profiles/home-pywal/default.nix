@@ -18,21 +18,21 @@ let
   cfg = config.home-manager.users.${user};
 in {
   home-manager.users.${user} = {
-    home.packages = with pkgs; [ pywal ];
+    # home.packages = with pkgs; [ pywal ];
 
     # Setup general templates
-    home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =
-      _ ./templates/Xresources;
-    systemd.user.tmpfiles.rules = [
-      "L ${cfg.home.homeDirectory}/.Xresources - - - - ${cfg.xdg.cacheHome}/wal/Xresources"
-    ];
+    # home.file."${cfg.xdg.configHome}/wal/templates/Xresources".source =
+    #   _ ./templates/Xresources;
+    # systemd.user.tmpfiles.rules = [
+    #   "L ${cfg.home.homeDirectory}/.Xresources - - - - ${cfg.xdg.cacheHome}/wal/Xresources"
+    # ];
 
-    programs.zsh.initExtra = lib.mkIf (cfg.programs.zsh.enable) ''
-      # Import colorscheme from 'wal' asynchronously
-      # &   # Run the process in the background.
-      # ( ) # Hide shell job control messages.
-      (cat ${cfg.xdg.cacheHome}/wal/sequences &)
-    '';
+    # programs.zsh.initExtra = lib.mkIf (cfg.programs.zsh.enable) ''
+    #   # Import colorscheme from 'wal' asynchronously
+    #   # &   # Run the process in the background.
+    #   # ( ) # Hide shell job control messages.
+    #   (cat ${cfg.xdg.cacheHome}/wal/sequences &)
+    # '';
 
     programs.neovim.plugins = with pkgs.vimPlugins;
       lib.mkIf (cfg.programs.neovim.enable) [{

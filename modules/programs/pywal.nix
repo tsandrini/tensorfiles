@@ -23,10 +23,13 @@ let
 
   cfg = config.tensorfiles.programs.pywal;
   _ = mkOverrideAtModuleLevel;
-  users = if (isUsersSystemEnabled config) then
-    config.tensorfiles.system.users
-  else
-    null;
+
+  _args = {
+    inherit _user;
+    cfg = config;
+  };
+  cacheDir = getUserCacheDir _args;
+  homeDir = getUserCacheDir _args;
 in {
   options.tensorfiles.programs.pywal = with types;
     with tensorfiles.options; {
@@ -41,69 +44,74 @@ in {
         enable = mkHomeEnableOption;
 
         settings = mkHomeSettingsOption (_user: { });
-
       };
     };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
+        let
+          userCfg = cfg.home.settings."${_user}";
+          homeDir = getUserHomeDir {
+            inherit _user;
+            cfg = config;
+          };
+          cacheDir = getUserCacheDir {
+            inherit _user;
+            cfg = config;
+          };
         in {
           home.packages = with pkgs; [ pywal ];
-          # home.file."${cfg.xdg.configHome}/wal/templates/Xresources".text =
-          #   mkBefore ''
-          #     ! Xft.autohint: 0
-          #     ! Xft*antialias: true
-          #     ! Xft.hinting: true
-          #     ! Xft.hintstyle: hintslight
-          #     ! Xft*dpi: 96
-          #     ! Xft.lcdfilter: lcddefault
 
-          #     *.background: {background}
-          #     *.foreground: {foreground}
-          #     *.cursorColor: {cursor}
+          systemd.user.tmpfiles.rules =
+            [ "L ${homeDir}/.Xresources - - - - ${cacheDir}/wal/Xresources" ];
+          home.file."${homeDir}/wal/templates/Xresources".text = mkBefore ''
+            ! Xft.autohint: 0
+            ! Xft*antialias: true
+            ! Xft.hinting: true
+            ! Xft.hintstyle: hintslight
+            ! Xft*dpi: 96
+            ! Xft.lcdfilter: lcddefault
 
-          #     ! Colors 0-15.
-          #     *.color0: {color0}
-          #     *color0:  {color0}
-          #     *.color1: {color1}
-          #     *color1:  {color1}
-          #     *.color2: {color2}
-          #     *color2:  {color2}
-          #     *.color3: {color3}
-          #     *color3:  {color3}
-          #     *.color4: {color4}
-          #     *color4:  {color4}
-          #     *.color5: {color5}
-          #     *color5:  {color5}
-          #     *.color6: {color6}
-          #     *color6:  {color6}
-          #     *.color7: {color7}
-          #     *color7:  {color7}
-          #     *.color8: {color8}
-          #     *color8:  {color8}
-          #     *.color9: {color9}
-          #     *color9:  {color9}
-          #     *.color10: {color10}
-          #     *color10:  {color10}
-          #     *.color11: {color11}
-          #     *color11:  {color11}
-          #     *.color12: {color12}
-          #     *color12:  {color12}
-          #     *.color13: {color13}
-          #     *color13:  {color13}
-          #     *.color14: {color14}
-          #     *color14:  {color14}
-          #     *.color15: {color15}
-          #     *color15:  {color15}
-          #   '';
+            *.background: {background}
+            *.foreground: {foreground}
+            *.cursorColor: {cursor}
 
-          # systemd.user.tmpfiles.rules = [
-          #   "L ${cfg.home.homeDirectory}/.Xresources - - - - ${cfg.xdg.cacheHome}/wal/Xresources"
-          # ];
+            ! Colors 0-15.
+            *.color0: {color0}
+            *color0:  {color0}
+            *.color1: {color1}
+            *color1:  {color1}
+            *.color2: {color2}
+            *color2:  {color2}
+            *.color3: {color3}
+            *color3:  {color3}
+            *.color4: {color4}
+            *color4:  {color4}
+            *.color5: {color5}
+            *color5:  {color5}
+            *.color6: {color6}
+            *color6:  {color6}
+            *.color7: {color7}
+            *color7:  {color7}
+            *.color8: {color8}
+            *color8:  {color8}
+            *.color9: {color9}
+            *color9:  {color9}
+            *.color10: {color10}
+            *color10:  {color10}
+            *.color11: {color11}
+            *color11:  {color11}
+            *.color12: {color12}
+            *color12:  {color12}
+            *.color13: {color13}
+            *color13:  {color13}
+            *.color14: {color14}
+            *color14:  {color14}
+            *.color15: {color15}
+            *color15:  {color15}
+          '';
         });
     })
     # |----------------------------------------------------------------------| #
@@ -119,13 +127,13 @@ in {
                 cfg = config;
               };
 
-              cacheDir = (getUserCacheDir {
+              cacheDir = getUserCacheDir {
                 inherit _user;
                 cfg = config;
-              }) + "/wal";
+              };
             in {
               files = [ ".fehbg" ];
-              directories = [ (toRelative cacheDir) ];
+              directories = [ (toRelative (cacheDir + "/wal")) ];
             });
       }))
     # |----------------------------------------------------------------------| #

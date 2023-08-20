@@ -56,6 +56,20 @@ with builtins; rec {
     cfg:
     (cfg ? tensorfiles.system.users) && (cfg.tensorfiles.system.users.enable);
 
+  /* Check whether the pywal theme system module is enabled, that is whether
+
+     1. The `tensorfiles.programs.pywal` module is imported
+
+     2. It is also enabled
+
+     *Type*: `isPywalEnabled:: AttrSet -> Bool`
+  */
+  isPywalEnabled =
+    # (AttrSet) An AttrSet with the already parsed NixOS config
+    cfg:
+    (cfg ? tensorfiles.programs.pywal)
+    && (cfg.tensorfiles.programs.pywal.enable);
+
   /* Transforms an absolute path to a one relative to the given user home
      directory. It basically functions as a case handler for
      `lib.strings.removePreffix` to handle a variety of different cases.
@@ -167,7 +181,7 @@ with builtins; rec {
           != null)) then
         cfg.tensorfiles.system.users.home.settings.${_user}.homeDir
 
-      else if ((hasAttr home-manager cfg)
+      else if ((hasAttr "home-manager" cfg)
         && (hasAttr _user cfg.home-manager.users)
         && (cfg.home-manager.users.${_user}.home.homeDirectory != null)) then
         cfg.home-manager.${_user}.home.homeDirectory

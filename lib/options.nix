@@ -48,6 +48,27 @@ with builtins; rec {
     default = true;
   };
 
+  /* Creates an enableOption targeted for the integration with the pywal
+     colorscheme generator.
+
+     *Type*: `Option`
+  */
+  mkPywalEnableOption = mkEnableOption (mdDoc ''
+    Whether to enable the integration with the pywal colorscheme generator
+    program. The integration may range from just some color parsing/loading to
+    sometimes full on detailed plugins depending on the context.
+
+    Note that the code will get execute only if
+
+    1. pywal.enable = true;
+
+    2. tensorfiles.programs.pywal module is loaded
+
+    3. tensorfiles.programs.pywal.enable = true;
+  '') // {
+    default = true;
+  };
+
   /* Creates an enableOption targeted for the management of the agenix
      security system.
 

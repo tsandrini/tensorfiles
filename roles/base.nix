@@ -45,7 +45,7 @@
     # nixosProfiles.home-git
     # nixosProfiles.home-zsh
     nixosProfiles.home-neovim
-    nixosProfiles.home-pywal
+    # nixosProfiles.home-pywal
     nixosProfiles.home-pywalfox-native
     nixosProfiles.home-picom
     nixosProfiles.home-alacritty

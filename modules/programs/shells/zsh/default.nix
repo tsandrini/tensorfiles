@@ -17,9 +17,16 @@ with builtins;
 with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.nixos) isPywalEnabled getUserCacheDir;
 
   cfg = config.tensorfiles.programs.shells.zsh;
   _ = mkOverrideAtModuleLevel;
+
+  _args = {
+    inherit _user;
+    cfg = config;
+  };
+  cacheDir = getUserCacheDir _args;
 in {
   # TODO add non-hm nixos only based configuration
   options.tensorfiles.programs.shells.zsh = with types;
@@ -41,6 +48,8 @@ in {
         enable = mkHomeEnableOption;
 
         settings = mkHomeSettingsOption (_user: {
+
+          pywal = { enable = mkPywalEnableOption; };
 
           withAutocompletions = mkOption {
             type = bool;
@@ -198,6 +207,24 @@ in {
             })
             { fetch = _ "${pkgs.nitch}/bin/nitch"; }
           ];
+        });
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.home.enable && (isPywalEnabled (config))) {
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
+        let
+          userCfg = cfg.home.settings."${_user}";
+          cacheDir = getUserCacheDir {
+            inherit _user;
+            cfg = config;
+          };
+        in {
+          programs.zsh.initExtra = mkIf userCfg.pywal.enable ''
+            # Import colorscheme from 'wal' asynchronously
+            # &   # Run the process in the background.
+            # ( ) # Hide shell job control messages.
+            (cat ${cacheDir}/wal/sequences &)
+          '';
         });
     })
     # |----------------------------------------------------------------------| #
