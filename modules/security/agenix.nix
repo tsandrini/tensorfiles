@@ -16,10 +16,16 @@
 with builtins;
 with lib;
 let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel isPersistenceEnabled;
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.nixos) isPersistenceEnabled getUserHomeDir;
 
   cfg = config.tensorfiles.security.agenix;
   _ = mkOverrideAtModuleLevel;
+
+  rootHome = getUserHomeDir {
+    _user = "root";
+    cfg = config;
+  };
 in {
   # TODO conditional persistence
   options.tensorfiles.security.agenix = with types; {
@@ -52,14 +58,14 @@ in {
         inputs.agenix.packages.${system}.default
         age
       ];
-      age.identityPaths = [ "/root/.ssh/id_ed25519" ];
+      age.identityPaths = [ "${rootHome}/.ssh/id_ed25519" ];
     })
     # |----------------------------------------------------------------------| #
     (mkIf (isPersistenceEnabled config)
       (let persistence = config.tensorfiles.system.persistence;
       in {
         age.identityPaths =
-          [ "${persistence.persistentRoot}/root/.ssh/id_ed25519" ];
+          [ "${persistence.persistentRoot}/${rootHome}/.ssh/id_ed25519" ];
       }))
     # |----------------------------------------------------------------------| #
   ]);

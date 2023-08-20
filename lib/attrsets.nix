@@ -19,20 +19,20 @@ with builtins; rec {
   /* Apply a map to every attribute of an attrset and then filter the resulting
      attrset based on a given predicate function.
 
-     *Type*: mapFilterAttrs :: (AttrSet b -> Bool) -> (AttrSet a -> AttrSet b) -> AttrSet a -> AttrSet b
+     *Type*: `mapFilterAttrs :: (AttrSet b -> Bool) -> (AttrSet a -> AttrSet b) -> AttrSet a -> AttrSet b`
   */
   mapFilterAttrs =
-    # Predicate used for filtering
+    # (AttrSet b -> Bool) Predicate used for filtering
     pred:
-    # Function used for transforming the given AttrSets
+    # (AttrSet a -> AttrSet b) Function used for transforming the given AttrSets
     f:
-    # Initial attrset
+    # (AttrSet a) Initial attrset
     attrs:
     filterAttrs pred (mapAttrs' f attrs);
 
   /* Recursively merges a list of attrsets.
 
-     *Type*: mergeAttrs :: [AttrSet] -> AttrSet
+     *Type*: `mergeAttrs :: [AttrSet] -> AttrSet`
 
      Example:
      ```nix title="Example" linenums="1"
@@ -45,14 +45,14 @@ with builtins; rec {
      ```
   */
   mergeAttrs =
-    # The list of attrsets
+    # ([AttrSet]) The list of attrsets
     attrs:
     foldl' (acc: elem: acc // elem) { } attrs;
 
   /* Given a list of elements, applies a transformation to each of the element
      to an attrset and then recursively merges the resulting attrset.
 
-     *Type*: mapToAttrsAndMerge :: [a] -> (a -> AttrSet) -> AttrSet
+     *Type*: `mapToAttrsAndMerge :: [a] -> (a -> AttrSet) -> AttrSet`
 
      Example:
      ```nix title="Example" linenums="1"
@@ -61,15 +61,15 @@ with builtins; rec {
      ```
   */
   mapToAttrsAndMerge =
-    # Initial list of elements
+    # ([a]) Initial list of elements
     list:
-    # Function used for transforming the initial elements to attrsets
+    # (a -> AttrSet) Function used for transforming the initial elements to attrsets
     f:
     mergeAttrs (map f list);
 
   /* Recursivelly flattens a nested attrset into a list of just its values.
 
-     *Type*: flatten :: AttrSet a -> [a]
+     *Type*: `flatten :: AttrSet a -> [a]`
 
      Example:
      ```nix title="Example" linenums="1"
@@ -89,7 +89,7 @@ with builtins; rec {
      ```
   */
   flatten =
-    # Initial nested attrset
+    # (AttrSet a) Initial nested attrset
     attrs:
     collect (x: !isAttrs x) attrs;
 }

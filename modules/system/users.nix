@@ -16,9 +16,10 @@
 with builtins;
 with lib;
 let
-  inherit (tensorfiles.modules)
-    mkOverrideAtModuleLevel isPersistenceEnabled isAgenixEnabled
-    absolutePathToRelativeHome;
+  inherit (tensorfiles.types) email;
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.nixos)
+    isPersistenceEnabled isAgenixEnabled absolutePathToRelativeHome;
   inherit (tensorfiles.attrsets) mapToAttrsAndMerge;
 
   cfg = config.tensorfiles.system.users;
@@ -75,6 +76,22 @@ in {
 
               This is achieved by creating an empty `.blank` file inside the
               directories, thanks to this we preserve the overall purity.
+            '';
+          };
+
+          email = mkOption {
+            type = nullOr email;
+            default = null;
+            description = mdDoc ''
+              TODO
+            '';
+          };
+
+          description = mkOption {
+            type = nullOr str;
+            default = null;
+            description = mdDoc ''
+              TODO
             '';
           };
 
@@ -247,6 +264,7 @@ in {
       users.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
         in {
+          name = _ _user;
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
           extraGroups = [ "video" "audio" "camera" ]

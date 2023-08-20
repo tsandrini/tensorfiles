@@ -16,7 +16,10 @@
 with builtins;
 with lib;
 let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel isUsersSystemEnabled;
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.nixos)
+    isUsersSystemEnabled getUserHomeDir getUserConfigDir getUserCacheDir
+    getUserAppDataDir getUserAppStateDir;
 
   cfg = config.tensorfiles.misc.xdg;
   _ = mkOverrideAtModuleLevel;
@@ -42,33 +45,20 @@ in {
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && (isUsersSystemEnabled config)) {
+    (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let users = config.tensorfiles.system.users;
-        in {
-          xdg = {
-            enable = _ true;
-            configHome = _ users.home.settings.${_user}.configDir;
-            cacheHome = _ users.home.settings.${_user}.cacheDir;
-            dataHome = _ users.home.settings.${_user}.appDataDir;
-            stateHome = _ users.home.settings.${_user}.appStateDir;
-
-            mime.enable = _ true;
-            mimeApps = { enable = _ true; };
+        let
+          args = {
+            inherit _user;
+            cfg = config;
           };
-        });
-    })
-    # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && !(isUsersSystemEnabled config)) {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let homeDir = if _user != "root" then "/home/${_user}" else "/root";
         in {
           xdg = {
             enable = _ true;
-            configHome = _ "${home}/.config";
-            cacheHome = _ "${home}/.cache";
-            dataHome = _ "${home}/.local/share";
-            stateHome = _ "${home}/.local/state";
+            configHome = _ (getUserConfigDir args);
+            cacheHome = _ (getUserCacheDir args);
+            dataHome = _ (getUserAppDataDir args);
+            stateHome = _ (getUserAppStateDir args);
 
             mime.enable = _ true;
             mimeApps = { enable = _ true; };

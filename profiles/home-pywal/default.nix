@@ -44,10 +44,10 @@ in {
       }];
   };
 
-  environment.persistence = lib.mkIf (config.environment ? persistence) {
-    "/persist".users.${user} = {
-      directories = [ ".cache/wal" ];
-      files = [ ".fehbg" ];
-    };
-  };
+  # environment.persistence = lib.mkIf (config.environment ? persistence) {
+  #   "/persist".users.${user} = {
+  #     # directories = [ ".cache/wal" ];
+  #     # files = [ ".fehbg" ];
+  #   };
+  # };
 }

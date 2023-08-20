@@ -16,7 +16,8 @@
 with builtins;
 with lib;
 let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel isPersistenceEnabled;
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.nixos) isPersistenceEnabled;
 
   cfg = config.tensorfiles.services.networking.networkmanager;
   _ = mkOverrideAtModuleLevel;

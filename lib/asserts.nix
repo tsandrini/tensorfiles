@@ -18,7 +18,7 @@ with builtins; {
 
   /* Asserts that the home-manager module is installed and imported.
 
-     *Type*: assertHomeManagerLoaded :: AttrSet a -> (AttrSet a | Error)
+     *Type*: `assertHomeManagerLoaded :: AttrSet a -> (AttrSet a | Error)`
 
      Example:
      ```nix title="Example" linenums="1"

@@ -101,6 +101,7 @@ in {
                 Enable predefined shell aliases
               '';
             };
+
             catToBat = mkOption {
               type = bool;
               default = true;
@@ -108,6 +109,7 @@ in {
                 Remap the cat related commands to its reworked edition bat.
               '';
             };
+
             findToFd = mkOption {
               type = bool;
               default = true;
@@ -115,6 +117,7 @@ in {
                 Remap the find related commands to its reworked edition fd.
               '';
             };
+
             grepToRipgrep = mkOption {
               type = bool;
               default = true;

@@ -17,13 +17,13 @@ with builtins;
 with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.nixos) getUserEmail;
   inherit (tensorfiles.types) email;
 
   cfg = config.tensorfiles.programs.git;
   _ = mkOverrideAtModuleLevel;
 in {
   # TODO add non-hm nixos only based configuration
-  # TODO change default email for home.settings.userEmail
   options.tensorfiles.programs.git = with types;
     with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
@@ -45,8 +45,8 @@ in {
           };
 
           userEmail = mkOption {
-            type = email;
-            default = "tomas.sandrini@seznam.cz"; # TODO remove
+            type = nullOr email;
+            default = null;
             description = mdDoc ''
               Email that should be used for commits and credentials.
             '';
@@ -65,9 +65,16 @@ in {
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let
-          userCfg = cfg.home.settings."${_user}";
+          userCfg = cfg.home.settings.${_user};
           userName =
-            if userCfg.userName != null then userCfg.userName else "${_user}";
+            if userCfg.userName != null then userCfg.userName else _user;
+          userEmail = if userCfg.userEmail != null then
+            userCfg.userEmail
+          else
+            getUserEmail {
+              inherit _user;
+              cfg = config;
+            };
         in {
           programs.git = {
             enable = _ true;
@@ -79,7 +86,7 @@ in {
               };
             };
             userName = _ userName;
-            userEmail = _ userCfg.userEmail;
+            userEmail = _ userEmail;
             extraConfig = { github.user = _ userName; };
             aliases = {
               b = _ "branch";

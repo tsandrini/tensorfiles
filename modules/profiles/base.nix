@@ -79,6 +79,7 @@ in {
     misc.xdg
 
     programs.git
+    programs.pywal
     programs.shells.zsh
 
     security.agenix
@@ -107,6 +108,7 @@ in {
       };
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
         git.enable = _ true;
+        pywal.enable = _ true;
         shells.zsh.enable = _ true;
       };
       tensorfiles.security = mkIf cfg.modulesAutoenable.security {
@@ -128,10 +130,18 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.modulesAutoenable.enable && cfg.modulesAutoenable.homeSettings) {
+      # HARDWARE
+      # MISC
+      tensorfiles.misc.xdg.home.enable = _ true;
+      # PROGRAMS
+      tensorfiles.programs.pywal.home.enable = _ true;
       tensorfiles.programs.shells.zsh.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
-      tensorfiles.misc.xdg.home.enable = _ true;
+      # SECURITY
+      # SERVICES
+      # SYSTEM
       tensorfiles.system.users.home.enable = _ true;
+      # TASKS
     })
     # |----------------------------------------------------------------------| #
     ({
@@ -146,6 +156,7 @@ in {
       tensorfiles.system.users.home.settings."root" = { isSudoer = _ false; };
       tensorfiles.system.users.home.settings."tsandrini" = {
         isSudoer = _ true;
+        email = _ "tomas.sandrini@seznam.cz";
       };
 
       tensorfiles.misc.xdg.home.settings."root" = { };

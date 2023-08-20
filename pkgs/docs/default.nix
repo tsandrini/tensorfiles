@@ -38,32 +38,36 @@ let
         description = "attribute set functions";
       }
       {
-        name = "strings";
-        description = "string manipulation functions";
-      }
-      {
-        name = "options";
-        description = "NixOS / nixpkgs option handling";
-      }
-      {
-        name = "modules";
-        description = "general modularity functions";
+        name = "licenses";
+        description = "tensorfiles licenses";
       }
       {
         name = "lists";
         description = "list manipulation functions";
       }
       {
-        name = "types";
-        description = "additional types definitions";
-      }
-      {
         name = "maintainers";
         description = "tensorfiles maintainers";
       }
       {
-        name = "licenses";
-        description = "tensorfiles licenses";
+        name = "modules";
+        description = "general modularity functions";
+      }
+      {
+        name = "nixos";
+        description = "NixOS related functionality";
+      }
+      {
+        name = "options";
+        description = "NixOS / nixpkgs option handling";
+      }
+      {
+        name = "strings";
+        description = "string manipulation functions";
+      }
+      {
+        name = "types";
+        description = "additional types definitions";
       }
     ];
   in stdenv.mkDerivation {
