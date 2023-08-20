@@ -75,9 +75,11 @@ in {
     agenix.nixosModules.default
     nur.nixosModules.nur
   ]) ++ (with inputs.self.nixosModules; [
+    misc.gtk
     misc.nix
     misc.xdg
 
+    programs.editors.neovim
     programs.git
     programs.pywal
     programs.shells.zsh
@@ -90,8 +92,8 @@ in {
     system.persistence
     system.users
 
-    tasks.system-autoupgrade
     tasks.nix-garbage-collect
+    tasks.system-autoupgrade
   ]);
 
   config = mkIf cfg.enable (mkMerge [
@@ -105,11 +107,13 @@ in {
       tensorfiles.misc = mkIf cfg.modulesAutoenable.misc {
         nix.enable = _ true;
         xdg.enable = _ true;
+        gtk.enable = _ true;
       };
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
         git.enable = _ true;
         pywal.enable = _ true;
         shells.zsh.enable = _ true;
+        editors.neovim.enable = _ true;
       };
       tensorfiles.security = mkIf cfg.modulesAutoenable.security {
         #
@@ -136,9 +140,11 @@ in {
       # PROGRAMS
       tensorfiles.programs.pywal.home.enable = _ true;
       tensorfiles.programs.shells.zsh.home.enable = _ true;
+      tensorfiles.programs.editors.neovim.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
       # SECURITY
       # SERVICES
+      tensorfiles.services.x11.window-managers.xmonad.home.enable = _ true;
       # SYSTEM
       tensorfiles.system.users.home.enable = _ true;
       # TASKS

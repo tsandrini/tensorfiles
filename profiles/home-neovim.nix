@@ -27,7 +27,7 @@ in {
       vimAlias = _ true;
       withPython3 = _ true;
       withNodeJs = _ true;
-      extraConfig = lib.mkBefore ''
+      extraConfig = ''
         set number
         set relativenumber
 

@@ -39,12 +39,12 @@
     # nixosProfiles.persist-btrfs
     # nixosProfiles.localization
     # nixosProfiles.networking-nm
-    nixosProfiles.xmonad-with-xmobar-pywaled
+    # nixosProfiles.xmonad-with-xmobar-pywaled
     # nixosProfiles.home-manager
     # nixosProfiles.home-xdg
     # nixosProfiles.home-git
     # nixosProfiles.home-zsh
-    nixosProfiles.home-neovim
+    # nixosProfiles.home-neovim
     # nixosProfiles.home-pywal
     nixosProfiles.home-pywalfox-native
     nixosProfiles.home-picom
@@ -54,7 +54,7 @@
     nixosProfiles.home-dmenu-pywaled
     nixosProfiles.home-redshift
     nixosProfiles.home-dunst-pywaled
-    nixosProfiles.home-gtk
+    # nixosProfiles.home-gtk
     nixosProfiles.home-firefox
   ];
 }

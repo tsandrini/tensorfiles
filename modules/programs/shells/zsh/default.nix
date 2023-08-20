@@ -21,12 +21,6 @@ let
 
   cfg = config.tensorfiles.programs.shells.zsh;
   _ = mkOverrideAtModuleLevel;
-
-  _args = {
-    inherit _user;
-    cfg = config;
-  };
-  cacheDir = getUserCacheDir _args;
 in {
   # TODO add non-hm nixos only based configuration
   options.tensorfiles.programs.shells.zsh = with types;

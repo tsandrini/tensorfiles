@@ -19,23 +19,16 @@ let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit (tensorfiles.nixos)
     isPersistenceEnabled isUsersSystemEnabled absolutePathToRelativeHome
-    getUserHomeDir getUserCacheDir;
+    getUserHomeDir getUserCacheDir getUserConfigDir;
 
   cfg = config.tensorfiles.programs.pywal;
   _ = mkOverrideAtModuleLevel;
-
-  _args = {
-    inherit _user;
-    cfg = config;
-  };
-  cacheDir = getUserCacheDir _args;
-  homeDir = getUserCacheDir _args;
 in {
   options.tensorfiles.programs.pywal = with types;
     with tensorfiles.options; {
 
       enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the networkmanager service.
+        Enables NixOS module that configures/handles pywal colorscheme generator.
       '');
 
       persistence = { enable = mkPersistenceEnableOption; };
@@ -61,12 +54,16 @@ in {
             inherit _user;
             cfg = config;
           };
+          configDir = getUserConfigDir {
+            inherit _user;
+            cfg = config;
+          };
         in {
           home.packages = with pkgs; [ pywal ];
 
           systemd.user.tmpfiles.rules =
             [ "L ${homeDir}/.Xresources - - - - ${cacheDir}/wal/Xresources" ];
-          home.file."${homeDir}/wal/templates/Xresources".text = mkBefore ''
+          home.file."${configDir}/wal/templates/Xresources".text = mkBefore ''
             ! Xft.autohint: 0
             ! Xft*antialias: true
             ! Xft.hinting: true
