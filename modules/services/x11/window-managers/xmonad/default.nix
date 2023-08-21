@@ -404,8 +404,7 @@ in {
                 getColors :: IO [String]
                 ${if (userCfg.pywal.enable && (isPywalEnabled config)) then ''
                   getColors = do
-                    file <- "${cacheDir}/wal/colors"
-                    contents <- readFile file
+                    contents <- readFile "${cacheDir}/wal/colors"
                     let colors = lines contents
                     return (colors ++ replicate (16 - length colors) "#000000")
                 '' else ''
