@@ -84,6 +84,7 @@ in {
     programs.git
     programs.pywal
     programs.shells.zsh
+    programs.terminals.alacritty
 
     security.agenix
 
@@ -111,11 +112,12 @@ in {
         gtk.enable = _ true;
       };
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
+        dmenu.enable = _ true;
+        editors.neovim.enable = _ true;
         git.enable = _ true;
         pywal.enable = _ true;
-        dmenu.enable = _ true;
         shells.zsh.enable = _ true;
-        editors.neovim.enable = _ true;
+        terminals.alacritty.enable = _ true;
       };
       tensorfiles.security = mkIf cfg.modulesAutoenable.security {
         #
@@ -145,6 +147,7 @@ in {
       tensorfiles.programs.git.home.enable = _ true;
       tensorfiles.programs.pywal.home.enable = _ true;
       tensorfiles.programs.shells.zsh.home.enable = _ true;
+      tensorfiles.programs.terminals.alacritty.home.enable = _ true;
       # SECURITY
       # SERVICES
       tensorfiles.services.x11.window-managers.xmonad.home.enable = _ true;

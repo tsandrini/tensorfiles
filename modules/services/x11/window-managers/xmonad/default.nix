@@ -156,6 +156,29 @@ in {
             };
           };
 
+          dmenu = {
+            enable = mkAlreadyEnabledOption (mdDoc ''
+              Enable the dmenu app launcher integration.
+              This does **one of** two things, first off
+
+              1. If `tensorfiles.programs.dmenu` is installed and enabled it will
+                 use whatever is defined inside that module.
+
+              2. If not, it will install `dmenu.pkg` and use that version.
+
+              and secondly, it creates the keyboard mappings.
+            '');
+
+            pkg = mkOption {
+              type = package;
+              default = pkgs.dmenu;
+              description = mdDoc ''
+                Which package to use for the dmenu app launcher.
+                You can provide any custom derivation as long as the main binary
+                resides at `$pkg/bin/dmenu`, `$pkg/bin/dmenu_run`, ..
+              '';
+            };
+          };
         });
       };
     };
@@ -203,6 +226,11 @@ in {
             inherit _user;
             cfg = config;
           };
+          # The idea is that if the dmenu module is enabled, we leave the installation
+          # and $PATH symlinking to the module, and if not, we install the one
+          # define inside this module
+          isDmenuModuleEnabled = (config ? tensorfiles.programs.dmenu)
+            && (config.tensorfiles.programs.dmenu.enable);
         in {
           home.packages = with pkgs;
             with userCfg;
@@ -217,7 +245,10 @@ in {
               trayer
               xfce.xfce4-clipman-plugin
               xfce.xfce4-screenshooter
-            ] ++ (optional volumeicon.enable volumeicon.pkg)
+            ] ++ (if dmenu.enable then
+              (if isDmenuModuleEnabled then [ ] else dmenu.pkg)
+            else
+              [ ]) ++ (optional volumeicon.enable volumeicon.pkg)
             ++ (optional cbatticon.enable cbatticon.pkg)
             ++ (optional playerctl.enable playerctl.pkg);
 
@@ -548,7 +579,12 @@ in {
                 myKeys colors =
                   [ -- Programs
                     ("M-<Return>", spawn myTerminal),
-                    ("M-d", spawn "dmenu_run -i -f -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '"),
+                    ${
+                      if userCfg.dmenu.enable then ''
+                        ("M-d", spawn "dmenu_run -i -f -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '"),
+                      '' else
+                        ""
+                    }
                     -- TODO I give up, this just won't work how I want ...
                     -- ("M-f", spawn myTerminal ++ " -e ." ++ myFileManager ++ ""),
                     ("M-S-i", spawn "i3lock-fancy-rapid 5 'pixel'"),

@@ -29,7 +29,7 @@ in {
     with tensorfiles.options; {
 
       enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles TODO.
+        Enables NixOS module that configures/handles the dmenu app launcher.
       '');
 
       home = {
