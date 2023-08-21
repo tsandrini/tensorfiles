@@ -36,7 +36,19 @@ in {
       home = {
         enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption (_user: { });
+        settings = mkHomeSettingsOption (_user: {
+
+          pkg = mkOption {
+            type = package;
+            default = pkgs.pywal;
+            description = mdDoc ''
+              Which package to use for the pywal utilities. You can provide any
+              custom derivation or forks with differing internals as long
+              as the API and binaries stay the same and reside at the
+              same place.
+            '';
+          };
+        });
       };
     };
 
@@ -59,7 +71,7 @@ in {
             cfg = config;
           };
         in {
-          home.packages = with pkgs; [ pywal ];
+          home.packages = with pkgs; [ userCfg.pkg ];
 
           systemd.user.tmpfiles.rules =
             [ "L ${homeDir}/.Xresources - - - - ${cacheDir}/wal/Xresources" ];

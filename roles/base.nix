@@ -51,7 +51,7 @@
     nixosProfiles.home-alacritty
     nixosProfiles.home-newsboat
     nixosProfiles.home-lf
-    nixosProfiles.home-dmenu-pywaled
+    # nixosProfiles.home-dmenu-pywaled
     nixosProfiles.home-redshift
     nixosProfiles.home-dunst-pywaled
     # nixosProfiles.home-gtk

@@ -79,6 +79,7 @@ in {
     misc.nix
     misc.xdg
 
+    programs.dmenu
     programs.editors.neovim
     programs.git
     programs.pywal
@@ -112,6 +113,7 @@ in {
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
         git.enable = _ true;
         pywal.enable = _ true;
+        dmenu.enable = _ true;
         shells.zsh.enable = _ true;
         editors.neovim.enable = _ true;
       };
@@ -138,10 +140,11 @@ in {
       # MISC
       tensorfiles.misc.xdg.home.enable = _ true;
       # PROGRAMS
-      tensorfiles.programs.pywal.home.enable = _ true;
-      tensorfiles.programs.shells.zsh.home.enable = _ true;
+      tensorfiles.programs.dmenu.home.enable = _ true;
       tensorfiles.programs.editors.neovim.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
+      tensorfiles.programs.pywal.home.enable = _ true;
+      tensorfiles.programs.shells.zsh.home.enable = _ true;
       # SECURITY
       # SERVICES
       tensorfiles.services.x11.window-managers.xmonad.home.enable = _ true;

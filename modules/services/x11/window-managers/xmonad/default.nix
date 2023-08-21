@@ -85,7 +85,7 @@ in {
   options.tensorfiles.services.x11.window-managers.xmonad = with types;
     with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles TODO
+        Enables NixOS module that configures/handles the xmonad window manager.
       '');
 
       persistence = { enable = mkPersistenceEnableOption; };
@@ -163,6 +163,9 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     ({
+      # TODO this would ideally be executed only if (but nof iff) the host
+      # doesnt use any desktopManager -> and thus we use a simply
+      # xinit to home-manager pipeline
       services.xserver = {
         enable = _ true;
         libinput.enable = _ true;
@@ -196,7 +199,7 @@ in {
             inherit _user;
             cfg = config;
           };
-          configDir = getUserHomeDir {
+          configDir = getUserConfigDir {
             inherit _user;
             cfg = config;
           };
@@ -501,18 +504,18 @@ in {
                   ${
                     with userCfg.volumeicon;
                     (if enable then ''
-                      spawn "pgrep  volumeicon > /dev/null || ${pkg}/bin/volumeicon &"
+                      spawn "pgrep volumeicon > /dev/null || ${pkg}/bin/volumeicon &"
                     '' else
                       "")
                   }
                   ${
                     with userCfg.cbatticon;
                     (if enable then ''
-                      spawn "pgrep  cbatticon > /dev/null || ${pkg}/bin/cbatticon &"
+                      spawn "pgrep cbatticon > /dev/null || ${pkg}/bin/cbatticon &"
                     '' else
                       "")
                   }
-                  spawnOnce "pgrep  xfce4-clipman > /dev/null || xfce4-clipman &"
+                  spawnOnce "pgrep xfce4-clipman > /dev/null || xfce4-clipman &"
 
                   -- Apps: these should restart every time
                   spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
@@ -561,12 +564,14 @@ in {
                     ("<XF86HomePage>", runOrRaise myBrowser (resource =? myBrowser)),
                     ${
                       with userCfg.playerctl;
-                      (if enable then ''
-                        ("<XF86AudioPrev>", spawn "${pkg}/bin/playerctl previous"),
-                        ("<XF86AudioNext>", spawn "${pkg}/bin/playerctl next"),
-                        ("<XF86AudioPlay>", spawn "${pkg}/bin/playerctl play-pause"),
-                        ("<XF86AudioStop>", spawn "${pkg}/bin/playerctl stop"),
-                      '' else
+                      (if enable then
+                        (replaceStrings [ "\n" ] [ "" ] ''
+                          ("<XF86AudioPrev>", spawn "${pkg}/bin/playerctl previous"),
+                          ("<XF86AudioNext>", spawn "${pkg}/bin/playerctl next"),
+                          ("<XF86AudioPlay>", spawn "${pkg}/bin/playerctl play-pause"),
+                          ("<XF86AudioStop>", spawn "${pkg}/bin/playerctl stop"),
+                        '')
+                      else
                         "")
                     }
                     ("<XF86Display>", spawn "autorandr --cycle"),
