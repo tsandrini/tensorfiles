@@ -96,6 +96,66 @@ in {
         settings = mkHomeSettingsOption (_user: {
 
           pywal = { enable = mkPywalEnableOption; };
+
+          cbatticon = {
+            enable = mkAlreadyEnabledOption (mdDoc ''
+              Enable the cbatticon battery indicator.
+              Doing so install the appropriate derivation and adds the
+              management code into the xmonad configuration.
+
+              https://github.com/valr/cbatticon
+            '');
+
+            pkg = mkOption {
+              type = package;
+              default = pkgs.cbatticon;
+              description = mdDoc ''
+                Which package to use for the battery indicator.
+                You can provide any custom derivation as long as the main binary
+                resides at `$pkg/bin/cbatticon`.
+              '';
+            };
+          };
+
+          volumeicon = {
+            enable = mkAlreadyEnabledOption (mdDoc ''
+              Enable the volumeicon volume indicator.
+              Doing so install the appropriate derivation and adds code to spawn
+              it into the trayer.
+
+              http://nullwise.com/volumeicon.html
+            '');
+
+            pkg = mkOption {
+              type = package;
+              default = pkgs.volumeicon;
+              description = mdDoc ''
+                Which package to use for the volumeicon indicator.
+                You can provide any custom derivation as long as the main binary
+                resides at `$pkg/bin/volumeicon`.
+              '';
+            };
+          };
+
+          playerctl = {
+            enable = mkAlreadyEnabledOption (mdDoc ''
+              Enable integration with the playerctl toolset. Doing so enables the
+              media keys functionality.
+
+              https://github.com/altdesktop/playerctl
+            '');
+
+            pkg = mkOption {
+              type = package;
+              default = pkgs.playerctl;
+              description = mdDoc ''
+                Which package to use for the playerctl utility.
+                You can provide any custom derivation as long as the main binary
+                resides at `$pkg/bin/playerctl`.
+              '';
+            };
+          };
+
         });
       };
     };
@@ -141,22 +201,22 @@ in {
             cfg = config;
           };
         in {
-          home.packages = with pkgs; [
-            trayer-padding-icon
-            haskellPackages.xmobar
-            i3lock-fancy-rapid
-            playerctl
-            # autorandr
-            # nerdfonts
-            ubuntu_font_family
-            (nerdfonts.override { fonts = [ "Ubuntu" "UbuntuMono" ]; })
-            feh
-            trayer
-            cbatticon
-            volumeicon
-            xfce.xfce4-clipman-plugin
-            xfce.xfce4-screenshooter
-          ];
+          home.packages = with pkgs;
+            with userCfg;
+            [
+              killall
+              trayer-padding-icon
+              haskellPackages.xmobar
+              i3lock-fancy-rapid
+              ubuntu_font_family
+              (nerdfonts.override { fonts = [ "Ubuntu" "UbuntuMono" ]; })
+              feh
+              trayer
+              xfce.xfce4-clipman-plugin
+              xfce.xfce4-screenshooter
+            ] ++ (optional volumeicon.enable volumeicon.pkg)
+            ++ (optional cbatticon.enable cbatticon.pkg)
+            ++ (optional playerctl.enable playerctl.pkg);
 
           systemd.user.tmpfiles.rules = [
             "L ${configDir}/xmobar/xmobarrc - - - - ${cacheDir}/wal/xmobarrc"
@@ -431,20 +491,34 @@ in {
                 myStartupHook :: [String] -> X ()
                 myStartupHook colors = do
                   -- X init
-                  spawnOnce "wal -R"
-                  -- spawn "ps -C picom > /dev/null || picom &"
+                  ${
+                    if (userCfg.pywal.enable && (isPywalEnabled config)) then ''
+                      spawnOnce "wal -R"
+                    '' else
+                      ""
+                  }
+
                   -- Apps: base
-                  -- spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
-                  -- spawn "ps -C keepassxc > /dev/null || keepassxc &"
-                  -- spawn "ps -C nm-applet > /dev/null || nm-applet &"
-                  spawn "ps -C volumeicon > /dev/null || volumeicon &"
-                  spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
-                  -- spawn "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
-                  spawnOnce "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
+                  ${
+                    with userCfg.volumeicon;
+                    (if enable then ''
+                      spawn "pgrep  volumeicon > /dev/null || ${pkg}/bin/volumeicon &"
+                    '' else
+                      "")
+                  }
+                  ${
+                    with userCfg.cbatticon;
+                    (if enable then ''
+                      spawn "pgrep  cbatticon > /dev/null || ${pkg}/bin/cbatticon &"
+                    '' else
+                      "")
+                  }
+                  spawnOnce "pgrep  xfce4-clipman > /dev/null || xfce4-clipman &"
+
                   -- Apps: these should restart every time
-                  spawn "(pkill dunst || true) && dunst &"
+                  spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
                   spawn
-                    ( "(pkill trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
+                    ( "(${pkgs.killall}/bin/killall -q trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
                       \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
                       \--transparent true --alpha 80 --height 22 --tint x"
                         ++ tail (head colors)
@@ -486,10 +560,16 @@ in {
                     -- Multimedia keys
                     ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird")),
                     ("<XF86HomePage>", runOrRaise myBrowser (resource =? myBrowser)),
-                    ("<XF86AudioPrev>", spawn "playerctl previous"),
-                    ("<XF86AudioNext>", spawn "playerctl next"),
-                    ("<XF86AudioPlay>", spawn "playerctl play-pause"),
-                    ("<XF86AudioStop>", spawn "playerctl stop"),
+                    ${
+                      with userCfg.playerctl;
+                      (if enable then ''
+                        ("<XF86AudioPrev>", spawn "${pkg}/bin/playerctl previous"),
+                        ("<XF86AudioNext>", spawn "${pkg}/bin/playerctl next"),
+                        ("<XF86AudioPlay>", spawn "${pkg}/bin/playerctl play-pause"),
+                        ("<XF86AudioStop>", spawn "${pkg}/bin/playerctl stop"),
+                      '' else
+                        "")
+                    }
                     ("<XF86Display>", spawn "autorandr --cycle"),
                     -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
                     -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),
