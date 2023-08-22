@@ -28,8 +28,6 @@ in {
         Enables NixOS module that configures/handles the alacritty terminal.
       '');
 
-      persistence = { enable = mkPersistenceEnableOption; };
-
       home = {
         enable = mkHomeEnableOption;
 
@@ -43,6 +41,8 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
         in {
+          home.packages = with pkgs; [ meslo-lgs-nf ];
+
           programs.alacritty = {
             enable = _ true;
 

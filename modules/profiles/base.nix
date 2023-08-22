@@ -81,6 +81,7 @@ in {
 
     programs.dmenu
     programs.editors.neovim
+    programs.file-managers.lf
     programs.git
     programs.pywal
     programs.shells.zsh
@@ -96,6 +97,32 @@ in {
 
     tasks.nix-garbage-collect
     tasks.system-autoupgrade
+  ]) ++ (with inputs.self; [
+    # TODO one by one remove these
+    # nixosProfiles.agenix
+    # nixosProfiles.tty
+    # nixosProfiles.system-maintenance
+    # nixosProfiles.system-packages
+    # nixosProfiles.persist-btrfs
+    # nixosProfiles.localization
+    # nixosProfiles.networking-nm
+    # nixosProfiles.xmonad-with-xmobar-pywaled
+    # nixosProfiles.home-manager
+    # nixosProfiles.home-xdg
+    # nixosProfiles.home-git
+    # nixosProfiles.home-zsh
+    # nixosProfiles.home-neovim
+    # nixosProfiles.home-pywal
+    nixosProfiles.home-pywalfox-native
+    nixosProfiles.home-picom
+    # nixosProfiles.home-alacritty
+    nixosProfiles.home-newsboat
+    # nixosProfiles.home-lf
+    # nixosProfiles.home-dmenu-pywaled
+    nixosProfiles.home-redshift
+    nixosProfiles.home-dunst-pywaled
+    # nixosProfiles.home-gtk
+    nixosProfiles.home-firefox
   ]);
 
   config = mkIf cfg.enable (mkMerge [
@@ -114,6 +141,7 @@ in {
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
         dmenu.enable = _ true;
         editors.neovim.enable = _ true;
+        file-managers.lf.enable = _ true;
         git.enable = _ true;
         pywal.enable = _ true;
         shells.zsh.enable = _ true;
@@ -144,6 +172,7 @@ in {
       # PROGRAMS
       tensorfiles.programs.dmenu.home.enable = _ true;
       tensorfiles.programs.editors.neovim.home.enable = _ true;
+      tensorfiles.programs.file-managers.lf.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
       tensorfiles.programs.pywal.home.enable = _ true;
       tensorfiles.programs.shells.zsh.home.enable = _ true;
