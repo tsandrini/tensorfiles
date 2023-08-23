@@ -64,8 +64,6 @@
 
       nixosModules = mapModules ./modules import;
 
-      nixosProfiles = mapModules ./profiles import;
-
       nixosConfigurations = mapModules ./hosts mkHost;
     };
 }

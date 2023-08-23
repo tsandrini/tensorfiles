@@ -224,14 +224,8 @@ with builtins; rec {
      tensorfiles.system.users.enable = true;
      tensorfiles.system.users.home.enable = true;
      tensorfiles.system.users.home."myUser".configDir = "/var/mySecretDir/configuration";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
+     getUserConfigDir { _user = "myUser"; cfg = config; }
        =>  "/var/mySecretDir/configuration"
-
-     tensorfiles.system.users.enable = false;
-     home-manager.users."myUser".home.homeDirectory = null;
-     users.users."myUser".home = "/var/myOtherSecretDir/other-configuration";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
-       =>  "/var/myOtherSecretDir/other-configuration"
      ```
   */
   getUserConfigDir = {
@@ -276,14 +270,8 @@ with builtins; rec {
      tensorfiles.system.users.enable = true;
      tensorfiles.system.users.home.enable = true;
      tensorfiles.system.users.home."myUser".cacheDir = "/var/mySecretDir/cache";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
+     getUserCacheDir { _user = "myUser"; cfg = config; }
        =>  "/var/mySecretDir/cache"
-
-     tensorfiles.system.users.enable = false;
-     home-manager.users."myUser".home.homeDirectory = null;
-     users.users."myUser".home = "/var/myOtherSecretDir/other-cache";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
-       =>  "/var/myOtherSecretDir/other-cache"
      ```
   */
   getUserCacheDir = {
@@ -319,23 +307,17 @@ with builtins; rec {
 
      Example:
      ```nix title="Example" linenums="1"
-     getUserCacheDir { _user = "myUser"; }
+     getUserAppDataDir { _user = "myUser"; }
        => "/home/myUser/.local/share"
 
-     getUserCacheDir { _user = "root"; }
+     getUserAppDataDir { _user = "root"; }
        => "/root/.local/share"
 
      tensorfiles.system.users.enable = true;
      tensorfiles.system.users.home.enable = true;
      tensorfiles.system.users.home."myUser".appDataDir = "/var/mySecretDir/appData";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
+     getUserAppDataDir { _user = "myUser"; cfg = config; }
        =>  "/var/mySecretDir/appData"
-
-     tensorfiles.system.users.enable = false;
-     home-manager.users."myUser".home.homeDirectory = null;
-     users.users."myUser".home = "/var/myOtherSecretDir/other-app-data";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
-       =>  "/var/myOtherSecretDir/other-app-data"
      ```
   */
   getUserAppDataDir = {
@@ -371,24 +353,17 @@ with builtins; rec {
 
      Example:
      ```nix title="Example" linenums="1"
-     getUserCacheDir { _user = "myUser"; }
+     getUserAppStateDir { _user = "myUser"; }
        => "/home/myUser/.local/state"
 
-     getUserCacheDir { _user = "root"; }
+     getUserAppStateDir { _user = "root"; }
        => "/root/.local/state"
 
      tensorfiles.system.users.enable = true;
      tensorfiles.system.users.home.enable = true;
      tensorfiles.system.users.home."myUser".appStateDir = "/var/mySecretDir/appState";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
+     getUserAppStateDir { _user = "myUser"; cfg = config; }
        =>  "/var/mySecretDir/appState"
-
-     tensorfiles.system.users.enable = false;
-     home-manager.users."myUser".home.homeDirectory = null;
-     users.users."myUser".home = "/var/myOtherSecretDir/other-app-state";
-     getUserHomeDir { _user = "myUser"; cfg = config; }
-       =>  "/var/myOtherSecretDir/other-app-state"
-     ```
   */
   getUserAppStateDir = {
     # (String) Target user whose app state directory should be parsed. Default: user passed during lib init
@@ -402,6 +377,52 @@ with builtins; rec {
     else
       let homeDir = getUserHomeDir { inherit _user cfg; };
       in "${homeDir}/.local/state";
+
+  /* A generic function for parsing the user Downloads directory. The parsing will be
+     attempted in the following order:
+
+     1. In case that the users system is enabled, the value will be parsed
+        from the downloadsDir home.settings option of the users module (if the user
+        is entry is well defined in the home.settings attrset).
+
+     2. If not, the home directory will be dynamically retrieved using the
+        `getUserHomeDir` function and `Downloads` will simply be appended to it
+        and returned.
+
+     This method is designed to be an abstraction between different
+     modules/systems that provide this kind of functionality. It enables writing
+     extensible nix expressions instead of relying on any specific module that
+     the end user might not have enabled or might even remove in the future.
+
+     *Type*: `{ _user :: String; cfg :: AttrSet } -> Path`
+
+     Example:
+     ```nix title="Example" linenums="1"
+     getUserDownloadsDir { _user = "myUser"; }
+       => "/home/myUser/Downloads"
+
+     getUserDownloadsDir { _user = "root"; }
+       => "/root/Downloads"
+
+     tensorfiles.system.users.enable = true;
+     tensorfiles.system.users.home.enable = true;
+     tensorfiles.system.users.home."myUser".downloadsDir = "/var/mySecretDir/downloaded_stuff";
+     getUserHomeDir { _user = "myUser"; cfg = config; }
+       =>  "/var/mySecretDir/downloaded_stuff"
+     ```
+  */
+  getUserDownloadsDir = {
+    # (String) Target user whose Downloads directory should be parsed. Default: user passed during lib init
+    _user ? user,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attribute enables parsing the Downloads directory dynamically from the configuration itself rather than statically.
+    cfg ? null }:
+    if ((cfg != null) && (isUsersSystemEnabled cfg)
+      && (cfg.tensorfiles.system.users.home.settings.${_user}.downloadsDir
+        != null)) then
+      cfg.tensorfiles.system.users.home.settings.${_user}.downloadsDir
+    else
+      let homeDir = getUserHomeDir { inherit _user cfg; };
+      in "${homeDir}/Downloads";
 
   /* A generic function for parsing the user email. The parsing will be
      attempted in the following order:

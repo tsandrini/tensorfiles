@@ -79,10 +79,12 @@ in {
     misc.nix
     misc.xdg
 
+    programs.browsers.firefox
     programs.dmenu
     programs.editors.neovim
     programs.file-managers.lf
     programs.git
+    programs.newsboat
     programs.pywal
     programs.shells.zsh
     programs.terminals.alacritty
@@ -90,6 +92,7 @@ in {
     security.agenix
 
     services.dunst
+    services.pywalfox-native
     services.networking.networkmanager
     services.x11.picom
     services.x11.redshift
@@ -100,32 +103,6 @@ in {
 
     tasks.nix-garbage-collect
     tasks.system-autoupgrade
-  ]) ++ (with inputs.self; [
-    # TODO one by one remove these
-    # nixosProfiles.agenix
-    # nixosProfiles.tty
-    # nixosProfiles.system-maintenance
-    # nixosProfiles.system-packages
-    # nixosProfiles.persist-btrfs
-    # nixosProfiles.localization
-    # nixosProfiles.networking-nm
-    # nixosProfiles.xmonad-with-xmobar-pywaled
-    # nixosProfiles.home-manager
-    # nixosProfiles.home-xdg
-    # nixosProfiles.home-git
-    # nixosProfiles.home-zsh
-    # nixosProfiles.home-neovim
-    # nixosProfiles.home-pywal
-    nixosProfiles.home-pywalfox-native
-    # nixosProfiles.home-picom
-    # nixosProfiles.home-alacritty
-    nixosProfiles.home-newsboat
-    # nixosProfiles.home-lf
-    # nixosProfiles.home-dmenu-pywaled
-    # nixosProfiles.home-redshift
-    # nixosProfiles.home-dunst-pywaled
-    # nixosProfiles.home-gtk
-    nixosProfiles.home-firefox
   ]);
 
   config = mkIf cfg.enable (mkMerge [
@@ -142,6 +119,7 @@ in {
         gtk.enable = _ true;
       };
       tensorfiles.programs = mkIf cfg.modulesAutoenable.programs {
+        newsboat.enable = _ true;
         dmenu.enable = _ true;
         editors.neovim.enable = _ true;
         file-managers.lf.enable = _ true;
@@ -149,6 +127,7 @@ in {
         pywal.enable = _ true;
         shells.zsh.enable = _ true;
         terminals.alacritty.enable = _ true;
+        browsers.firefox.enable = _ true;
       };
       tensorfiles.security = mkIf cfg.modulesAutoenable.security {
         #
@@ -156,6 +135,7 @@ in {
       };
       tensorfiles.services = mkIf cfg.modulesAutoenable.services {
         dunst.enable = _ true;
+        pywalfox-native.enable = _ true;
         networking.networkmanager.enable = _ true;
         x11.picom.enable = _ true;
         x11.redshift.enable = _ true;
@@ -180,12 +160,15 @@ in {
       tensorfiles.programs.editors.neovim.home.enable = _ true;
       tensorfiles.programs.file-managers.lf.home.enable = _ true;
       tensorfiles.programs.git.home.enable = _ true;
+      tensorfiles.programs.newsboat.home.enable = _ true;
       tensorfiles.programs.pywal.home.enable = _ true;
       tensorfiles.programs.shells.zsh.home.enable = _ true;
       tensorfiles.programs.terminals.alacritty.home.enable = _ true;
+      tensorfiles.programs.browsers.firefox.home.enable = _ true;
       # SECURITY
       # SERVICES
       tensorfiles.services.dunst.home.enable = _ true;
+      tensorfiles.services.pywalfox-native.home.enable = _ true;
       tensorfiles.services.x11.redshift.home.enable = _ true;
       tensorfiles.services.x11.picom.home.enable = _ true;
       tensorfiles.services.x11.window-managers.xmonad.home.enable = _ true;

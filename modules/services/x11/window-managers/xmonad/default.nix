@@ -549,8 +549,7 @@ in {
                   spawnOnce "pgrep xfce4-clipman > /dev/null || xfce4-clipman &"
 
                   -- Apps: these should restart every time
-                  # spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
-                  # spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
+                  -- spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
                   spawn "systemctl --user restart dunst.service > /dev/null"
 
                   spawn
