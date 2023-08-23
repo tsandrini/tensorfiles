@@ -1,4 +1,4 @@
-# --- modules/misc/gtk.nix
+# --- modules/services/x11/redshift.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -18,15 +18,14 @@ with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
-  cfg = config.tensorfiles.misc.gtk;
+  cfg = config.tensorfiles.services.x11.redshift;
   _ = mkOverrideAtModuleLevel;
 in {
-  # TODO create a theme system
-  options.tensorfiles.misc.gtk = with types;
+  options.tensorfiles.services.x11.redshift = with types;
     with tensorfiles.options; {
 
       enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the gtk system.
+        Enables NixOS module that configures/handles the x11 redshift service
       '');
 
       home = {
@@ -42,19 +41,14 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
         in {
-          home.packages = with pkgs; [ dconf ];
-
-          gtk = {
+          services.redshift = {
             enable = _ true;
-            theme = {
-              name = _ "Arc-Dark";
-              package = _ pkgs.arc-theme;
-            };
-
-            iconTheme = {
-              name = _ "Arc";
-              package = _ pkgs.arc-icon-theme;
-            };
+            tray = _ true;
+            provider = _ "manual";
+            latitude = _ 50.1386267;
+            longitude = _ 14.4295628;
+            temperature.day = _ 5700;
+            temperature.night = _ 3500;
           };
         });
     })

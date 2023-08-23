@@ -89,7 +89,10 @@ in {
 
     security.agenix
 
+    services.dunst
     services.networking.networkmanager
+    services.x11.picom
+    services.x11.redshift
     services.x11.window-managers.xmonad
 
     system.persistence
@@ -114,13 +117,13 @@ in {
     # nixosProfiles.home-neovim
     # nixosProfiles.home-pywal
     nixosProfiles.home-pywalfox-native
-    nixosProfiles.home-picom
+    # nixosProfiles.home-picom
     # nixosProfiles.home-alacritty
     nixosProfiles.home-newsboat
     # nixosProfiles.home-lf
     # nixosProfiles.home-dmenu-pywaled
-    nixosProfiles.home-redshift
-    nixosProfiles.home-dunst-pywaled
+    # nixosProfiles.home-redshift
+    # nixosProfiles.home-dunst-pywaled
     # nixosProfiles.home-gtk
     nixosProfiles.home-firefox
   ]);
@@ -152,7 +155,10 @@ in {
         agenix.enable = _ true;
       };
       tensorfiles.services = mkIf cfg.modulesAutoenable.services {
+        dunst.enable = _ true;
         networking.networkmanager.enable = _ true;
+        x11.picom.enable = _ true;
+        x11.redshift.enable = _ true;
         x11.window-managers.xmonad.enable = _ true;
       };
       tensorfiles.system = mkIf cfg.modulesAutoenable.system {
@@ -179,6 +185,9 @@ in {
       tensorfiles.programs.terminals.alacritty.home.enable = _ true;
       # SECURITY
       # SERVICES
+      tensorfiles.services.dunst.home.enable = _ true;
+      tensorfiles.services.x11.redshift.home.enable = _ true;
+      tensorfiles.services.x11.picom.home.enable = _ true;
       tensorfiles.services.x11.window-managers.xmonad.home.enable = _ true;
       # SYSTEM
       tensorfiles.system.users.home.enable = _ true;

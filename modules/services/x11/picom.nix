@@ -1,4 +1,4 @@
-# --- modules/misc/gtk.nix
+# --- modules/services/x11/picom.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -18,15 +18,15 @@ with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
-  cfg = config.tensorfiles.misc.gtk;
+  cfg = config.tensorfiles.services.x11.picom;
   _ = mkOverrideAtModuleLevel;
 in {
-  # TODO create a theme system
-  options.tensorfiles.misc.gtk = with types;
+  options.tensorfiles.services.x11.picom = with types;
     with tensorfiles.options; {
 
       enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the gtk system.
+        Enables NixOS module that configures/handles the x11 picom compositor
+        service.
       '');
 
       home = {
@@ -42,19 +42,42 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
         in {
-          home.packages = with pkgs; [ dconf ];
-
-          gtk = {
+          services.picom = {
             enable = _ true;
-            theme = {
-              name = _ "Arc-Dark";
-              package = _ pkgs.arc-theme;
-            };
-
-            iconTheme = {
-              name = _ "Arc";
-              package = _ pkgs.arc-icon-theme;
-            };
+            backend = _ "glx";
+            activeOpacity = _ 1.0;
+            fade = _ true;
+            fadeDelta = _ 4;
+            fadeSteps = _ [ 3.0e-2 3.0e-2 ];
+            inactiveOpacity = _ 1.0;
+            shadow = _ true;
+            shadowOffsets = _ [ (-5) (-5) ];
+            shadowOpacity = _ 0.5;
+            vSync = _ true;
+            shadowExclude = _ [
+              "! name~=''"
+              "name = 'Notification'"
+              "name = 'Plank'"
+              "name = 'Docky'"
+              "name = 'Kupfer'"
+              "name = 'xfce4-notifyd'"
+              "name = 'cpt_frame_window'"
+              "name *= 'VLC'"
+              "name *= 'compton'"
+              "name *= 'picom'"
+              "name *= 'Chromium'"
+              "name *= 'Chrome'"
+              "class_g = 'Firefox' && argb"
+              "class_g = 'Conky'"
+              "class_g = 'Kupfer'"
+              "class_g = 'Synapse'"
+              "class_g ?= 'Notify-osd'"
+              "class_g ?= 'Cairo-dock'"
+              "class_g ?= 'Xfce4-notifyd'"
+              "class_g ?= 'Xfce4-power-manager'"
+              "_GTK_FRAME_EXTENTS@:c"
+              "_NET_WM_STATE@:32a *= '_NET_WM_STATE_HIDDEN'"
+            ];
           };
         });
     })
