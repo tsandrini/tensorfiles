@@ -1,0 +1,73 @@
+site_name: tensorfiles docs
+copyright: 2023 tsandrini
+repo_url: https://github.com/tsandrini/tensorfiles/
+theme:
+  name: material
+  # font: false
+  features:
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+# extra_css:
+#   - assets/stylesheets/extra.css
+nav:
+  - Index: index.md
+  - Hosts:
+      - spinorbundle: hosts/spinorbundle.md
+  - API:
+      - modules/ Options: nixos-options.md
+      - lib/ Functions: lib.md
+markdown_extensions:
+  - attr_list
+  - tables
+  - codehilite
+  - admonition
+  - meta
+  - markdown_include.include:
+      base_path: docs
+  - toc:
+      permalink: "#"
+      baselevel: 2
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+plugins:
+  - search
+  - offline
+#   - social
+# extra:
+#   social:
+#     - type: "twitter"
+#       link: "https://twitter.com/tomas_sandrini"
+#     - type: 'linkedin'
+# link: 'https://cz.linkedin.com/in/tom%C3%A1%C5%A1-sandrini-33a686122'
