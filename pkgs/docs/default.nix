@@ -1,3 +1,4 @@
+# platforms: x86_64-linux, aarch64-linux
 # --- pkgs/docs/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
