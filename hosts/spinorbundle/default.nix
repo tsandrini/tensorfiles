@@ -24,6 +24,7 @@
   imports = with inputs.self; [
     ./hardware-configuration.nix
     nixosModules.profiles.base
+    inputs.home-manager.nixosModules.home-manager
   ];
 
   tensorfiles.profiles.base.enable = true;

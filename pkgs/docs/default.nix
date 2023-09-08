@@ -182,10 +182,6 @@ in stdenv.mkDerivation {
 
   installPhase = ''
     mv -v site $out
-
-    # TODO remove
-    cp -v docs/lib.md $out/lib.md
-    cp -v docs/nixos-options.md $out/nixos-options.md
   '';
 
   meta = with lib; {

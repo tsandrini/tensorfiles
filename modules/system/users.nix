@@ -271,12 +271,13 @@ in {
             ++ (optional userCfg.isSudoer "wheel");
           home = _ userCfg.homeDir;
 
-          passwordFile = (mkIf (isAgenixEnabled config) (_
-            config.age.secrets."common/passwords/users/${_user}_default".path));
+          passwordFile = (mkIf ((isAgenixEnabled config) && cfg.agenix.enable)
+            (_
+              config.age.secrets."common/passwords/users/${_user}_default".path));
         });
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && (isAgenixEnabled config)) {
+    (mkIf (cfg.home.enable && ((isAgenixEnabled config) && cfg.agenix.enable)) {
       age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user: {
         "common/passwords/users/${_user}_default" = {
           file = _ ../../secrets/common/passwords/users/${_user}_default.age;

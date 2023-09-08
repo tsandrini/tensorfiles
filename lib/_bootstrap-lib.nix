@@ -23,7 +23,8 @@ with builtins; rec {
   mapFilterAttrs' = pred: f: attrs: filterAttrs pred (mapAttrs' f attrs);
 
   mapModules' = dir: fn:
-    mapFilterAttrs' (n: v: v != null && !(hasPrefix "_" n)) (n: v:
+    mapFilterAttrs'
+    (n: v: v != null && !(hasPrefix "_" n) && !(hasPrefix ".git" n)) (n: v:
       let path = "${toString dir}/${n}";
       in if v == "directory" && pathExists "${path}/default.nix" then
         nameValuePair n (fn path)
