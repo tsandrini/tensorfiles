@@ -168,18 +168,19 @@ myStartupHook :: [String] -> X ()
 myStartupHook colors = do
   -- X init
   spawnOnce "wal -R"
-  spawn "ps -C picom > /dev/null || picom &"
+  spawn "pgrep picom > /dev/null || picom &"
   -- Apps: base
-  spawn "ps -C redshift-gtk > /dev/null || redshift-gtk &"
-  spawn "ps -C keepassxc > /dev/null || keepassxc &"
-  spawn "ps -C nm-applet > /dev/null || nm-applet &"
-  spawn "ps -C volumeicon > /dev/null || volumeicon &"
-  spawn "ps -C cbatticon > /dev/null || cbatticon &" -- TODO remove
-  spawn "ps -C xfce4-clipman > /dev/null || xfce4-clipman &"
+  spawn "pgrep redshift-gtk > /dev/null || redshift-gtk &"
+  spawn "pgrep keepassxc > /dev/null || keepassxc &"
+  spawn "pgrep nm-applet > /dev/null || nm-applet &"
+  -- spawn "pgrep volumeicon > /dev/null || volumeicon &"
+  spawn "pgrep pasystray > /dev/null || pasystray &"
+  spawn "pgrep cbatticon > /dev/null || cbatticon &" -- TODO remove
+  spawn "pgrep xfce4-clipman > /dev/null || xfce4-clipman &"
   -- Apps: these should restart every time
-  spawn "(killall dunst || true) && dunst &"
+  spawn "(killall -q dunst || true) && dunst &"
   spawn
-    ( "(killall trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
+    ( "(killall -q trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
       \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
       \--transparent true --alpha 80 --height 22 --tint x"
         ++ tail (head colors)
@@ -235,6 +236,9 @@ myKeys colors =
     ("<XF86AudioNext>", spawn "playerctl next"),
     ("<XF86AudioPlay>", spawn "playerctl play-pause"),
     ("<XF86AudioStop>", spawn "playerctl stop"),
+    ("<XF86AudioLowerVolume>", spawn "pamixer --set-limit 100 -d 3"),
+    ("<XF86AudioRaiseVolume>", spawn "pamixer --set-limit 100 -i 3"),
+    ("<XF86AudioMute>", spawn "pamixer --set-limit 100 -t"),
     ("<XF86Display>", spawn "autorandr --cycle"),
     -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
     -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),

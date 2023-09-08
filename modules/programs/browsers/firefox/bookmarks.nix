@@ -91,6 +91,16 @@
       url = "https://pomofocus.io/";
       keyword = "pomofocus";
     }
+    {
+      name = "";
+      url = "https://chat.openai.com/";
+      keyword = "chatgpt";
+    }
+    {
+      name = "Draw";
+      url = "https://excalidraw.com/";
+      keyword = "excalidraw";
+    }
     # ~ Specific bookmarks
     {
       name = "/work/";
@@ -346,12 +356,6 @@
             {
               name = "The latest in Machine Learning | Papers With Code";
               url = "https://paperswithcode.com/";
-            }
-            {
-              name =
-                "nixos-config/default.nix at master · balsoft/nixos-config · GitHub";
-              url =
-                "https://github.com/balsoft/nixos-config/blob/master/profiles/workspace/zsh/default.nix";
             }
           ];
         }
