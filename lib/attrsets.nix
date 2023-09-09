@@ -92,4 +92,39 @@ with builtins; rec {
     # (AttrSet a) Initial nested attrset
     attrs:
     collect (x: !isAttrs x) attrs;
+
+  /* Performs a `groupBy` element based grouping operation on nested attrset.
+
+     Isn't natively supported so the strategy is to first convert the attrset
+     into a list of `nameValuePair`s and then perform the `groupBy` on
+     `(item: item.value)`. After a successful grouping the list is converted back
+     to an attrset
+
+     Note: This function should work with arbitrary objects as long as the values
+     themselves are not nested again -- for arbitrarly large nests you should instead
+     apply this function recursively.
+
+     *Type*: `groupAttrsetBySublistElems :: AttrSet a(b) -> AttrSet b(a)`
+
+     Example:
+     ```nix title="Example" linenums="1"
+     groupAttrsetBySublistElems {
+     pkg1 = [ "aarch64_linux" "x86_64-linux" ];
+     pkg2 = [ "x86_64-linux" ];
+     pkg3 = [ "aarch64-linux" ]
+     }
+      => { "aarch64-linux" = [ "pkg1" "pkg3" ]; "x86_64-linux" = [ "pkg1" "pkg2" ]; }
+     ```
+  */
+  groupAttrsetBySublistElems =
+    # (AttrSet a(b)) The initial nested attrset
+    inputAttrset:
+    let
+      flattened = concatMap
+        (name: map (value: nameValuePair name value) inputAttrset.${name})
+        (attrNames inputAttrset);
+      grouped = groupBy (item: item.value) flattened;
+    in listToAttrs (map (value:
+      let names = map (item: item.name) grouped.${value};
+      in nameValuePair value names) (attrNames grouped));
 }

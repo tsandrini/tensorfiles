@@ -12,7 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, user ? "root", ... }:
+{ config, lib, pkgs, inputs, projectPath
+, secretsPath ? (projectPath + "/secrets"), user ? "root", ... }:
 with builtins;
 with lib;
 let
@@ -280,7 +281,8 @@ in {
     (mkIf (cfg.home.enable && ((isAgenixEnabled config) && cfg.agenix.enable)) {
       age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user: {
         "common/passwords/users/${_user}_default" = {
-          file = _ ../../secrets/common/passwords/users/${_user}_default.age;
+          file =
+            _ (secretsPath + "/common/passwords/users/${_user}_default.age");
         };
       });
     })

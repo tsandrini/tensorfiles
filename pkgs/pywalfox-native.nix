@@ -1,3 +1,4 @@
+# platforms: x86_64-linux
 # --- pkgs/pywalfox-native.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>

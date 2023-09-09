@@ -1,4 +1,4 @@
-# --- modules/profiles/base.nix
+# --- modules/profiles/minimal.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,35 +12,61 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 with builtins;
 with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.profiles.base;
+  cfg = config.tensorfiles.profiles.minimal;
   _ = mkOverrideAtProfileLevel;
 in {
-  options.tensorfiles.profiles.base = with types;
+  options.tensorfiles.profiles.minimal = with types;
     with tensorfiles.options; {
       enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the base system profile.
+        Enables NixOS module that configures/handles the minimal system profile.
 
-        **Base layer** sets up necessary structures to be able to simply
-        just evaluate the configuration, ie. not build it, meaning that this layer
-        enables fundamental functionality that other higher level modules rely
-        on.
+        **Minimal layers** builds on top of the base layer and creates a
+        minimal bootable system. It isn't targetted to posses any other functionality,
+        for example if you'd like remote access and more of server-like features,
+        use the headless profile that build on top of this one.
       '');
     };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     ({
-      system.stateVersion = _ "23.05";
+      tensorfiles.profiles.base.enable = _ true;
 
-      tensorfiles.system.users.enable = _ true;
-      tensorfiles.misc.nix.enable = _ true;
-      tensorfiles.misc.xdg.enable = _ true;
+      tensorfiles.tasks.nix-garbage-collect.enable = _ true;
+      tensorfiles.tasks.system-autoupgrade.enable = _ true;
+
+      time.timeZone = _ "Europe/Prague";
+      i18n.defaultLocale = _ "en_US.UTF-8";
+
+      console = {
+        enable = _ true;
+        useXkbConfig = _ true;
+        font = _ "ter-132n";
+      };
+
+      environment.systemPackages = with pkgs; [
+        # BASE UTILS
+        htop
+        wget
+        curl
+        jq
+        killall
+        openssl
+        vim
+        # HW
+        exfat
+        dosfstools
+        exfatprogs
+        udisks
+        pciutils
+        usbutils
+      ];
     })
     # |----------------------------------------------------------------------| #
   ]);

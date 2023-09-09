@@ -12,9 +12,10 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, lib, self, inputs, user ? "root", ... }:
+{ pkgs, lib, self, inputs, projectPath ? ./..
+, secretsPath ? (projectPath + "/secrets"), user ? "root", ... }:
 let
-  inherit (self.attrsets) mapFilterAttrs;
+  inherit (self.attrsets) mapFilterAttrs mergeAttrs groupAttrsetBySublistElems;
   inherit (self.strings) dirnameFromPath;
 in with lib;
 with builtins; rec {
@@ -84,20 +85,20 @@ with builtins; rec {
   /* Custom nixpkgs constructor. Its purpose is to import provided nixpkgs
      while setting the target platform and all over the needed overlays.
 
-     *Type*: `mkPkgs :: AttrSet -> String -> [(AttrSet -> AttrSet -> AttrSet)] -> Attrset`
+     *Type*: `mkNixpkgs :: AttrSet -> String -> [(AttrSet -> AttrSet -> AttrSet)] -> Attrset`
 
      Example:
      ```nix title="Example" linenums="1"
-     mkPkgs <nixpkgs> "x86_64-linux" []
+     mkNixpkgs <nixpkgs> "x86_64-linux" []
        => { ... }
 
-     mkPkgs inputs.nixpkgs "aarch64-linux" [ (final: prev: {
+     mkNixpkgs inputs.nixpkgs "aarch64-linux" [ (final: prev: {
        customPkgs = inputs.customPkgs { pkgs = final; };
      }) ]
        => { ... }
      ```
   */
-  mkPkgs =
+  mkNixpkgs =
     # (AttrSet) TODO (this is probably not an actual attrset?)
     pkgs:
     # (String) System string identifier (eg: "x86_64-linux", "aarch64-linux", "aarch64-darwin")
@@ -114,7 +115,7 @@ with builtins; rec {
         nurOverlay = final: prev: {
           nur = import inputs.nur { pkgs = final; };
         };
-      in [ pkgsOverlay ] ++ (optional (inputs ? nur) nurOverlay)
+      in [ pkgsOverlay ] ++ (optional (hasAttr "nur" inputs) nurOverlay)
       ++ (attrValues inputs.self.overlays) ++ extraOverlays;
     };
 
@@ -141,23 +142,149 @@ with builtins; rec {
     # (Path) Path to the root directory further providing the "system" and "default.nix" files
     dir:
     let
-      name = dirnameFromPath dir;
+      hostName = dirnameFromPath dir;
       system = removeSuffix "\n" (readFile "${dir}/system");
-      systemPkgs = mkPkgs inputs.nixpkgs system [ ];
-    in nixosSystem {
+      systemPkgs = mkNixpkgs inputs.nixpkgs system [ ];
+      secretsAttrset = (if pathExists (secretsPath + "/secrets.nix") then
+        (import (secretsPath + "/secrets.nix"))
+      else
+        { });
+    in lib.nixosSystem {
       inherit system;
       pkgs = systemPkgs;
       specialArgs = {
-        inherit inputs lib system user;
-        host.hostName = name;
+        inherit inputs lib system user hostName projectPath secretsPath
+          secretsAttrset;
+        host.hostName = hostName;
+        # lintCompatibility = false;
       };
       modules = [
         {
           nixpkgs.config.allowUnfree = true;
           nixpkgs.pkgs = systemPkgs;
-          networking.hostName = name;
+          networking.hostName = hostName;
         }
+        (projectPath + "/modules/profiles/_load-all-modules.nix")
         (dir)
       ];
     };
+
+  /* Given a filepath, it will try to parse a list of platforms from the
+     header (first line) of the provided file in the following format
+
+     ```nix linenums="1"
+     # platforms: aarch64-linux, x86_64-linux
+     # rest of the file ...
+     # ...
+     ```
+
+     In case that the provided file doesn't containt any platform specification
+     it will simply return an empty list.
+
+     *Type*: `parsePlatformHeader :: Path -> [String]`
+
+     Example:
+     ```nix title="Example" linenums="1"
+     parsePlatformHeader example-file.nix
+       => [ "aarch64-linux" "x86_64-linux" ]
+     ```
+  */
+  parsePlatformHeader =
+    # (Path) Path to the file whose platform header should be parsed
+    file:
+    let
+      fileContent = readFile file;
+      lines = splitString "\n" fileContent;
+      header = replaceStrings [ " " ] [ "" ] (head lines);
+    in (if (hasPrefix "#platforms:" header) then
+      splitString "," (removePrefix "#platforms:" header)
+    else
+      [ ]);
+
+  /* Returns a dummy derivation with a given name as and a platform
+     specific builder. Useful when constructing certain defaults or general
+     debugging. The resulting derivation can be compiled without errors, but
+     obviously doesn't produce any nontrivial output.
+
+     *Type*: `mkDummyDerivation :: String -> String -> AttrSet a -> Package a`
+
+     Example:
+     ```nix title="Example" linenums="1"
+     mkDummyDerivation "example-pkg" "aarch64-linux" {}
+      => <derivation ....>
+
+     mkDummyDerivation "example-pkg2" "x86_64-linux" { meta.license = lib.licenses.gpl20; }
+      => <derivation ....>
+
+     mkDummyDerivation "example-pkg3" "x86_64-linux" { installPhase = "mkdir -p $out && touch $out/hey"; }
+      => <derivation ....>
+     ```
+  */
+  mkDummyDerivation =
+    # (String) Name of the dummy derivation
+    name:
+    # (String) System architecture string. This is going to be used for choosing the target derivation builder
+    system:
+    # (AttrSet a) An attrset with possibily any additional values that are going to be passed to the mkDerivation call
+    extraArgs:
+    let
+      systemPkgs = mkNixpkgs inputs.nixpkgs system [ ];
+      args = rec {
+        inherit name;
+        version = "not-for-build";
+
+        # In case something tries to actually evaluate this, we have to provide
+        #
+        # 1. Declaratively some source?
+        # 2. Minimally something to do during the installPhase
+        src = ./.;
+        dontBuild = true;
+        installPhase = ''
+          echo "DUMMY PACKAGE for ${name}" && mkdir -p $out
+        '';
+
+        meta = {
+          homepage = "https://github.com/tsandrini/tensorfiles";
+          description = "Dummy package used for ${name} -- not for build";
+          license = licenses.mit;
+          platforms = [ system ];
+          maintainers = [ ];
+        };
+      } // extraArgs;
+    in systemPkgs.stdenv.mkDerivation args;
+
+  /* Custom `packages` flake output constructor.
+     It recursively traverses the provided root directory and scans for packages.
+     The resulting attrset is constructed in such a way to comply with the
+     flake `packages` format, that is
+
+     packages."<system>"."<name>"
+
+     The platform package specifications will be parsed from the packages
+     themselves using the `parsePlatformHeader` which reduces the overall
+     amount of manual setup while still maintaining an overall pure
+     declarative structure.
+
+     *Type*: `mkPackages :: Path -> { callPackageExtraAttrs :: AttrSet a; pkgsExtraOverlays :: [ (AttrSet -> AttrSet -> AttrSet) ] } -> AttrSet b`
+  */
+  mkPackages =
+    # (Path) Path to the root dir which should be scanned for packages
+    dir:
+    {
+    # (AttrSet a) Extra arguments that should be inherit for the callPackage pattern
+    callPackageExtraAttrs ? { },
+    # ([(AttrSet -> AttrSet -> AttrSet)]) Extra overlays that should be applied to created the nixpkgs instance
+    pkgsExtraOverlays ? [ ] }:
+    let
+      pkgsByPlatforms = groupAttrsetBySublistElems (mapModules dir (p:
+        parsePlatformHeader
+        (if pathExists "${p}/default.nix" then "${p}/default.nix" else p)));
+      pkgPaths = mapModules dir (p: p);
+    in genAttrs (attrNames pkgsByPlatforms) (system:
+      let
+        systemPkgs = mkNixpkgs inputs.nixpkgs system ([ ] ++ pkgsExtraOverlays);
+      in mergeAttrs (map (p: {
+        "${p}" = systemPkgs.callPackage pkgPaths.${p}
+          ({ inherit lib inputs; } // callPackageExtraAttrs);
+      }) pkgsByPlatforms.${system}));
 }

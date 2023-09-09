@@ -22,14 +22,13 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    impermanence.url = "github:nix-community/impermanence";
     agenix = {
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
 
     arkenfox-user-js = {
@@ -40,9 +39,16 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      inherit (lib.tensorfiles.modules) mapModules mkPkgs mkHost;
+      inherit (lib.tensorfiles.modules) mapModules mkPackages mkHost;
 
+      # These assignments are optional and only serve to change the default values
+      # (that being `root` and `./secrets` -- if you don't plan on using any secrets
+      # backend you can simply ignore this), meaning that
+      # you can change or even delete them, however, the projectRoot variable is
+      # required, so please keep that one.
       user = "tsandrini";
+      projectPath = ./.;
+      secretsPath = (projectPath + "/secrets");
 
       lib = nixpkgs.lib.extend (self: super: {
         tensorfiles = import ./lib {
@@ -57,10 +63,7 @@
 
       overlays = mapModules ./overlays import;
 
-      packages = lib.genAttrs [ "x86_64-linux" ] (system:
-        let systemPkgs = mkPkgs nixpkgs system [ ];
-        in mapModules ./pkgs
-        (p: systemPkgs.callPackage p { inherit lib inputs; }));
+      packages = mkPackages ./pkgs { };
 
       nixosModules = mapModules ./modules import;
 

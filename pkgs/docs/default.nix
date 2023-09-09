@@ -1,3 +1,4 @@
+# platforms: x86_64-linux, aarch64-linux
 # --- pkgs/docs/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
@@ -13,17 +14,19 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { lib, pkgs, inputs, stdenv, mkdocs, pandoc, python3, python310Packages
-, runCommand, nixosOptionsDoc, nixdoc, writeText, perl, ... }:
+, runCommand, nixosOptionsDoc, nixdoc, writeText, perl, system, ... }:
 let
   inherit (lib.tensorfiles.attrsets) flatten;
   inherit (lib.tensorfiles.modules) mapModules;
 
   READMEs = let
     readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
+    projectPath = ../../.;
   in {
-    main = readmeToDerivation ../../README.md;
+    main = readmeToDerivation (projectPath + "/README.md");
     hosts = {
-      "spinorbundle" = readmeToDerivation ../../hosts/spinorbundle/README.md;
+      "spinorbundle" =
+        readmeToDerivation (projectPath + "/hosts/spinorbundle/README.md");
     };
   };
 
@@ -129,15 +132,20 @@ let
       ++ (loadModulesInDir ../../modules/services)
       ++ (loadModulesInDir ../../modules/system)
       ++ (loadModulesInDir ../../modules/tasks)
-      ++ (loadModulesInDir ../../modules/security);
-      specialArgs = {
+      ++ (loadModulesInDir ../../modules/security)
+      ++ (loadModulesInDir ../../modules/profiles);
+      specialArgs = rec {
         # TODO: Warning!!!!
         # This is very bad practice and should be usually avoided at all costs,
         # but modules cannot be easily evaluated otherwise. In the future it would
         # be probably best to just create the inputs manually directly here.
-        inherit lib pkgs inputs;
-        user = "root";
-        system = "x86_64-linux";
+        inherit lib pkgs inputs system;
+        lintCompatibility = true;
+        projectPath = ../..;
+        secretsPath = (projectPath + "/secrets");
+        secretsAttrset = { };
+        hostName = "exampleHost";
+        user = "exampleUser";
       };
     };
     optionsDoc = nixosOptionsDoc { inherit (eval) options; };
@@ -188,7 +196,7 @@ in stdenv.mkDerivation {
     homepage = "https://github.com/tsandrini/tensorfiles";
     description = "The combined Documentation of the whole tensorfiles flake.";
     license = licenses.mit;
-    platforms = [ "x86_64-linux" ];
+    platforms = [ "x86_64-linux" "aarch64-linux" ];
     maintainers = with tensorfiles.maintainers; [ tsandrini ];
   };
 }
