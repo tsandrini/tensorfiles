@@ -21,13 +21,9 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = with inputs.self; [
-    ./hardware-configuration.nix
-    nixosModules.profiles.base
-    inputs.home-manager.nixosModules.home-manager
-  ];
+  imports = [ ./hardware-configuration.nix ];
 
-  tensorfiles.profiles.base.enable = true;
+  tensorfiles.profiles.laptop.enable = true;
 
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |

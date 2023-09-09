@@ -142,22 +142,29 @@ with builtins; rec {
     # (Path) Path to the root directory further providing the "system" and "default.nix" files
     dir:
     let
-      name = dirnameFromPath dir;
+      hostName = dirnameFromPath dir;
       system = removeSuffix "\n" (readFile "${dir}/system");
       systemPkgs = mkNixpkgs inputs.nixpkgs system [ ];
-    in nixosSystem {
+      secretsAttrset = (if pathExists (secretsPath + "/secrets.nix") then
+        (import (secretsPath + "/secrets.nix"))
+      else
+        { });
+    in lib.nixosSystem {
       inherit system;
       pkgs = systemPkgs;
       specialArgs = {
-        inherit inputs lib system user;
-        host.hostName = name;
+        inherit inputs lib system user hostName projectPath secretsPath
+          secretsAttrset;
+        host.hostName = hostName;
+        # lintCompatibility = false;
       };
       modules = [
         {
           nixpkgs.config.allowUnfree = true;
           nixpkgs.pkgs = systemPkgs;
-          networking.hostName = name;
+          networking.hostName = hostName;
         }
+        (projectPath + "/modules/profiles/_load-all-modules.nix")
         (dir)
       ];
     };
