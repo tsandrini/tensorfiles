@@ -1,0 +1,18 @@
+name: "Run a simple check on merge requests"
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  check:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Nix
+        uses: cachix/install-nix-action@v22
+
+      - name: Run a simple nix check
+        run: nix flake check --impure --show-trace --debug --all-systems

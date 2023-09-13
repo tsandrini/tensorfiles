@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["master"]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -25,7 +25,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    steps:        
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -34,15 +34,15 @@ jobs:
 
       - name: Build docs using Nix
         run: nix build .#docs
-        
+
       - name: Setup Pages
         uses: actions/configure-pages@v3
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: 'result'
-          
+          path: "result"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2

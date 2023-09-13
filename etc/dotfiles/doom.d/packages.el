@@ -62,4 +62,4 @@
 (package! doct)
 
 ;; Fun stuff :)
-(package! speed-type)
+;(package! speed-type)
