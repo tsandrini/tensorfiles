@@ -1,4 +1,4 @@
-name: "Run a simple check on merge requests"
+name: "Run various checks on merge (pull) request"
 
 on:
   pull_request:
@@ -14,5 +14,8 @@ jobs:
       - name: Setup Nix
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Run a simple nix check
+      - name: Check the flake
         run: nix flake check --impure --show-trace --debug --all-systems
+
+      - name: Check formatting
+        run: nix-shell -p nixfmt --command "find . -name '*.nix' -type f -exec nixfmt -c {} \;"
