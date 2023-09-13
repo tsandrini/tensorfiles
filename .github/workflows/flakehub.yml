@@ -2,7 +2,7 @@ name: "Publish every Git push to master to FlakeHub"
 on:
   push:
     branches:
-      - "master"
+      - "main"
 jobs:
   flakehub-publish:
     runs-on: "ubuntu-latest"

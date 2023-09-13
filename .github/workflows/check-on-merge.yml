@@ -1,0 +1,21 @@
+name: "Run various checks on merge (pull) request"
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  check:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Check the flake
+        run: nix flake check --impure --show-trace --all-systems
+
+      - name: Check formatting
+        run: nix-shell -p nixfmt --command "find . -name '*.nix' -type f -exec nixfmt -c {} +"

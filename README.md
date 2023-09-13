@@ -17,6 +17,9 @@ Hello my dear explorer! Let's enjoy computing that actually doesn't suck togethe
 ![img](pkgs/docs/docs/assets/images/showcase_1.png)
 ![img](pkgs/docs/docs/assets/images/showcase_2.png)
 
+For more info refer to the [documentation](https://tsandrini.github.io/tensorfiles/).
+The project is also hosted at on [FlakeHub](https://flakehub.com/flake/tsandrini/tensorfiles/).
+
 # 2. Software 
 
 I use the following software
