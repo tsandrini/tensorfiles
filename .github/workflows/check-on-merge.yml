@@ -2,7 +2,7 @@ name: "Run various checks on merge (pull) request"
 
 on:
   pull_request:
-    types: [opened, reopened, edited]
+    types: [opened, reopened, synchronize]
 
 jobs:
   check:

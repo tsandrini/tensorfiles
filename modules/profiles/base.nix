@@ -33,10 +33,10 @@ in {
       '');
     };
 
-  config =  mkIf cfg.enable (mkMerge [
+  config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (  {
-         system.stateVersion = _ "23.05";
+    ({
+      system.stateVersion = _ "23.05";
 
       tensorfiles.system.users.enable = _ true;
       tensorfiles.misc.nix.enable = _ true;
