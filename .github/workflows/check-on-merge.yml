@@ -15,7 +15,7 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
 
       - name: Check the flake
-        run: nix flake check --impure --show-trace --debug --all-systems
+        run: nix flake check --impure --show-trace --all-systems
 
       - name: Check formatting
-        run: nix-shell -p nixfmt --command "find . -name '*.nix' -type f -exec nixfmt -c {} \;"
+        run: nix-shell -p nixfmt --command "find . -name '*.nix' -type f -exec nixfmt -c {} +"
