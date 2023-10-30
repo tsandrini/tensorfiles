@@ -369,3 +369,28 @@
                              ("Study INTR" :keys "i"
                               :todo-state "INTR")))
                 ))))
+
+;; accept completion from copilot and fallback to company
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)))
+
+(use-package! lsp-nix
+  :ensure lsp-mode
+  :after (lsp-mode)
+  :demand t
+  :custom
+  (lsp-nix-nil-formatter ["nixfmt"]))
+
+
+(use-package! nix-mode
+  :hook (nix-mode . lsp-deferred)
+  :ensure t)
+
+;; (add-hook 'tuareg-mode-hook #'merlin-mode)
+;; (add-hook 'caml-mode-hook #'merlin-mode)
+;; (use-package! merlin-company)
