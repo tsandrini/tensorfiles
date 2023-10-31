@@ -47,6 +47,7 @@ with lib; {
     programs.pywal
     programs.shells.zsh
     programs.terminals.alacritty
+    programs.terminals.kitty
 
     security.agenix
 
