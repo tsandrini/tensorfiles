@@ -17,7 +17,8 @@ with builtins;
 with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-  inherit (tensorfiles.nixos) isPywalEnabled getUserCacheDir;
+  inherit (tensorfiles.nixos)
+    isPywalEnabled getUserCacheDir isPersistenceEnabled;
 
   cfg = config.tensorfiles.programs.shells.zsh;
   _ = mkOverrideAtModuleLevel;
@@ -28,6 +29,8 @@ in {
       enable = mkEnableOption (mdDoc ''
         Enables NixOS module that configures/handles the zsh shell.
       '');
+
+      persistence = { enable = mkPersistenceEnableOption; };
 
       package = mkOption {
         type = package;
@@ -231,6 +234,16 @@ in {
           '';
         });
     })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.home.enable && (isPersistenceEnabled config)
+      && cfg.persistence.enable)
+      (let persistence = config.tensorfiles.system.persistence;
+      in {
+        environment.persistence."${persistence.persistentRoot}".users =
+          genAttrs (attrNames cfg.home.settings) (_user:
+            let userCfg = cfg.home.settings."${_user}";
+            in { files = [ ".zsh_history" ]; });
+      }))
     # |----------------------------------------------------------------------| #
   ]);
 

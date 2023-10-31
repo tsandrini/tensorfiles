@@ -287,7 +287,8 @@ in {
       });
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && (isPersistenceEnabled config))
+    (mkIf (cfg.home.enable && (isPersistenceEnabled config)
+      && cfg.persistence.enable)
       (let persistence = config.tensorfiles.system.persistence;
       in {
         environment.persistence."${persistence.persistentRoot}".users =
@@ -315,6 +316,8 @@ in {
                   (toRelative userCfg.orgDir))
                 ++ (optional (userCfg.projectsDir != null)
                   (toRelative userCfg.projectsDir))
+                ++ (optional (userCfg.cacheDir != null)
+                  (toRelative userCfg.cacheDir))
                 ++ (optional (userCfg.miscDataDir != null)
                   (toRelative userCfg.miscDataDir));
             });

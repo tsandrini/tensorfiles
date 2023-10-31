@@ -142,7 +142,8 @@ in {
               };
             in {
               files = [ ".fehbg" ];
-              directories = [ (toRelative (cacheDir + "/wal")) ];
+              # not needed anymore
+              # directories = [ (toRelative (cacheDir + "/wal")) ];
             });
       }))
     # |----------------------------------------------------------------------| #
