@@ -272,8 +272,8 @@ in {
             ++ (optional userCfg.isSudoer "wheel");
           home = _ userCfg.homeDir;
 
-          passwordFile = (mkIf ((isAgenixEnabled config) && cfg.agenix.enable)
-            (_
+          hashedPasswordFile =
+            (mkIf ((isAgenixEnabled config) && cfg.agenix.enable) (_
               config.age.secrets."common/passwords/users/${_user}_default".path));
         });
     })

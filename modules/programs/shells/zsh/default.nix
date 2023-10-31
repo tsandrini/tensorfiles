@@ -108,7 +108,7 @@ in {
 
           shellAliases = {
 
-            lsToExa = mkOption {
+            lsToEza = mkOption {
               type = bool;
               default = true;
               description = mdDoc ''
@@ -151,7 +151,7 @@ in {
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     # |----------------------------------------------------------------------| #
-    ({ users.defaultUserShell = _ cfg.package; })
+    # ({ users.defaultUserShell = _ cfg.package; })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
@@ -159,13 +159,13 @@ in {
         in {
           home.packages = with pkgs;
             with userCfg.shellAliases;
-            [ nitch ] ++ (optional lsToExa exa) ++ (optional catToBat bat)
+            [ nitch ] ++ (optional lsToEza eza) ++ (optional catToBat bat)
             ++ (optional findToFd fd) ++ (optional grepToRipgrep ripgrep)
             ++ (optional userCfg.oh-my-zsh.withFzf fzf);
 
           programs.zsh = {
             enable = _ true;
-            enableSyntaxHighlighting = _ true;
+            syntaxHighlighting.enable = _ true;
             enableAutosuggestions = _ userCfg.withAutocompletions;
             oh-my-zsh = mkIf userCfg.oh-my-zsh.enable {
               enable = _ true;
@@ -194,12 +194,12 @@ in {
 
           home.shellAliases = mkMerge [
             { fetch = _ "${pkgs.nitch}/bin/nitch"; }
-            (mkIf userCfg.shellAliases.lsToExa {
-              ls = _ "${pkgs.exa}/bin/exa";
+            (mkIf userCfg.shellAliases.lsToEza {
+              ls = _ "${pkgs.eza}/bin/eza";
               ll = _
-                "${pkgs.exa}/bin/exa -F --icons --group-directories-first -la --git --header --created --modified";
+                "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
               tree = _
-                "${pkgs.exa}/bin/exa -F --icons --group-directories-first -la --git --header --created --modified -T";
+                "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified -T";
             })
             (mkIf userCfg.shellAliases.catToBat {
               cat = _ "${pkgs.bat}/bin/bat -p --wrap=never --paging=never";

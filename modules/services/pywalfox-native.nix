@@ -53,7 +53,7 @@ in {
           home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
             builtins.replaceStrings [ "<path>" ]
             [ "${pywalfox-wrapper}/bin/pywalfox-wrapper" ] (builtins.readFile
-              "${pywalfox-native}/lib/python3.10/site-packages/pywalfox/assets/manifest.json");
+              "${pywalfox-native}/lib/python3.11/site-packages/pywalfox/assets/manifest.json");
         });
     })
     # |----------------------------------------------------------------------| #

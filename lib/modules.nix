@@ -108,6 +108,7 @@ with builtins; rec {
     import pkgs {
       inherit system;
       config.allowUnfree = true;
+      hostPlatform = system;
       overlays = let
         pkgsOverlay = final: prev: {
           tensorfiles = inputs.self.packages.${system};
@@ -160,8 +161,7 @@ with builtins; rec {
       };
       modules = [
         {
-          nixpkgs.config.allowUnfree = true;
-          nixpkgs.pkgs = systemPkgs;
+          nixpkgs.pkgs = mkDefault systemPkgs;
           networking.hostName = hostName;
         }
         (projectPath + "/modules/profiles/_load-all-modules.nix")

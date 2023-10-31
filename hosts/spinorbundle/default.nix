@@ -80,10 +80,10 @@
     jack.enable = true;
   };
 
-  users.users.${user}.passwordFile =
+  users.users.${user}.hashedPasswordFile =
     config.age.secrets."hosts/spinorbundle/passwords/users/${user}".path;
 
-  users.users.root.passwordFile =
+  users.users.root.hashedPasswordFile =
     config.age.secrets."hosts/spinorbundle/passwords/users/root".path;
 
   age.secrets."hosts/spinorbundle/passwords/users/${user}".file =
