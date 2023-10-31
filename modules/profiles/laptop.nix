@@ -40,11 +40,11 @@ in {
       tensorfiles.programs.newsboat.enable = _ true;
       tensorfiles.programs.dmenu.enable = _ true;
       tensorfiles.programs.file-managers.lf.enable = _ true;
+      tensorfiles.programs.file-managers.lf.home.settings."tsandrini".previewer.backend =
+        _ "kitty";
       tensorfiles.programs.pywal.enable = _ true;
       tensorfiles.programs.terminals.kitty.enable = _ true;
       tensorfiles.programs.terminals.alacritty.enable = _ true;
-      tensorfiles.programs.terminals.alacritty.home.settings."tsandrini".previewer.backend =
-        _ "kitty";
       tensorfiles.programs.browsers.firefox.enable = _ true;
 
       tensorfiles.security.agenix.enable = _ true;
