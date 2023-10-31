@@ -93,6 +93,14 @@ in {
                 oh-my-zsh plugins that are enabled by default
               '';
             };
+
+            withFzf = mkOption {
+              type = bool;
+              default = true;
+              description = mdDoc ''
+                Whether to enable the fzf plugin
+              '';
+            };
           };
 
           shellAliases = {
@@ -149,7 +157,8 @@ in {
           home.packages = with pkgs;
             with userCfg.shellAliases;
             [ nitch ] ++ (optional lsToExa exa) ++ (optional catToBat bat)
-            ++ (optional findToFd fd) ++ (optional grepToRipgrep ripgrep);
+            ++ (optional findToFd fd) ++ (optional grepToRipgrep ripgrep)
+            ++ (optional userCfg.oh-my-zsh.withFzf fzf);
 
           programs.zsh = {
             enable = _ true;
@@ -157,7 +166,8 @@ in {
             enableAutosuggestions = _ userCfg.withAutocompletions;
             oh-my-zsh = mkIf userCfg.oh-my-zsh.enable {
               enable = _ true;
-              plugins = userCfg.oh-my-zsh.plugins;
+              plugins = userCfg.oh-my-zsh.plugins
+                ++ (optional userCfg.oh-my-zsh.withFzf "fzf");
             };
             plugins = [
               (mkIf userCfg.withAutocompletions {

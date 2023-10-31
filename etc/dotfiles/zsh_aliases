@@ -9,8 +9,8 @@ alias vim="nvim"
 alias shutnow="shutdown now"
 alias vtop="vtop --theme wal"
 alias ls="exa"
-alias ll="exa -F --icons --group-directories-first -la --git --header --created --modified"
-alias tree="exa -F --icons --group-directories-first -la --git --header --created --modified -T";
+alias ll="exa -F --hyperlink --icons --group-directories-first -la --git --header --created --modified"
+alias tree="exa -F --hyperlink --icons --group-directories-first -la --git --header --created --modified -T";
 alias cat="bat -p --wrap=never --paging=never"
 alias less="bat --paging=always"
 
