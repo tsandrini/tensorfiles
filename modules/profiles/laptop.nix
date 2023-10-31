@@ -43,8 +43,8 @@ in {
       tensorfiles.programs.pywal.enable = _ true;
       tensorfiles.programs.terminals.kitty.enable = _ true;
       tensorfiles.programs.terminals.alacritty.enable = _ true;
-      tensorfiles.programs.terminals.alacritty.home.settings."tsandrini".previewer.enable =
-        _ false;
+      tensorfiles.programs.terminals.alacritty.home.settings."tsandrini".previewer.backend =
+        _ "kitty";
       tensorfiles.programs.browsers.firefox.enable = _ true;
 
       tensorfiles.security.agenix.enable = _ true;

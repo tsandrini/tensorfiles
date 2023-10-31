@@ -261,9 +261,9 @@ in {
             (if (!previewer.enable) then
               pkg
             else
-              (if (userCfg.previewer.backend == "ueberzug") then
+              (if (previewer.backend == "ueberzug") then
                 lf-with-ueberzug
-              else if (userCfg.previewer.backend == "kitty") then
+              else if (previewer.backend == "kitty") then
                 lf-with-kitty
               else
                 pkg));
