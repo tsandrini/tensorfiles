@@ -413,7 +413,7 @@ in {
                 myModMask = mod4Mask
 
                 myTerminal :: String
-                myTerminal = "alacritty"
+                myTerminal = "kitty"
 
                 myBrowser :: String
                 myBrowser = "firefox-developer-edition"

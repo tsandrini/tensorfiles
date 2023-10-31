@@ -66,6 +66,7 @@ in {
               set wildmenu
               set wildmode=full"
               set wildignorecase
+              set clipboard=unnamedplus
 
               set tabstop=8
               set softtabstop=0

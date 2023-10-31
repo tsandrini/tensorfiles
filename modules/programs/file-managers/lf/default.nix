@@ -198,10 +198,9 @@ in {
 
               case "''${1:-clear}" in
                   draw)
-                    [[ "$(file -Lb --mime-type "$1")" =~ ^image ]] || exit 1
-                    itty +kitten icat --silent --transfer-mode file --place "''${2}x''${3}@''${4}x''${5}" "$1"
+                    kitty +kitten icat --silent --transfer-mode file --stdin no --place "''${2}x''${3}@''${4}x''${5}" "$1" < /dev/null > /dev/tty;;
                   clear|*)
-                    kitten icat --clear
+                    kitten icat --clear ;;
               esac
             '';
           in pkgs.symlinkJoin {
