@@ -151,7 +151,10 @@ in {
         [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
     })
     # |----------------------------------------------------------------------| #
-    # ({ users.defaultUserShell = _ cfg.package; })
+    ({
+      users.defaultUserShell = _ cfg.package;
+      programs.zsh.enable = _ true;
+    })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
