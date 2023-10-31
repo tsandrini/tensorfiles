@@ -17,7 +17,6 @@ with builtins;
 with lib;
 let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-  inherit (tensorfiles.nixos) getUserConfigDir;
 
   cfg = config.tensorfiles.programs.file-managers.lf;
   _ = mkOverrideAtModuleLevel;
@@ -66,12 +65,13 @@ in {
             '');
 
             backend = mkOption {
-              type = enum [ "ueberzug" ];
+              type = enum [ "ueberzug" "kitty" ];
               default = "ueberzug";
               description = mdDoc ''
                 As of now the following backends/solutions are supported
 
                 1. Ueberzug (https://github.com/ueber-devel/ueberzug)
+                2. Kitty and its icat kitten protocol
               '';
             };
           };
@@ -86,29 +86,27 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let
           userCfg = cfg.home.settings."${_user}";
-          configDir = getUserConfigDir {
-            inherit _user;
-            cfg = config;
-          };
           lf-previewer = let
             name = "lf-previewer";
-            buildInputs = with pkgs; [
-              lf-cleaner
-              ueberzug
-              mediainfo
-              file
-              libuchardet
-              highlight
-              libarchive
-              unrar
-              _7zz
-              odt2txt
-              w3m
-              lynx
-              catdoc
-              python39Packages.docx2txt
-              transmission
-            ];
+            buildInputs = with pkgs;
+              [
+                mediainfo
+                file
+                libuchardet
+                highlight
+                libarchive
+                unrar
+                _7zz
+                odt2txt
+                w3m
+                lynx
+                catdoc
+                python39Packages.docx2txt
+                transmission
+              ] ++ (optional (userCfg.previewer.backend == "ueberzug")
+                lf-cleaner-ueberzug)
+              ++ (optional (userCfg.previewer.backend == "kitty")
+                lf-cleaner-kitty);
             script = pkgs.writeShellScriptBin name ''
               case ''${1##*.} in
                   a|ace|alz|apk|arc|arj|bz|bz2|cab|cpio|deb|gz|iso|jar|lha|lz|lzh|lzma|lzo|\
@@ -169,7 +167,7 @@ in {
             postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
           };
 
-          lf-cleaner = let
+          lf-cleaner-ueberzug = let
             name = "lf-cleaner";
             buildInputs = with pkgs; [ ueberzug ];
             script = pkgs.writeShellScriptBin name ''
@@ -192,9 +190,34 @@ in {
             postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
           };
 
+          lf-cleaner-kitty = let
+            name = "lf-cleaner";
+            buildInputs = with pkgs; [ kitty ];
+            script = pkgs.writeShellScriptBin name ''
+              ID="lf-preview"
+
+              case "''${1:-clear}" in
+                  draw)
+                    [[ "$(file -Lb --mime-type "$1")" =~ ^image ]] || exit 1
+                    itty +kitten icat --silent --transfer-mode file --place "''${2}x''${3}@''${4}x''${5}" "$1"
+                  clear|*)
+                    kitten icat --clear
+              esac
+            '';
+          in pkgs.symlinkJoin {
+            inherit name;
+            paths = [ script ] ++ buildInputs;
+            buildInputs = [ pkgs.makeWrapper ];
+            postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+          };
+
           lf-with-ueberzug = let
             name = "lf";
-            buildInputs = with pkgs; [ ueberzug lf-previewer lf-cleaner ];
+            buildInputs = with pkgs; [
+              ueberzug
+              lf-previewer
+              lf-cleaner-ueberzug
+            ];
             script = pkgs.writeShellScriptBin name ''
               start_ueberzug() {
                   mkfifo "$FIFO_UEBERZUG" || exit 1
@@ -221,18 +244,32 @@ in {
             buildInputs = [ pkgs.makeWrapper ];
             postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
           };
+
+          lf-with-kitty = let
+            name = "lf";
+            buildInputs = with pkgs; [ kitty lf-previewer lf-cleaner-kitty ];
+            script = pkgs.writeShellScriptBin name ''
+              exec ${pkgs.lf}/bin/lf "$@"
+            '';
+          in pkgs.symlinkJoin {
+            inherit name;
+            paths = [ script userCfg.pkg ] ++ buildInputs;
+            buildInputs = [ pkgs.makeWrapper ];
+            postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
+          };
           lf-package = with userCfg;
             (if (!previewer.enable) then
-              previewer.pkg
+              pkg
             else
               (if (userCfg.previewer.backend == "ueberzug") then
                 lf-with-ueberzug
-                # else if .... then # other possible backends
+              else if (userCfg.previewer.backend == "kitty") then
+                lf-with-kitty
               else
-                previewer.pkg));
+                pkg));
         in {
 
-          home.file."${configDir}/lf/icons" = {
+          xdg.configFile."lf/icons" = {
             source = _ ./icons;
             enable = _ userCfg.withIcons;
           };
