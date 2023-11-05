@@ -28,7 +28,7 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = with pkgs; [ pavucontrol ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -54,12 +54,7 @@
     enable = true;
     package = pkgs.bluez;
   };
-  hardware.pulseaudio = {
-    enable = true;
-    extraModules = [ pkgs.pulseaudio-modules-bt ];
-  };
   services.blueman.enable = true;
-
 
   # Services
   services.tlp = {
