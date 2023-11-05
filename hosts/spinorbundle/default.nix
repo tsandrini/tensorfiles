@@ -50,9 +50,27 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.timeout = 1;
   boot.loader.grub.enable = false;
+  hardware.bluetooth = {
+    enable = true;
+    package = pkgs.bluez;
+  };
+  hardware.pulseaudio = {
+    enable = true;
+    extraModules = [ pkgs.pulseaudio-modules-bt ];
+  };
+  services.blueman.enable = true;
+
 
   # Services
-  services.tlp.enable = true;
+  services.tlp = {
+    enable = true;
+    settings = {
+      START_CHARGE_THRESH_BAT0 = 75;
+      STOP_CHARGE_THRESH_BAT0 = 80;
+      START_CHARGE_THRESH_BAT1 = 75;
+      STOP_CHARGE_THRESH_BAT1 = 80;
+    };
+  };
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = true;
