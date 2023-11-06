@@ -84,6 +84,8 @@
 
   programs.ssh.startAgent = true;
 
+  programs.steam.enable = true; # just trying it out
+
   services.pipewire = {
     enable = true;
     alsa.enable = true;

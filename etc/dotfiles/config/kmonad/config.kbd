@@ -17,19 +17,22 @@
   lctl lmet lalt           spc            ralt                left down right
 )
 
+(defalias
+  etc (layer-toggle etc)
+)
 
 (deflayer qwerty
   esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc print
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \    pgup
-  caps a    s    d    f    g    h    j    k    l    ;    '    ret       pgdn
+  @etc a    s    d    f    g    h    j    k    l    ;    '    ret       pgdn
   lsft z    x    c    v    b    n    m    ,    .    /    rsft      up
   lctl lmet lalt           spc            ralt                left down right
 )
 
-;; (deflayer qwertyCZ
-;;   esc  +    ě    š    č    ř    ž    ý    á    í    é    -    =    bspc print
-;;   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \    pgup
-;;   caps a    s    d    f    g    h    j    k    l    ;    '    ret       pgdn
-;;   lsft z    x    c    v    b    n    m    ,    .    /    rsft      up
-;;   lctl lmet lalt           spc            ralt                left down right
-;; )
+(deflayer etc
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _   _
+  _    _    _    _    _    XX   /    7    8    9    -    _    _    _   _
+  _    _    _    _    _    XX   *    4    5    6    +    _    _        _
+  _    _    \(   \)   .    XX   0    1    2    3    _    _         _
+  _    _    _              _              _                      _ _  _
+)
