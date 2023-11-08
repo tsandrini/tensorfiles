@@ -20,7 +20,7 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-  boot.blacklistedKernelModules = [ "radeon" "amdgpu" ];
+  # boot.blacklistedKernelModules = [ "radeon" "amdgpu" ];
 
   fileSystems."/" = {
     device = "/dev/disk/by-label/root";
