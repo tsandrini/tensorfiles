@@ -142,3 +142,5 @@ source ~/.cache/wal/colors-tty.sh
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 [[ ! -r /home/tsandrini/.opam/opam-init/init.zsh ]] || source /home/tsandrini/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+eval "$(direnv hook zsh)"
