@@ -391,6 +391,8 @@
   :hook (nix-mode . lsp-deferred)
   :ensure t)
 
+(use-package! kbd-mode)
+
 ;; (add-hook 'tuareg-mode-hook #'merlin-mode)
 ;; (add-hook 'caml-mode-hook #'merlin-mode)
 ;; (use-package! merlin-company)
