@@ -595,8 +595,8 @@ in {
                     -- Workspaces
                     ("M-<Tab>", toggleWS),
                     -- Increase/decrease spacing (gaps)
-                    ("C-j", decWindowSpacing 4), -- Decrease window spacing
-                    ("C-k", incWindowSpacing 4), -- Increase window spacing
+                    ("M-u", decWindowSpacing 4), -- Decrease window spacing
+                    ("M-i", incWindowSpacing 4), -- Increase window spacing
                     -- Multimedia keys
                     ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird")),
                     ("<XF86HomePage>", runOrRaise myBrowser (resource =? myBrowser)),
