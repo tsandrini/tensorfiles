@@ -38,9 +38,11 @@ in {
     ({
       system.stateVersion = _ "23.05";
 
-      tensorfiles.system.users.enable = _ true;
-      tensorfiles.misc.nix.enable = _ true;
-      tensorfiles.misc.xdg.enable = _ true;
+      tensorfiles = {
+        system.users.enable = _ true;
+        misc.nix.enable = _ true;
+        misc.xdg.enable = _ true;
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);

@@ -12,8 +12,9 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, projectPath
-, secretsPath ? (projectPath + "/secrets"), user ? "root", ... }:
+{ config, lib, pkgs, inputs, hostName, projectPath
+, secretsPath ? (projectPath + "/secrets"), user ? "root"
+, lintCompatibility ? false, ... }:
 with builtins;
 with lib;
 let
@@ -25,6 +26,18 @@ let
 
   cfg = config.tensorfiles.system.users;
   _ = mkOverrideAtModuleLevel;
+
+  # userFiletypes = genAttrs (if lintCompatibility then [
+  #   user
+  #   "‹name›"
+  # ] else
+  #   attrNames cfg.home.settings) (_user:
+  #     import inputs.home-manager.lib.hm.file-type {
+  #       inherit pkgs lib;
+  #       homeDirectory = cfg.home.settings."${user}".homeDir;
+  #     });
+
+  agenixCheck = ((isAgenixEnabled config) && cfg.agenix.enable);
 in {
   # TODO move bluetooth dir to hardware
   # TODO pass also root user
@@ -119,6 +132,16 @@ in {
             '';
           };
 
+          # configFile = mkOption {
+          #   type =
+          #     userFiletypes."${_user}" "xdg.configFile" "{var}`xdg.configHome`"
+          #     cfg.configHome;
+          #   default = { };
+          #   description = mdDoc ''
+          #     TODO
+          #   '';
+          # };
+
           cacheDir = mkOption {
             type = path;
             default = (if _user != "root" then
@@ -212,6 +235,21 @@ in {
               set it to null, ie `home.settings.$user.miscDataDir = null;`
             '';
           };
+
+          agenixPassword = {
+            enable = mkEnableOption (mdDoc ''
+              TODO
+            '');
+
+            passwordSecretsPath = mkOption {
+              type = str;
+              default = "hosts/${hostName}/users/${_user}/system-password";
+              description = mdDoc ''
+                TODO
+              '';
+            };
+          };
+
         });
       };
     };
@@ -234,6 +272,10 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
         let userCfg = cfg.home.settings."${_user}";
         in {
+
+          imports = with inputs;
+            ([ ] ++ (optional agenixCheck agenix.homeManagerModules.default));
+
           home = {
             username = _ "${_user}";
             homeDirectory = _ userCfg.homeDir;
@@ -273,18 +315,9 @@ in {
           home = _ userCfg.homeDir;
 
           hashedPasswordFile =
-            (mkIf ((isAgenixEnabled config) && cfg.agenix.enable) (_
-              config.age.secrets."common/passwords/users/${_user}_default".path));
+            (mkIf (agenixCheck && userCfg.agenixPassword.enable) (_
+              config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path));
         });
-    })
-    # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && ((isAgenixEnabled config) && cfg.agenix.enable)) {
-      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user: {
-        "common/passwords/users/${_user}_default" = {
-          file =
-            _ (secretsPath + "/common/passwords/users/${_user}_default.age");
-        };
-      });
     })
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.home.enable && (isPersistenceEnabled config)
@@ -318,10 +351,24 @@ in {
                   (toRelative userCfg.projectsDir))
                 ++ (optional (userCfg.cacheDir != null)
                   (toRelative userCfg.cacheDir))
+                ++ (optional (userCfg.appDataDir != null)
+                  (toRelative userCfg.appDataDir))
                 ++ (optional (userCfg.miscDataDir != null)
                   (toRelative userCfg.miscDataDir));
             });
       }))
+    # |----------------------------------------------------------------------| #
+    (mkIf (agenixCheck && cfg.home.enable) {
+      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user:
+        let userCfg = cfg.home.settings."${_user}";
+        in with userCfg.agenixPassword; {
+          "${passwordSecretsPath}" = mkIf enable {
+            file = _ (secretsPath + "/${passwordSecretsPath}.age");
+            mode = _ "700";
+            owner = _ _user;
+          };
+        });
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

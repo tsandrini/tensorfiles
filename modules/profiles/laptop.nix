@@ -33,45 +33,34 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     ({
-      tensorfiles.profiles.headless.enable = _ true;
+      tensorfiles = {
+        profiles.headless.enable = _ true;
 
-      tensorfiles.misc.gtk.enable = _ true;
+        misc.gtk.enable = _ true;
 
-      tensorfiles.programs.newsboat.enable = _ true;
-      tensorfiles.programs.dmenu.enable = _ true;
-      tensorfiles.programs.file-managers.lf.enable = _ true;
-      tensorfiles.programs.file-managers.lf.home.settings."tsandrini".previewer.backend =
-        _ "kitty";
-      tensorfiles.programs.pywal.enable = _ true;
-      tensorfiles.programs.terminals.kitty.enable = _ true;
-      tensorfiles.programs.terminals.alacritty.enable = _ true;
-      tensorfiles.programs.browsers.firefox.enable = _ true;
+        programs.newsboat.enable = _ true;
+        programs.dmenu.enable = _ true;
+        programs.file-managers.lf.enable = _ true;
+        programs.pywal.enable = _ true;
+        programs.terminals.kitty.enable = _ true;
+        # programs.terminals.alacritty.enable = _ true;
+        programs.browsers.firefox.enable = _ true;
 
-      tensorfiles.security.agenix.enable = _ true;
-      tensorfiles.services.dunst.enable = _ true;
+        services.dunst.enable = _ true;
+        services.pywalfox-native.enable = _ true;
+        services.x11.picom.enable = _ true;
+        services.x11.redshift.enable = _ true;
+        services.x11.window-managers.xmonad.enable = _ true;
 
-      tensorfiles.services.pywalfox-native.enable = _ true;
-      tensorfiles.services.x11.picom.enable = _ true;
-      tensorfiles.services.x11.redshift.enable = _ true;
-      tensorfiles.services.x11.window-managers.xmonad.enable = _ true;
+        system.persistence = {
+          enable = _ true;
+          btrfsWipe = {
+            enable = _ true;
+            rootPartition = _ "/dev/mapper/enc";
+          };
+        };
 
-      tensorfiles.system.persistence.enable = _ true;
-
-      tensorfiles.system.persistence.btrfsWipe = {
-        enable = _ true;
-        rootPartition = _ "/dev/mapper/enc";
       };
-
-      # TODO fix this
-      # Init also the root user even if not used elsewhere
-      tensorfiles.system.users.home.settings."root" = { isSudoer = _ false; };
-      tensorfiles.system.users.home.settings."tsandrini" = {
-        isSudoer = _ true;
-        email = _ "tomas.sandrini@seznam.cz";
-      };
-
-      tensorfiles.misc.xdg.home.settings."root" = { };
-      tensorfiles.misc.xdg.home.settings."tsandrini" = { };
     })
     # |----------------------------------------------------------------------| #
   ]);

@@ -52,8 +52,9 @@ with lib; {
     security.agenix
 
     services.dunst
-    services.pywalfox-native
     services.networking.networkmanager
+    services.networking.openssh
+    services.pywalfox-native
     services.x11.picom
     services.x11.redshift
     services.x11.window-managers.xmonad

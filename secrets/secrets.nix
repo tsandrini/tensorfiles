@@ -25,20 +25,36 @@ let
   users = [ tsandrini ];
 in {
 
+  publicKeys = {
+    common = { };
+    hosts = {
+      spinorbundle = {
+        hostKey = null;
+        users = {
+          root = {
+            userKey = null;
+            authorizedKeys = [ ];
+          };
+          tsandrini = {
+            userKey = null;
+            authorizedKeys = [ tsandrini ];
+          };
+        };
+      };
+    };
+  };
+
   # ----------
   # | COMMON |
   # ----------
-  "common/passwords/users/tsandrini_default.age".publicKeys = hosts ++ users;
-  "common/passwords/users/root_default.age".publicKeys = hosts ++ users;
 
   # ---------
   # | HOSTS |
   # ---------
 
-  # --------------------
-  # | I. #spinorbundle |
-  # --------------------
-  "hosts/spinorbundle/passwords/users/tsandrini.age".publicKeys =
-    [ spinorbundle ];
-  "hosts/spinorbundle/passwords/users/root.age".publicKeys = [ spinorbundle ];
+  # I. #spinorbundle
+  "hosts/spinorbundle/users/root/system-password.age".publicKeys =
+    [ spinorbundle ] ++ [ tsandrini ];
+  "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys =
+    [ spinorbundle ] ++ [ tsandrini ];
 }

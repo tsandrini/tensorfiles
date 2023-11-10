@@ -50,11 +50,20 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.timeout = 1;
   boot.loader.grub.enable = false;
+
   hardware.bluetooth = {
     enable = true;
     package = pkgs.bluez;
   };
   services.blueman.enable = true;
+
+  tensorfiles.services.networking.openssh.genHostKey.enable = false;
+  tensorfiles.services.networking.openssh.agenix.hostKey.enable = false;
+
+  services.xserver.videoDrivers = [ "amdgpu" ];
+  hardware.opengl.driSupport = true;
+  # For 32 bit applications
+  hardware.opengl.driSupport32Bit = true;
 
   # Services
   services.tlp = {
@@ -64,25 +73,24 @@
       STOP_CHARGE_THRESH_BAT1 = 80;
     };
   };
-  services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = true;
-  };
 
   hardware.enableAllFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
 
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      vaapiIntel
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
-  };
+  hardware.opengl.extraPackages = with pkgs; [
+    rocm-opencl-icd
+    rocm-opencl-runtime
+  ];
 
-  programs.ssh.startAgent = true;
+  # hardware.opengl = {
+  #   enable = true;
+  #   extraPackages = with pkgs; [
+  #     intel-media-driver
+  #     vaapiIntel
+  #     vaapiVdpau
+  #     libvdpau-va-gl
+  #   ];
+  # };
 
   programs.steam.enable = true; # just trying it out
 
@@ -92,15 +100,4 @@
     pulse.enable = true;
     jack.enable = true;
   };
-
-  users.users.${user}.hashedPasswordFile =
-    config.age.secrets."hosts/spinorbundle/passwords/users/${user}".path;
-
-  users.users.root.hashedPasswordFile =
-    config.age.secrets."hosts/spinorbundle/passwords/users/root".path;
-
-  age.secrets."hosts/spinorbundle/passwords/users/${user}".file =
-    ../../secrets/hosts/spinorbundle/passwords/users/${user}.age;
-  age.secrets."hosts/spinorbundle/passwords/users/root".file =
-    ../../secrets/hosts/spinorbundle/passwords/users/root.age;
 }

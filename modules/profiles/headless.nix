@@ -12,7 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, user ? "root", ... }:
+{ config, lib, pkgs, inputs, user ? "root", projectPath
+, secretsPath ? (projectPath + "/secrets"), ... }:
 with builtins;
 with lib;
 let
@@ -20,6 +21,14 @@ let
 
   cfg = config.tensorfiles.profiles.headless;
   _ = mkOverrideAtProfileLevel;
+
+  usersRootCfg = config.tensorfiles.system.users.home.settings."root";
+  enableMainUser = user != "root";
+
+  usersMainCfg = if enableMainUser then
+    config.tensorfiles.system.users.home.settings."${user}"
+  else
+    { };
 in {
   options.tensorfiles.profiles.headless = with types;
     with tensorfiles.options; {
@@ -35,12 +44,37 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     ({
-      tensorfiles.profiles.minimal.enable = _ true;
+      tensorfiles = {
+        profiles.minimal.enable = _ true;
 
-      tensorfiles.programs.editors.neovim.enable = _ true;
-      tensorfiles.programs.git.enable = _ true;
-      tensorfiles.services.networking.networkmanager.enable = _ true;
-      tensorfiles.programs.shells.zsh.enable = _ true;
+        programs.editors.neovim.enable = _ true;
+        programs.git.enable = _ true;
+        programs.shells.zsh.enable = _ true;
+        security.agenix.enable = _ true;
+
+        services.networking.networkmanager.enable = _ true;
+        services.networking.openssh.enable = _ true;
+
+        misc.xdg.home.settings = {
+          "root" = { };
+          "${if enableMainUser then user else "_"}" = mkIf enableMainUser { };
+        };
+
+        system.users.home.settings = {
+          "root" = {
+            isSudoer = _ false;
+            agenixPassword.enable = _ (pathExists (secretsPath
+              + "/${usersRootCfg.agenixPassword.passwordSecretsPath}.age"));
+          };
+          "${if enableMainUser then user else "_"}" = mkIf enableMainUser {
+            isSudoer = _ true;
+            email = _ "tomas.sandrini@seznam.cz"; # TODO uhhh dunno, do smth
+            agenixPassword.enable = _ (pathExists (secretsPath
+              + "/${usersMainCfg.agenixPassword.passwordSecretsPath}.age"));
+          };
+        };
+
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);

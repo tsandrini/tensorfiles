@@ -145,7 +145,7 @@ let
         secretsPath = (projectPath + "/secrets");
         secretsAttrset = { };
         hostName = "exampleHost";
-        user = "exampleUser";
+        user = "‹name›";
       };
     };
     optionsDoc = nixosOptionsDoc { inherit (eval) options; };
