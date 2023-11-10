@@ -63,14 +63,16 @@ in {
         system.users.home.settings = {
           "root" = {
             isSudoer = _ false;
-            agenixPassword.enable = _ (pathExists (secretsPath
-              + "/${usersRootCfg.agenixPassword.passwordSecretsPath}.age"));
+            agenixPassword.enable = _ true;
+            # agenixPassword.enable = _ (pathExists (secretsPath
+            #   + "/${usersRootCfg.agenixPassword.passwordSecretsPath}.age"));
           };
           "${if enableMainUser then user else "_"}" = mkIf enableMainUser {
             isSudoer = _ true;
             email = _ "tomas.sandrini@seznam.cz"; # TODO uhhh dunno, do smth
-            agenixPassword.enable = _ (pathExists (secretsPath
-              + "/${usersMainCfg.agenixPassword.passwordSecretsPath}.age"));
+            agenixPassword.enable = _ true;
+            # agenixPassword.enable = _ (pathExists (secretsPath
+            #   + "/${usersMainCfg.agenixPassword.passwordSecretsPath}.age"));
           };
         };
 
