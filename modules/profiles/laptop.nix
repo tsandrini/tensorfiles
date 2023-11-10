@@ -12,27 +12,33 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, user ? "root", ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  user ? "root",
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.laptop;
   _ = mkOverrideAtProfileLevel;
 in {
   options.tensorfiles.profiles.laptop = with types;
-    with tensorfiles.options; {
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the laptop system profile.
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles the laptop system profile.
 
-        **TODO**: decouple this into a graphical + xmonad + persitence profiles
-      '');
-    };
+      **TODO**: decouple this into a graphical + xmonad + persitence profiles
+    '');
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
+    {
       tensorfiles = {
         profiles.headless.enable = _ true;
 
@@ -59,11 +65,10 @@ in {
             rootPartition = _ "/dev/mapper/enc";
           };
         };
-
       };
-    })
+    }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -12,48 +12,51 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.services.x11.redshift;
   _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.services.x11.redshift = with types;
-    with tensorfiles.options; {
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles the x11 redshift service
+    '');
 
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the x11 redshift service
-      '');
+    home = {
+      enable = mkHomeEnableOption;
 
-      home = {
-        enable = mkHomeEnableOption;
-
-        settings = mkHomeSettingsOption (_user: { });
-      };
+      settings = mkHomeSettingsOption (_user: {});
     };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in {
-          services.redshift = {
-            enable = _ true;
-            tray = _ true;
-            provider = _ "manual";
-            latitude = _ 50.1386267;
-            longitude = _ 14.4295628;
-            temperature.day = _ 5700;
-            temperature.night = _ 3500;
-          };
-        });
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+      in {
+        services.redshift = {
+          enable = _ true;
+          tray = _ true;
+          provider = _ "manual";
+          latitude = _ 50.1386267;
+          longitude = _ 14.4295628;
+          temperature.day = _ 5700;
+          temperature.night = _ 3500;
+        };
+      });
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -12,7 +12,15 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, user ? "root", system, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  user ? "root",
+  system,
+  ...
+}: {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -21,19 +29,19 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = [ ./hardware-configuration.nix ];
+  imports = [./hardware-configuration.nix];
 
   tensorfiles.profiles.laptop.enable = true;
 
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ pavucontrol ];
+  environment.systemPackages = with pkgs; [pavucontrol];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
-  home-manager.users.${user} = { home.packages = with pkgs; [ ]; };
+  home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -46,7 +54,7 @@
     enable = true;
     configurationLimit = 3;
   };
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
+  boot.binfmt.emulatedSystems = ["aarch64-linux"];
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.loader.timeout = 1;
   boot.loader.grub.enable = false;

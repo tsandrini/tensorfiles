@@ -12,10 +12,15 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.system.persistence;
@@ -115,15 +120,16 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
-      assertions = [{
-        assertion = hasAttr "persistence" config.environment;
-        message =
-          "environment.persistence missing, please install and import the impermanence module";
-      }];
-    })
+    {
+      assertions = [
+        {
+          assertion = hasAttr "persistence" config.environment;
+          message = "environment.persistence missing, please install and import the impermanence module";
+        }
+      ];
+    }
     # |----------------------------------------------------------------------| #
-    ({
+    {
       environment.persistence = {
         "${cfg.persistentRoot}" = {
           hideMounts = _ true;
@@ -132,10 +138,10 @@ in {
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
             "/var/lib/systemd/coredump"
           ];
-          files = [ "/etc/adjtime" "/etc/machine-id" ];
+          files = ["/etc/adjtime" "/etc/machine-id"];
         };
       };
-    })
+    }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.disableSudoLectures {
       security.sudo.extraConfig = mkBefore ''
@@ -188,5 +194,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

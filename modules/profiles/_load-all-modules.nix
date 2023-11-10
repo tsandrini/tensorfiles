@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ lib, inputs, ... }:
+{
+  lib,
+  inputs,
+  ...
+}:
 with builtins;
 with lib; {
   # the purpose of this module is to load all of the defined modules as well
@@ -28,49 +32,51 @@ with lib; {
   # by doing this, we can create a fully (mostly) importless module ecosystem
   # which prevents any potential conflicts since everything will be reduced
   # to overriding attrsets.
-  imports = (with inputs; [
-    impermanence.nixosModules.impermanence
-    home-manager.nixosModules.home-manager
-    agenix.nixosModules.default
-    nur.nixosModules.nur
-  ]) ++ (with inputs.self.nixosModules; [
-    misc.gtk
-    misc.nix
-    misc.xdg
+  imports =
+    (with inputs; [
+      impermanence.nixosModules.impermanence
+      home-manager.nixosModules.home-manager
+      agenix.nixosModules.default
+      nur.nixosModules.nur
+    ])
+    ++ (with inputs.self.nixosModules; [
+      misc.gtk
+      misc.nix
+      misc.xdg
 
-    programs.browsers.firefox
-    programs.dmenu
-    programs.editors.neovim
-    programs.file-managers.lf
-    programs.git
-    programs.newsboat
-    programs.pywal
-    programs.shells.zsh
-    programs.terminals.alacritty
-    programs.terminals.kitty
+      programs.browsers.firefox
+      programs.dmenu
+      programs.editors.neovim
+      programs.file-managers.lf
+      programs.git
+      programs.newsboat
+      programs.pywal
+      programs.shells.zsh
+      programs.terminals.alacritty
+      programs.terminals.kitty
 
-    security.agenix
+      security.agenix
 
-    services.dunst
-    services.networking.networkmanager
-    services.networking.openssh
-    services.pywalfox-native
-    services.x11.picom
-    services.x11.redshift
-    services.x11.window-managers.xmonad
+      services.dunst
+      services.networking.networkmanager
+      services.networking.openssh
+      services.pywalfox-native
+      services.x11.picom
+      services.x11.redshift
+      services.x11.window-managers.xmonad
 
-    system.persistence
-    system.users
+      system.persistence
+      system.users
 
-    tasks.nix-garbage-collect
-    tasks.system-autoupgrade
+      tasks.nix-garbage-collect
+      tasks.system-autoupgrade
 
-    # profiles
-    profiles.base
-    profiles.headless
-    profiles.minimal
-    profiles.laptop
-  ]);
+      # profiles
+      profiles.base
+      profiles.headless
+      profiles.minimal
+      profiles.laptop
+    ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -12,15 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, hostName, projectPath
-, secretsPath ? (projectPath + "/secrets"), secretsAttrset ?
-  (if builtins.pathExists (secretsPath + "/secrets.nix") then
-    (import (secretsPath + "/secrets.nix"))
-  else
-    { }), ... }:
+{
+  config,
+  lib,
+  pkgs,
+  hostName,
+  projectPath,
+  secretsPath ? (projectPath + "/secrets"),
+  secretsAttrset ? (
+    if builtins.pathExists (secretsPath + "/secrets.nix")
+    then (import (secretsPath + "/secrets.nix"))
+    else {}
+  ),
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit (tensorfiles.nixos) isAgenixEnabled;
   inherit (tensorfiles.attrsets) mapToAttrsAndMerge;
@@ -28,55 +35,144 @@ let
   cfg = config.tensorfiles.services.networking.openssh;
   _ = mkOverrideAtModuleLevel;
 
-  agenixCheck = ((isAgenixEnabled config) && cfg.agenix.enable);
+  agenixCheck = (isAgenixEnabled config) && cfg.agenix.enable;
 in {
   options.tensorfiles.services.networking.openssh = with types;
-    with tensorfiles.options; {
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles everything related to ssh,
-        that is remote access, messagess, ssh-agents and ssh-keys with the
-        openssh backend.
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles everything related to ssh,
+      that is remote access, messagess, ssh-agents and ssh-keys with the
+      openssh backend.
+    '');
+
+    genHostKey = {
+      enable = mkAlreadyEnabledOption (mdDoc ''
+        Enables autogenerating per-host based keys. Apart from certain additional
+        checks this works mostly as a passthrough to
+        `openssh.authorizedKeys.keys`, for more info refer to the documentation
+        of said option.
       '');
 
-      genHostKey = {
-        enable = mkAlreadyEnabledOption (mdDoc ''
-          Enables autogenerating per-host based keys. Apart from certain additional
-          checks this works mostly as a passthrough to
-          `openssh.authorizedKeys.keys`, for more info refer to the documentation
-          of said option.
+      hostKey = mkOption {
+        type = attrs;
+        default = {
+          type = "ed25519";
+          path = "/etc/ssh/ssh_host_ed25519_key";
+        };
+        description = mdDoc ''
+          TODO
+        '';
+      };
+    };
+
+    agenix = {
+      enable = mkAgenixEnableOption;
+
+      hostKey = {
+        enable = mkEnableOption (mdDoc ''
+          TODO
         '');
 
-        hostKey = mkOption {
-          type = attrs;
-          default = {
-            type = "ed25519";
-            path = "/etc/ssh/ssh_host_ed25519_key";
-          };
+        privateKeySecretsPath = mkOption {
+          type = str;
+          default = "hosts/${hostName}/files/host_key";
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        privateKeyEnvPath = mkOption {
+          type = str;
+          default = "ssh/ssh_host_ed25519_key";
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        publicKeyRaw = mkOption {
+          type = nullOr str;
+          default = null;
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        publicKeySecretsAttrsetKey = mkOption {
+          type = str;
+          default = "publicKeys.hosts.${hostName}.hostKey";
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        publicKeyEnvPath = mkOption {
+          type = str;
+          default = "ssh/id_ed25519.pub";
           description = mdDoc ''
             TODO
           '';
         };
       };
+    };
 
-      agenix = {
-        enable = mkAgenixEnableOption;
+    home = {
+      enable = mkHomeEnableOption;
 
-        hostKey = {
+      settings = mkHomeSettingsOption (_user: {
+        withKeychain = mkOption {
+          type = bool;
+          default = true;
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        authorizedKeys = {
+          enable = mkAlreadyEnabledOption (mdDoc ''
+            TODO
+          '');
+
+          keysRaw = mkOption {
+            type = listOf str;
+            default = [];
+            description = mdDoc ''
+              TODO
+            '';
+          };
+
+          keysSecretsAttrsetKey = mkOption {
+            type = str;
+            default = "publicKeys.hosts.${hostName}.users.${_user}.authorizedKeys";
+            description = mdDoc ''
+              TODO
+            '';
+          };
+        };
+
+        userKey = {
           enable = mkEnableOption (mdDoc ''
             TODO
           '');
 
           privateKeySecretsPath = mkOption {
             type = str;
-            default = "hosts/${hostName}/files/host_key";
+            default = "hosts/${hostName}/users/${_user}/private_key";
             description = mdDoc ''
               TODO
             '';
           };
 
-          privateKeyEnvPath = mkOption {
+          privateKeyHomePath = mkOption {
             type = str;
-            default = "ssh/ssh_host_ed25519_key";
+            default = ".ssh/id_ed25519";
+            description = mdDoc ''
+              TODO
+            '';
+          };
+
+          publicKeyHomePath = mkOption {
+            type = str;
+            default = ".ssh/id_ed25519.pub";
             description = mdDoc ''
               TODO
             '';
@@ -92,111 +188,19 @@ in {
 
           publicKeySecretsAttrsetKey = mkOption {
             type = str;
-            default = "publicKeys.hosts.${hostName}.hostKey";
-            description = mdDoc ''
-              TODO
-            '';
-          };
-
-          publicKeyEnvPath = mkOption {
-            type = str;
-            default = "ssh/id_ed25519.pub";
+            default = "publicKeys.hosts.${hostName}.users.${_user}.userKey";
             description = mdDoc ''
               TODO
             '';
           };
         };
-
-      };
-
-      home = {
-        enable = mkHomeEnableOption;
-
-        settings = mkHomeSettingsOption (_user: {
-
-          withKeychain = mkOption {
-            type = bool;
-            default = true;
-            description = mdDoc ''
-              TODO
-            '';
-          };
-
-          authorizedKeys = {
-            enable = mkAlreadyEnabledOption (mdDoc ''
-              TODO
-            '');
-
-            keysRaw = mkOption {
-              type = listOf str;
-              default = [ ];
-              description = mdDoc ''
-                TODO
-              '';
-            };
-
-            keysSecretsAttrsetKey = mkOption {
-              type = str;
-              default =
-                "publicKeys.hosts.${hostName}.users.${_user}.authorizedKeys";
-              description = mdDoc ''
-                TODO
-              '';
-            };
-          };
-
-          userKey = {
-            enable = mkEnableOption (mdDoc ''
-              TODO
-            '');
-
-            privateKeySecretsPath = mkOption {
-              type = str;
-              default = "hosts/${hostName}/users/${_user}/private_key";
-              description = mdDoc ''
-                TODO
-              '';
-            };
-
-            privateKeyHomePath = mkOption {
-              type = str;
-              default = ".ssh/id_ed25519";
-              description = mdDoc ''
-                TODO
-              '';
-            };
-
-            publicKeyHomePath = mkOption {
-              type = str;
-              default = ".ssh/id_ed25519.pub";
-              description = mdDoc ''
-                TODO
-              '';
-            };
-
-            publicKeyRaw = mkOption {
-              type = nullOr str;
-              default = null;
-              description = mdDoc ''
-                TODO
-              '';
-            };
-
-            publicKeySecretsAttrsetKey = mkOption {
-              type = str;
-              default = "publicKeys.hosts.${hostName}.users.${_user}.userKey";
-              description = mdDoc ''
-                TODO
-              '';
-            };
-          };
-        });
-      };
+      });
     };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
+    {
       assertions = with tensorfiles.asserts; [
         (mkIf cfg.home.enable (assertHomeManagerLoaded config))
         (mkIf cfg.agenix.enable {
@@ -210,9 +214,9 @@ in {
           '';
         })
       ];
-    })
+    }
     # |----------------------------------------------------------------------| #
-    ({
+    {
       programs.ssh = {
         startAgent = _ true;
         extraConfig = mkBefore ''
@@ -239,7 +243,7 @@ in {
           KbdInteractiveAuthentication = _ false;
         };
       };
-    })
+    }
     # |----------------------------------------------------------------------| #
     # (mkIf (agenixCheck && cfg.agenix.hostKey.enable) (with cfg.agenix.hostKey; {
 
@@ -264,14 +268,14 @@ in {
     # }))
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.genHostKey.enable) {
-      services.openssh.hostKeys = [ cfg.genHostKey.hostKey ];
+      services.openssh.hostKeys = [cfg.genHostKey.hostKey];
     })
     # |----------------------------------------------------------------------| #
     (mkIf (agenixCheck && cfg.home.enable) {
-      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings.${_user};
-        in with userCfg.userKey; {
-
+      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings.${_user};
+      in
+        with userCfg.userKey; {
           "${privateKeySecretsPath}" = mkIf enable {
             file = _ (secretsPath + "/${privateKeySecretsPath}.age");
             mode = _ "700";
@@ -279,47 +283,50 @@ in {
           };
         });
 
-      users.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in with userCfg.authorizedKeys; {
-
-          openssh.authorizedKeys.keys = mkIf enable ([ ] ++ keysRaw
-            ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [ ]
+      users.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+      in
+        with userCfg.authorizedKeys; {
+          openssh.authorizedKeys.keys = mkIf enable ([]
+            ++ keysRaw
+            ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) []
               secretsAttrset));
         });
 
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let
-          userCfg = cfg.home.settings."${_user}";
-          hmConfig = config.home-manager.users.${_user};
-        in with userCfg.userKey; {
-
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+        hmConfig = config.home-manager.users.${_user};
+      in
+        with userCfg.userKey; {
           home.file = mkIf enable {
-            "${privateKeyHomePath}".source = _
+            "${privateKeyHomePath}".source =
+              _
               (hmConfig.lib.file.mkOutOfStoreSymlink
                 config.age.secrets."${privateKeySecretsPath}".path);
 
             "${publicKeyHomePath}".text = let
-              key = (if publicKeyRaw != null then
-                publicKeyRaw
-              else
-                (attrsets.attrByPath
-                  (splitString "." publicKeySecretsAttrsetKey) ""
-                  secretsAttrset));
-            in _ key;
+              key =
+                if publicKeyRaw != null
+                then publicKeyRaw
+                else
+                  (attrsets.attrByPath
+                    (splitString "." publicKeySecretsAttrsetKey) ""
+                    secretsAttrset);
+            in
+              _ key;
           };
 
           programs.keychain = mkIf userCfg.withKeychain {
             enable = _ true;
             enableBashIntegration = _ true;
-            agents = [ "ssh" ];
-            extraFlags = [ "--nogui" ];
-            keys = [ "id_ed25519" ];
+            agents = ["ssh"];
+            extraFlags = ["--nogui"];
+            keys = ["id_ed25519"];
           };
         });
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

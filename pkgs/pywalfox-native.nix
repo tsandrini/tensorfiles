@@ -13,29 +13,32 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ lib, python3, ... }:
-
+{
+  lib,
+  python3,
+  ...
+}:
 with python3.pkgs;
-buildPythonApplication rec {
-  pname = "pywalfox";
-  version = "2.7.4";
+  buildPythonApplication rec {
+    pname = "pywalfox";
+    version = "2.7.4";
 
-  src = fetchPypi {
-    inherit pname version;
-    sha256 = "59e73d7e27389574fb801634e03d8471f09bfe062865cad803f68c456680ed66";
-  };
+    src = fetchPypi {
+      inherit pname version;
+      sha256 = "59e73d7e27389574fb801634e03d8471f09bfe062865cad803f68c456680ed66";
+    };
 
-  propagatedBuildInputs = [ setuptools ];
+    propagatedBuildInputs = [setuptools];
 
-  # No tests included
-  doCheck = false;
-  pythonImportsCheck = [ "pywalfox" ];
+    # No tests included
+    doCheck = false;
+    pythonImportsCheck = ["pywalfox"];
 
-  meta = with lib; {
-    homepage = "https://github.com/Frewacom/pywalfox-native";
-    description = "Native app used alongside the Pywalfox addon.";
-    license = licenses.mpl20;
-    platforms = [ "x86_64-linux" ];
-    maintainers = with tensorfiles.maintainers; [ tsandrini ];
-  };
-}
+    meta = with lib; {
+      homepage = "https://github.com/Frewacom/pywalfox-native";
+      description = "Native app used alongside the Pywalfox addon.";
+      license = licenses.mpl20;
+      platforms = ["x86_64-linux"];
+      maintainers = with tensorfiles.maintainers; [tsandrini];
+    };
+  }

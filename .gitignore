@@ -5,3 +5,7 @@
 .vim/plugged/
 result/
 build/
+
+result/
+.direnv/
+.devenv/

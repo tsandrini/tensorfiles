@@ -12,10 +12,14 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit (tensorfiles.nixos) isPersistenceEnabled;
 
@@ -23,40 +27,39 @@ let
   _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.services.networking.networkmanager = with types;
-    with tensorfiles.options; {
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles the networkmanager service.
+    '');
 
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the networkmanager service.
-      '');
+    persistence = {enable = mkPersistenceEnableOption;};
 
-      persistence = { enable = mkPersistenceEnableOption; };
+    home = {
+      enable = mkHomeEnableOption;
 
-      home = {
-        enable = mkHomeEnableOption;
-
-        settings = mkHomeSettingsOption (_user: {
-
-          addUserToGroup = mkOption {
-            type = bool;
-            default = true;
-            description = mdDoc ''
-              Whether the given user should be added to the
-              `networkmanager` group.
-            '';
-          };
-        });
-      };
+      settings = mkHomeSettingsOption (_user: {
+        addUserToGroup = mkOption {
+          type = bool;
+          default = true;
+          description = mdDoc ''
+            Whether the given user should be added to the
+            `networkmanager` group.
+          '';
+        };
+      });
     };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({ networking.networkmanager.enable = _ true; })
+    {networking.networkmanager.enable = _ true;}
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.persistence.enable && (isPersistenceEnabled config))
-      (let persistence = config.tensorfiles.system.persistence;
+      (let
+        persistence = config.tensorfiles.system.persistence;
       in {
         environment.persistence."${persistence.persistentRoot}" = {
-          directories = [ "/etc/NetworkManager/system-connections" ];
+          directories = ["/etc/NetworkManager/system-connections"];
           files = [
             "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
             "/var/lib/NetworkManager/seen-bssids"
@@ -66,12 +69,12 @@ in {
       }))
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      users.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in { extraGroups = optional userCfg.addUserToGroup "networkmanager"; });
+      users.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+      in {extraGroups = optional userCfg.addUserToGroup "networkmanager";});
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -12,34 +12,38 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.tasks.nix-garbage-collect;
   _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.tasks.nix-garbage-collect = with types;
-    with tensorfiles.options; {
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures the task handling periodix nix store
-        garbage collection.
-      '');
-    };
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures the task handling periodix nix store
+      garbage collection.
+    '');
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
+    {
       nix.gc = {
         automatic = _ true;
         dates = _ "weekly";
         options = _ "--delete-older-than 3d";
       };
-    })
+    }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

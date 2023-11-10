@@ -12,11 +12,18 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, user ? "root", projectPath
-, secretsPath ? (projectPath + "/secrets"), ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  user ? "root",
+  projectPath,
+  secretsPath ? (projectPath + "/secrets"),
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.headless;
@@ -25,25 +32,25 @@ let
   usersRootCfg = config.tensorfiles.system.users.home.settings."root";
   enableMainUser = user != "root";
 
-  usersMainCfg = if enableMainUser then
-    config.tensorfiles.system.users.home.settings."${user}"
-  else
-    { };
+  usersMainCfg =
+    if enableMainUser
+    then config.tensorfiles.system.users.home.settings."${user}"
+    else {};
 in {
   options.tensorfiles.profiles.headless = with types;
-    with tensorfiles.options; {
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the headless system profile.
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles the headless system profile.
 
-        **Headless layer** builds on top of the minimal layer and adds other
-        server-like functionalty like simple shells, basic networking for remote
-        access and simple editors.
-      '');
-    };
+      **Headless layer** builds on top of the minimal layer and adds other
+      server-like functionalty like simple shells, basic networking for remote
+      access and simple editors.
+    '');
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
+    {
       tensorfiles = {
         profiles.minimal.enable = _ true;
 
@@ -56,8 +63,13 @@ in {
         services.networking.openssh.enable = _ true;
 
         misc.xdg.home.settings = {
-          "root" = { };
-          "${if enableMainUser then user else "_"}" = mkIf enableMainUser { };
+          "root" = {};
+          "${
+            if enableMainUser
+            then user
+            else "_"
+          }" =
+            mkIf enableMainUser {};
         };
 
         system.users.home.settings = {
@@ -67,7 +79,11 @@ in {
             # agenixPassword.enable = _ (pathExists (secretsPath
             #   + "/${usersRootCfg.agenixPassword.passwordSecretsPath}.age"));
           };
-          "${if enableMainUser then user else "_"}" = mkIf enableMainUser {
+          "${
+            if enableMainUser
+            then user
+            else "_"
+          }" = mkIf enableMainUser {
             isSudoer = _ true;
             email = _ "tomas.sandrini@seznam.cz"; # TODO uhhh dunno, do smth
             agenixPassword.enable = _ true;
@@ -75,11 +91,10 @@ in {
             #   + "/${usersMainCfg.agenixPassword.passwordSecretsPath}.age"));
           };
         };
-
       };
-    })
+    }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

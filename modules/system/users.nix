@@ -12,16 +12,28 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, hostName, projectPath
-, secretsPath ? (projectPath + "/secrets"), user ? "root"
-, lintCompatibility ? false, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  hostName,
+  projectPath,
+  secretsPath ? (projectPath + "/secrets"),
+  user ? "root",
+  lintCompatibility ? false,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.types) email;
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-  inherit (tensorfiles.nixos)
-    isPersistenceEnabled isAgenixEnabled absolutePathToRelativeHome;
+  inherit
+    (tensorfiles.nixos)
+    isPersistenceEnabled
+    isAgenixEnabled
+    absolutePathToRelativeHome
+    ;
   inherit (tensorfiles.attrsets) mapToAttrsAndMerge;
 
   cfg = config.tensorfiles.system.users;
@@ -37,7 +49,7 @@ let
   #       homeDirectory = cfg.home.settings."${user}".homeDir;
   #     });
 
-  agenixCheck = ((isAgenixEnabled config) && cfg.agenix.enable);
+  agenixCheck = (isAgenixEnabled config) && cfg.agenix.enable;
 in {
   # TODO move bluetooth dir to hardware
   # TODO pass also root user
@@ -45,223 +57,223 @@ in {
   # TODO zotero
   # TODO move fontconfig elsewhere
   options.tensorfiles.system.users = with types;
-    with tensorfiles.options; {
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that sets up the basis for the userspace, that is
-        declarative management, basis for the home directories and also
-        configures home-manager, persistence, agenix if they are enabled.
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that sets up the basis for the userspace, that is
+      declarative management, basis for the home directories and also
+      configures home-manager, persistence, agenix if they are enabled.
 
-        (Persistence) The users module will automatically append and set up the
-        usual home related directories, however, in case that you have an opt-in
-        filesystem with a persistent home, you should set
-        `persistence.enable = false`
+      (Persistence) The users module will automatically append and set up the
+      usual home related directories, however, in case that you have an opt-in
+      filesystem with a persistent home, you should set
+      `persistence.enable = false`
 
-        (Agenix) This module uses the following secrets
-        1. `common/passwords/users/$user_default`
-          User passwords. They are meant to be defaults that should be later
-          configured and changed appropriately on each host, which would ideally be
-          `hosts/$host/passwords/users/$user`
-      '');
+      (Agenix) This module uses the following secrets
+      1. `common/passwords/users/$user_default`
+        User passwords. They are meant to be defaults that should be later
+        configured and changed appropriately on each host, which would ideally be
+        `hosts/$host/passwords/users/$user`
+    '');
 
-      persistence = { enable = mkPersistenceEnableOption; };
+    persistence = {enable = mkPersistenceEnableOption;};
 
-      agenix = { enable = mkAgenixEnableOption; };
+    agenix = {enable = mkAgenixEnableOption;};
 
-      home = {
-        enable = mkHomeEnableOption;
+    home = {
+      enable = mkHomeEnableOption;
 
-        settings = mkHomeSettingsOption (_user: {
+      settings = mkHomeSettingsOption (_user: {
+        isSudoer = mkOption {
+          type = bool;
+          default = true;
+          description = mdDoc ''
+            Add user to sudoers (ie the `wheel` group)
+          '';
+        };
 
-          isSudoer = mkOption {
-            type = bool;
-            default = true;
-            description = mdDoc ''
-              Add user to sudoers (ie the `wheel` group)
-            '';
-          };
+        initDirectoryStructure = mkOption {
+          type = bool;
+          default = true;
+          description = mdDoc ''
+            Whether to automatically create all the directories. Home-manager
+            doesn't do this automatically unless you need to populate it with
+            files, so this option might be useful.
 
-          initDirectoryStructure = mkOption {
-            type = bool;
-            default = true;
-            description = mdDoc ''
-              Whether to automatically create all the directories. Home-manager
-              doesn't do this automatically unless you need to populate it with
-              files, so this option might be useful.
+            This is achieved by creating an empty `.blank` file inside the
+            directories, thanks to this we preserve the overall purity.
+          '';
+        };
 
-              This is achieved by creating an empty `.blank` file inside the
-              directories, thanks to this we preserve the overall purity.
-            '';
-          };
+        email = mkOption {
+          type = nullOr email;
+          default = null;
+          description = mdDoc ''
+            TODO
+          '';
+        };
 
-          email = mkOption {
-            type = nullOr email;
-            default = null;
+        description = mkOption {
+          type = nullOr str;
+          default = null;
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        homeDir = mkOption {
+          type = path;
+          default =
+            if _user != "root"
+            then "/home/${_user}"
+            else "/root";
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        configDir = mkOption {
+          type = path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/.config"
+            else "/root/.config";
+          description = mdDoc ''
+            The usual downloads home dir.
+            Path is relative to the given user home directory.
+
+            If you'd like to disable the features of the downloads dir, just
+            set it to null, ie `home.settings.$user.downloadsDir = null;`
+          '';
+        };
+
+        # configFile = mkOption {
+        #   type =
+        #     userFiletypes."${_user}" "xdg.configFile" "{var}`xdg.configHome`"
+        #     cfg.configHome;
+        #   default = { };
+        #   description = mdDoc ''
+        #     TODO
+        #   '';
+        # };
+
+        cacheDir = mkOption {
+          type = path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/.cache"
+            else "/root/.cache";
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        appDataDir = mkOption {
+          type = path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/.local/share"
+            else "/root/.local/share";
+          description = mdDoc ''
+            The usual downloads home dir.
+            Path is relative to the given user home directory.
+
+            If you'd like to disable the features of the downloads dir, just
+            set it to null, ie `home.settings.$user.downloadsDir = null;`
+          '';
+        };
+
+        appStateDir = mkOption {
+          type = path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/.local/state"
+            else "/root/.local/state";
+          description = mdDoc ''
+            TODO
+          '';
+        };
+
+        downloadsDir = mkOption {
+          type = nullOr path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/Downloads"
+            else "/root/Downloads";
+          description = mdDoc ''
+            The usual downloads home dir.
+
+            If you'd like to disable the features of the downloads dir, just
+            set it to null, ie `home.settings.$user.downloadsDir = null;`
+          '';
+        };
+
+        orgDir = mkOption {
+          type = nullOr path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/OrgBundle"
+            else "/root/OrgBundle";
+          description = mdDoc ''
+            Central directory for the organization of your whole life!
+            Org-mode, org-roam, org-agenda, and much more!
+
+            If you'd like to disable the features of the org dir, just
+            set it to null, ie `home.settings.$user.orgDir = null;`
+          '';
+        };
+
+        projectsDir = mkOption {
+          type = nullOr path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/ProjectBundle"
+            else "/root/ProjectBundle";
+          description = mdDoc ''
+            TODO
+
+            If you'd like to disable the features of the downloads dir, just
+            set it to null, ie `home.settings.$user.projectsDir = null;`
+          '';
+        };
+
+        miscDataDir = mkOption {
+          type = nullOr path;
+          default =
+            if _user != "root"
+            then "/home/${_user}/FiberBundle"
+            else "/root/FiberBundle";
+          description = mdDoc ''
+            TODO
+
+            If you'd like to disable the features of the downloads dir, just
+            set it to null, ie `home.settings.$user.miscDataDir = null;`
+          '';
+        };
+
+        agenixPassword = {
+          enable = mkEnableOption (mdDoc ''
+            TODO
+          '');
+
+          passwordSecretsPath = mkOption {
+            type = str;
+            default = "hosts/${hostName}/users/${_user}/system-password";
             description = mdDoc ''
               TODO
             '';
           };
-
-          description = mkOption {
-            type = nullOr str;
-            default = null;
-            description = mdDoc ''
-              TODO
-            '';
-          };
-
-          homeDir = mkOption {
-            type = path;
-            default = (if _user != "root" then "/home/${_user}" else "/root");
-            description = mdDoc ''
-              TODO
-            '';
-          };
-
-          configDir = mkOption {
-            type = path;
-            default = (if _user != "root" then
-              "/home/${_user}/.config"
-            else
-              "/root/.config");
-            description = mdDoc ''
-              The usual downloads home dir.
-              Path is relative to the given user home directory.
-
-              If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.downloadsDir = null;`
-            '';
-          };
-
-          # configFile = mkOption {
-          #   type =
-          #     userFiletypes."${_user}" "xdg.configFile" "{var}`xdg.configHome`"
-          #     cfg.configHome;
-          #   default = { };
-          #   description = mdDoc ''
-          #     TODO
-          #   '';
-          # };
-
-          cacheDir = mkOption {
-            type = path;
-            default = (if _user != "root" then
-              "/home/${_user}/.cache"
-            else
-              "/root/.cache");
-            description = mdDoc ''
-              TODO
-            '';
-          };
-
-          appDataDir = mkOption {
-            type = path;
-            default = (if _user != "root" then
-              "/home/${_user}/.local/share"
-            else
-              "/root/.local/share");
-            description = mdDoc ''
-              The usual downloads home dir.
-              Path is relative to the given user home directory.
-
-              If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.downloadsDir = null;`
-            '';
-          };
-
-          appStateDir = mkOption {
-            type = path;
-            default = (if _user != "root" then
-              "/home/${_user}/.local/state"
-            else
-              "/root/.local/state");
-            description = mdDoc ''
-              TODO
-            '';
-          };
-
-          downloadsDir = mkOption {
-            type = nullOr path;
-            default = (if _user != "root" then
-              "/home/${_user}/Downloads"
-            else
-              "/root/Downloads");
-            description = mdDoc ''
-              The usual downloads home dir.
-
-              If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.downloadsDir = null;`
-            '';
-          };
-
-          orgDir = mkOption {
-            type = nullOr path;
-            default = (if _user != "root" then
-              "/home/${_user}/OrgBundle"
-            else
-              "/root/OrgBundle");
-            description = mdDoc ''
-              Central directory for the organization of your whole life!
-              Org-mode, org-roam, org-agenda, and much more!
-
-              If you'd like to disable the features of the org dir, just
-              set it to null, ie `home.settings.$user.orgDir = null;`
-            '';
-          };
-
-          projectsDir = mkOption {
-            type = nullOr path;
-            default = (if _user != "root" then
-              "/home/${_user}/ProjectBundle"
-            else
-              "/root/ProjectBundle");
-            description = mdDoc ''
-              TODO
-
-              If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.projectsDir = null;`
-            '';
-          };
-
-          miscDataDir = mkOption {
-            type = nullOr path;
-            default = (if _user != "root" then
-              "/home/${_user}/FiberBundle"
-            else
-              "/root/FiberBundle");
-            description = mdDoc ''
-              TODO
-
-              If you'd like to disable the features of the downloads dir, just
-              set it to null, ie `home.settings.$user.miscDataDir = null;`
-            '';
-          };
-
-          agenixPassword = {
-            enable = mkEnableOption (mdDoc ''
-              TODO
-            '');
-
-            passwordSecretsPath = mkOption {
-              type = str;
-              default = "hosts/${hostName}/users/${_user}/system-password";
-              description = mdDoc ''
-                TODO
-              '';
-            };
-          };
-
-        });
-      };
+        };
+      });
     };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
-      assertions = with tensorfiles.asserts;
-        [ (mkIf cfg.home.enable (assertHomeManagerLoaded config)) ];
-    })
+    {
+      assertions = with tensorfiles.asserts; [(mkIf cfg.home.enable (assertHomeManagerLoaded config))];
+    }
     # |----------------------------------------------------------------------| #
-    ({ users.mutableUsers = _ false; })
+    {users.mutableUsers = _ false;}
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.useGlobalPkgs = _ true;
@@ -269,99 +281,101 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in {
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+      in {
+        imports = with inputs; ([] ++ (optional agenixCheck agenix.homeManagerModules.default));
 
-          imports = with inputs;
-            ([ ] ++ (optional agenixCheck agenix.homeManagerModules.default));
+        home = {
+          username = _ "${_user}";
+          homeDirectory = _ userCfg.homeDir;
+          stateVersion = _ "23.05";
+        };
 
-          home = {
-            username = _ "${_user}";
-            homeDirectory = _ userCfg.homeDir;
-            stateVersion = _ "23.05";
-          };
+        fonts.fontconfig.enable = _ true;
 
-          fonts.fontconfig.enable = _ true;
+        home.file = mkIf userCfg.initDirectoryStructure {
+          "${userCfg.configDir}/.blank".text = mkBefore "";
+          "${userCfg.cacheDir}/.blank".text = mkBefore "";
+          "${userCfg.appDataDir}/.blank".text = mkBefore "";
+          "${userCfg.appStateDir}/.blank".text = mkBefore "";
 
-          home.file = mkIf userCfg.initDirectoryStructure {
-            "${userCfg.configDir}/.blank".text = mkBefore "";
-            "${userCfg.cacheDir}/.blank".text = mkBefore "";
-            "${userCfg.appDataDir}/.blank".text = mkBefore "";
-            "${userCfg.appStateDir}/.blank".text = mkBefore "";
-
-            "${userCfg.downloadsDir}/.blank".text =
-              mkIf (userCfg.downloadsDir != null) (mkBefore "");
-            "${userCfg.orgDir}/.blank".text =
-              mkIf (userCfg.orgDir != null) (mkBefore "");
-            "${userCfg.projectsDir}/.blank".text =
-              mkIf (userCfg.projectsDir != null) (mkBefore "");
-            "${userCfg.miscDataDir}/.blank".text =
-              mkIf (userCfg.miscDataDir != null) (mkBefore "");
-          };
-        });
+          "${userCfg.downloadsDir}/.blank".text =
+            mkIf (userCfg.downloadsDir != null) (mkBefore "");
+          "${userCfg.orgDir}/.blank".text =
+            mkIf (userCfg.orgDir != null) (mkBefore "");
+          "${userCfg.projectsDir}/.blank".text =
+            mkIf (userCfg.projectsDir != null) (mkBefore "");
+          "${userCfg.miscDataDir}/.blank".text =
+            mkIf (userCfg.miscDataDir != null) (mkBefore "");
+        };
+      });
     })
     # |----------------------------------------------------------------------| #
     # TODO TODO TODO TODO
     (mkIf cfg.home.enable {
-      users.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in {
-          name = _ _user;
-          isNormalUser = _ (_user != "root");
-          isSystemUser = _ (_user == "root");
-          extraGroups = [ "video" "audio" "camera" ]
-            ++ (optional userCfg.isSudoer "wheel");
-          home = _ userCfg.homeDir;
+      users.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+      in {
+        name = _ _user;
+        isNormalUser = _ (_user != "root");
+        isSystemUser = _ (_user == "root");
+        extraGroups =
+          ["video" "audio" "camera"]
+          ++ (optional userCfg.isSudoer "wheel");
+        home = _ userCfg.homeDir;
 
-          hashedPasswordFile =
-            (mkIf (agenixCheck && userCfg.agenixPassword.enable) (_
-              config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path));
-        });
+        hashedPasswordFile =
+          mkIf (agenixCheck && userCfg.agenixPassword.enable) (_
+            config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path);
+      });
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.home.enable && (isPersistenceEnabled config)
-      && cfg.persistence.enable)
-      (let persistence = config.tensorfiles.system.persistence;
+    (mkIf (cfg.home.enable
+        && (isPersistenceEnabled config)
+        && cfg.persistence.enable)
+      (let
+        persistence = config.tensorfiles.system.persistence;
       in {
-        environment.persistence."${persistence.persistentRoot}".users =
-          genAttrs (attrNames cfg.home.settings) (_user:
-            let
-              userCfg = cfg.home.settings."${_user}";
-              toRelative = (flip absolutePathToRelativeHome) {
-                inherit _user;
-                cfg = config;
-              };
-            in {
-              home = userCfg.homeDir;
-              directories = [
-                {
-                  directory = ".gnupg";
-                  mode = "0700";
-                }
-                {
-                  directory = ".ssh";
-                  mode = "0700";
-                }
-              ] ++ (optional (userCfg.downloadsDir != null)
-                (toRelative userCfg.downloadsDir))
-                ++ (optional (userCfg.orgDir != null)
-                  (toRelative userCfg.orgDir))
-                ++ (optional (userCfg.projectsDir != null)
-                  (toRelative userCfg.projectsDir))
-                ++ (optional (userCfg.cacheDir != null)
-                  (toRelative userCfg.cacheDir))
-                ++ (optional (userCfg.appDataDir != null)
-                  (toRelative userCfg.appDataDir))
-                ++ (optional (userCfg.miscDataDir != null)
-                  (toRelative userCfg.miscDataDir));
-            });
+        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: let
+          userCfg = cfg.home.settings."${_user}";
+          toRelative = (flip absolutePathToRelativeHome) {
+            inherit _user;
+            cfg = config;
+          };
+        in {
+          home = userCfg.homeDir;
+          directories =
+            [
+              {
+                directory = ".gnupg";
+                mode = "0700";
+              }
+              {
+                directory = ".ssh";
+                mode = "0700";
+              }
+            ]
+            ++ (optional (userCfg.downloadsDir != null)
+              (toRelative userCfg.downloadsDir))
+            ++ (optional (userCfg.orgDir != null)
+              (toRelative userCfg.orgDir))
+            ++ (optional (userCfg.projectsDir != null)
+              (toRelative userCfg.projectsDir))
+            ++ (optional (userCfg.cacheDir != null)
+              (toRelative userCfg.cacheDir))
+            ++ (optional (userCfg.appDataDir != null)
+              (toRelative userCfg.appDataDir))
+            ++ (optional (userCfg.miscDataDir != null)
+              (toRelative userCfg.miscDataDir));
+        });
       }))
     # |----------------------------------------------------------------------| #
     (mkIf (agenixCheck && cfg.home.enable) {
-      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in with userCfg.agenixPassword; {
+      age.secrets = mapToAttrsAndMerge (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings."${_user}";
+      in
+        with userCfg.agenixPassword; {
           "${passwordSecretsPath}" = mkIf enable {
             file = _ (secretsPath + "/${passwordSecretsPath}.age");
             mode = _ "700";
@@ -372,5 +386,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }
