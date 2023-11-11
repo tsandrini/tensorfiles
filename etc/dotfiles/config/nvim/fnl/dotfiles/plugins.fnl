@@ -29,7 +29,7 @@
   :Olical/nvim-local-fennel {}
   :tpope/vim-repeat {}
   :kyazdani42/nvim-web-devicons {}
-  :nvim-treesitter/nvim-treesitter {:mod :treesitter}
+  ;; :nvim-treesitter/nvim-treesitter {:mod :treesitter}
   ;:neovim/nvim-lspconfig {}
   ;:glepnir/lspsaga.nvim {:mod :lspsaga}
   ;:folke/trouble.nvim {:mod :trouble}

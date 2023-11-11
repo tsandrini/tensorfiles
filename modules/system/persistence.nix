@@ -12,10 +12,13 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.system.persistence;
@@ -83,7 +86,7 @@ in {
         type = str;
         default = "root";
         description = mdDoc ''
-          The main root btrfs subvolume path that is going to be resetted to
+          The main root btrfs subvolume path that is going to be reset to
           blankRootSnapshot later.
         '';
       };
@@ -93,7 +96,7 @@ in {
         default = "root-blank";
         description = mdDoc ''
           The btrfs snapshot of the main rootSubvolume. You will probably
-          need to create this one manully during the installation & formatting
+          need to create this one manually during the installation & formatting
           of the system. One such way is using the following command:
 
           btrfs su snapshot -r /mnt/root /mnt/root-blank
@@ -104,7 +107,7 @@ in {
         type = path;
         default = "/mnt";
         description = mdDoc ''
-          Temporary mounpoint that should be used for mounting and resetting
+          Temporary mountpoint that should be used for mounting and resetting
           the rootPartition.
 
           This is useful mainly if you want to prevent some conflicts.
@@ -115,15 +118,16 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
-      assertions = [{
-        assertion = hasAttr "persistence" config.environment;
-        message =
-          "environment.persistence missing, please install and import the impermanence module";
-      }];
-    })
+    {
+      assertions = [
+        {
+          assertion = hasAttr "persistence" config.environment;
+          message = "environment.persistence missing, please install and import the impermanence module";
+        }
+      ];
+    }
     # |----------------------------------------------------------------------| #
-    ({
+    {
       environment.persistence = {
         "${cfg.persistentRoot}" = {
           hideMounts = _ true;
@@ -132,10 +136,10 @@ in {
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
             "/var/lib/systemd/coredump"
           ];
-          files = [ "/etc/adjtime" "/etc/machine-id" ];
+          files = ["/etc/adjtime" "/etc/machine-id"];
         };
       };
-    })
+    }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.disableSudoLectures {
       security.sudo.extraConfig = mkBefore ''
@@ -188,5 +192,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

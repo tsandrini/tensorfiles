@@ -12,52 +12,50 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, system, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
-with lib;
-let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-
+with lib; let
   cfg = config.tensorfiles.services.pywalfox-native;
-  _ = mkOverrideAtModuleLevel;
 
   # pywalfox-native = inputs.self.packages.${system}.pywalfox-native;
-  pywalfox-native = pkgs.tensorfiles.pywalfox-native;
+  inherit (pkgs.tensorfiles) pywalfox-native;
   pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
     ${pywalfox-native}/bin/pywalfox start
   '';
 in {
   options.tensorfiles.services.pywalfox-native = with types;
-    with tensorfiles.options; {
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles the pywalfox native
+      messenger.
+    '');
 
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the pywalfox native
-        messenger.
-      '');
+    home = {
+      enable = mkHomeEnableOption;
 
-      home = {
-        enable = mkHomeEnableOption;
-
-        settings = mkHomeSettingsOption (_user: { });
-      };
+      settings = mkHomeSettingsOption (_user: {});
     };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in {
-          home.packages = with pkgs; [ pywalfox-native ];
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
+        home.packages = with pkgs; [pywalfox-native];
 
-          home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
-            builtins.replaceStrings [ "<path>" ]
-            [ "${pywalfox-wrapper}/bin/pywalfox-wrapper" ] (builtins.readFile
-              "${pywalfox-native}/lib/python3.10/site-packages/pywalfox/assets/manifest.json");
-        });
+        home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
+          builtins.replaceStrings ["<path>"]
+          ["${pywalfox-wrapper}/bin/pywalfox-wrapper"] (builtins.readFile
+            "${pywalfox-native}/lib/python3.11/site-packages/pywalfox/assets/manifest.json");
+      });
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

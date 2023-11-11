@@ -21,6 +21,7 @@
 (nvim.ex.set "formatoptions+=l")
 (nvim.ex.set "rulerformat=%l:%c")
 (nvim.ex.set :nofoldenable)
+(nvim.ex.set "clipboard=unnamedplus")
 
 (nvim.ex.set :wildmenu)
 (nvim.ex.set "wildmode=full")

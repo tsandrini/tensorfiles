@@ -63,3 +63,14 @@
 
 ;; Fun stuff :)
 ;(package! speed-type)
+
+;;(package! org-super-agenda)
+;; (package! emacsql-sqlite)
+(package! doct)
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+
+
+(package! kbd-mode
+  :recipe (:host github
+           :repo "kmonad/kbd-mode"))

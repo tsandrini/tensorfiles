@@ -80,7 +80,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git git-flow colorize colored-man-pages zsh-autosuggestions)
+plugins=(git git-flow colorize colored-man-pages zsh-autosuggestions fzf)
 
 ZSH_CACHE_DIR=$HOME/.oh-my-zsh-cache
 if [[ ! -d $ZSH_CACHE_DIR ]]; then
@@ -140,3 +140,7 @@ source ~/.cache/wal/colors-tty.sh
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[[ ! -r /home/tsandrini/.opam/opam-init/init.zsh ]] || source /home/tsandrini/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
+
+eval "$(direnv hook zsh)"

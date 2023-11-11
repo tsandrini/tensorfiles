@@ -1,0 +1,38 @@
+(defcfg
+  input (device-file "/dev/input/by-id/usb-Keychron_Keychron_Q8-event-kbd")
+  output (uinput-sink "My KMonad output"
+    "sleep 1 && setxkbmap -layout us,cz -variant ,qwerty -option compose:ralt,grp:alt_shift_toggle")
+  cmp-seq ralt    ;; Set the compose key to `RightAlt'
+  cmp-seq-delay 5 ;; 5ms delay between each compose-key sequence press
+
+  fallthrough true
+  allow-cmd false
+)
+
+(defsrc
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc ins
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \    del
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret       home
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft      up
+  lctl lmet lalt           spc            ralt                left down right
+)
+
+(defalias
+  etc (layer-toggle etc)
+)
+
+(deflayer qwerty
+  esc  1    2    3    4    5    6    7    8    9    0    -    =    bspc print
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \    pgup
+  @etc a    s    d    f    g    h    j    k    l    ;    '    ret       pgdn
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft      up
+  lctl lmet lalt           spc            ralt                left down right
+)
+
+(deflayer etc
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _   _
+  _    _    _    _    _    XX   /    7    8    9    -    _    _    _   _
+  _    _    _    _    _    XX   *    4    5    6    +    _    _        _
+  _    _    \(   \)   .    XX   0    1    2    3    _    _         _
+  _    _    _              _              _                      _ _  _
+)

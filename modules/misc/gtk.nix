@@ -12,10 +12,14 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
-with lib;
-let
+with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.misc.gtk;
@@ -23,43 +27,40 @@ let
 in {
   # TODO create a theme system
   options.tensorfiles.misc.gtk = with types;
-    with tensorfiles.options; {
+  with tensorfiles.options; {
+    enable = mkEnableOption (mdDoc ''
+      Enables NixOS module that configures/handles the gtk system.
+    '');
 
-      enable = mkEnableOption (mdDoc ''
-        Enables NixOS module that configures/handles the gtk system.
-      '');
+    home = {
+      enable = mkHomeEnableOption;
 
-      home = {
-        enable = mkHomeEnableOption;
-
-        settings = mkHomeSettingsOption (_user: { });
-      };
+      settings = mkHomeSettingsOption (_user: {});
     };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user:
-        let userCfg = cfg.home.settings."${_user}";
-        in {
-          home.packages = with pkgs; [ dconf ];
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
+        home.packages = with pkgs; [dconf];
 
-          gtk = {
-            enable = _ true;
-            theme = {
-              name = _ "Arc-Dark";
-              package = _ pkgs.arc-theme;
-            };
-
-            iconTheme = {
-              name = _ "Arc";
-              package = _ pkgs.arc-icon-theme;
-            };
+        gtk = {
+          enable = _ true;
+          theme = {
+            name = _ "Arc-Dark";
+            package = _ pkgs.arc-theme;
           };
-        });
+
+          iconTheme = {
+            name = _ "Arc";
+            package = _ pkgs.arc-icon-theme;
+          };
+        };
+      });
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

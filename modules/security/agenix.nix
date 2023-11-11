@@ -12,15 +12,19 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, system, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  system,
+  ...
+}:
 with builtins;
-with lib;
-let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+with lib; let
   inherit (tensorfiles.nixos) isPersistenceEnabled getUserHomeDir;
 
   cfg = config.tensorfiles.security.agenix;
-  _ = mkOverrideAtModuleLevel;
 
   rootHome = getUserHomeDir {
     _user = "root";
@@ -38,37 +42,35 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    ({
+    {
       assertions = [
         {
           assertion = hasAttr "age" config;
-          message =
-            "age attribute missing, please install and import the agenix module";
+          message = "age attribute missing, please install and import the agenix module";
         }
         {
           assertion = hasAttr "agenix" inputs;
-          message =
-            "inputs.agenix attribute missing, please import agenix in such a way so it's accessible via the inputs attribute";
+          message = "inputs.agenix attribute missing, please import agenix in such a way so it's accessible via the inputs attribute";
         }
       ];
-    })
+    }
     # |----------------------------------------------------------------------| #
-    ({
+    {
       environment.systemPackages = with pkgs; [
         inputs.agenix.packages.${system}.default
         age
       ];
-      age.identityPaths = [ "${rootHome}/.ssh/id_ed25519" ];
-    })
+      age.identityPaths = ["${rootHome}/.ssh/id_ed25519"];
+    }
     # |----------------------------------------------------------------------| #
     (mkIf (isPersistenceEnabled config)
-      (let persistence = config.tensorfiles.system.persistence;
+      (let
+        inherit (config.tensorfiles.system) persistence;
       in {
-        age.identityPaths =
-          [ "${persistence.persistentRoot}/${rootHome}/.ssh/id_ed25519" ];
+        age.identityPaths = ["${persistence.persistentRoot}/${rootHome}/.ssh/id_ed25519"];
       }))
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with tensorfiles.maintainers; [ tsandrini ];
+  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -27,6 +27,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    devenv.url = "github:cachix/devenv";
+
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
@@ -35,38 +37,41 @@
       url = "github:arkenfox/user.js";
       flake = false;
     };
+
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, ... }@inputs:
-    let
-      inherit (lib.tensorfiles.modules) mapModules mkPackages mkHost;
+  outputs = {nixpkgs, ...} @ inputs: let
+    inherit (lib.tensorfiles.modules) mapModules mkPackages mkHost mkShells;
 
-      # These assignments are optional and only serve to change the default values
-      # (that being `root` and `./secrets` -- if you don't plan on using any secrets
-      # backend you can simply ignore this), meaning that
-      # you can change or even delete them, however, the projectRoot variable is
-      # required, so please keep that one.
-      user = "tsandrini";
-      projectPath = ./.;
-      secretsPath = (projectPath + "/secrets");
+    # These assignments are optional and only serve to change the default values
+    # (that being `root` and `./secrets` -- if you don't plan on using any secrets
+    # backend you can simply ignore this), meaning that
+    # you can change or even delete them, however, the projectRoot variable is
+    # required, so please keep that one.
+    user = "tsandrini";
 
-      lib = nixpkgs.lib.extend (self: super: {
-        tensorfiles = import ./lib {
-          inherit inputs user;
-          pkgs = nixpkgs;
-          lib = self;
-        };
-      });
+    lib = nixpkgs.lib.extend (self: _super: {
+      tensorfiles = import ./lib {
+        inherit inputs user;
+        pkgs = nixpkgs;
+        lib = self;
+      };
+    });
+  in {
+    lib = lib.tensorfiles;
 
-    in {
-      lib = lib.tensorfiles;
+    overlays = mapModules ./overlays import;
 
-      overlays = mapModules ./overlays import;
+    packages = mkPackages ./pkgs {};
 
-      packages = mkPackages ./pkgs { };
+    nixosModules = mapModules ./modules import;
 
-      nixosModules = mapModules ./modules import;
+    nixosConfigurations = mapModules ./hosts mkHost;
 
-      nixosConfigurations = mapModules ./hosts mkHost;
-    };
+    devShells = mkShells ./shells {};
+  };
 }

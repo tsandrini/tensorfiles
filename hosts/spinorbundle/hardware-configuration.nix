@@ -12,50 +12,56 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, modulesPath, ... }: {
-  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+{
+  config,
+  lib,
+  modulesPath,
+  ...
+}: {
+  imports = [(modulesPath + "/installer/scan/not-detected.nix")];
 
-  boot.initrd.availableKernelModules =
-    [ "xhci_pci" "ahci" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
-  boot.extraModulePackages = [ ];
-  boot.blacklistedKernelModules = [ "radeon" "amdgpu" ];
+  boot = {
+    initrd = {
+      availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc"];
+      kernelModules = [];
+      luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
+    };
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-label/root";
-    fsType = "btrfs";
-    options = [ "subvol=root" "compress=zstd" "noatime" ];
+    kernelModules = ["kvm-intel"];
+    extraModulePackages = [];
+    blacklistedKernelModules = ["radeon" "amdgpu"];
   };
 
-  boot.initrd.luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
-
-  fileSystems."/nix" = {
-    device = "/dev/disk/by-label/root";
-    fsType = "btrfs";
-    options = [ "subvol=nix" "compress=zstd" "noatime" ];
+  fileSystems = {
+    "/" = {
+      device = "/dev/disk/by-label/root";
+      fsType = "btrfs";
+      options = ["subvol=root" "compress=zstd" "noatime"];
+    };
+    "/nix" = {
+      device = "/dev/disk/by-label/root";
+      fsType = "btrfs";
+      options = ["subvol=nix" "compress=zstd" "noatime"];
+    };
+    "/persist" = {
+      device = "/dev/disk/by-label/root";
+      fsType = "btrfs";
+      options = ["subvol=persist" "compress=zstd" "noatime"];
+      neededForBoot = true;
+    };
+    "/var/log" = {
+      device = "/dev/disk/by-label/root";
+      fsType = "btrfs";
+      options = ["subvol=log" "compress=zstd" "noatime"];
+      neededForBoot = true;
+    };
+    "/boot" = {
+      device = "/dev/disk/by-label/boot";
+      fsType = "vfat";
+    };
   };
 
-  fileSystems."/persist" = {
-    device = "/dev/disk/by-label/root";
-    fsType = "btrfs";
-    options = [ "subvol=persist" "compress=zstd" "noatime" ];
-    neededForBoot = true;
-  };
-
-  fileSystems."/var/log" = {
-    device = "/dev/disk/by-label/root";
-    fsType = "btrfs";
-    options = [ "subvol=log" "compress=zstd" "noatime" ];
-    neededForBoot = true;
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-label/boot";
-    fsType = "vfat";
-  };
-
-  swapDevices = [{ device = "/dev/disk/by-label/swap"; }];
+  swapDevices = [{device = "/dev/disk/by-label/swap";}];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -65,7 +71,6 @@
   # networking.interfaces.enp2s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp3s0.useDHCP = lib.mkDefault true;
 
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;

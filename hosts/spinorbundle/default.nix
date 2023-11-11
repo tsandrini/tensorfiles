@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, lib, pkgs, inputs, user ? "root", system, ... }: {
+{
+  pkgs,
+  user ? "root",
+  ...
+}: {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -21,73 +25,84 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = [ ./hardware-configuration.nix ];
-
-  tensorfiles.profiles.laptop.enable = true;
+  imports = [./hardware-configuration.nix];
 
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = with pkgs; [pavucontrol];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
-  home-manager.users.${user} = { home.packages = with pkgs; [ ]; };
+  home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
-  boot.loader.efi = {
-    canTouchEfiVariables = true;
-    efiSysMountPoint = "/boot";
-  };
-  boot.loader.systemd-boot = {
-    enable = true;
-    configurationLimit = 3;
-  };
-  boot.binfmt.emulatedSystems = [ "aarch64-linux" ];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.loader.timeout = 1;
-  boot.loader.grub.enable = false;
-
-  # Services
-  services.tlp.enable = true;
-  services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = true;
+  boot = {
+    loader = {
+      timeout = 1;
+      grub.enable = false;
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 3;
+      };
+    };
+    binfmt.emulatedSystems = ["aarch64-linux"];
+    kernelPackages = pkgs.linuxPackages_latest;
   };
 
-  hardware.enableAllFirmware = true;
-  hardware.cpu.intel.updateMicrocode = true;
+  hardware = {
+    enableAllFirmware = true;
+    cpu.intel.updateMicrocode = true;
 
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      vaapiIntel
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        vaapiIntel
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
+
+    bluetooth = {
+      enable = true;
+      package = pkgs.bluez;
+    };
   };
 
-  programs.ssh.startAgent = true;
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    jack.enable = true;
+  services = {
+    blueman.enable = true;
+    tlp = {
+      enable = true;
+      settings = {
+        START_CHARGE_THRESH_BAT1 = 75;
+        STOP_CHARGE_THRESH_BAT1 = 80;
+      };
+    };
+    openssh = {
+      enable = true;
+      settings.PasswordAuthentication = true;
+    };
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
   };
 
-  users.users.${user}.passwordFile =
-    config.age.secrets."hosts/spinorbundle/passwords/users/${user}".path;
+  tensorfiles = {
+    profiles.graphical-xmonad.enable = true;
+    services.networking.openssh.genHostKey.enable = false;
+    services.networking.openssh.agenix.hostKey.enable = false;
+  };
 
-  users.users.root.passwordFile =
-    config.age.secrets."hosts/spinorbundle/passwords/users/root".path;
-
-  age.secrets."hosts/spinorbundle/passwords/users/${user}".file =
-    ../../secrets/hosts/spinorbundle/passwords/users/${user}.age;
-  age.secrets."hosts/spinorbundle/passwords/users/root".file =
-    ../../secrets/hosts/spinorbundle/passwords/users/root.age;
+  programs.steam.enable = true; # just trying it out
 }
