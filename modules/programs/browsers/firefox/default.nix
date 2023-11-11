@@ -25,7 +25,6 @@ with lib; let
   inherit
     (tensorfiles.nixos)
     isPersistenceEnabled
-    getUserHomeDir
     getUserDownloadsDir
     getUserEmail
     ;
@@ -50,11 +49,6 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
-        userCfg = cfg.home.settings."${_user}";
-        homeDir = getUserHomeDir {
-          inherit _user;
-          cfg = config;
-        };
         downloadsDir = getUserDownloadsDir {
           inherit _user;
           cfg = config;
@@ -255,9 +249,7 @@ in {
       (let
         inherit (config.tensorfiles.system) persistence;
       in {
-        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: let
-          userCfg = cfg.home.settings."${_user}";
-        in {directories = [".mozilla/firefox/default"];});
+        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: {directories = [".mozilla/firefox/default"];});
       }))
     # |----------------------------------------------------------------------| #
   ]);

@@ -720,9 +720,7 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.home.enable && isNetworkManagerEnabled) {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
-        userCfg = cfg.home.settings."${_user}";
-      in {services.network-manager-applet.enable = _ true;});
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {services.network-manager-applet.enable = _ true;});
     })
     # |----------------------------------------------------------------------| #
   ]);

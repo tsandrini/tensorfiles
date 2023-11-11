@@ -15,13 +15,10 @@
 {
   config,
   lib,
-  pkgs,
   inputs,
   hostName,
   projectPath,
   secretsPath ? (projectPath + "/secrets"),
-  user ? "root",
-  lintCompatibility ? false,
   ...
 }:
 with builtins;

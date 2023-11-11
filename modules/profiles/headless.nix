@@ -15,11 +15,7 @@
 {
   config,
   lib,
-  pkgs,
-  inputs,
   user ? "root",
-  projectPath,
-  secretsPath ? (projectPath + "/secrets"),
   ...
 }:
 with builtins;
@@ -28,14 +24,7 @@ with lib; let
 
   cfg = config.tensorfiles.profiles.headless;
   _ = mkOverrideAtProfileLevel;
-
-  usersRootCfg = config.tensorfiles.system.users.home.settings."root";
   enableMainUser = user != "root";
-
-  usersMainCfg =
-    if enableMainUser
-    then config.tensorfiles.system.users.home.settings."${user}"
-    else {};
 in {
   options.tensorfiles.profiles.headless = with types;
   with tensorfiles.options; {

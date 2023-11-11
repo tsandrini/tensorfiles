@@ -42,9 +42,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
-        userCfg = cfg.home.settings."${_user}";
-      in {
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
         home.packages = with pkgs; [dconf];
 
         gtk = {

@@ -15,7 +15,6 @@
 {
   config,
   lib,
-  pkgs,
   hostName,
   projectPath,
   secretsPath ? (projectPath + "/secrets"),
@@ -207,7 +206,8 @@ in {
           assertion = let
             genHostKey = cfg.genHostKey.enable;
             setHostKey = cfg.agenix.hostKey.enable;
-          in !(genHostKey && setHostKey);
+          in
+            !(genHostKey && setHostKey);
           message = ''
             Cannot generate the host key and set it via agenix both at the same
             time. Please pick only one desired way of setting the host key.

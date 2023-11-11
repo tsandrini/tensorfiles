@@ -20,19 +20,15 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit
     (tensorfiles.nixos)
     isPersistenceEnabled
-    isUsersSystemEnabled
-    absolutePathToRelativeHome
     getUserHomeDir
     getUserCacheDir
     getUserConfigDir
     ;
 
   cfg = config.tensorfiles.programs.pywal;
-  _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.programs.pywal = with types;
   with tensorfiles.options; {
@@ -134,18 +130,7 @@ in {
       (let
         inherit (config.tensorfiles.system) persistence;
       in {
-        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: let
-          userCfg = cfg.home.settings."${_user}";
-          toRelative = (flip absolutePathToRelativeHome) {
-            inherit _user;
-            cfg = config;
-          };
-
-          cacheDir = getUserCacheDir {
-            inherit _user;
-            cfg = config;
-          };
-        in {
+        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: {
           files = [".fehbg"];
           # not needed anymore
           # directories = [ (toRelative (cacheDir + "/wal")) ];

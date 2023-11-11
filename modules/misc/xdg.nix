@@ -15,7 +15,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 with builtins;
@@ -23,8 +22,6 @@ with lib; let
   inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit
     (tensorfiles.nixos)
-    isUsersSystemEnabled
-    getUserHomeDir
     getUserConfigDir
     getUserCacheDir
     getUserAppDataDir

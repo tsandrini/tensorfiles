@@ -22,11 +22,9 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit (tensorfiles.nixos) isPersistenceEnabled getUserHomeDir;
 
   cfg = config.tensorfiles.security.agenix;
-  _ = mkOverrideAtModuleLevel;
 
   rootHome = getUserHomeDir {
     _user = "root";

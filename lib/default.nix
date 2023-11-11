@@ -33,4 +33,4 @@
         }));
 in
   tensorfiles.extend
-  (self: super: lib.foldr (a: b: a // b) {} (lib.attrValues super))
+  (_self: super: lib.foldr (a: b: a // b) {} (lib.attrValues super))

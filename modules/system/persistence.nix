@@ -15,8 +15,6 @@
 {
   config,
   lib,
-  pkgs,
-  inputs,
   ...
 }:
 with builtins;

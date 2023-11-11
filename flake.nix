@@ -39,11 +39,7 @@
     devenv.url = "github:cachix/devenv";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
+  outputs = {nixpkgs, ...} @ inputs: let
     inherit (lib.tensorfiles.modules) mapModules mkPackages mkHost mkShells;
 
     # These assignments are optional and only serve to change the default values
@@ -52,10 +48,8 @@
     # you can change or even delete them, however, the projectRoot variable is
     # required, so please keep that one.
     user = "tsandrini";
-    projectPath = ./.;
-    secretsPath = projectPath + "/secrets";
 
-    lib = nixpkgs.lib.extend (self: super: {
+    lib = nixpkgs.lib.extend (self: _super: {
       tensorfiles = import ./lib {
         inherit inputs user;
         pkgs = nixpkgs;
@@ -72,6 +66,7 @@
     nixosModules = mapModules ./modules import;
 
     nixosConfigurations = mapModules ./hosts mkHost;
+
     devShells = mkShells ./shells {};
   };
 }

@@ -20,17 +20,13 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit
     (tensorfiles.nixos)
-    getUserHomeDir
     getUserCacheDir
-    getUserConfigDir
     isPywalEnabled
     ;
 
   cfg = config.tensorfiles.programs.dmenu;
-  _ = mkOverrideAtModuleLevel;
 in {
   # TODO test dmenu-rs if it works or not
   # https://github.com/NixOS/nixpkgs/pull/223667

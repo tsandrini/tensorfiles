@@ -16,7 +16,6 @@
   config,
   lib,
   pkgs,
-  user ? "root",
   ...
 }:
 with builtins;
@@ -255,9 +254,7 @@ in {
       (let
         inherit (config.tensorfiles.system) persistence;
       in {
-        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: let
-          userCfg = cfg.home.settings."${_user}";
-        in {files = [".zsh_history"];});
+        environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: {files = [".zsh_history"];});
       }))
     # |----------------------------------------------------------------------| #
   ]);

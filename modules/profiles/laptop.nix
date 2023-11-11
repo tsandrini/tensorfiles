@@ -15,9 +15,6 @@
 {
   config,
   lib,
-  pkgs,
-  inputs,
-  user ? "root",
   ...
 }:
 with builtins;

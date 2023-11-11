@@ -16,15 +16,11 @@
   config,
   lib,
   pkgs,
-  system,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.services.pywalfox-native;
-  _ = mkOverrideAtModuleLevel;
 
   # pywalfox-native = inputs.self.packages.${system}.pywalfox-native;
   inherit (pkgs.tensorfiles) pywalfox-native;
@@ -49,9 +45,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
-        userCfg = cfg.home.settings."${_user}";
-      in {
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
         home.packages = with pkgs; [pywalfox-native];
 
         home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
