@@ -27,8 +27,6 @@
   # --------------------------
   imports = [./hardware-configuration.nix];
 
-  tensorfiles.profiles.laptop.enable = true;
-
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
@@ -42,58 +40,69 @@
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
-  boot.loader.efi = {
-    canTouchEfiVariables = true;
-    efiSysMountPoint = "/boot";
+  boot = {
+    loader = {
+      timeout = 1;
+      grub.enable = false;
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 3;
+      };
+    };
+    binfmt.emulatedSystems = ["aarch64-linux"];
+    kernelPackages = pkgs.linuxPackages_latest;
   };
-  boot.loader.systemd-boot = {
-    enable = true;
-    configurationLimit = 3;
-  };
-  boot.binfmt.emulatedSystems = ["aarch64-linux"];
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.loader.timeout = 1;
-  boot.loader.grub.enable = false;
-  hardware.bluetooth = {
-    enable = true;
-    package = pkgs.bluez;
-  };
-  services.blueman.enable = true;
 
-  tensorfiles.services.networking.openssh.genHostKey.enable = false;
-  tensorfiles.services.networking.openssh.agenix.hostKey.enable = false;
-  # Services
-  services.tlp = {
-    enable = true;
-    settings = {
-      START_CHARGE_THRESH_BAT1 = 75;
-      STOP_CHARGE_THRESH_BAT1 = 80;
+  hardware = {
+    enableAllFirmware = true;
+    cpu.intel.updateMicrocode = true;
+
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        vaapiIntel
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
+
+    bluetooth = {
+      enable = true;
+      package = pkgs.bluez;
     };
   };
-  services.openssh = {
-    enable = true;
-    settings.PasswordAuthentication = true;
+
+  services = {
+    blueman.enable = true;
+    tlp = {
+      enable = true;
+      settings = {
+        START_CHARGE_THRESH_BAT1 = 75;
+        STOP_CHARGE_THRESH_BAT1 = 80;
+      };
+    };
+    openssh = {
+      enable = true;
+      settings.PasswordAuthentication = true;
+    };
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
   };
 
-  hardware.enableAllFirmware = true;
-  hardware.cpu.intel.updateMicrocode = true;
-
-  hardware.opengl = {
-    enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      vaapiIntel
-      vaapiVdpau
-      libvdpau-va-gl
-    ];
+  tensorfiles = {
+    profiles.laptop.enable = true;
+    services.networking.openssh.genHostKey.enable = false;
+    services.networking.openssh.agenix.hostKey.enable = false;
   };
 
   programs.steam.enable = true; # just trying it out
-
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    jack.enable = true;
-  };
 }

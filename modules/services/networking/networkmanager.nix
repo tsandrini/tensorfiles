@@ -56,7 +56,7 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.persistence.enable && (isPersistenceEnabled config))
       (let
-        persistence = config.tensorfiles.system.persistence;
+        inherit (config.tensorfiles.system) persistence;
       in {
         environment.persistence."${persistence.persistentRoot}" = {
           directories = ["/etc/NetworkManager/system-connections"];

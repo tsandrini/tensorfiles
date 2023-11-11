@@ -219,11 +219,9 @@ in
         fileContent = readFile file;
         lines = splitString "\n" fileContent;
         header = replaceStrings [" "] [""] (head lines);
-      in (
-        if (hasPrefix "#platforms:" header)
+      in if (hasPrefix "#platforms:" header)
         then splitString "," (removePrefix "#platforms:" header)
-        else []
-      );
+        else [];
 
     /*
     Returns a dummy derivation with a given name as and a platform
@@ -313,7 +311,7 @@ in
         pkgPaths = mapModules dir (p: p);
       in
         genAttrs (attrNames pkgsByPlatforms) (system: let
-          systemPkgs = mkNixpkgs inputs.nixpkgs system ([] ++ pkgsExtraOverlays);
+          systemPkgs = mkNixpkgs inputs.nixpkgs system pkgsExtraOverlays;
         in
           mergeAttrs (map (p: {
               "${p}" =
@@ -324,7 +322,7 @@ in
 
     mkShells =
       # (Path) Path to the root dir which should be scanned for packages
-      dir: {}: let
+      dir: _: let
         pkgsByPlatforms = groupAttrsetBySublistElems (mapModules dir (p:
           parsePlatformHeader
           (

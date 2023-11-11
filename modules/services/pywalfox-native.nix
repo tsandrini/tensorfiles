@@ -27,7 +27,7 @@ with lib; let
   _ = mkOverrideAtModuleLevel;
 
   # pywalfox-native = inputs.self.packages.${system}.pywalfox-native;
-  pywalfox-native = pkgs.tensorfiles.pywalfox-native;
+  inherit (pkgs.tensorfiles) pywalfox-native;
   pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
     ${pywalfox-native}/bin/pywalfox start
   '';

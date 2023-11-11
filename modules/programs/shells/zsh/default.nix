@@ -253,7 +253,7 @@ in {
         && (isPersistenceEnabled config)
         && cfg.persistence.enable)
       (let
-        persistence = config.tensorfiles.system.persistence;
+        inherit (config.tensorfiles.system) persistence;
       in {
         environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: let
           userCfg = cfg.home.settings."${_user}";

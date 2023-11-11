@@ -54,9 +54,12 @@ in {
       tensorfiles = {
         profiles.minimal.enable = _ true;
 
-        programs.editors.neovim.enable = _ true;
-        programs.git.enable = _ true;
-        programs.shells.zsh.enable = _ true;
+        programs = {
+          editors.neovim.enable = _ true;
+          git.enable = _ true;
+          shells.zsh.enable = _ true;
+        };
+
         security.agenix.enable = _ true;
 
         services.networking.networkmanager.enable = _ true;

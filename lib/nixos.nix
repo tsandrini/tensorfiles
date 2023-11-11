@@ -32,7 +32,7 @@ with builtins; rec {
     # (AttrSet) An AttrSet with the already parsed NixOS config
     cfg:
       (cfg ? tensorfiles.system.persistence)
-      && (cfg.tensorfiles.system.persistence.enable);
+      && cfg.tensorfiles.system.persistence.enable;
 
   /*
   Check whether the agenix system is enabled, that is whether
@@ -47,7 +47,7 @@ with builtins; rec {
     # (AttrSet) An AttrSet with the already parsed NixOS config
     cfg:
       (cfg ? tensorfiles.security.agenix)
-      && (cfg.tensorfiles.security.agenix.enable);
+      && cfg.tensorfiles.security.agenix.enable;
 
   /*
   Check whether the agenix system is enabled, that is whether
@@ -61,7 +61,7 @@ with builtins; rec {
   isUsersSystemEnabled =
     # (AttrSet) An AttrSet with the already parsed NixOS config
     cfg:
-      (cfg ? tensorfiles.system.users) && (cfg.tensorfiles.system.users.enable);
+      (cfg ? tensorfiles.system.users) && cfg.tensorfiles.system.users.enable;
 
   /*
   Check whether the pywal theme system module is enabled, that is whether
@@ -76,7 +76,7 @@ with builtins; rec {
     # (AttrSet) An AttrSet with the already parsed NixOS config
     cfg:
       (cfg ? tensorfiles.programs.pywal)
-      && (cfg.tensorfiles.programs.pywal.enable);
+      && cfg.tensorfiles.programs.pywal.enable;
 
   /*
   Transforms an absolute path to a one relative to the given user home

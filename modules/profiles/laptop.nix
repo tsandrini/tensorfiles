@@ -44,19 +44,26 @@ in {
 
         misc.gtk.enable = _ true;
 
-        programs.newsboat.enable = _ true;
-        programs.dmenu.enable = _ true;
-        programs.file-managers.lf.enable = _ true;
-        programs.pywal.enable = _ true;
-        programs.terminals.kitty.enable = _ true;
-        # programs.terminals.alacritty.enable = _ true;
-        programs.browsers.firefox.enable = _ true;
+        programs = {
+          newsboat.enable = _ true;
+          dmenu.enable = _ true;
+          file-managers.lf.enable = _ true;
+          pywal.enable = _ true;
+          terminals.kitty.enable = _ true;
+          # terminals.alacritty.enable = _ true;
+          browsers.firefox.enable = _ true;
+        };
 
-        services.dunst.enable = _ true;
-        services.pywalfox-native.enable = _ true;
-        services.x11.picom.enable = _ true;
-        services.x11.redshift.enable = _ true;
-        services.x11.window-managers.xmonad.enable = _ true;
+        services = {
+          dunst.enable = _ true;
+          pywalfox-native.enable = _ true;
+
+          x11 = {
+            picom.enable = _ true;
+            redshift.enable = _ true;
+            window-managers.xmonad.enable = _ true;
+          };
+        };
 
         system.persistence = {
           enable = _ true;

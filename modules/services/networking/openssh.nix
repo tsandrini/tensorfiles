@@ -207,7 +207,7 @@ in {
           assertion = let
             genHostKey = cfg.genHostKey.enable;
             setHostKey = cfg.agenix.hostKey.enable;
-          in (!(genHostKey && setHostKey));
+          in !(genHostKey && setHostKey);
           message = ''
             Cannot generate the host key and set it via agenix both at the same
             time. Please pick only one desired way of setting the host key.
@@ -267,7 +267,7 @@ in {
     #   };
     # }))
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.genHostKey.enable) {
+    (mkIf cfg.genHostKey.enable {
       services.openssh.hostKeys = [cfg.genHostKey.hostKey];
     })
     # |----------------------------------------------------------------------| #
@@ -287,8 +287,7 @@ in {
         userCfg = cfg.home.settings."${_user}";
       in
         with userCfg.authorizedKeys; {
-          openssh.authorizedKeys.keys = mkIf enable ([]
-            ++ keysRaw
+          openssh.authorizedKeys.keys = mkIf enable (keysRaw
             ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) []
               secretsAttrset));
         });

@@ -34,7 +34,7 @@ with lib; let
 
   isNetworkManagerEnabled =
     (config ? tensorfiles.services.networking.networkmanager)
-    && (config.tensorfiles.services.networking.networkmanager.enable);
+    && config.tensorfiles.services.networking.networkmanager.enable;
 
   trayer-padding-icon = pkgs.writeShellScriptBin "trayer-padding-icon" ''
     #!/bin/sh
@@ -240,111 +240,114 @@ in {
         # define inside this module
         isDmenuModuleEnabled =
           (config ? tensorfiles.programs.dmenu)
-          && (config.tensorfiles.programs.dmenu.enable);
+          && config.tensorfiles.programs.dmenu.enable;
       in {
-        home.packages = with pkgs;
-        with userCfg;
-          [
-            killall
-            trayer-padding-icon
-            haskellPackages.xmobar
-            i3lock-fancy-rapid
-            ubuntu_font_family
-            (nerdfonts.override {fonts = ["Ubuntu" "UbuntuMono"];})
-            feh
-            trayer
-            xfce.xfce4-clipman-plugin
-            xfce.xfce4-screenshooter
-          ]
-          ++ (
-            if dmenu.enable
-            then
-              (
-                if isDmenuModuleEnabled
-                then []
-                else dmenu.pkg
-              )
-            else []
-          )
-          ++ (optional volumeicon.enable volumeicon.pkg)
-          ++ (optional cbatticon.enable cbatticon.pkg)
-          ++ (optional playerctl.enable playerctl.pkg);
+        home = {
+          packages = with pkgs;
+          with userCfg;
+            [
+              killall
+              trayer-padding-icon
+              haskellPackages.xmobar
+              i3lock-fancy-rapid
+              ubuntu_font_family
+              (nerdfonts.override {fonts = ["Ubuntu" "UbuntuMono"];})
+              feh
+              trayer
+              xfce.xfce4-clipman-plugin
+              xfce.xfce4-screenshooter
+            ]
+            ++ (
+              if dmenu.enable
+              then
+                (
+                  if isDmenuModuleEnabled
+                  then []
+                  else dmenu.pkg
+                )
+              else []
+            )
+            ++ (optional volumeicon.enable volumeicon.pkg)
+            ++ (optional cbatticon.enable cbatticon.pkg)
+            ++ (optional playerctl.enable playerctl.pkg);
+
+          # lil haskell icon ^^
+          file."${homeDir}/.xmonad/xpm/haskell_20.xpm".source =
+            _ ./xpm/haskell_20.xpm;
+
+          file."${configDir}/wal/templates/xmobarrc".text = ''
+            Config {{
+
+                   -- ~Appearance~
+                     font    = "xft:Ubuntu:weight=bold:pixelsize=11:antialias=true:hinting=true"
+                   , additionalFonts = [ "xft:Ubuntu Nerd Font Mono:pixelsize=13:antialias=true:hinting=true" ]
+                   , alpha = 200 -- alpha in [0,255]
+                   , bgColor = "{background}"
+                   , fgColor = "{foreground}"
+                   , position = TopSize L 100 22,
+                   , iconRoot = "${homeDir}/.xmonad/xpm"
+
+                   -- ~Layout~
+                   , sepChar = "%"
+                   , alignSep = "}}{{"
+                   , template = " <icon=haskell_20.xpm/> <fc={color14}>|</fc> %UnsafeStdinReader% }}{{  <fc={color14}>|</fc> <fc={color1}>%uname%</fc> <fc={color14}>|</fc> %cpu% <fc={color14}>|</fc> %coretemp% <fc={color14}>|</fc> %memory% <fc={color14}>|</fc> %dynnetwork% <fc={color14}>|</fc> %disku% <fc={color14}>|</fc> %battery% <fc={color14}>|</fc> %date% <fc={color14}><fn=1>|</fn></fc> %trayerpad%"
+
+                   -- ~Behaviour~
+                   , lowerOnStart = True
+                   , hideOnStart = False
+                   , allDesktops = True
+                   , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+                   , persistent = True
+
+                   , commands = [
+                                  Run Com "uname" ["-r", "-m"] "" 10000
+                                  , Run DynNetwork
+                                  ["-t"          , " <fc={foreground}><fn=1>\xf09e</fn></fc> <fc={color10}><dev></fc> <fc={color14}>|</fc> <fc={foreground}><fn=1>\xf0aa</fn></fc> <fc={color5}><rx>kB/s</fc> <fc={foreground}><fn=1>\xf0ab</fn></fc> <fc={color5}><tx>kB/s</fc> "
+                                  , "--High"     , "5000"       -- units: B/s
+                                  , "--high"     , "darkred"
+                                  ] 20
+                                  , Run Cpu
+                                  [ "-t"         , " <fc={foreground}><fn=1>\xe266</fn></fc> <fc={color10}><total>%</fc> "
+                                  , "--High"     , "85"         -- units: %
+                                  , "--high"     , "darkred"
+                                  ] 20
+                                  , Run CoreTemp
+                                  [ "-t"         , " <fc={foreground}><fn=1>\xf8c7</fn></fc> <fc={color5}><core0>°C</fc> "
+                                  , "--High"     , "80"        -- units: °C
+                                  , "--high"     , "darkred"
+                                  ] 50
+                                  , Run Memory
+                                  [ "-t"         ," <fc={foreground}><fn=1>\xf85a</fn></fc> <fc={color1}><usedratio>%</fc>"
+                                  , "--High"     , "90"        -- units: %
+                                  , "--high"     , "darkred"
+                                  ] 20
+                                  , Run DiskU
+                                  [ ("/"         , " <fc={foreground}><fn=1>\xe706</fn></fc> <fc={color1}><used>/<size> (<usedp>%)</fc> ")]
+                                  [ "--High"     , "50"        -- units: %
+                                  , "--high"     , "darkred"
+                                  ] 200
+                                  , Run Battery
+                                  [ "--template" , " <acstatus> <fc={color10}><left>% (<timeleft>)</fc> "
+                                  , "--Low"      , "20"        -- units: %
+                                  , "--low"      , "darkred"
+                                  , "--" -- battery specific options
+                                  , "-o"	, "<fc={foreground}><fn=1>\xf57e</fn></fc>"  -- discharging
+                                  , "-O"	, "<fc={foreground}><fn=1>\xf583</fn></fc>" -- charging
+                                  , "-i"	, "<fc={foreground}><fn=1>\xf58e</fn></fc>" -- charged
+                                  ] 100
+                                  , Run Date "<fn=1>\xf017</fn>  <fc={color5}>%b %d %Y - (%H:%M)</fc> " "date" 50
+                                  -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
+                                  , Run Com "trayer-padding-icon" [] "trayerpad" 20
+                                  -- Prints out the left side items such as workspaces, layout, etc.
+                                  , Run UnsafeStdinReader
+                                ]
+                   }}
+          '';
+        };
 
         systemd.user.tmpfiles.rules = [
           "L ${configDir}/xmobar/xmobarrc - - - - ${cacheDir}/wal/xmobarrc"
         ];
-        home.file."${configDir}/wal/templates/xmobarrc".text = ''
-          Config {{
-
-                 -- ~Appearance~
-                   font    = "xft:Ubuntu:weight=bold:pixelsize=11:antialias=true:hinting=true"
-                 , additionalFonts = [ "xft:Ubuntu Nerd Font Mono:pixelsize=13:antialias=true:hinting=true" ]
-                 , alpha = 200 -- alpha in [0,255]
-                 , bgColor = "{background}"
-                 , fgColor = "{foreground}"
-                 , position = TopSize L 100 22,
-                 , iconRoot = "${homeDir}/.xmonad/xpm"
-
-                 -- ~Layout~
-                 , sepChar = "%"
-                 , alignSep = "}}{{"
-                 , template = " <icon=haskell_20.xpm/> <fc={color14}>|</fc> %UnsafeStdinReader% }}{{  <fc={color14}>|</fc> <fc={color1}>%uname%</fc> <fc={color14}>|</fc> %cpu% <fc={color14}>|</fc> %coretemp% <fc={color14}>|</fc> %memory% <fc={color14}>|</fc> %dynnetwork% <fc={color14}>|</fc> %disku% <fc={color14}>|</fc> %battery% <fc={color14}>|</fc> %date% <fc={color14}><fn=1>|</fn></fc> %trayerpad%"
-
-                 -- ~Behaviour~
-                 , lowerOnStart = True
-                 , hideOnStart = False
-                 , allDesktops = True
-                 , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
-                 , persistent = True
-
-                 , commands = [
-                                Run Com "uname" ["-r", "-m"] "" 10000
-                                , Run DynNetwork
-                                ["-t"          , " <fc={foreground}><fn=1>\xf09e</fn></fc> <fc={color10}><dev></fc> <fc={color14}>|</fc> <fc={foreground}><fn=1>\xf0aa</fn></fc> <fc={color5}><rx>kB/s</fc> <fc={foreground}><fn=1>\xf0ab</fn></fc> <fc={color5}><tx>kB/s</fc> "
-                                , "--High"     , "5000"       -- units: B/s
-                                , "--high"     , "darkred"
-                                ] 20
-                                , Run Cpu
-                                [ "-t"         , " <fc={foreground}><fn=1>\xe266</fn></fc> <fc={color10}><total>%</fc> "
-                                , "--High"     , "85"         -- units: %
-                                , "--high"     , "darkred"
-                                ] 20
-                                , Run CoreTemp
-                                [ "-t"         , " <fc={foreground}><fn=1>\xf8c7</fn></fc> <fc={color5}><core0>°C</fc> "
-                                , "--High"     , "80"        -- units: °C
-                                , "--high"     , "darkred"
-                                ] 50
-                                , Run Memory
-                                [ "-t"         ," <fc={foreground}><fn=1>\xf85a</fn></fc> <fc={color1}><usedratio>%</fc>"
-                                , "--High"     , "90"        -- units: %
-                                , "--high"     , "darkred"
-                                ] 20
-                                , Run DiskU
-                                [ ("/"         , " <fc={foreground}><fn=1>\xe706</fn></fc> <fc={color1}><used>/<size> (<usedp>%)</fc> ")]
-                                [ "--High"     , "50"        -- units: %
-                                , "--high"     , "darkred"
-                                ] 200
-                                , Run Battery
-                                [ "--template" , " <acstatus> <fc={color10}><left>% (<timeleft>)</fc> "
-                                , "--Low"      , "20"        -- units: %
-                                , "--low"      , "darkred"
-                                , "--" -- battery specific options
-                                , "-o"	, "<fc={foreground}><fn=1>\xf57e</fn></fc>"  -- discharging
-                                , "-O"	, "<fc={foreground}><fn=1>\xf583</fn></fc>" -- charging
-                                , "-i"	, "<fc={foreground}><fn=1>\xf58e</fn></fc>" -- charged
-                                ] 100
-                                , Run Date "<fn=1>\xf017</fn>  <fc={color5}>%b %d %Y - (%H:%M)</fc> " "date" 50
-                                -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
-                                , Run Com "trayer-padding-icon" [] "trayerpad" 20
-                                -- Prints out the left side items such as workspaces, layout, etc.
-                                , Run UnsafeStdinReader
-                              ]
-                 }}
-        '';
-
-        # lil haskell icon ^^
-        home.file."${homeDir}/.xmonad/xpm/haskell_20.xpm".source =
-          _ ./xpm/haskell_20.xpm;
 
         xsession = {
           enable = _ true;

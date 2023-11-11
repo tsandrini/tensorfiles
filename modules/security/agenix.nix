@@ -67,7 +67,7 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf (isPersistenceEnabled config)
       (let
-        persistence = config.tensorfiles.system.persistence;
+        inherit (config.tensorfiles.system) persistence;
       in {
         age.identityPaths = ["${persistence.persistentRoot}/${rootHome}/.ssh/id_ed25519"];
       }))

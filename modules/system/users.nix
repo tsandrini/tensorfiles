@@ -284,7 +284,7 @@ in {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
         userCfg = cfg.home.settings."${_user}";
       in {
-        imports = with inputs; ([] ++ (optional agenixCheck agenix.homeManagerModules.default));
+        imports = with inputs; (optional agenixCheck agenix.homeManagerModules.default);
 
         home = {
           username = _ "${_user}";
@@ -335,7 +335,7 @@ in {
         && (isPersistenceEnabled config)
         && cfg.persistence.enable)
       (let
-        persistence = config.tensorfiles.system.persistence;
+        inherit (config.tensorfiles.system) persistence;
       in {
         environment.persistence."${persistence.persistentRoot}".users = genAttrs (attrNames cfg.home.settings) (_user: let
           userCfg = cfg.home.settings."${_user}";

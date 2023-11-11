@@ -40,10 +40,12 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      tensorfiles.profiles.base.enable = _ true;
+      tensorfiles = {
+        profiles.base.enable = _ true;
 
-      tensorfiles.tasks.nix-garbage-collect.enable = _ true;
-      tensorfiles.tasks.system-autoupgrade.enable = _ true;
+        tasks.nix-garbage-collect.enable = _ true;
+        tasks.system-autoupgrade.enable = _ true;
+      };
 
       time.timeZone = _ "Europe/Prague";
       i18n.defaultLocale = _ "en_US.UTF-8";
