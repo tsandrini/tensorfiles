@@ -99,7 +99,7 @@
   };
 
   tensorfiles = {
-    profiles.laptop.enable = true;
+    profiles.graphical-xmonad.enable = true;
     services.networking.openssh.genHostKey.enable = false;
     services.networking.openssh.agenix.hostKey.enable = false;
   };

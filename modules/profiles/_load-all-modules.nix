@@ -44,6 +44,7 @@ with lib; {
       misc.nix
       misc.xdg
 
+      programs.direnv
       programs.browsers.firefox
       programs.dmenu
       programs.editors.neovim
@@ -75,7 +76,8 @@ with lib; {
       profiles.base
       profiles.headless
       profiles.minimal
-      profiles.laptop
+      profiles.graphical-xmonad
+      profiles.graphical-hyprland
     ]);
 
   meta.maintainers = with tensorfiles.maintainers; [tsandrini];

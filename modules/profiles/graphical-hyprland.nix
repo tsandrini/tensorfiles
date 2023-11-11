@@ -15,16 +15,18 @@
 {
   config,
   lib,
+  inputs,
+  user ? "root",
   ...
 }:
 with builtins;
 with lib; let
   inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.profiles.laptop;
+  cfg = config.tensorfiles.profiles.graphical-hyprland;
   _ = mkOverrideAtProfileLevel;
 in {
-  options.tensorfiles.profiles.laptop = with types;
+  options.tensorfiles.profiles.graphical-hyprland = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the laptop system profile.
@@ -43,7 +45,7 @@ in {
 
         programs = {
           newsboat.enable = _ true;
-          dmenu.enable = _ true;
+          # dmenu.enable = _ true;
           file-managers.lf.enable = _ true;
           pywal.enable = _ true;
           terminals.kitty.enable = _ true;
@@ -54,12 +56,6 @@ in {
         services = {
           dunst.enable = _ true;
           pywalfox-native.enable = _ true;
-
-          x11 = {
-            picom.enable = _ true;
-            redshift.enable = _ true;
-            window-managers.xmonad.enable = _ true;
-          };
         };
 
         system.persistence = {
@@ -68,6 +64,16 @@ in {
             enable = _ true;
             rootPartition = _ "/dev/mapper/enc";
           };
+        };
+      };
+
+      programs.hyprland.enable = true;
+
+      home-manager.users.${user} = {
+        modules = [inputs.hyprland.homeManagerModules.default];
+
+        wayland.windowManager.hyprland = {
+          enable = true;
         };
       };
     }

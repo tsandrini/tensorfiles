@@ -40,7 +40,8 @@ in {
     {
       system.autoUpgrade = {
         enable = _ true;
-        channel = _ "https://nixos.org/channels/nixos-unstable";
+        flake = _ "github:tsandrini/tensorfiles";
+        # channel = _ "https://nixos.org/channels/nixos-unstable";
         allowReboot = _ true;
         randomizedDelaySec = _ "5m";
         rebootWindow = {

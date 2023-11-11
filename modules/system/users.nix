@@ -47,6 +47,7 @@ with lib; let
   #     });
 
   agenixCheck = (isAgenixEnabled config) && cfg.agenix.enable;
+  xdgModuleCheck = (config ? tensorfiles.modules.misc.xdg) && config.tensorfiles.modules.misc.xdg.enable;
 in {
   # TODO move bluetooth dir to hardware
   # TODO pass also root user
@@ -88,6 +89,16 @@ in {
           '';
         };
 
+        isNixTrusted = mkOption {
+          type = bool;
+          default = false;
+          description = mdDoc ''
+            Whether the user has the ability to connect to the nix daemon
+            and gain additional privileges for working with nix (like adding
+            binary cache)
+          '';
+        };
+
         initDirectoryStructure = mkOption {
           type = bool;
           default = true;
@@ -114,6 +125,58 @@ in {
           default = null;
           description = mdDoc ''
             TODO
+          '';
+        };
+
+        terminal = mkOption {
+          type = str;
+          default = "xterm";
+          description = mdDoc ''
+            User's preferred terminal emulator.
+
+            Note that this option doesn't actually download or enable any
+            packages (you should do that yourself), it's instead a simple way
+            to tell other programs what terminal to launch for a given user
+            if needed (and also presets some env variables).
+          '';
+        };
+
+        browser = mkOption {
+          type = str;
+          default = "w3m";
+          description = mdDoc ''
+            User's preferred browser.
+
+            Note that this option doesn't actually download or enable any
+            packages (you should do that yourself), it's instead a simple way
+            to tell other programs what browser to launch for a given user
+            if needed (and also presets some env variables).
+          '';
+        };
+
+        editor = mkOption {
+          type = nullOr str;
+          default = "vi";
+          description = mdDoc ''
+            User's preferred editor.
+
+            Note that this option doesn't actually download or enable any
+            packages (you should do that yourself), it's instead a simple way
+            to tell other programs what editor to launch for a given user
+            if needed (and also presets some env variables).
+          '';
+        };
+
+        IDE = mkOption {
+          type = nullOr str;
+          default = "vi";
+          description = mdDoc ''
+            User's preferred IDE.
+
+            Note that this option doesn't actually download or enable any
+            packages (you should do that yourself), it's instead a simple way
+            to tell other programs what IDE to launch for a given user
+            if needed (and also presets some env variables).
           '';
         };
 
@@ -287,6 +350,15 @@ in {
           username = _ "${_user}";
           homeDirectory = _ userCfg.homeDir;
           stateVersion = _ "23.05";
+          sessionVariables = {
+            # I've tried defining these using mkIf but the compilation
+            # fails due to the definition via lazy values? ig? dunno
+            EDITOR = _ userCfg.editor;
+            VISUAL = _ userCfg.editor;
+            IDE = _ userCfg.IDE;
+            BROWSER = _ userCfg.browser;
+            TERMINAL = _ userCfg.terminal;
+          };
         };
 
         fonts.fontconfig.enable = _ true;
@@ -306,10 +378,46 @@ in {
           "${userCfg.miscDataDir}/.blank".text =
             mkIf (userCfg.miscDataDir != null) (mkBefore "");
         };
+
+        xdg.mimeApps = mkIf xdgModuleCheck {
+          defaultApplications = {
+            # BROWSER
+            "x-scheme-handler/http" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "x-scheme-handler/https" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "x-scheme-handler/about" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "x-scheme-handler/unknown" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "x-scheme-handler/chrome" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "text/html" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/x-extension-htm" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/x-extension-html" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/x-extension-shtml" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/xhtml+xml" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/x-extension-xhtml" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/x-extension-xht" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "application/x-www-browser" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "x-www-browser" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            "x-scheme-handler/webcal" = mkIf (userCfg.browser != null) (_ "${userCfg.browser}.desktop");
+            # EDITOR
+            "application/x-shellscript" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "application/x-perl" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "application/json" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/x-readme" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/plain" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/markdown" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/x-csrc" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/x-chdr" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/x-python" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/x-makefile" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            "text/x-markdown" = mkIf (userCfg.editor != null) (_ "${userCfg.editor}.desktop");
+            # TERMINAL
+            "mimetype" = mkIf (userCfg.terminal != null) (_ "${userCfg.terminal}.desktop");
+            "application/x-terminal-emulator" = mkIf (userCfg.terminal != null) (_ "${userCfg.terminal}.desktop");
+            "x-terminal-emulator" = mkIf (userCfg.terminal != null) (_ "${userCfg.terminal}.desktop");
+          };
+        };
       });
     })
     # |----------------------------------------------------------------------| #
-    # TODO TODO TODO TODO
     (mkIf cfg.home.enable {
       users.users = genAttrs (attrNames cfg.home.settings) (_user: let
         userCfg = cfg.home.settings."${_user}";
@@ -379,6 +487,15 @@ in {
             owner = _ _user;
           };
         });
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.home.enable {
+      nix.settings = let
+        users = filter (_user: cfg.home.settings."${_user}".isNixTrusted) (attrNames cfg.home.settings);
+      in {
+        trusted-users = users;
+        allowedUsers = users;
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);

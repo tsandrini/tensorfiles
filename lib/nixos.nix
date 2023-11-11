@@ -206,7 +206,7 @@ with builtins; rec {
           ((hasAttr "home-manager" cfg)
             && (hasAttr _user cfg.home-manager.users)
             && (cfg.home-manager.users.${_user}.home.homeDirectory != null))
-        then cfg.home-manager.${_user}.home.homeDirectory
+        then cfg.home-manager.users.${_user}.home.homeDirectory
         else if
           ((hasAttr _user cfg.users.users)
             && (cfg.users.users.${_user}.home != null))
@@ -507,4 +507,204 @@ with builtins; rec {
           != null))
     then cfg.tensorfiles.system.users.home.settings.${_user}.email
     else null;
+
+  getUserBrowser = {
+    # (String) Target user whose browser should be parsed. Default: user passed during lib init
+    _user ? user,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attribute enables parsing the browser dynamically from the configuration itself rather than statically.
+    cfg ? null,
+  }: let
+    fallback = null;
+  in
+    if (cfg != null)
+    then
+      (
+        if
+          ((isUsersSystemEnabled cfg)
+            && (cfg.tensorfiles.system.users.home.settings.${_user}.browser
+              != null))
+        then cfg.tensorfiles.system.users.home.settings.${_user}.browser
+        else if
+          ((hasAttr "home-manager" cfg)
+            && (hasAttr _user cfg.home-manager.users)
+            && (hasAttr "BROWSER" cfg.home-manager.users.${_user}.home.sessionVariables)
+            && (cfg.home-manager.users.${_user}.home.sessionVariables.BROWSER != null))
+        then cfg.home-manager.users.${_user}.home.sessionVariables.BROWSER
+        else if
+          (
+            (hasAttr "BROWSER" cfg.environment.variables)
+            && (cfg.environment.variables.BROWSER != null)
+          )
+        then environment.variables.BROWSER
+        else if
+          (
+            (hasAttr "tensorfiles" cfg)
+            && (hasAttr "programs" cfg.tensorfiles)
+            && (hasAttr "browsers" cfg.tensorfiles.programs)
+            && (hasAttr "firefox" cfg.tensorfiles.programs.browsers)
+            && cfg.tensorfiles.programs.browsers.firefox.enable
+          )
+        then "firefox"
+        else fallback
+      )
+    else fallback;
+
+  getUserTerminal = {
+    # (String) Target user whose terminal should be parsed. Default: user passed during lib init
+    _user ? user,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attribute enables parsing the terminal dynamically from the configuration itself rather than statically.
+    cfg ? null,
+  }: let
+    fallback = "xterm";
+  in
+    if (cfg != null)
+    then
+      (
+        if
+          ((isUsersSystemEnabled cfg)
+            && (cfg.tensorfiles.system.users.home.settings.${_user}.terminal
+              != null))
+        then cfg.tensorfiles.system.users.home.settings.${_user}.terminal
+        else if
+          ((hasAttr "home-manager" cfg)
+            && (hasAttr _user cfg.home-manager.users)
+            && (hasAttr "TERMINAL" cfg.home-manager.users.${_user}.home.sessionVariables)
+            && (cfg.home-manager.users.${_user}.home.sessionVariables.TERMINAL != null))
+        then cfg.home-manager.users.${_user}.home.sessionVariables.TERMINAL
+        else if
+          (
+            (hasAttr "TERMINAL" cfg.environment.variables)
+            && (cfg.environment.variables.TERMINAL != null)
+          )
+        then cfg.environment.variables.TERMINAL
+        else if
+          (
+            (hasAttr "tensorfiles" cfg)
+            && (hasAttr "programs" cfg.tensorfiles)
+            && (hasAttr "terminals" cfg.tensorfiles.programs)
+            && (hasAttr "kitty" cfg.tensorfiles.programs.terminals)
+            && cfg.tensorfiles.programs.terminals.kitty.enable
+          )
+        then "kitty"
+        else if
+          (
+            (hasAttr "tensorfiles" cfg)
+            && (hasAttr "programs" cfg.tensorfiles)
+            && (hasAttr "terminals" cfg.tensorfiles.programs)
+            && (hasAttr "alacritty" cfg.tensorfiles.programs.terminals)
+            && cfg.tensorfiles.programs.terminals.alacritty.enable
+          )
+        then "alacritty"
+        else fallback
+      )
+    else fallback;
+
+  getUserShell = {
+    # (String) Target user whose shell should be parsed. Default: user passed during lib init
+    _user ? user,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attribute enables parsing the shell dynamically from the configuration itself rather than statically.
+    cfg ? null,
+  }: let
+    fallback = "sh";
+  in
+    if (cfg != null)
+    then
+      (
+        if
+          ((hasAttr "home-manager" cfg)
+            && (hasAttr _user cfg.home-manager.users)
+            && (hasAttr "SHELL" cfg.home-manager.users.${_user}.home.sessionVariables)
+            && (cfg.home-manager.users.${_user}.home.sessionVariables.SHELL != null))
+        then cfg.home-manager.users.${_user}.home.sessionVariables.SHELL
+        else if
+          (
+            (hasAttr "SHELL" cfg.environment.variables)
+            && (cfg.environment.variables.SHELL != null)
+          )
+        then cfg.environment.variables.SHELL
+        else if
+          (
+            (hasAttr "tensorfiles" cfg)
+            && (hasAttr "programs" cfg.tensorfiles)
+            && (hasAttr "shells" cfg.tensorfiles.programs)
+            && (hasAttr "zsh" cfg.tensorfiles.programs.shells)
+            && cfg.tensorfiles.programs.shells.zsh.enable
+          )
+        then "zsh"
+        else fallback
+      )
+    else fallback;
+
+  getUserEditor = {
+    # (String) Target user whose editor should be parsed. Default: user passed during lib init
+    _user ? user,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attribute enables parsing the editor dynamically from the configuration itself rather than statically.
+    cfg ? null,
+  }: let
+    fallback = "vi";
+  in
+    if (cfg != null)
+    then
+      (
+        if
+          ((isUsersSystemEnabled cfg)
+            && (cfg.tensorfiles.system.users.home.settings.${_user}.editor
+              != null))
+        then cfg.tensorfiles.system.users.home.settings.${_user}.editor
+        else if
+          ((hasAttr "home-manager" cfg)
+            && (hasAttr _user cfg.home-manager.users)
+            && (hasAttr "EDITOR" cfg.home-manager.users.${_user}.home.sessionVariables)
+            && (cfg.home-manager.users.${_user}.home.sessionVariables.EDITOR != null))
+        then cfg.home-manager.users.${_user}.home.sessionVariables.EDITOR
+        else if
+          (
+            (hasAttr "EDITOR" cfg.environment.variables)
+            && (cfg.environment.variables.EDITOR != null)
+          )
+        then cfg.environment.variables.EDITOR
+        else if
+          (
+            (hasAttr "tensorfiles" cfg)
+            && (hasAttr "programs" cfg.tensorfiles)
+            && (hasAttr "editors" cfg.tensorfiles.programs)
+            && (hasAttr "neovim" cfg.tensorfiles.programs.browsers)
+            && cfg.tensorfiles.programs.editors.neovim.enable
+          )
+        then "nvim"
+        else fallback
+      )
+    else fallback;
+
+  getUserIDE = {
+    # (String) Target user whose IDE should be parsed. Default: user passed during lib init
+    _user ? user,
+    # (AttrSet) An AttrSet with the already parsed NixOS config. Passing this attribute enables parsing the IDE dynamically from the configuration itself rather than statically.
+    cfg ? null,
+  }: let
+    fallback = getUserEditor {inherit _user cfg;};
+  in
+    if (cfg != null)
+    then
+      (
+        if
+          ((isUsersSystemEnabled cfg)
+            && (cfg.tensorfiles.system.users.home.settings.${_user}.IDE
+              != null))
+        then cfg.tensorfiles.system.users.home.settings.${_user}.IDE
+        else if
+          ((hasAttr "home-manager" cfg)
+            && (hasAttr _user cfg.home-manager.users)
+            && (hasAttr "IDE" cfg.home-manager.users.${_user}.home.sessionVariables)
+            && (cfg.home-manager.users.${_user}.home.sessionVariables.IDE != null))
+        then cfg.home-manager.users.${_user}.home.sessionVariables.IDE
+        else if
+          (
+            (hasAttr "IDE" cfg.environment.variables)
+            && (cfg.environment.variables.IDE != null)
+          )
+        then cfg.environment.variables.IDE
+        else fallback
+      )
+    else fallback;
 }

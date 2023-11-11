@@ -47,6 +47,7 @@ in {
           editors.neovim.enable = _ true;
           git.enable = _ true;
           shells.zsh.enable = _ true;
+          direnv.enable = _ true;
         };
 
         security.agenix.enable = _ true;
@@ -77,8 +78,13 @@ in {
             else "_"
           }" = mkIf enableMainUser {
             isSudoer = _ true;
+            isNixTrusted = _ true;
             email = _ "tomas.sandrini@seznam.cz"; # TODO uhhh dunno, do smth
             agenixPassword.enable = _ true;
+            browser = _ "firefox";
+            editor = _ "nvim";
+            IDE = _ "emacs";
+            terminal = _ "kitty";
             # agenixPassword.enable = _ (pathExists (secretsPath
             #   + "/${usersMainCfg.agenixPassword.passwordSecretsPath}.age"));
           };

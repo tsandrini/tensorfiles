@@ -45,11 +45,9 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        home.sessionVariables = {
-          EDITOR = _ "nvim";
-          VISUAL = _ "nvim";
+        home.shellAliases = {
+          "neovim" = _ "nvim";
         };
-
         programs.neovim = {
           enable = _ true;
           viAlias = _ true;
@@ -184,26 +182,26 @@ in {
                 }
               '';
             }
-            {
-              plugin = nvim-treesitter.withAllGrammars;
-              type = "lua";
-              config = ''
-                require('nvim-treesitter.configs').setup{
-                  sync_install = false,
-                  auto_install = false,
-                  highlight = {
-                    enable = true,
-                    disable = { "latex" }
-                  },
-                  incremental_selection = {
-                    enable = true
-                  },
-                  indent = {
-                    enable = true
-                  }
-                };
-              '';
-            }
+            # {
+            #   plugin = nvim-treesitter.withAllGrammars;
+            #   type = "lua";
+            #   config = ''
+            #     require('nvim-treesitter.configs').setup{
+            #       sync_install = false,
+            #       auto_install = false,
+            #       highlight = {
+            #         enable = true,
+            #         disable = { "latex" }
+            #       },
+            #       incremental_selection = {
+            #         enable = true
+            #       },
+            #       indent = {
+            #         enable = true
+            #       }
+            #     };
+            #   '';
+            # }
             {
               plugin = fern-vim;
               type = "lua";
@@ -312,7 +310,7 @@ in {
                     s = { ":Snippets<CR>", "telescope-snippets" },
                     m = { ":Telescope commands<CR>", "telescope-commands" },
                     h = { ":Telescope man_pages<CR>", "telescope-man-pages" },
-                    t = { ":Telescope treesitter<CR>", "telescope-treesitter" }
+                    -- t = { ":Telescope treesitter<CR>", "telescope-treesitter" }
                   },
                   b = {
                     name = "+bufexplorer",
