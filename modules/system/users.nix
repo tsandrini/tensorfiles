@@ -494,7 +494,7 @@ in {
         users = filter (_user: cfg.home.settings."${_user}".isNixTrusted) (attrNames cfg.home.settings);
       in {
         trusted-users = users;
-        allowedUsers = users;
+        allowed-users = users;
       };
     })
     # |----------------------------------------------------------------------| #

@@ -32,8 +32,6 @@ in {
       Enables NixOS module that configures/handles direnv colorscheme generator.
     '');
 
-    persistence = {enable = mkPersistenceEnableOption;};
-
     home = {
       enable = mkHomeEnableOption;
 
