@@ -37,11 +37,15 @@
       url = "github:arkenfox/user.js";
       flake = false;
     };
-
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
+  };
+
+  nix.settings = {
+    substituters = ["https://hyprland.cachix.org"];
+    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="];
   };
 
   outputs = {nixpkgs, ...} @ inputs: let
