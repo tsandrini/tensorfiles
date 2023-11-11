@@ -384,7 +384,7 @@
   :after (lsp-mode)
   :demand t
   :custom
-  (lsp-nix-nil-formatter ["nixfmt"]))
+  (lsp-nix-nil-formatter ["alejandra"]))
 
 
 (use-package! nix-mode

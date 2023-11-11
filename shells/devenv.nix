@@ -8,6 +8,7 @@
 with builtins;
 with lib; let
   inherit (inputs) devenv;
+
   pkgs = inputs.nixpkgs.legacyPackages.${system};
 in
   devenv.lib.mkShell {

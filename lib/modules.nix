@@ -121,10 +121,10 @@ in
           config.allowUnfree = true;
           hostPlatform = system;
           overlays = let
-            pkgsOverlay = final: prev: {
+            pkgsOverlay = _final: _prev: {
               tensorfiles = inputs.self.packages.${system};
             };
-            nurOverlay = final: prev: {
+            nurOverlay = final: _prev: {
               nur = import inputs.nur {pkgs = final;};
             };
           in
