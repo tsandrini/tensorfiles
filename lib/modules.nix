@@ -202,7 +202,7 @@ in
     # ...
     ```
 
-    In case that the provided file doesn't containt any platform specification
+    In case that the provided file doesn't contain any platform specification
     it will simply return an empty list.
 
     *Type*: `parsePlatformHeader :: Path -> [String]`
@@ -219,7 +219,8 @@ in
         fileContent = readFile file;
         lines = splitString "\n" fileContent;
         header = replaceStrings [" "] [""] (head lines);
-      in if (hasPrefix "#platforms:" header)
+      in
+        if (hasPrefix "#platforms:" header)
         then splitString "," (removePrefix "#platforms:" header)
         else [];
 
@@ -248,7 +249,7 @@ in
       name:
       # (String) System architecture string. This is going to be used for choosing the target derivation builder
       system:
-      # (AttrSet a) An attrset with possibily any additional values that are going to be passed to the mkDerivation call
+      # (AttrSet a) An attrset with possibly any additional values that are going to be passed to the mkDerivation call
       extraArgs: let
         systemPkgs = mkNixpkgs inputs.nixpkgs system [];
         args =

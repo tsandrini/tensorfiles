@@ -1,4 +1,4 @@
-# platforms: x86_64-linux,aarch64-linux
+# platforms: x86_64-linux,aarch64-linux,aarch64-darwin
 {
   inputs,
   lib,
@@ -15,7 +15,7 @@ in
     inherit inputs pkgs;
     modules = [
       {
-        packages = with pkgs; [nil];
+        packages = with pkgs; [nil shellcheck shfmt markdownlint-cli typos commitizen cz-cli];
 
         languages.nix.enable = true;
         pre-commit.hooks = {
@@ -23,9 +23,16 @@ in
           alejandra.enable = true;
           statix.enable = true;
           deadnix.enable = true;
+          nil.enable = true;
           # shell
           shellcheck.enable = true;
           shfmt.enable = true;
+          # git
+          commitizen.enable = true;
+          # markdown
+          markdownlint.enable = true;
+          # spell checking
+          typos.enable = true;
         };
 
         pre-commit.settings = {

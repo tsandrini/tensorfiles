@@ -36,7 +36,7 @@ with builtins; {
       assertion = hasAttr "home-manager" cfg;
       message = ''
         Home configuration is enabled, however, the required home-manager module is
-        missing. Please, install and import home-manager for the modul to work
+        missing. Please, install and import home-manager for the module to work
         properly.
       '';
     };

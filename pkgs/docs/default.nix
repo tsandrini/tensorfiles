@@ -110,7 +110,7 @@
           # Then we convert the docbook xml to smart markdown
           pandoc -f docbook -t markdown -s "$out/$name.xml" -o "$out/$name.md"
 
-          # Remove agressive pandoc escaping
+          # Remove aggressive pandoc escaping
           sed -i 's/\\//g' "$out/$name.md"
 
           # The following commands properly parse and convert the Example blocks

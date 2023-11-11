@@ -23,7 +23,7 @@ with lib; {
   # as any possibly needed 3rd party modules.
   #
   # note: contrary to usual practices in imperative languages this is actually
-  # the prefered way of handling dependencies between modules since
+  # the preferred way of handling dependencies between modules since
   #
   # 1. nix is a lazily evaluated language
   # 2. modules are executed only after enabling them via their options (modules

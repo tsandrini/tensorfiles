@@ -81,7 +81,7 @@ with builtins; rec {
   /*
   Transforms an absolute path to a one relative to the given user home
   directory. It basically functions as a case handler for
-  `lib.strings.removePreffix` to handle a variety of different cases.
+  `lib.strings.removePrefix` to handle a variety of different cases.
 
    1. If you pass `cfg = config;` then the function will load the `homeDir`
       specified in the users system module (tensorfiles.system.users).

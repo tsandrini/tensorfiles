@@ -1,18 +1,20 @@
-# Table of Contents
+# spinorbundle
 
-1. [About](#1-about)
-2. [Installation](#2-installation)
-3. [Troubleshooting](#3-troubleshooting)
-    1. [Root partition fails to be labeled](#root-partition-fails-to-be-labeled)
+## Table of Contents
 
-# 1. About 
+1. [About](1-about)
+2. [Installation](2-installation)
+3. [Troubleshooting](3-troubleshooting)
+    1. [Root partition fails to be labeled](root-partition-fails-to-be-labeled)
+
+## 1. About
 
 Secondary windows (papa needs his occasional osu! grind) dualbooted laptop
 running btrfs based opt-in filesystem.
 
 TODO specs?
 
-# 2. Installation 
+## 2. Installation
 
 First things first, I can't read this tty crap
 
@@ -128,9 +130,9 @@ now you should be ready to go and pray!
 reboot # hehe
 ```
 
-# 3. Troubleshooting
+## 3. Troubleshooting
 
-## Root partition fails to be labeled 
+### Root partition fails to be labeled
 
 First try
 

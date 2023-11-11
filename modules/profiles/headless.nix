@@ -32,7 +32,7 @@ in {
       Enables NixOS module that configures/handles the headless system profile.
 
       **Headless layer** builds on top of the minimal layer and adds other
-      server-like functionalty like simple shells, basic networking for remote
+      server-like functionality like simple shells, basic networking for remote
       access and simple editors.
     '');
   };

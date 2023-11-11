@@ -86,7 +86,7 @@ in {
         type = str;
         default = "root";
         description = mdDoc ''
-          The main root btrfs subvolume path that is going to be resetted to
+          The main root btrfs subvolume path that is going to be reset to
           blankRootSnapshot later.
         '';
       };
@@ -96,7 +96,7 @@ in {
         default = "root-blank";
         description = mdDoc ''
           The btrfs snapshot of the main rootSubvolume. You will probably
-          need to create this one manully during the installation & formatting
+          need to create this one manually during the installation & formatting
           of the system. One such way is using the following command:
 
           btrfs su snapshot -r /mnt/root /mnt/root-blank
@@ -107,7 +107,7 @@ in {
         type = path;
         default = "/mnt";
         description = mdDoc ''
-          Temporary mounpoint that should be used for mounting and resetting
+          Temporary mountpoint that should be used for mounting and resetting
           the rootPartition.
 
           This is useful mainly if you want to prevent some conflicts.

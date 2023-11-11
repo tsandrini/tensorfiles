@@ -70,7 +70,7 @@ with builtins; rec {
       mergeAttrs (map f list);
 
   /*
-  Recursivelly flattens a nested attrset into a list of just its values.
+  Recursively flattens a nested attrset into a list of just its values.
 
   *Type*: `flatten :: AttrSet a -> [a]`
 
@@ -105,7 +105,7 @@ with builtins; rec {
   to an attrset
 
   Note: This function should work with arbitrary objects as long as the values
-  themselves are not nested again -- for arbitrarly large nests you should instead
+  themselves are not nested again -- for arbitrarily large nests you should instead
   apply this function recursively.
 
   *Type*: `groupAttrsetBySublistElems :: AttrSet a(b) -> AttrSet b(a)`

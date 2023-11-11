@@ -139,7 +139,7 @@ in {
             case "$(file -Lb --mime-type -- "$1")" in
                 # Text
                 text/*|*/xml|*/csv|*/json)
-                    # try to detect the charactor encodeing
+                    # try to detect the character encodeing
                     enc=$(head -n20 "$1" | uchardet)
                     head -n 100 "$1" |
                     { if command -v highlight > /dev/null 2>&1; then

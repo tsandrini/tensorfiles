@@ -1,0 +1,8 @@
+[default.extend-identifiers]
+nitch = "nitch"
+edn = "edn"
+fo = "fo"
+
+
+[files]
+extend-exclude = ["etc", "secrets"]
