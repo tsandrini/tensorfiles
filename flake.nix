@@ -68,10 +68,10 @@
 
     packages = mkPackages ./pkgs {};
 
+    devShells = mkShells ./shells {};
+
     nixosModules = mapModules ./modules import;
 
     nixosConfigurations = mapModules ./hosts mkHost;
-
-    devShells = mkShells ./shells {};
   };
 }

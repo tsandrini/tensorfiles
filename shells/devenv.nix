@@ -1,4 +1,18 @@
 # platforms: x86_64-linux,aarch64-linux,aarch64-darwin
+# --- shells/devenv.nix
+#
+# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# URL:     https://github.com/tsandrini/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   inputs,
   lib,
@@ -16,16 +30,22 @@ in
     modules = [
       {
         packages = with pkgs; [
+          # greeting
           cowsay
           fortune
           lolcat
+          # nix
           nil
-          shellcheck
-          shfmt
+          alejandra
+          statix
+          deadnix
+          # markdown, spell checking
           markdownlint-cli
           typos
+          # git, flakehub
           commitizen
           cz-cli
+          fh
         ];
 
         languages.nix.enable = true;
@@ -65,7 +85,7 @@ in
 
         enterShell = ''
           echo ""
-          echo "~~ Welcome to tensorfiles devshell! ~~
+          echo "~~ Welcome to the tensorfiles devshell! ~~
 
           [Fortune of the Day] $(fortune)" | cowsay -W 120 -T "U " | lolcat -F 0.3 -p 10 -t
           echo ""
