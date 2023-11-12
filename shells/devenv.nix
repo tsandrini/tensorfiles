@@ -26,6 +26,7 @@ in
           typos
           commitizen
           cz-cli
+          alejandra
         ];
 
         languages.nix.enable = true;

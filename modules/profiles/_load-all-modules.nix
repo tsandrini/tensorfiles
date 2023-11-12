@@ -55,6 +55,7 @@ with lib; {
       programs.shells.zsh
       programs.terminals.alacritty
       programs.terminals.kitty
+      programs.wayland.waybar
 
       security.agenix
 
@@ -65,6 +66,7 @@ with lib; {
       services.x11.picom
       services.x11.redshift
       services.x11.window-managers.xmonad
+      services.wayland.window-managers.hyprland
 
       system.persistence
       system.users
