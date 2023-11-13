@@ -22,11 +22,17 @@
   flakeFormatter = true;
   projectRootFile = projectRoot + "/flake.nix";
 
-  settings.formatter = {
-    alejandra.excludes = ["etc/**/*" "*.png" "*.woff2"];
-    deadnix.excludes = ["etc/**/*" "*.png" "*.woff2"];
-    statix.excludes = ["etc/**/*" "*.png" "*.woff2"];
-    prettier.excludes = ["etc/**/*" "*.png" "*.woff2"];
+  settings.formatter = let
+    excludes = [
+      "etc/**"
+      "*.png"
+      "*.woff2"
+    ];
+  in {
+    alejandra.excludes = excludes;
+    deadnix.excludes = excludes;
+    statix.excludes = excludes;
+    prettier.excludes = excludes;
     # TODO, for some reason doesn't work
     # typos = {
     #   command = pkgs.runtimeShell;

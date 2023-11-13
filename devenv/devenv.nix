@@ -45,7 +45,7 @@
   devenv.flakesIntegration = true;
 
   pre-commit = {
-    excludes = ["etc/**/*" "*.png" "*.woff2"];
+    excludes = ["etc" ".*png" ".*woff2"];
     hooks = {
       treefmt.enable = true;
       # Everything below is stuff that I couldn't make work with treefmt
