@@ -1,7 +1,7 @@
 name: "Run various checks on merge (pull) request"
 
 on:
-  push: # TODO temporary just for testing
+  # push: # TODO temporary just for testing
   pull_request:
     types: [opened, reopened, synchronize]
 
