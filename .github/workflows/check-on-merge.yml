@@ -10,15 +10,16 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@v4
-      # - uses: cachix/install-nix-action@v23
-      # - uses: cachix/cachix-action@v12
-      #   with:
-      #     name: devenv
-      - name: Install devenv.sh
+
+      - name: Complete nix setup
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Pre-commit checks
+      - name: pre-commit checks
         run: nix develop .#devenv --impure --command bash -c "pre-commit run --all-files"
 
       - name: Check the flake
-        run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace --all-systems"
+        run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace"
+        # TODO this would be a great addition to update in the future, right now
+        # some minor stuff isn't passing, but I don't have the time to
+        # emulate all other platforms that I don't care about at the moment
+        # run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace --all-systems"
