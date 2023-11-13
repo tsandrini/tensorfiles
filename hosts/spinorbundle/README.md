@@ -5,7 +5,7 @@
 1. [About](1-about)
 2. [Installation](2-installation)
 3. [Troubleshooting](3-troubleshooting)
-    1. [Root partition fails to be labeled](root-partition-fails-to-be-labeled)
+   1. [Root partition fails to be labeled](root-partition-fails-to-be-labeled)
 
 ## 1. About
 
@@ -57,13 +57,13 @@ Now we can proceed to create btrfs subvolumes. We'll be making a few of them
 
 1. `/mnt/root`: main subvolume, flushed on every boot
 2. `/mnt/nix`: subvolume holding `/nix/store` - easily reconstructible, but
-    worth caching and thus will be persistent between boots
+   worth caching and thus will be persistent between boots
 3. `/mnt/persist`: subvolume holding all of the needed permanent data and main
-    mount point for [impermanence](https://github.com/nix-community/impermanence)
+   mount point for [impermanence](https://github.com/nix-community/impermanence)
 4. `/mnt/var/log`: low data priority, but worth preserving between boots due
-    to possible error logs
+   to possible error logs
 
-*Note*: You may consider also having a `/mnt/home` subvolume preserved between
+_Note_: You may consider also having a `/mnt/home` subvolume preserved between
 boots since it's easier to maintain, however, I decided to flush the `/home`
 directory between boots as well and reconstruct it using `home-manager` so
 I am omitting the `/mnt/home` subvolume parts.
@@ -94,7 +94,7 @@ mount -o noatime,compress=zstd,subvol=log /dev/mapper/enc /mnt/var/log
 mount /dev/disk/by-label/boot /mnt/boot
 ```
 
-*Notenote*: At this stage you should either start an ssh-agent
+_Notenote_: At this stage you should either start an ssh-agent
 (``eval `ssh-agent` ``) and add the
 appropriate keys (`ssh-add /root/.ssh/id_ed25519`) or in case you don't want
 to use agenix you should patch the config with your desired way of handling
