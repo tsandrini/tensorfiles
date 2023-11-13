@@ -18,7 +18,7 @@ jobs:
         run: nix profile install tarball+https://install.devenv.sh/latest
 
       - name: Pre-commit checks
-        run: nix develop .#devenv --impure --command "pre-commit run --all-files"
+        run: nix develop .#devenv --impure --command bash -c "pre-commit run --all-files"
 
       - name: Check the flake
-        run: nix develop .#devenv --impure --command "nix flake check --impure --show-trace --all-systems"
+        run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace --all-systems"
