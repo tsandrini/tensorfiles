@@ -26,6 +26,10 @@
       url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nh = {
+      url = "github:viperML/nh";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -52,8 +56,14 @@
   };
 
   nixConfig = {
-    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-    extra-substituters = "https://devenv.cachix.org";
+    extra-substituters = [
+      "https://devenv.cachix.org"
+      "https://viperml.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
+    ];
   };
 
   outputs = inputs @ {flake-parts, ...}:
@@ -102,7 +112,7 @@
         in {
           packages = mapModules ./pkgs (p: pkgs.callPackage p {inherit lib inputs;});
 
-          devenv.shells = mapModules ./devenv (p: import p {inherit pkgs lib config;});
+          devenv.shells = mapModules ./devenv (p: import p {inherit pkgs config inputs system;});
 
           treefmt = import ./treefmt.nix {inherit pkgs projectRoot;};
         };

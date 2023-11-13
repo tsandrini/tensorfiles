@@ -15,6 +15,8 @@
 {
   pkgs,
   config,
+  inputs,
+  system,
   ...
 }: {
   packages = with pkgs; [
@@ -38,6 +40,7 @@
     fh # flakehub cli
 
     config.treefmt.build.wrapper
+    inputs.nh.packages.${system}.default
   ];
 
   languages.nix.enable = true;

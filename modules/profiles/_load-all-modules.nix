@@ -32,55 +32,15 @@ with lib; {
   # by doing this, we can create a fully (mostly) importless module ecosystem
   # which prevents any potential conflicts since everything will be reduced
   # to overriding attrsets.
-  imports =
-    (with inputs; [
+
+  imports = with inputs;
+    [
       impermanence.nixosModules.impermanence
       home-manager.nixosModules.home-manager
       agenix.nixosModules.default
       nur.nixosModules.nur
-    ])
+    ]
     ++ (attrValues inputs.self.nixosModules);
-
-  # ++ (with inputs.self.nixosModules; [
-  #   misc.gtk
-  #   misc.nix
-  #   misc.xdg
-
-  #   programs.direnv
-  #   programs.browsers.firefox
-  #   programs.dmenu
-  #   programs.editors.neovim
-  #   programs.file-managers.lf
-  #   programs.git
-  #   programs.newsboat
-  #   programs.pywal
-  #   programs.shells.zsh
-  #   programs.terminals.alacritty
-  #   programs.terminals.kitty
-
-  #   security.agenix
-
-  #   services.dunst
-  #   services.networking.networkmanager
-  #   services.networking.openssh
-  #   services.pywalfox-native
-  #   services.x11.picom
-  #   services.x11.redshift
-  #   services.x11.window-managers.xmonad
-
-  #   system.persistence
-  #   system.users
-
-  #   tasks.nix-garbage-collect
-  #   tasks.system-autoupgrade
-
-  #   # profiles
-  #   profiles.base
-  #   profiles.headless
-  #   profiles.minimal
-  #   profiles.graphical-xmonad
-  #   profiles.graphical-hyprland
-  # ]);
 
   meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -16,6 +16,8 @@
   config,
   lib,
   user ? "root",
+  inputs,
+  system,
   ...
 }:
 with builtins;
@@ -90,6 +92,10 @@ in {
           };
         };
       };
+
+      environment.systemPackages = [
+        inputs.nh.packages.${system}.default
+      ];
     }
     # |----------------------------------------------------------------------| #
   ]);
