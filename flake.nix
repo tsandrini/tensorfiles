@@ -20,6 +20,12 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
     devenv.url = "github:cachix/devenv";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
+    mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
+    nix2container = {
+      url = "github:nlewo/nix2container";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -75,24 +81,30 @@
       in {
         systems = import systems;
 
-        imports = with inputs; [devenv.flakeModule];
+        imports = with inputs; [devenv.flakeModule treefmt-nix.flakeModule];
 
         flake = {
           lib = lib.tensorfiles;
 
           overlays = mapModules ./overlays import;
 
-          nixosModules = mapModules ./modules import;
+          nixosModules = import ./modules;
 
           nixosConfigurations = mapModules ./hosts mkHost;
         };
 
-        perSystem = {system, ...}: let
+        perSystem = {
+          system,
+          config,
+          ...
+        }: let
           pkgs = mkNixpkgs inputs.nixpkgs system [];
         in {
           packages = mapModules ./pkgs (p: pkgs.callPackage p {inherit lib inputs;});
 
-          devenv.shells = mapModules ./devenv import;
+          devenv.shells = mapModules ./devenv (p: import p {inherit pkgs lib config;});
+
+          treefmt = import ./treefmt.nix {inherit pkgs projectRoot;};
         };
       }
     );

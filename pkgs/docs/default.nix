@@ -1,4 +1,3 @@
-# platforms: x86_64-linux, aarch64-linux
 # --- pkgs/docs/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
@@ -30,9 +29,6 @@
   system,
   ...
 }: let
-  inherit (lib.tensorfiles.attrsets) flatten;
-  inherit (lib.tensorfiles.modules) mapModules;
-
   READMEs = let
     readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
     projectPath = ../../.;
@@ -146,17 +142,14 @@
 
   options-doc = let
     eval = lib.evalModules {
-      modules = let
-        loadModulesInDir = dir: flatten (mapModules dir (x: x));
-      in
-        [{_module.check = false;}]
-        ++ (loadModulesInDir ../../modules/misc)
-        ++ (loadModulesInDir ../../modules/programs)
-        ++ (loadModulesInDir ../../modules/services)
-        ++ (loadModulesInDir ../../modules/system)
-        ++ (loadModulesInDir ../../modules/tasks)
-        ++ (loadModulesInDir ../../modules/security)
-        ++ (loadModulesInDir ../../modules/profiles);
+      modules = [{_module.check = false;}];
+      # ++ (loadModulesInDir ../../modules/misc)
+      # ++ (loadModulesInDir ../../modules/programs)
+      # ++ (loadModulesInDir ../../modules/services)
+      # ++ (loadModulesInDir ../../modules/system)
+      # ++ (loadModulesInDir ../../modules/tasks)
+      # ++ (loadModulesInDir ../../modules/security)
+      # ++ (loadModulesInDir ../../modules/profiles);
       specialArgs = rec {
         # TODO: Warning!!!!
         # This is very bad practice and should be usually avoided at all costs,
