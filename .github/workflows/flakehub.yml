@@ -15,5 +15,5 @@ jobs:
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
           name: "tsandrini/tensorfiles"
-          rolling: false
+          rolling: true
           visibility: "public"
