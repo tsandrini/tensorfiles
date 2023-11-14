@@ -161,7 +161,8 @@
     runCommand "options-doc.md" {} ''
       cat ${optionsDoc.optionsCommonMark} >> $out
       sed -i "s/\\\./\./g" $out
-      ${perl}/bin/perl -i -0777 -pe 's/```\n(.*?)\n```/```nix linenums="1"\n\1\n```/gs' $out
+      # TODO this unfortunately breaks the whole document
+      # ${perl}/bin/perl -i -0777 -pe 's/```\n(.*?)\n```/```nix linenums="1"\n\1\n```/gs' $out
     '';
 in
   stdenv.mkDerivation {

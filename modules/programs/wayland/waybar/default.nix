@@ -46,7 +46,7 @@ in {
         programs.waybar = {
           enable = _ true;
           style = import ./style.nix {};
-          config = {
+          settings = {
             mainBar = {
               position = "top";
               layer = "top";

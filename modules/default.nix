@@ -61,7 +61,7 @@
   services_x11_window-managers_xmonad = import ./services/x11/window-managers/xmonad;
   ## -- wayland --
   ### -- window-managers --
-  services_wayland_window-managers_wayland = import ./services/wayland/window-managers/wayland.nix;
+  services_wayland_window-managers_hyprland = import ./services/wayland/window-managers/hyprland.nix;
 
   # -- system --
   system_persistence = import ./system/persistence.nix;
