@@ -6,7 +6,7 @@
 result/
 build/
 
-result/
+result
 .direnv/
 .devenv/
 
