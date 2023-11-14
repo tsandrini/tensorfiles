@@ -49,6 +49,7 @@ in {
           terminals.kitty.enable = _ true;
           # terminals.alacritty.enable = _ true;
           browsers.firefox.enable = _ true;
+          wayland.waybar.enable = _ true;
         };
 
         services = {

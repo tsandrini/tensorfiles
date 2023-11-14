@@ -212,7 +212,6 @@ in
       homepage = "https://github.com/tsandrini/tensorfiles";
       description = "The combined Documentation of the whole tensorfiles flake.";
       license = licenses.mit;
-      # platforms = ["x86_64-linux" "aarch64-linux"];
       maintainers = with tensorfiles.maintainers; [tsandrini];
     };
   }

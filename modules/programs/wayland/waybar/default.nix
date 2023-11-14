@@ -15,6 +15,8 @@
 {
   config,
   lib,
+  inputs,
+  system,
   ...
 }:
 with builtins;
@@ -46,6 +48,7 @@ in {
         programs.waybar = {
           enable = _ true;
           style = import ./style.nix {};
+          package = _ inputs.nixpkgs-wayland.packages.${system}.waybar;
           settings = {
             mainBar = {
               position = "top";
