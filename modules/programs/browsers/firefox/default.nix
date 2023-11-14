@@ -27,6 +27,7 @@ with lib; let
     isPersistenceEnabled
     getUserDownloadsDir
     getUserEmail
+    getUserGraphicalBackend
     ;
 
   cfg = config.tensorfiles.programs.browsers.firefox;
@@ -57,7 +58,15 @@ in {
           inherit _user;
           cfg = config;
         };
+        userGraphicalBackend = getUserGraphicalBackend {
+          inherit _user;
+          cfg = config;
+        };
       in {
+        home.sessionVariables = mkIf (userGraphicalBackend == "wayland") {
+          MOZ_ENABLE_WAYLAND = _ "1";
+        };
+
         programs.firefox = {
           enable = _ true;
           package = pkgs.firefox.override {

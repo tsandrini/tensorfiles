@@ -27,6 +27,7 @@ with lib; let
     getUserCacheDir
     getUserHomeDir
     getUserConfigDir
+    getUserTerminal
     ;
 
   cfg = config.tensorfiles.services.x11.window-managers.xmonad;
@@ -235,6 +236,11 @@ in {
           inherit _user;
           cfg = config;
         };
+        userTerminal = getUserTerminal {
+          inherit _user;
+          cfg = config;
+        };
+
         # The idea is that if the dmenu module is enabled, we leave the installation
         # and $PATH symlinking to the module, and if not, we install the one
         # define inside this module
@@ -434,10 +440,7 @@ in {
               myModMask = mod4Mask
 
               myTerminal :: String
-              myTerminal = "kitty"
-
-              myBrowser :: String
-              myBrowser = "firefox-developer-edition"
+              myTerminal = "${userTerminal}"
 
               myFileManager :: String
               myFileManager = "lf"
@@ -630,7 +633,6 @@ in {
                   ("M-i", incWindowSpacing 4), -- Increase window spacing
                   -- Multimedia keys
                   ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird")),
-                  ("<XF86HomePage>", runOrRaise myBrowser (resource =? myBrowser)),
                   ${
                 with userCfg.playerctl; (
                   if enable

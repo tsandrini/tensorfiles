@@ -36,6 +36,12 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # TODO mako https://github.com/emersion/mako
+      # TODO Hyprland Desktop Portal
+      # TODO Authentication Agent
+      # TODO tofi app launcher
+      # TODO clipboard manager
+      # TODO ianny (RSI tool) https://github.com/zefr0x/ianny
       tensorfiles = {
         profiles.headless.enable = _ true;
 

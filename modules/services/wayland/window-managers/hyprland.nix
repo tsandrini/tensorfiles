@@ -63,13 +63,13 @@ in {
             ];
 
             general = {
-              layout = "dwindle";
-              resize_on_border = true;
+              layout = _ "dwindle";
+              resize_on_border = _ true;
             };
 
             misc = {
-              layers_hog_keyboard_focus = false;
-              disable_splash_rendering = true;
+              layers_hog_keyboard_focus = _ false;
+              disable_splash_rendering = _ true;
               # force_default_wallpaper = 0;
             };
 
@@ -77,29 +77,29 @@ in {
               kb_layout = _ "us,cz";
               kb_options = _ "grp:alt_shift_toggle";
               kb_variant = _ ",qwerty";
-              follow_mouse = 1;
+              follow_mouse = _ 1;
               touchpad = {
-                natural_scroll = "yes";
-                disable_while_typing = true;
-                drag_lock = true;
+                natural_scroll = _ "yes";
+                disable_while_typing = _ true;
+                drag_lock = _ true;
               };
-              sensitivity = 0;
-              float_switch_override_focus = 2;
+              sensitivity = _ 0;
+              float_switch_override_focus = _ 2;
             };
             binds = {
-              allow_workspace_cycles = true;
+              allow_workspace_cycles = _ true;
             };
 
             dwindle = {
-              pseudotile = "yes";
-              preserve_split = "yes";
+              pseudotile = _ "yes";
+              preserve_split = _ "yes";
               # no_gaps_when_only = "yes";
             };
             gestures = {
-              workspace_swipe = "on";
-              workspace_swipe_direction_lock = false;
-              workspace_swipe_forever = true;
-              workspace_swipe_numbered = true;
+              workspace_swipe = _ "on";
+              workspace_swipe_direction_lock = _ false;
+              workspace_swipe_forever = _ true;
+              workspace_swipe_numbered = _ true;
             };
 
             windowrule = let
@@ -163,12 +163,12 @@ in {
             ];
 
             decoration = {
-              drop_shadow = "yes";
-              shadow_range = 8;
-              shadow_render_power = 2;
-              "col.shadow" = "rgba(00000044)";
+              drop_shadow = _ "yes";
+              shadow_range = _ 8;
+              shadow_render_power = _ 2;
+              "col.shadow" = _ "rgba(00000044)";
 
-              dim_inactive = false;
+              dim_inactive = _ false;
 
               # blur = {
               #   enabled = true;

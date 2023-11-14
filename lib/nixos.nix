@@ -508,6 +508,81 @@ with builtins; rec {
     then cfg.tensorfiles.system.users.home.settings.${_user}.email
     else null;
 
+  # TODO doccoment
+  getUserGraphicalBackend = {
+    _user ? user,
+    cfg ? null,
+  }: let
+    fallback = "tty";
+  in
+    if (cfg != null)
+    then
+      (
+        if
+          ((isUsersSystemEnabled cfg)
+            && (cfg.tensorfiles.system.users.home.settings.${_user}.graphicalBackend
+              != null))
+        then cfg.tensorfiles.system.users.home.settings.${_user}.graphicalBackend
+        else if
+          (
+            hasAttr "home-manager" cfg
+            && (any (x: x.enable) (with cfg.home-manager.users.${user}.xsession.windowManager; [
+              xmonad
+              awesome
+              bspwm
+              spectrwm
+              fluxbox
+              herbstluftwm
+            ]))
+          )
+        then "xorg"
+        else if
+          (
+            hasAttr "home-manager" cfg
+            && (any (x: x.enable) (with cfg.home-manager.users.${user}.wayland.windowManager; [
+              sway
+              hyprland
+            ]))
+          )
+        then "wayland"
+        else if
+          (
+            any (x: x.enable) (with cfg.services.xserver.windowManager; [
+              yeahwm
+              xmonad
+              wmii
+              twm
+              tinywm
+              stumpwm
+              spectrwm
+              smallwm
+              sawfish
+              qtile
+              notion
+              i3
+              exwm
+              dwm
+              bspwm
+              awesome
+            ])
+          )
+        then "xorg"
+        else if
+          (
+            any (x: x.enable) (with cfg.programs; [
+              sway
+              hyprland
+              wayfire
+              river
+              miriway
+            ])
+          )
+        then "wayland"
+        else fallback
+      )
+    else fallback;
+
+  # TODO doccoment
   getUserBrowser = {
     # (String) Target user whose browser should be parsed. Default: user passed during lib init
     _user ? user,
@@ -549,6 +624,7 @@ with builtins; rec {
       )
     else fallback;
 
+  # TODO doccoment
   getUserTerminal = {
     # (String) Target user whose terminal should be parsed. Default: user passed during lib init
     _user ? user,
@@ -599,6 +675,7 @@ with builtins; rec {
       )
     else fallback;
 
+  # TODO doccoment
   getUserShell = {
     # (String) Target user whose shell should be parsed. Default: user passed during lib init
     _user ? user,
@@ -635,6 +712,7 @@ with builtins; rec {
       )
     else fallback;
 
+  # TODO doccoment
   getUserEditor = {
     # (String) Target user whose editor should be parsed. Default: user passed during lib init
     _user ? user,
@@ -676,6 +754,7 @@ with builtins; rec {
       )
     else fallback;
 
+  # TODO doccoment
   getUserIDE = {
     # (String) Target user whose IDE should be parsed. Default: user passed during lib init
     _user ? user,
