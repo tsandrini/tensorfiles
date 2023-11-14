@@ -1,4 +1,3 @@
-# platforms: x86_64-linux, aarch64-linux
 # --- pkgs/docs/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
@@ -21,7 +20,6 @@
   mkdocs,
   pandoc,
   python3,
-  python310Packages,
   runCommand,
   nixosOptionsDoc,
   nixdoc,
@@ -30,9 +28,6 @@
   system,
   ...
 }: let
-  inherit (lib.tensorfiles.attrsets) flatten;
-  inherit (lib.tensorfiles.modules) mapModules;
-
   READMEs = let
     readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
     projectPath = ../../.;
@@ -146,17 +141,7 @@
 
   options-doc = let
     eval = lib.evalModules {
-      modules = let
-        loadModulesInDir = dir: flatten (mapModules dir (x: x));
-      in
-        [{_module.check = false;}]
-        ++ (loadModulesInDir ../../modules/misc)
-        ++ (loadModulesInDir ../../modules/programs)
-        ++ (loadModulesInDir ../../modules/services)
-        ++ (loadModulesInDir ../../modules/system)
-        ++ (loadModulesInDir ../../modules/tasks)
-        ++ (loadModulesInDir ../../modules/security)
-        ++ (loadModulesInDir ../../modules/profiles);
+      modules = [{_module.check = false;}] ++ (lib.attrValues (import ../../modules));
       specialArgs = rec {
         # TODO: Warning!!!!
         # This is very bad practice and should be usually avoided at all costs,
@@ -187,16 +172,20 @@ in
       [options-doc lib-doc]
       ++ (with READMEs; [main hosts."spinorbundle"]);
 
-    nativeBuildInputs = with python310Packages; [
-      setuptools
-      mkdocs
-      mkdocs-material
-      # I've had issues while trying to include files from the /nix/store
-      # using the jinja macros so just for this I've included the markdown-include
-      # package
-      markdown-include
-      pygments
-      cairosvg
+    nativeBuildInputs = [
+      (python3.withPackages
+        (ps:
+          with ps; [
+            setuptools
+            mkdocs
+            mkdocs-material
+            # I've had issues while trying to include files from the /nix/store
+            # using the jinja macros so just for this I've included the markdown-include
+            # package
+            markdown-include
+            pygments
+            cairosvg
+          ]))
     ];
 
     buildPhase = ''
@@ -222,7 +211,7 @@ in
       homepage = "https://github.com/tsandrini/tensorfiles";
       description = "The combined Documentation of the whole tensorfiles flake.";
       license = licenses.mit;
-      platforms = ["x86_64-linux" "aarch64-linux"];
+      # platforms = ["x86_64-linux" "aarch64-linux"];
       maintainers = with tensorfiles.maintainers; [tsandrini];
     };
   }

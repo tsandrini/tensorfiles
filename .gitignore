@@ -6,6 +6,9 @@
 result/
 build/
 
-result/
+result
 .direnv/
 .devenv/
+
+.devcontainer.json
+.pre-commit-config.yaml

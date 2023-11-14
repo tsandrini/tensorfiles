@@ -22,7 +22,7 @@
   user ? "root",
   ...
 }: let
-  inherit (self.attrsets) mapFilterAttrs mergeAttrs groupAttrsetBySublistElems;
+  inherit (self.attrsets) mapFilterAttrs;
   inherit (self.strings) dirnameFromPath;
 in
   with lib;
@@ -100,7 +100,7 @@ in
 
     Example:
     ```nix title="Example" linenums="1"
-    mkNixpkgs <nixpkgs> "x86_64-linux" []
+    mkNixpkgs inputs.nixpkgs "x86_64-linux" []
       => { ... }
 
     mkNixpkgs inputs.nixpkgs "aarch64-linux" [ (final: prev: {
@@ -193,38 +193,6 @@ in
         };
 
     /*
-    Given a filepath, it will try to parse a list of platforms from the
-    header (first line) of the provided file in the following format
-
-    ```nix linenums="1"
-    # platforms: aarch64-linux, x86_64-linux
-    # rest of the file ...
-    # ...
-    ```
-
-    In case that the provided file doesn't contain any platform specification
-    it will simply return an empty list.
-
-    *Type*: `parsePlatformHeader :: Path -> [String]`
-
-    Example:
-    ```nix title="Example" linenums="1"
-    parsePlatformHeader example-file.nix
-      => [ "aarch64-linux" "x86_64-linux" ]
-    ```
-    */
-    parsePlatformHeader =
-      # (Path) Path to the file whose platform header should be parsed
-      file: let
-        fileContent = readFile file;
-        lines = splitString "\n" fileContent;
-        header = replaceStrings [" "] [""] (head lines);
-      in
-        if (hasPrefix "#platforms:" header)
-        then splitString "," (removePrefix "#platforms:" header)
-        else [];
-
-    /*
     Returns a dummy derivation with a given name as and a platform
     specific builder. Useful when constructing certain defaults or general
     debugging. The resulting derivation can be compiled without errors, but
@@ -235,13 +203,10 @@ in
     Example:
     ```nix title="Example" linenums="1"
     mkDummyDerivation "example-pkg" "aarch64-linux" {}
-     => <derivation ....>
+     => derivation
 
     mkDummyDerivation "example-pkg2" "x86_64-linux" { meta.license = lib.licenses.gpl20; }
-     => <derivation ....>
-
-    mkDummyDerivation "example-pkg3" "x86_64-linux" { installPhase = "mkdir -p $out && touch $out/hey"; }
-     => <derivation ....>
+     => derivation
     ```
     */
     mkDummyDerivation =
@@ -278,65 +243,4 @@ in
           // extraArgs;
       in
         systemPkgs.stdenv.mkDerivation args;
-
-    /*
-    Custom `packages` flake output constructor.
-    It recursively traverses the provided root directory and scans for packages.
-    The resulting attrset is constructed in such a way to comply with the
-    flake `packages` format, that is
-
-    packages."<system>"."<name>"
-
-    The platform package specifications will be parsed from the packages
-    themselves using the `parsePlatformHeader` which reduces the overall
-    amount of manual setup while still maintaining an overall pure
-    declarative structure.
-
-    *Type*: `mkPackages :: Path -> { callPackageExtraAttrs :: AttrSet a; pkgsExtraOverlays :: [ (AttrSet -> AttrSet -> AttrSet) ] } -> AttrSet b`
-    */
-    mkPackages =
-      # (Path) Path to the root dir which should be scanned for packages
-      dir: {
-        # (AttrSet a) Extra arguments that should be inherit for the callPackage pattern
-        callPackageExtraAttrs ? {},
-        # ([(AttrSet -> AttrSet -> AttrSet)]) Extra overlays that should be applied to created the nixpkgs instance
-        pkgsExtraOverlays ? [],
-      }: let
-        pkgsByPlatforms = groupAttrsetBySublistElems (mapModules dir (p:
-          parsePlatformHeader
-          (
-            if pathExists "${p}/default.nix"
-            then "${p}/default.nix"
-            else p
-          )));
-        pkgPaths = mapModules dir (p: p);
-      in
-        genAttrs (attrNames pkgsByPlatforms) (system: let
-          systemPkgs = mkNixpkgs inputs.nixpkgs system pkgsExtraOverlays;
-        in
-          mergeAttrs (map (p: {
-              "${p}" =
-                systemPkgs.callPackage pkgPaths.${p}
-                ({inherit lib inputs;} // callPackageExtraAttrs);
-            })
-            pkgsByPlatforms.${system}));
-
-    mkShells =
-      # (Path) Path to the root dir which should be scanned for packages
-      dir: _: let
-        pkgsByPlatforms = groupAttrsetBySublistElems (mapModules dir (p:
-          parsePlatformHeader
-          (
-            if pathExists "${p}/default.nix"
-            then "${p}/default.nix"
-            else p
-          )));
-        pkgPaths = mapModules dir (p: p);
-      in
-        genAttrs (attrNames pkgsByPlatforms) (system:
-          mergeAttrs (map (p: {
-              "${p}" =
-                import pkgPaths.${p} {inherit inputs lib system projectPath user;};
-            })
-            pkgsByPlatforms.${system}));
   }

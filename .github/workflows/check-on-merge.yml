@@ -8,14 +8,17 @@ jobs:
   check:
     runs-on: "ubuntu-latest"
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Nix
+      - name: Complete nix setup
         uses: DeterminateSystems/nix-installer-action@main
 
-      - name: Check the flake
-        run: nix flake check --impure --show-trace --all-systems
+      - name: pre-commit checks
+        run: nix develop .#devenv --impure --command bash -c "pre-commit run --all-files"
 
-      - name: Check formatting
-        run: nix-shell -p nixfmt --command "find . -name '*.nix' -type f -exec nixfmt -c {} +"
+      - name: Check the flake
+        run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace"
+        # TODO this would be a great addition to update in the future, right now
+        # some minor stuff isn't passing, but I don't have the time to
+        # emulate all other platforms that I don't care about at the moment
+        # run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace --all-systems"

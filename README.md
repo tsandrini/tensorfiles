@@ -4,12 +4,12 @@
 
 1. [About](1-about)
 2. [Software](2-software)
-    1. [Academics](21-academics)
-    2. [Secrets](22-secrets)
+   1. [Academics](21-academics)
+   2. [Secrets](22-secrets)
 3. [Installation](3-installation)
 4. [(rough) Roadmap](4-rough-roadmap)
 5. [Troubleshooting](5-troubleshooting)
-    1. [`Write error: disk full;` during `nixos-install`](write-error-disk-full-during-nixos-install)
+   1. [`Write error: disk full;` during `nixos-install`](write-error-disk-full-during-nixos-install)
 6. [References](6-references)
 
 ## 1. About
@@ -35,10 +35,10 @@ TODO comment more?
 1. [org-roam](https://www.orgroam.com/): This is the heart of everything that I
    do, TODOs, daily journals, scratchpads, notetaking and personal research wiki.
    The internal wiki is interlinked with zotero entries as well as anki cards.
-    - TODOs: [org-agenda](https://orgmode.org/manual/Agenda-Views.html)
-    - visualization: [org-roam-ui](https://github.com/org-roam/org-roam-ui)
-    - anki connection: [org-anki-editor](https://github.com/louietan/anki-editor)
-    ![img](pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
+   - TODOs: [org-agenda](https://orgmode.org/manual/Agenda-Views.html)
+   - visualization: [org-roam-ui](https://github.com/org-roam/org-roam-ui)
+   - anki connection: [org-anki-editor](https://github.com/louietan/anki-editor)
+     ![img](pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
 2. [zotero](https://www.zotero.org/): This is my backend for all of my
    bibliography as well as the individual `.pdf` files. As of now I keep them up
    to date between machines using [syncthing](https://syncthing.net/), but
@@ -55,7 +55,7 @@ secrets I use [agenix](https://github.com/ryantm/agenix). I also try to avoid
 using any globally available pubkeys and rather tend to use machine specific
 ones instead (for obvious reasons).
 
-*Note*: plz no pwn xd, if you see any vulnerabilities please DM me instead,
+_Note_: plz no pwn xd, if you see any vulnerabilities please DM me instead,
 thanks <3.
 
 ## 3. Installation
@@ -64,23 +64,23 @@ TODO
 
 ## 4. (rough) Roadmap
 
-- [-] ****organization****
+- [-] \***\*organization\*\***
   - [ ] finish doc
   - [x] decouple <nix/roles/base.nix>
   - [x] decouple <nix/flake.nix>
   - [x] move nix/ to be the project root
-- [-] ****implementation****
+- [-] \***\*implementation\*\***
   - [ ] syncthing (local version)
   - [ ] syncthing (remote)
   - [ ] searx (remote)
-  - [X] newsboat
+  - [x] newsboat
   - [ ] thunderbird
   - [ ] zotero
   - [ ] anki
   - [ ] emacs
   - [ ] discord
   - [ ] misc? vlc? libre?
-- [ ] ****machines****
+- [ ] \***\*machines\*\***
   - [ ] jetbundle
   - [ ] pi
   - [ ] server

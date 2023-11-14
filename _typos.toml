@@ -5,4 +5,4 @@ fo = "fo"
 
 
 [files]
-extend-exclude = ["etc", "secrets"]
+extend-exclude = ["etc"]

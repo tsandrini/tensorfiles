@@ -29,8 +29,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Nix
-        uses: cachix/install-nix-action@v22
+      - name: Complete nix setup
+        uses: DeterminateSystems/nix-installer-action@main
 
       - name: Build docs using Nix
         run: nix build .#docs
