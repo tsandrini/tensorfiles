@@ -44,6 +44,7 @@
   programs_terminals_kitty = import ./programs/terminals/kitty.nix;
   ## -- wayland --
   programs_wayland_waybar = import ./programs/wayland/waybar;
+  programs_wayland_anyrun = import ./programs/wayland/anyrun.nix;
 
   # -- security --
   security_agenix = import ./security/agenix.nix;

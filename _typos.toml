@@ -2,6 +2,7 @@
 nitch = "nitch"
 edn = "edn"
 fo = "fo"
+ags = "ags"
 
 
 [files]

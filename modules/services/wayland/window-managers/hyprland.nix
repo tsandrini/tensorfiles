@@ -13,11 +13,11 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  pkgs,
   config,
   lib,
   inputs,
   system,
-  user ? "root",
   ...
 }:
 with builtins;
@@ -50,21 +50,112 @@ in {
         package = _ inputs.hyprland.packages.${system}.hyprland;
       };
 
-      home-manager.users.${user} = {
+      services.upower.enable = _ true;
+
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
+        imports = [inputs.ags.homeManagerModules.default];
+        home.packages = with pkgs; [
+          playerctl
+          xdg-utils # create maybe a base graphical?
+          hyprpicker
+          gtklock
+          xdg-desktop-portal-hyprland
+          (
+            pkgs.symlinkJoin {
+              name = "ags";
+              paths = [
+                swww
+                grim # TODO all of the following dependencies should be wrapped
+                slurp
+                sassc
+                brightnessctl
+                wf-recorder
+                wayshot
+                imagemagick
+                wl-gammactl
+                swappy
+                (python3.withPackages (ps: with ps; [python-pam]))
+                inputs.ags.packages.${system}.default
+              ];
+            }
+          )
+          copyq
+        ]; # TODO move
+
+        programs.ags = {
+          enable = _ true;
+          extraPackages = with pkgs; [
+          ];
+        };
+
         wayland.windowManager.hyprland = {
           enable = _ true;
           package = _ inputs.hyprland.packages.${system}.hyprland;
           settings = {
             exec-once = [
-              "waybar"
+              "ags"
+              "copyq"
             ];
             monitor = [
               "eDP-1, 1920x1080, 0x0, 1"
             ];
 
             general = {
+              gaps_in = _ 5;
+              gaps_out = _ 5;
+              border_size = _ 1;
               layout = _ "dwindle";
               resize_on_border = _ true;
+              allow_tearing = _ true;
+            };
+
+            gestures = {
+              workspace_swipe = _ "on";
+              workspace_swipe_direction_lock = _ false;
+              workspace_swipe_forever = _ true;
+              workspace_swipe_numbered = _ true;
+            };
+
+            group = {
+              groupbar = {
+                font_size = _ 16;
+                gradients = _ false;
+              };
+              # TODO col_border_active_color
+            };
+
+            decoration = {
+              rounding = _ 14;
+              blur = {
+                enabled = _ false;
+                size = _ 10;
+                passes = _ 3;
+                new_optimizations = _ true;
+                brightness = _ 1.0;
+                contrast = _ 1.0;
+                noise = _ 0.02;
+              };
+              drop_shadow = _ true;
+              shadow_ignore_window = _ true;
+              shadow_offset = _ "0 2";
+              shadow_range = _ 20;
+              shadow_render_power = _ 3;
+              "col.shadow" = _ "rgba(00000055)";
+            };
+
+            animations = {
+              enabled = _ true;
+              animation = [
+                "border, 1, 2, default"
+                "fade, 1, 4, default"
+                "windows, 1, 3, default, popin 80%"
+                "workspaces, 1, 2, default, slide"
+              ];
+            };
+
+            dwindle = {
+              pseudotile = _ "yes";
+              preserve_split = _ "yes";
             };
 
             misc = {
@@ -90,111 +181,60 @@ in {
               allow_workspace_cycles = _ true;
             };
 
-            dwindle = {
-              pseudotile = _ "yes";
-              preserve_split = _ "yes";
-              # no_gaps_when_only = "yes";
-            };
-            gestures = {
-              workspace_swipe = _ "on";
-              workspace_swipe_direction_lock = _ false;
-              workspace_swipe_forever = _ true;
-              workspace_swipe_numbered = _ true;
-            };
-
-            windowrule = let
-              f = regex: "float, ^(${regex})$";
-            in [
-              (f "pavucontrol")
-              (f "nm-connection-editor")
-              (f "blueberry.py")
-              (f "Color Picker")
-              (f "xdg-desktop-portal")
-              (f "xdg-desktop-portal-gnome")
-              (f "transmission-gtk")
-              "workspace 7, title:Spotify"
-            ];
-
-            bind = let
-              binding = mod: cmd: key: arg: "${mod}, ${key}, ${cmd}, ${arg}";
-              mvfocus = binding "SUPER" "movefocus";
-              ws = binding "SUPER" "workspace";
-              resizeactive = binding "SUPER CTRL" "resizeactive";
-              mvactive = binding "SUPER ALT" "moveactive";
-              mvtows = binding "SUPER SHIFT" "movetoworkspace";
-              arr = [1 2 3 4 5 6 7 8 9];
-            in
+            bind =
               [
                 "SUPER, Return, exec, kitty"
-                "SUPER, T, exec, firefox"
-                "SUPER, F, exec, kitty -e lf"
+                "SUPER SHIFT, Q, killactive,"
+                "SUPER, D, exec, anyrun"
 
-                "ALT, Tab, focuscurrentorlast"
-                "CTRL ALT, Delete, exit"
-                "ALT, Q, killactive"
-                "SUPER, F, togglefloating"
-                "SUPER, G, fullscreen"
-                "SUPER, O, fakefullscreen"
-                "SUPER, P, togglesplit"
+                "SUPER, T, togglefloating"
+                "SUPER, R, togglesplit"
+                "SUPER, Tab, workspace, previous"
+                "SUPER, Space, fullscreen"
 
-                (mvfocus "k" "u")
-                (mvfocus "j" "d")
-                (mvfocus "l" "r")
-                (mvfocus "h" "l")
-                (ws "left" "e-1")
-                (ws "right" "e+1")
-                (mvtows "left" "e-1")
-                (mvtows "right" "e+1")
-                (resizeactive "k" "0 -20")
-                (resizeactive "j" "0 20")
-                (resizeactive "l" "20 0")
-                (resizeactive "h" "-20 0")
-                (mvactive "k" "0 -20")
-                (mvactive "j" "0 20")
-                (mvactive "l" "20 0")
-                (mvactive "h" "-20 0")
+                "SUPER, h, movefocus, l"
+                "SUPER, l, movefocus, r"
+                "SUPER, k, movefocus, u"
+                "SUPER, j, movefocus, d"
+
+                "SUPER SHIFT, j, swapnext,"
+                "SUPER SHIFT, k, swapnext, prev"
+
+                "SUPER,B,layoutmsg,swapwithmaster master" # TODO debug
               ]
-              ++ (map (i: ws (toString i) (toString i)) arr)
-              ++ (map (i: mvtows (toString i) (toString i)) arr);
+              ++ (map (x: "SUPER, ${toString x}, workspace, ${toString x}") [1 2 3 4 5 6 7 8 9])
+              ++ (map (x: "SUPER SHIFT, ${toString x}, movetoworkspace, ${toString x}") [1 2 3 4 5 6 7 8 9]);
 
             bindm = [
               "SUPER, mouse:273, resizewindow"
               "SUPER, mouse:272, movewindow"
             ];
 
-            decoration = {
-              drop_shadow = _ "yes";
-              shadow_range = _ 8;
-              shadow_render_power = _ 2;
-              "col.shadow" = _ "rgba(00000044)";
+            binde = [
+              "SUPER CTRL, k, resizeactive, 0 -20"
+              "SUPER CTRL, j, resizeactive, 0 20"
+              "SUPER CTRL, l, resizeactive, 20 0"
+              "SUPER CTRL, h, resizeactive, -20 0"
+            ];
 
-              dim_inactive = _ true;
+            bindl = [
+              ", XF86AudioPlay, exec, playerctl play-pause"
+              ", XF86AudioPrev, exec, playerctl previous"
+              ", XF86AudioNext, exec, playerctl next"
 
-              # blur = {
-              #   enabled = true;
-              #   size = 8;
-              #   passes = 3;
-              #   new_optimizations = "on";
-              #   noise = 0.01;
-              #   contrast = 0.9;
-              #   brightness = 0.8;
-              # };
-            };
+              ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+              ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+            ];
 
-            animations = {
-              enabled = "yes";
-              bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-              animation = [
-                "windows, 1, 5, myBezier"
-                "windowsOut, 1, 7, default, popin 80%"
-                "border, 1, 10, default"
-                "fade, 1, 7, default"
-                "workspaces, 1, 6, default"
-              ];
-            };
+            bindle = [
+              ", XF86AudioRaiseVolume, exec, wpctl set-volume -l '1.0' @DEFAULT_AUDIO_SINK@ 5%+"
+              ", XF86AudioLowerVolume, exec, wpctl set-volume -l '1.0' @DEFAULT_AUDIO_SINK@ 5%-"
+              ", XF86MonBrightnessUp, exec, brightnessctl s +5%"
+              ", XF86MonBrightnessDown, exec, brightnessctl s -5%"
+            ];
           };
         };
-      };
+      });
     }
     # |----------------------------------------------------------------------| #
   ]);

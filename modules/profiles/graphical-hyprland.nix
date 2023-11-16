@@ -55,11 +55,12 @@ in {
           terminals.kitty.enable = _ true;
           # terminals.alacritty.enable = _ true;
           browsers.firefox.enable = _ true;
-          wayland.waybar.enable = _ true;
+          #wayland.waybar.enable = _ true;
+          wayland.anyrun.enable = _ true;
         };
 
         services = {
-          dunst.enable = _ true;
+          #dunst.enable = _ true;
           pywalfox-native.enable = _ true;
           wayland.window-managers.hyprland.enable = _ true;
         };
