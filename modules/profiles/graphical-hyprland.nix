@@ -57,6 +57,7 @@ in {
           browsers.firefox.enable = _ true;
           #wayland.waybar.enable = _ true;
           wayland.anyrun.enable = _ true;
+          wayland.ags.enable = _ true;
         };
 
         services = {

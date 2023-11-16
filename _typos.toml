@@ -1,9 +1,5 @@
-[default.extend-identifiers]
-nitch = "nitch"
-edn = "edn"
-fo = "fo"
-ags = "ags"
-
+[default]
+extend-ignore-identifiers-re = [ "ags", "nitch", "edn", "fo" ]
 
 [files]
 extend-exclude = ["etc"]

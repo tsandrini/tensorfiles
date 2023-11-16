@@ -45,6 +45,7 @@
   ## -- wayland --
   programs_wayland_waybar = import ./programs/wayland/waybar;
   programs_wayland_anyrun = import ./programs/wayland/anyrun.nix;
+  programs_wayland_ags = import ./programs/wayland/ags.nix;
 
   # -- security --
   security_agenix = import ./security/agenix.nix;

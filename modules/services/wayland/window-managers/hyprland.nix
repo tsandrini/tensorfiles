@@ -26,6 +26,8 @@ with lib; let
 
   cfg = config.tensorfiles.services.wayland.window-managers.hyprland;
   _ = mkOverrideAtProfileLevel;
+
+  agsCheck = (hasAttr "wayland" config.tensorfiles.programs) && (hasAttr "ags" config.tensorfiles.programs.wayland) && config.tensorfiles.programs.wayland.ags.enable;
 in {
   options.tensorfiles.services.wayland.window-managers.hyprland = with types;
   with tensorfiles.options; {
@@ -38,6 +40,16 @@ in {
 
       settings = mkHomeSettingsOption (_user: {
         pywal = {enable = mkPywalEnableOption;};
+
+        ags = {
+          enable = mkEnableOption (mdDodc ''
+            Enable ags hyprland integration
+
+            This includes
+            1. launching ags
+            2. mediakeys via ags
+          '');
+        };
       });
     };
   };
@@ -50,52 +62,44 @@ in {
         package = _ inputs.hyprland.packages.${system}.hyprland;
       };
 
-      services.upower.enable = _ true;
+      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: let
+        userCfg = cfg.home.settings.${_user};
+      in {
+        services.safeeyes.enable = _ true;
+        services.flameshot.enable = _ true; # test out
 
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        imports = [inputs.ags.homeManagerModules.default];
         home.packages = with pkgs; [
           playerctl
           xdg-utils # create maybe a base graphical?
           hyprpicker
           gtklock
           xdg-desktop-portal-hyprland
-          (
-            pkgs.symlinkJoin {
-              name = "ags";
-              paths = [
-                swww
-                grim # TODO all of the following dependencies should be wrapped
-                slurp
-                sassc
-                brightnessctl
-                wf-recorder
-                wayshot
-                imagemagick
-                wl-gammactl
-                swappy
-                (python3.withPackages (ps: with ps; [python-pam]))
-                inputs.ags.packages.${system}.default
-              ];
-            }
-          )
+          swww
+          grim # TODO all of the following dependencies should be wrapped
+          slurp
+          sassc
+          brightnessctl
+          wf-recorder
+          wayshot
+          imagemagick
+          wl-gammactl
+          swappy
+          (python3.withPackages (ps: with ps; [python-pam]))
+          inputs.ags.packages.${system}.default
           copyq
         ]; # TODO move
-
-        programs.ags = {
-          enable = _ true;
-          extraPackages = with pkgs; [
-          ];
-        };
 
         wayland.windowManager.hyprland = {
           enable = _ true;
           package = _ inputs.hyprland.packages.${system}.hyprland;
           settings = {
-            exec-once = [
-              "ags"
-              "copyq"
-            ];
+            exec-once =
+              [
+                "copyq"
+              ]
+              ++ (optional (agsCheck && userCfg.ags.enable) "ags");
+
+            # TODO move this part to concrete host definitions
             monitor = [
               "eDP-1, 1920x1080, 0x0, 1"
             ];
@@ -217,21 +221,45 @@ in {
               "SUPER CTRL, h, resizeactive, -20 0"
             ];
 
-            bindl = [
-              ", XF86AudioPlay, exec, playerctl play-pause"
-              ", XF86AudioPrev, exec, playerctl previous"
-              ", XF86AudioNext, exec, playerctl next"
+            bindl =
+              if (agsCheck && userCfg.ags.enable)
+              then [
+                ", XF86AudioPlay, exec, ags run-js 'mpris.players.pop()?.playPause()'"
+                ", XF86AudioPrev, exec, ags run-js 'mpris.players.pop()?.previous()'"
+                ", XF86AudioNext, exec, ags run-js 'mpris.players.pop()?.next()'"
+                ", XF86AudioStop, exec, ags run-js 'mpris.players.pop()?.stop()'"
+                ", XF86AudioPause, exec, ags run-js 'mpris.players.pop()?.pause()'"
 
-              ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-              ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-            ];
+                ", XF86AudioMute, exec, ags run-js 'audio.speaker.isMuted = !audio.speaker.isMuted'"
+                ", XF86AudioMicMute, exec, ags run-js 'audio.microphone.isMuted = !audio.microphone.isMuted'"
+              ]
+              else [
+                ", XF86AudioPlay, exec, playerctl play-pause"
+                ", XF86AudioPrev, exec, playerctl previous"
+                ", XF86AudioNext, exec, playerctl next"
+                ", XF86AudioStop, exec, playerctl stop"
+                ", XF86AudioPause, exec, playerctl pause"
 
-            bindle = [
-              ", XF86AudioRaiseVolume, exec, wpctl set-volume -l '1.0' @DEFAULT_AUDIO_SINK@ 5%+"
-              ", XF86AudioLowerVolume, exec, wpctl set-volume -l '1.0' @DEFAULT_AUDIO_SINK@ 5%-"
-              ", XF86MonBrightnessUp, exec, brightnessctl s +5%"
-              ", XF86MonBrightnessDown, exec, brightnessctl s -5%"
-            ];
+                ", XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+                ", XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+              ];
+
+            bindle =
+              if (agsCheck && userCfg.ags.enable)
+              then [
+                ", XF86AudioRaiseVolume, exec, ags run-js 'audio.speaker.volume += 0.05; indicator.speaker()'"
+                ", XF86AudioLowerVolume, exec, ags run-js 'audio.speaker.volume -= 0.05; indicator.speaker()'"
+                ", XF86MonBrightnessUp, exec, ags run-js 'brightness.screen += 0.05; indicator.display()'"
+                ", XF86MonBrightnessDown, exec, ags run-js 'brightness.screen -= 0.05; indicator.display()'"
+                ", XF86KbdBrightnessUp,     exec, ags run-js 'brightness.kbd++; indicator.kbd()'"
+                ", XF86KbdBrightnessDown,   exec, ags run-js 'brightness.kbd--; indicator.kbd()'"
+              ]
+              else [
+                ", XF86AudioRaiseVolume, exec, wpctl set-volume -l '1.0' @DEFAULT_AUDIO_SINK@ 5%+"
+                ", XF86AudioLowerVolume, exec, wpctl set-volume -l '1.0' @DEFAULT_AUDIO_SINK@ 5%-"
+                ", XF86MonBrightnessUp, exec, brightnessctl s +5%"
+                ", XF86MonBrightnessDown, exec, brightnessctl s -5%"
+              ];
           };
         };
       });
