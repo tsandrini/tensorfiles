@@ -42,7 +42,7 @@ in {
         pywal = {enable = mkPywalEnableOption;};
 
         ags = {
-          enable = mkAlreadyEnabledOption (mdDodc ''
+          enable = mkAlreadyEnabledOption (mdDoc ''
             Enable ags hyprland integration
 
             This includes
