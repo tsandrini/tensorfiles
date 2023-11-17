@@ -1,4 +1,4 @@
-# --- modules/profiles/laptop.nix
+# --- modules/profiles/graphical-hyprland.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,8 +15,6 @@
 {
   config,
   lib,
-  inputs,
-  user ? "root",
   ...
 }:
 with builtins;
@@ -38,6 +36,12 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # TODO mako https://github.com/emersion/mako
+      # TODO Hyprland Desktop Portal
+      # TODO Authentication Agent
+      # TODO tofi app launcher
+      # TODO clipboard manager
+      # TODO ianny (RSI tool) https://github.com/zefr0x/ianny
       tensorfiles = {
         profiles.headless.enable = _ true;
 
@@ -51,11 +55,15 @@ in {
           terminals.kitty.enable = _ true;
           # terminals.alacritty.enable = _ true;
           browsers.firefox.enable = _ true;
+          #wayland.waybar.enable = _ true;
+          wayland.anyrun.enable = _ true;
+          wayland.ags.enable = _ true;
         };
 
         services = {
-          dunst.enable = _ true;
+          #dunst.enable = _ true;
           pywalfox-native.enable = _ true;
+          wayland.window-managers.hyprland.enable = _ true;
         };
 
         system.persistence = {
@@ -64,16 +72,6 @@ in {
             enable = _ true;
             rootPartition = _ "/dev/mapper/enc";
           };
-        };
-      };
-
-      programs.hyprland.enable = true;
-
-      home-manager.users.${user} = {
-        modules = [inputs.hyprland.homeManagerModules.default];
-
-        wayland.windowManager.hyprland = {
-          enable = true;
         };
       };
     }

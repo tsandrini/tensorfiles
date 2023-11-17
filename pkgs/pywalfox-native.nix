@@ -37,7 +37,6 @@ with python3.pkgs;
       homepage = "https://github.com/Frewacom/pywalfox-native";
       description = "Native app used alongside the Pywalfox addon.";
       license = licenses.mpl20;
-      # platforms = ["x86_64-linux"];
       maintainers = with tensorfiles.maintainers; [tsandrini];
     };
   }

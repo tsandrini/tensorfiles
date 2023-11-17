@@ -319,7 +319,7 @@ in {
             enable = _ true;
             enableBashIntegration = _ true;
             agents = ["ssh"];
-            extraFlags = ["--nogui"];
+            extraFlags = ["--nogui" "--quiet"];
             keys = ["id_ed25519"];
           };
         });

@@ -14,7 +14,9 @@
 
 ## 1. About
 
-Hello my dear explorer! Let's enjoy computing that actually doesn't suck together!
+**tensorfiles** represent a set of _fully covariant_, that is invariant to the
+chosen coordinate system (**they work on every machine**), fundamental
+laws of computing (**how to build my fancy flashy terminals**)
 
 ![img](pkgs/docs/docs/assets/images/showcase_1.png)
 ![img](pkgs/docs/docs/assets/images/showcase_2.png)

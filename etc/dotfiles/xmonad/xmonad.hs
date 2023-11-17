@@ -242,7 +242,7 @@ myKeys colors =
     ("<XF86Display>", spawn "autorandr --cycle"),
     -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
     -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),
-    ("<Print>", spawn "xfce4-screenshooter")
+    ("<Print>", spawn "flameshot gui")
   ]
 
 remap ::

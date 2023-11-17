@@ -42,6 +42,10 @@
   ## -- terminals --
   programs_terminals_alacritty = import ./programs/terminals/alacritty.nix;
   programs_terminals_kitty = import ./programs/terminals/kitty.nix;
+  ## -- wayland --
+  programs_wayland_waybar = import ./programs/wayland/waybar;
+  programs_wayland_anyrun = import ./programs/wayland/anyrun.nix;
+  programs_wayland_ags = import ./programs/wayland/ags.nix;
 
   # -- security --
   security_agenix = import ./security/agenix.nix;
@@ -57,6 +61,9 @@
   services_x11_redshift = import ./services/x11/redshift.nix;
   ### -- window-managers --
   services_x11_window-managers_xmonad = import ./services/x11/window-managers/xmonad;
+  ## -- wayland --
+  ### -- window-managers --
+  services_wayland_window-managers_hyprland = import ./services/wayland/window-managers/hyprland.nix;
 
   # -- system --
   system_persistence = import ./system/persistence.nix;

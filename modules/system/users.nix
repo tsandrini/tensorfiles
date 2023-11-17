@@ -128,6 +128,14 @@ in {
           '';
         };
 
+        graphicalBackend = mkOption {
+          type = enum ["tty" "wayland" "x11"];
+          default = "tty";
+          description = mdDoc ''
+            User's preferred graphical backend.
+          '';
+        };
+
         terminal = mkOption {
           type = str;
           default = "xterm";

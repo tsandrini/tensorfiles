@@ -48,14 +48,21 @@
       url = "github:arkenfox/user.js";
       flake = false;
     };
-
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
+    };
+    anyrun = {
+      url = "github:Kirottu/anyrun";
+      #inputs.nixpkgs.follows = "nixpkgs";
+    };
+    ags = {
+      url = "github:Aylur/ags";
+      #inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -66,6 +73,7 @@
       "https://cache.nixos.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://hyprland.cachix.org"
+      "https://anyrun.cachix.org"
     ];
     extra-trusted-public-keys = [
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
@@ -73,6 +81,7 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
     ];
   };
 
