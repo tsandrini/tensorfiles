@@ -15,7 +15,6 @@
 {
   config,
   lib,
-  pkgs,
   inputs,
   ...
 }:
@@ -54,12 +53,12 @@ in {
 
         programs.ags = {
           enable = _ true;
-          extraPackages = with pkgs; [
-            sassc
-            swww
-            brightnessctl
-            slurp
-          ];
+          # extraPackages = with pkgs; [
+          #   sassc
+          #   swww
+          #   brightnessctl
+          #   slurp
+          # ];
         };
       });
     })
