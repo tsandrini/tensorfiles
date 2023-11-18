@@ -14,13 +14,13 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   pkgs,
-  projectRoot,
+  projectPath,
   ...
 }: {
   package = pkgs.treefmt;
   flakeCheck = true;
   flakeFormatter = true;
-  projectRootFile = projectRoot + "/flake.nix";
+  projectRootFile = projectPath + "/flake.nix";
 
   settings.formatter = let
     excludes = [

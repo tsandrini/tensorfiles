@@ -16,6 +16,8 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with builtins;
@@ -23,7 +25,8 @@ with lib; let
   cfg = config.tensorfiles.services.pywalfox-native;
 
   # pywalfox-native = inputs.self.packages.${system}.pywalfox-native;
-  inherit (pkgs.tensorfiles) pywalfox-native;
+  # inherit (pkgs.tensorfiles) pywalfox-native;
+  inherit (inputs.self.packages.${system}) pywalfox-native;
   pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
     ${pywalfox-native}/bin/pywalfox start
   '';
@@ -46,7 +49,7 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf cfg.home.enable {
       home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        home.packages = with pkgs; [pywalfox-native];
+        home.packages = [pywalfox-native];
 
         home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
           builtins.replaceStrings ["<path>"]

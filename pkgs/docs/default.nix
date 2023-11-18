@@ -16,6 +16,7 @@
   lib,
   pkgs,
   inputs,
+  projectPath,
   stdenv,
   mkdocs,
   pandoc,
@@ -30,7 +31,6 @@
 }: let
   READMEs = let
     readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
-    projectPath = ../../.;
   in {
     main = readmeToDerivation (projectPath + "/README.md");
     hosts = {
@@ -141,7 +141,7 @@
 
   options-doc = let
     eval = lib.evalModules {
-      modules = [{_module.check = false;}] ++ (lib.attrValues (import ../../modules));
+      modules = [{_module.check = false;}] ++ (lib.attrValues inputs.self.nixosModules);
       specialArgs = rec {
         # TODO: Warning!!!!
         # This is very bad practice and should be usually avoided at all costs,
@@ -212,6 +212,6 @@ in
       homepage = "https://github.com/tsandrini/tensorfiles";
       description = "The combined Documentation of the whole tensorfiles flake.";
       license = licenses.mit;
-      maintainers = with tensorfiles.maintainers; [tsandrini];
+      maintainers = with lib.tensorfiles.maintainers; [tsandrini];
     };
   }

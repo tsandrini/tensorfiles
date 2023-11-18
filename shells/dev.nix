@@ -14,9 +14,8 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   pkgs,
-  config,
-  inputs,
-  system,
+  inputs',
+  treefmt,
   ...
 }: {
   packages = with pkgs; [
@@ -39,8 +38,8 @@
     cz-cli
     fh # flakehub cli
 
-    config.treefmt.build.wrapper
-    inputs.nh.packages.${system}.default
+    treefmt
+    inputs'.nh.packages.default
   ];
 
   languages.nix.enable = true;
@@ -65,7 +64,7 @@
       actionlint.enable = true;
     };
     settings = {
-      treefmt.package = config.treefmt.build.wrapper;
+      treefmt.package = treefmt;
     };
   };
 

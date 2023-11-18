@@ -42,13 +42,13 @@ in {
         pywal = {enable = mkPywalEnableOption;};
 
         ags = {
-          enable = mkAlreadyEnabledOption (mdDoc ''
+          enable = mkAlreadyEnabledOption ''
             Enable ags hyprland integration
 
             This includes
             1. launching ags
             2. mediakeys via ags
-          '');
+          '';
         };
       });
     };

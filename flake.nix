@@ -85,56 +85,42 @@
     ];
   };
 
-  outputs = inputs @ {flake-parts, ...}:
-    flake-parts.lib.mkFlake {inherit inputs;} (
-      let
-        inherit (inputs) nixpkgs systems;
-        inherit (lib.tensorfiles.modules) mapModules mkNixpkgs mkHost;
+  outputs = inputs @ {flake-parts, ...}: let
+    inherit (inputs) nixpkgs;
 
-        # These assignments are optional and only serve to change the default values
-        # (that being `root` and `./secrets` -- if you don't plan on using any secrets
-        # backend you can simply ignore this), meaning that
-        # you can change or even delete them, however, the projectRoot variable is
-        # required, so please keep that one.
-        user = "tsandrini";
-        projectRoot = ./.;
-        secretsPath = projectRoot + "/secrets";
+    projectPath = ./.;
+    secretsPath = projectPath + "/secrets";
 
-        lib = nixpkgs.lib.extend (self: _super: {
-          tensorfiles = import ./lib {
-            inherit inputs user projectRoot secretsPath;
-            pkgs = nixpkgs;
-            lib = self;
-          };
-        });
-      in {
-        systems = import systems;
+    lib = nixpkgs.lib.extend (self: _super: {
+      tensorfiles = import ./lib {
+        inherit inputs projectPath secretsPath;
+        pkgs = nixpkgs;
+        lib = self;
+      };
+    });
+    specialArgs = {inherit lib projectPath secretsPath;};
+  in
+    flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
+      imports = with inputs; [
+        treefmt-nix.flakeModule
+        ./pkgs
+        ./shells
+        ./overlays
+        ./modules
+        ./hosts
+      ];
 
-        imports = with inputs; [devenv.flakeModule treefmt-nix.flakeModule];
+      systems = import inputs.systems;
+      flake.lib = lib.tensorfiles;
 
-        flake = {
-          lib = lib.tensorfiles;
+      perSystem = {
+        system,
+        pkgs,
+        ...
+      }: {
+        _module.args.pkgs = lib.tensorfiles.mkNixpkgs inputs.nixpkgs system [];
 
-          overlays = mapModules ./overlays import;
-
-          nixosModules = import ./modules;
-
-          nixosConfigurations = mapModules ./hosts mkHost;
-        };
-
-        perSystem = {
-          system,
-          config,
-          ...
-        }: let
-          pkgs = mkNixpkgs inputs.nixpkgs system [];
-        in {
-          packages = mapModules ./pkgs (p: pkgs.callPackage p {inherit lib inputs;});
-
-          devenv.shells = mapModules ./devenv (p: import p {inherit pkgs config inputs system;});
-
-          treefmt = import ./treefmt.nix {inherit pkgs projectRoot;};
-        };
-      }
-    );
+        treefmt = import ./treefmt.nix {inherit pkgs projectPath;};
+      };
+    };
 }
