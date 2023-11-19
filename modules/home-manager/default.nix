@@ -1,4 +1,4 @@
-# --- modules/default.nix
+# --- modules/home-manager/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,9 +12,28 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{...}: {
-  imports = [
-    ./nixos
-    ./home-manager
-  ];
+{lib, ...}: {
+  options.flake.homeModules = lib.mkOption {
+    type = with lib.types; lazyAttrsOf unspecified;
+    default = {};
+  };
+
+  config.flake.homeModules = {
+    # -- misc --
+
+    # -- profiles --
+
+    # -- programs --
+
+    ## -- editors --
+    programs_editors_neovim = import ./programs/editors/neovim.nix;
+
+    # -- security --
+
+    # -- services --
+
+    # -- system --
+
+    # -- tasks --
+  };
 }

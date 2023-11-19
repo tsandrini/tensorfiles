@@ -15,7 +15,6 @@
 {
   config,
   lib,
-  user ? "root",
   ...
 }:
 with builtins;

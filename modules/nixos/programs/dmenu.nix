@@ -70,7 +70,7 @@ in {
         };
         dmenu-pywaled = let
           name = "dmenu_run";
-          buildInputs = with pkgs; [
+          buildInputs = [
             # This is fine since nix is a lazy language and dmenu-pywaled won't
             # get evaluated unless `isPywalEnabled == true`
             config.tensorfiles.programs.pywal.home.settings.${_user}.pkg
@@ -88,7 +88,7 @@ in {
             postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
           };
       in {
-        home.packages = with pkgs; [
+        home.packages = [
           (
             if (userCfg.pywal.enable && (isPywalEnabled config))
             then dmenu-pywaled

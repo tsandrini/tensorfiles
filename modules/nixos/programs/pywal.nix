@@ -74,7 +74,7 @@ in {
           cfg = config;
         };
       in {
-        home.packages = with pkgs; [userCfg.pkg];
+        home.packages = [userCfg.pkg];
 
         systemd.user.tmpfiles.rules = ["L ${homeDir}/.Xresources - - - - ${cacheDir}/wal/Xresources"];
         home.file."${configDir}/wal/templates/Xresources".text = mkBefore ''

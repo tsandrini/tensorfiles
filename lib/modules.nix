@@ -13,7 +13,6 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
-  pkgs,
   lib,
   self,
   inputs,
@@ -33,6 +32,14 @@ in
     # mkImageMediaOverride = 60:
     # mkForce = 50:
     # mkVMOverride = 10: used by ‘nixos-rebuild build-vm’
+
+    /*
+    mkOverride function with a preset priority set for all of the
+    home-manager modules.
+
+    *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
+    */
+    mkOverrideAtHmModuleLevel = mkOverride 600;
 
     /*
     mkOverride function with a preset priority set for all of the nixos
@@ -187,7 +194,7 @@ in
               nixpkgs.pkgs = mkDefault systemPkgs;
               networking.hostName = hostName;
             }
-            (projectPath + "/modules/profiles/_load-all-modules.nix")
+            (projectPath + "/modules/nixos/profiles/_load-all-modules.nix")
             dir
           ];
         };

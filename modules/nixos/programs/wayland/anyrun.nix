@@ -17,7 +17,6 @@
   lib,
   pkgs,
   inputs,
-  system,
   ...
 }:
 with builtins;
