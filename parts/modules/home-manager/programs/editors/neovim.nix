@@ -16,12 +16,16 @@
   config,
   lib,
   pkgs,
+  self,
   ...
 }:
 with builtins;
 with lib; let
+  tensorfiles = self.lib;
+  inherit (tensorfiles.modules) mkOverrideAtHmModuleLevel;
+
   cfg = config.tensorfiles.hm.programs.editors.neovim;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverrideAtHmModuleLevel;
 in {
   # TODO modularize config, cant be bothered to do it now
   options.tensorfiles.hm.programs.editors.neovim = with types;

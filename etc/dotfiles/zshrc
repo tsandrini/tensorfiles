@@ -144,3 +144,6 @@ source ~/.cache/wal/colors-tty.sh
 [[ ! -r /home/tsandrini/.opam/opam-init/init.zsh ]] || source /home/tsandrini/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 
 eval "$(direnv hook zsh)"
+
+. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh

@@ -1,4 +1,4 @@
-# --- hosts/default.nix
+# --- parts/homes/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -18,41 +18,51 @@
   projectPath,
   secretsPath,
   withSystem,
+  self,
+  config,
   ...
 }: let
-  mkHost = args: hostName: {
+  mkHome = args: home: {
     extraSpecialArgs ? {},
     extraModules ? [],
   }:
-    lib.nixosSystem {
-      inherit (args) system pkgs;
-      specialArgs =
+    inputs.home-manager.lib.homeManagerConfiguration {
+      inherit (args) pkgs;
+      extraSpecialArgs =
         {
           inherit (args) system;
-          inherit inputs lib hostName projectPath secretsPath;
+          inherit inputs home projectPath secretsPath self;
           # TODO also maybe do something about this
           secretsAttrset =
             if builtins.pathExists (secretsPath + "/secrets.nix")
             then (import (secretsPath + "/secrets.nix"))
             else {};
-          host.hostName = hostName;
           # TODO REMOVE THIS TODO REMOVE THIS
           user = "tsandrini"; # TODO REMOVE THIS
         }
         // extraSpecialArgs;
       modules =
         [
-          {
-            nixpkgs.pkgs = lib.mkDefault args.pkgs;
-            networking.hostName = hostName;
-          }
-          (projectPath + "/modules/nixos/profiles/_load-all-modules.nix")
-          ./${hostName}
+          ./${home}
         ]
-        ++ extraModules;
+        ++ extraModules
+        # Disabled by default, therefore load every module and enable via attributes
+        # instead of imports
+        ++ (lib.attrValues config.flake.homeModules);
     };
 in {
-  flake.nixosConfigurations = {
-    spinorbundle = withSystem "x86_64-linux" (args: mkHost args "spinorbundle" {});
+  options.flake.homeConfigurations = lib.mkOption {
+    type = with lib.types; lazyAttrsOf unspecified;
+    default = {};
+  };
+
+  config = {
+    flake.homeConfigurations = {
+      "jetbundle@tsandrini" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
+    };
+
+    flake.checks."x86_64-linux" = {
+      "home-jetbundle@tsandrini" = config.flake.homeConfigurations."jetbundle@tsandrini".config.home.path;
+    };
   };
 }

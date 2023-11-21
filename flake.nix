@@ -16,9 +16,12 @@
   description = "tsandrini's fully covariant tensorfiles";
 
   inputs = {
+    # Base dependencies
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
+
+    # Development (devenv and treefmt dependencies)
     devenv.url = "github:cachix/devenv";
     treefmt-nix.url = "github:numtide/treefmt-nix";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
@@ -26,6 +29,8 @@
       url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Project specific dependencies
     nh = {
       url = "github:viperML/nh";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -66,6 +71,7 @@
     };
   };
 
+  # Here you can add additional binary cache substituers that you trust
   nixConfig = {
     extra-substituters = [
       "https://devenv.cachix.org"
@@ -87,10 +93,18 @@
 
   outputs = inputs @ {flake-parts, ...}: let
     inherit (inputs) nixpkgs;
+    inherit (lib.tensorfiles) mapModules mkNixpkgs flatten;
 
+    # You should ideally use relative paths in each individual part from ./parts,
+    # however, if needed you can use the `projectPath` variable that is passed
+    # to every flakeModule to properly anchor your absolute paths.
     projectPath = ./.;
     secretsPath = projectPath + "/secrets";
 
+    # We extend the base <nixpkgs> library with our own custom helpers as well
+    # as override any of the nixpkgs default functions that we'd like
+    # to override. This instance is then passed to every part in ./parts so that
+    # you can use it in your custom modules
     lib = nixpkgs.lib.extend (self: _super: {
       tensorfiles = import ./lib {
         inherit inputs projectPath secretsPath;
@@ -101,26 +115,40 @@
     specialArgs = {inherit lib projectPath secretsPath;};
   in
     flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
-      imports = with inputs; [
-        treefmt-nix.flakeModule
-        ./pkgs
-        ./shells
-        ./overlays
-        ./modules
-        ./hosts
-      ];
+      # We recursively traverse all of the flakeModules in ./parts and import only
+      # the final modules, meaning that you can have an arbitrary nested structure
+      # that suffices your needs. For example
+      #
+      # - ./parts
+      #   - modules/
+      #     - nixos/
+      #       - myNixosModule1.nix
+      #       - myNixosModule2.nix
+      #       - default.nix
+      #     - home-manager/
+      #       - myHomeModule1.nix
+      #       - myHomeModule2.nix
+      #       - default.nix
+      #     - sharedModules.nix
+      #    - pkgs/
+      #      - myPackage1.nix
+      #      - myPackage2.nix
+      #      - default.nix
+      #    - mySimpleModule.nix
+      imports = flatten (mapModules ./parts (x: x));
 
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
 
+      # Finally, we bootstrap the `pkgs` argument to use our custom nixpkgs
+      # instance bootstrapped with overlays, loaded system and other defaults.
+      # For more info refer to `lib/modules.nix:mkNixpkgs`
       perSystem = {
         system,
         pkgs,
         ...
       }: {
-        _module.args.pkgs = lib.tensorfiles.mkNixpkgs inputs.nixpkgs system [];
-
-        treefmt = import ./treefmt.nix {inherit pkgs projectPath;};
+        _module.args.pkgs = mkNixpkgs inputs.nixpkgs system [];
       };
     };
 }

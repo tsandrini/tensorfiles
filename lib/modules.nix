@@ -16,13 +16,9 @@
   lib,
   self,
   inputs,
-  projectPath ? ./..,
-  secretsPath ? (projectPath + "/secrets"),
-  user ? "root",
   ...
 }: let
   inherit (self.attrsets) mapFilterAttrs;
-  inherit (self.strings) dirnameFromPath;
 in
   with lib;
   with builtins; rec {
@@ -139,64 +135,6 @@ in
             ++ (optional (hasAttr "nur" inputs) nurOverlay)
             ++ (attrValues inputs.self.overlays)
             ++ extraOverlays;
-        };
-
-    /*
-    Custom host (that is, nixosSystem) constructor. It expects a target host
-    dir path as its first argument, that is, not a `.nix` file, but a directory.
-    The reasons for this are the following:
-
-    1. Each host gets its specifically constructed version of nixpkgs for its
-       target platform, which is specified in the `myHostDir/system` file.
-
-    2. Apart from some main host `.nix` file almost every host has some
-       `hardware-configuration.nix` thus implying a host directory structure
-       holding atleast 2 files + the system file.
-
-    This means that the minimal required structure for a host dir is
-    - myHostDir/
-      - (required) default.nix
-      - (required) system
-      - (optional) hardware-configuration.nix
-
-    *Type*: `mkHost :: Path -> Attrset`
-    */
-    mkHost =
-      # (Path) Path to the root directory further providing the "system" and "default.nix" files
-      dir: let
-        hostName = dirnameFromPath dir;
-        system = removeSuffix "\n" (readFile "${dir}/system");
-        systemPkgs = mkNixpkgs inputs.nixpkgs system [];
-        secretsAttrset =
-          if pathExists (secretsPath + "/secrets.nix")
-          then (import (secretsPath + "/secrets.nix"))
-          else {};
-      in
-        lib.nixosSystem {
-          inherit system;
-          pkgs = systemPkgs;
-          specialArgs = {
-            inherit
-              inputs
-              lib
-              system
-              user
-              hostName
-              projectPath
-              secretsPath
-              secretsAttrset
-              ;
-            host.hostName = hostName;
-            # lintCompatibility = false;
-          };
-          modules = [
-            {
-              nixpkgs.pkgs = mkDefault systemPkgs;
-              networking.hostName = hostName;
-            }
-            (projectPath + "/modules/nixos/profiles/_load-all-modules.nix")
-            dir
-          ];
         };
 
     /*

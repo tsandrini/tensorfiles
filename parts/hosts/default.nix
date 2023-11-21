@@ -1,4 +1,4 @@
-# --- homes/default.nix
+# --- parts/hosts/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -20,43 +20,39 @@
   withSystem,
   ...
 }: let
-  mkHome = args: home: {
+  mkHost = args: hostName: {
     extraSpecialArgs ? {},
     extraModules ? [],
   }:
-    inputs.home-manager.lib.homeManagerConfiguration {
+    lib.nixosSystem {
       inherit (args) system pkgs;
       specialArgs =
         {
           inherit (args) system;
-          inherit inputs lib home projectPath secretsPath;
+          inherit inputs lib hostName projectPath secretsPath;
           # TODO also maybe do something about this
           secretsAttrset =
             if builtins.pathExists (secretsPath + "/secrets.nix")
             then (import (secretsPath + "/secrets.nix"))
             else {};
+          host.hostName = hostName;
           # TODO REMOVE THIS TODO REMOVE THIS
           user = "tsandrini"; # TODO REMOVE THIS
         }
         // extraSpecialArgs;
       modules =
         [
-          # {
-          #   nixpkgs.pkgs = lib.mkDefault args.pkgs;
-          #   networking.hostName = hostName;
-          # }
-          # (projectPath + "/modules/nixos/profiles/_load-all-modules.nix")
-          ./${home}
+          {
+            nixpkgs.pkgs = lib.mkDefault args.pkgs;
+            networking.hostName = hostName;
+          }
+          (projectPath + "/modules/nixos/profiles/_load-all-modules.nix")
+          ./${hostName}
         ]
         ++ extraModules;
     };
 in {
-  options.flake.homeConfigurations = lib.mkOption {
-    type = with lib.types; lazyAttrsOf unspecified;
-    default = {};
-  };
-
-  config.flake.homeConfigurations = {
-    "jetbundle@tsandrini" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
+  flake.nixosConfigurations = {
+    spinorbundle = withSystem "x86_64-linux" (args: mkHost args "spinorbundle" {});
   };
 }
