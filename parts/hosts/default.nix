@@ -18,6 +18,7 @@
   projectPath,
   secretsPath,
   withSystem,
+  config,
   ...
 }: let
   mkHost = args: hostName: {
@@ -46,13 +47,23 @@
             nixpkgs.pkgs = lib.mkDefault args.pkgs;
             networking.hostName = hostName;
           }
-          (projectPath + "/modules/nixos/profiles/_load-all-modules.nix")
           ./${hostName}
         ]
-        ++ extraModules;
+        ++ extraModules
+        # Disabled by default, therefore load every module and enable via attributes
+        # instead of imports
+        ++ (lib.attrValues config.flake.nixosModules);
     };
 in {
   flake.nixosConfigurations = {
-    spinorbundle = withSystem "x86_64-linux" (args: mkHost args "spinorbundle" {});
+    spinorbundle = withSystem "x86_64-linux" (args:
+      mkHost args "spinorbundle" {
+        extraModules = with inputs; [
+          impermanence.nixosModules.impermanence
+          home-manager.nixosModules.home-manager
+          agenix.nixosModules.default
+          nur.nixosModules.nur
+        ];
+      });
   };
 }

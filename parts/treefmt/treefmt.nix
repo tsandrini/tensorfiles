@@ -1,4 +1,4 @@
-# --- treefmt.nix
+# --- parts/treefmt/treefmt.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

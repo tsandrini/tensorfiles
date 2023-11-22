@@ -1,4 +1,4 @@
-# --- shells/devenv.nix
+# --- parts/shells/devenv.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

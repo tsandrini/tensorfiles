@@ -133,4 +133,31 @@ with builtins; rec {
         names = map (item: item.name) grouped.${value};
       in
         nameValuePair value names) (attrNames grouped));
+
+  /*
+  Recursively checks the presence of a an attribute using `hasAttr`
+
+  One might ask why not `?` or `hasAttr` instead?
+  1. The `?` operator is indeed able to handle nested attributes, however, I've
+     had some errors while linting and running the `check` command during
+     development, which seems to be due to the inline direct syntax with a
+     potentially nonexisting attributes.
+  2. The `hasAttr` takes a string identifier instead, which is more safe, however,
+      it doesn't support nested attributes.
+
+  The solution is then to construct a recursive traverse over the identifier
+  using the `hasAttr` function.
+
+  *Type*: `nestedHasAttr:: AttrSet -> String -> Bool`
+  */
+  nestedHasAttr = attr: identifier: let
+    aux = acc: parts: let
+      elem = head parts;
+      rest = tail parts;
+    in
+      if length rest == 0
+      then (hasAttr elem acc)
+      else (hasAttr elem acc) && (aux acc.${elem} rest);
+  in
+    aux attr (splitString "." identifier);
 }

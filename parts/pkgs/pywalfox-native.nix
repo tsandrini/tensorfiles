@@ -1,4 +1,4 @@
-# --- pkgs/pywalfox-native.nix
+# --- parts/pkgs/pywalfox-native.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

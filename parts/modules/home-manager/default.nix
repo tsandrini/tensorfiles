@@ -20,13 +20,16 @@
 
   config.flake.homeModules = {
     # -- misc --
+    misc_xdg = import ./misc/xdg.nix;
 
     # -- profiles --
 
     # -- programs --
-
+    programs_pywal = import ./programs/pywal.nix;
     ## -- editors --
     programs_editors_neovim = import ./programs/editors/neovim.nix;
+    ## -- shells --
+    programs_shells_zsh = import ./programs/shells/zsh;
 
     # -- security --
 

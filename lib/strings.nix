@@ -15,4 +15,11 @@
 {lib, ...}:
 with lib;
 with builtins; rec {
+  /*
+  Check if a substring is present in a given string.
+  Uses simple splitting instead of creating and escaping a general regex
+
+  *Type*: `hasSubstring :: String -> String -> Bool`
+  */
+  hasSubstring = str: substr: (splitString substr str) > 1;
 }

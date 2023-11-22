@@ -1,4 +1,4 @@
-# --- shells/default.nix
+# --- parts/shells/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
