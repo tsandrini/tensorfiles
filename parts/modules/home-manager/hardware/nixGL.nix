@@ -24,10 +24,10 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.hardware.nixGL;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 550;
 
   nixGLWrap = pkg:
     pkgs.runCommand "${pkg.name}-nixgl-wrapper" {} ''
@@ -70,7 +70,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.integrations.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty")) {
-      programs.kitty.package = _ (nixGLWrap pkgs.kitty);
+      programs.kitty.package = _ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg);
     })
     # |----------------------------------------------------------------------| #
   ]);

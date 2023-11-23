@@ -24,6 +24,7 @@
 
     # -- misc --
     misc_xdg = import ./misc/xdg.nix;
+    misc_gtk = import ./misc/gtk.nix;
 
     # -- profiles --
 
@@ -42,6 +43,10 @@
     # -- security --
 
     # -- services --
+    services_dunst = import ./services/dunst.nix;
+    ## -- x11 --
+    services_x11_picom = import ./services/x11/picom.nix;
+    services_x11_redshift = import ./services/x11/redshift.nix;
 
     # -- system --
 

@@ -168,9 +168,9 @@ myStartupHook :: [String] -> X ()
 myStartupHook colors = do
   -- X init
   spawnOnce "wal -R"
-  spawn "pgrep picom > /dev/null || picom &"
+  -- spawn "pgrep picom > /dev/null || picom &"
   -- Apps: base
-  spawn "pgrep redshift-gtk > /dev/null || redshift-gtk &"
+  -- spawn "pgrep redshift-gtk > /dev/null || redshift-gtk &"
   spawn "pgrep keepassxc > /dev/null || keepassxc &"
   spawn "pgrep nm-applet > /dev/null || nm-applet &"
   -- spawn "pgrep volumeicon > /dev/null || volumeicon &"
@@ -178,7 +178,7 @@ myStartupHook colors = do
   spawn "pgrep cbatticon > /dev/null || cbatticon &" -- TODO remove
   spawn "pgrep xfce4-clipman > /dev/null || xfce4-clipman &"
   -- Apps: these should restart every time
-  spawn "(killall -q dunst || true) && dunst &"
+  -- spawn "(killall -q dunst || true) && dunst &"
   spawn
     ( "(killall -q trayer || true) && trayer --edge top --align right --widthtype request --padding 6 \
       \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \

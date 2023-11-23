@@ -159,8 +159,8 @@ in {
                 _
                 "dmenu_run -i -f -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '";
               browser = _ "firefox-developer-edition --new-tab";
-              startup_notification = _ false;
-              verbosity = _ "mesg";
+              # startup_notification = _ false;
+              #verbosity = _ "mesg";
               corner_radius = _ 15;
               ignore_dbusclose = _ true;
               # MOUSE
@@ -168,7 +168,7 @@ in {
               mouse_middle_click = _ "do_action";
               mouse_right_click = _ "do_action";
             };
-            frame = {width = _ 1;};
+            #frame = {width = _ 1;};
             urgency_low = {timeout = _ 15;};
             urgency_normal = {timeout = _ 0;};
             urgency_critical = {timeout = _ 0;};

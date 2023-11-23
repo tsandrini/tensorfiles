@@ -41,6 +41,14 @@ in {
         TODO
       '';
     };
+
+    pkg = mkOption {
+      type = package;
+      default = pkgs.kitty;
+      description = ''
+        TODO
+      '';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -48,6 +56,7 @@ in {
     {
       programs.kitty = {
         enable = _ true;
+        package = _ cfg.pkg;
         font = {
           package = _ pkgs.meslo-lgs-nf;
           name = _ "MesloLGS NF";
