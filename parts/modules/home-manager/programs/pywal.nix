@@ -1,4 +1,4 @@
-# --- parts/modules/programs/pywal.nix
+# --- parts/modules/home-manager/programs/pywal.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

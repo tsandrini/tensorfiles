@@ -35,7 +35,7 @@
     main = readmeToDerivation (projectPath + "/README.md");
     hosts = {
       "spinorbundle" =
-        readmeToDerivation (projectPath + "/hosts/spinorbundle/README.md");
+        readmeToDerivation (projectPath + "/parts/hosts/spinorbundle/README.md");
     };
   };
 
@@ -85,7 +85,7 @@
   in
     stdenv.mkDerivation {
       name = "tensorfiles-docs-lib";
-      src = ../../lib;
+      src = projectPath + "/lib";
 
       buildInputs = [nixdoc pandoc python3];
       installPhase = ''
@@ -149,7 +149,7 @@
         # be probably best to just create the inputs manually directly here.
         inherit lib pkgs inputs system;
         lintCompatibility = true;
-        projectPath = ../..;
+        inherit projectPath;
         secretsPath = projectPath + "/secrets";
         secretsAttrset = {};
         hostName = "exampleHost";

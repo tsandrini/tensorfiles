@@ -10,7 +10,8 @@
 4. [(rough) Roadmap](4-rough-roadmap)
 5. [Troubleshooting](5-troubleshooting)
    1. [`Write error: disk full;` during `nixos-install`](write-error-disk-full-during-nixos-install)
-6. [References](6-references)
+6. [Impurities](6-impurities)
+7. [References](7-references)
 
 ## 1. About
 
@@ -119,7 +120,13 @@ tmpfs, for example
 mount -o remount,size=15G /tmp
 ```
 
-## 6. References
+## 6. Impurities
+
+- some of the packages in [NUR](https://github.com/nix-community/NUR) require
+  running `--impure`
+- devenv requires `--impure` flag for commands
+
+## 7. References
 
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you&rsquo;ve really

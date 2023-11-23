@@ -45,6 +45,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixGL = {
+      url = "github:nix-community/nixGL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
@@ -69,23 +74,30 @@
       url = "github:Aylur/ags";
       #inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    kitty-scrollback-nvim = {
+      url = "github:mikesmithgh/kitty-scrollback.nvim";
+      flake = false;
+    };
   };
 
   # Here you can add additional binary cache substituers that you trust
   nixConfig = {
     extra-substituters = [
-      "https://devenv.cachix.org"
-      "https://viperml.cachix.org"
       "https://cache.nixos.org"
+      "https://nix-community.cachix.org/"
+      "https://devenv.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://hyprland.cachix.org"
       "https://anyrun.cachix.org"
+      "https://viperml.cachix.org"
     ];
     extra-trusted-public-keys = [
-      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-      "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
+      "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
       "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
     ];
@@ -148,7 +160,7 @@
         pkgs,
         ...
       }: {
-        _module.args.pkgs = mkNixpkgs inputs.nixpkgs system [];
+        _module.args.pkgs = mkNixpkgs inputs.nixpkgs system [inputs.neovim-nightly-overlay.overlay];
       };
     };
 }

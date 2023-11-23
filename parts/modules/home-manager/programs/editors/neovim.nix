@@ -17,6 +17,7 @@
   lib,
   pkgs,
   self,
+  inputs,
   ...
 }:
 with builtins;
@@ -315,6 +316,12 @@ in {
               }, { prefix = "<leader>" })
             '';
           }
+          (pkgs.vimUtils.buildVimPlugin
+            {
+              pname = "kitty-scrollback.nvim";
+              version = inputs.kitty-scrollback-nvim.rev;
+              src = inputs.kitty-scrollback-nvim;
+            })
         ];
       };
     }

@@ -19,17 +19,25 @@
   };
 
   config.flake.homeModules = {
+    # -- hardware --
+    hardware_nixGL = import ./hardware/nixGL.nix;
+
     # -- misc --
     misc_xdg = import ./misc/xdg.nix;
 
     # -- profiles --
 
     # -- programs --
+    programs_direnv = import ./programs/direnv.nix;
+    programs_dmenu = import ./programs/dmenu.nix;
+    programs_newsboat = import ./programs/newsboat.nix;
     programs_pywal = import ./programs/pywal.nix;
     ## -- editors --
     programs_editors_neovim = import ./programs/editors/neovim.nix;
     ## -- shells --
     programs_shells_zsh = import ./programs/shells/zsh;
+    ## -- terminals --
+    programs_terminals_kitty = import ./programs/terminals/kitty.nix;
 
     # -- security --
 
