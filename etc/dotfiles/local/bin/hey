@@ -2,9 +2,6 @@
 wal -i $1
 
 pywalfox update
-slick-pywal
-wal-vtop
-pywal-discord
 
 xmonad --recompile && xmonad --restart
 systemctl restart --user dunst.service
