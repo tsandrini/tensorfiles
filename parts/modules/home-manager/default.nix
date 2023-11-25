@@ -30,7 +30,9 @@
 
     # -- programs --
     programs_direnv = import ./programs/direnv.nix;
+    programs_ssh = import ./programs/ssh.nix;
     programs_dmenu = import ./programs/dmenu.nix;
+    programs_git = import ./programs/git.nix;
     programs_newsboat = import ./programs/newsboat.nix;
     programs_pywal = import ./programs/pywal.nix;
     ## -- editors --
@@ -39,11 +41,15 @@
     programs_shells_zsh = import ./programs/shells/zsh;
     ## -- terminals --
     programs_terminals_kitty = import ./programs/terminals/kitty.nix;
+    ## -- browsers --
+    programs_browsers_firefox = import ./programs/browsers/firefox;
 
     # -- security --
+    security_agenix = import ./security/agenix.nix;
 
     # -- services --
     services_dunst = import ./services/dunst.nix;
+    services_pywalfox-native = import ./services/pywalfox-native.nix;
     ## -- x11 --
     services_x11_picom = import ./services/x11/picom.nix;
     services_x11_redshift = import ./services/x11/redshift.nix;

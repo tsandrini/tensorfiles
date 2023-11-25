@@ -30,7 +30,7 @@
       inherit (args) pkgs;
       extraSpecialArgs =
         {
-          inherit (args) system;
+          inherit (args) system self';
           inherit inputs home projectPath secretsPath self;
           # TODO also maybe do something about this
           secretsAttrset =
@@ -58,7 +58,7 @@ in {
 
   config = {
     flake.homeConfigurations = {
-      "jetbundle@tsandrini" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
+      "tsandrini@jetbundle" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
     };
 
     flake.checks."x86_64-linux" = {
