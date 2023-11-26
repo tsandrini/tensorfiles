@@ -46,7 +46,7 @@ in {
         temperature.night = _ 3500;
         settings = {
           redshift = {
-            gamma = _ 0.8;
+            gamma = _ 0.95;
             adjustment-method = _ "randr";
           };
         };

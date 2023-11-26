@@ -37,10 +37,12 @@
     programs_pywal = import ./programs/pywal.nix;
     ## -- editors --
     programs_editors_neovim = import ./programs/editors/neovim.nix;
+    programs_editors_emacs-doom = import ./programs/editors/emacs-doom.nix;
     ## -- shells --
     programs_shells_zsh = import ./programs/shells/zsh;
     ## -- terminals --
     programs_terminals_kitty = import ./programs/terminals/kitty.nix;
+    programs_terminals_alacritty = import ./programs/terminals/alacritty.nix;
     ## -- browsers --
     programs_browsers_firefox = import ./programs/browsers/firefox;
 

@@ -11,10 +11,12 @@
     # hardware
     tensorfiles.hm.hardware.nixGL.enable = true;
     # programs
+    tensorfiles.hm.programs.ssh.enable = true;
     tensorfiles.hm.programs.direnv.enable = true;
     tensorfiles.hm.programs.git.enable = true;
     tensorfiles.hm.programs.dmenu.enable = true;
     tensorfiles.hm.programs.editors.neovim.enable = true;
+    tensorfiles.hm.programs.editors.emacs-doom.enable = true;
     tensorfiles.hm.programs.newsboat.enable = true;
     tensorfiles.hm.programs.pywal.enable = true;
     tensorfiles.hm.programs.shells.zsh.enable = true;
@@ -49,20 +51,40 @@
     };
 
     home.packages = with pkgs; [
+      # core
+      openssh
+      htop
+      iotop
+      jq
+      wget
+      unrar
+      xclip
+      dosfstools
+      # other
       beeper
       armcord
       btop
+      feh
+      cbatticon
+      mpv
       # TODO
       arandr
       cbatticon
+      shfmt
       i3lock-fancy
+      trayer
+      pasystray
+      # shellcheck
       #lxappearance
       libreoffice
       neofetch
       pavucontrol
       playerctl
       spotify
-      volumeicon
+      xfce.xfce4-clipman-plugin
+      xfce.xfce4-screenshooter
+      texlive.combined.scheme-medium
+      # volumeicon
       ubuntu_font_family
       #nerdfonts
       udisks

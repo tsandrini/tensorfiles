@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/programs/ssh.nix
+# --- parts/modules/home-manager/programs/terminals/alacritty.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,18 +15,19 @@
 {
   config,
   lib,
+  pkgs,
   self,
   ...
 }:
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
 
-  cfg = config.tensorfiles.hm.programs.ssh;
+  cfg = config.tensorfiles.hm.programs.terminals.alacritty;
   _ = mkOverrideAtHmModuleLevel;
 in {
-  options.tensorfiles.hm.programs.ssh = with types;
+  options.tensorfiles.hm.programs.terminals.alacritty = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -36,22 +37,24 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      programs.ssh = {
-        enable = _ true;
-      };
+      home.packages = with pkgs; [meslo-lgs-nf];
 
-      programs.keychain = {
+      programs.alacritty = {
         enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell");
-        agents = ["ssh"];
-        extraFlags = ["--nogui" "--quiet"];
-        keys = ["id_ed25519"];
+        settings = {
+          window = {
+            opacity = _ 0.8;
+            decorations = _ "full";
+          };
+          dynamic_title = _ true;
+          font = {
+            size = _ 7.0;
+            normal.family = _ "MesloLGS NF";
+          };
+          bell.duration = _ 0;
+          cursor.style.shape = _ "Block";
+        };
       };
-
-      services.ssh-agent.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);
