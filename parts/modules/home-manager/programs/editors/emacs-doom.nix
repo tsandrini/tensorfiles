@@ -18,6 +18,7 @@
   pkgs,
   self,
   inputs,
+  self',
   ...
 }:
 with builtins;
@@ -89,7 +90,8 @@ in {
         # fonts
         emacs-all-the-icons-fonts
         (nerdfonts.override {fonts = ["NerdFontsSymbolsOnly"];})
-        (python311.withPackages (ps: with ps; [grip pyflakes isort pipenv nose pytest]))
+        (python311.withPackages (ps: with ps; [grip pyflakes isort pipenv nose pytest self'.packages.my_cookies]))
+        self'.packages.my_cookies
         alejandra # TODO test?
         shellcheck
         pandoc

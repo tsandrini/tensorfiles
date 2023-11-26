@@ -58,7 +58,7 @@ in {
 
   config = {
     flake.homeConfigurations = {
-      "tsandrini@jetbundle" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
+      "jetbundle@tsandrini" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
     };
 
     flake.checks."x86_64-linux" = {

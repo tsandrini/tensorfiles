@@ -14,6 +14,7 @@
     tensorfiles.hm.programs.ssh.enable = true;
     tensorfiles.hm.programs.direnv.enable = true;
     tensorfiles.hm.programs.git.enable = true;
+    tensorfiles.hm.programs.btop.enable = true;
     tensorfiles.hm.programs.dmenu.enable = true;
     tensorfiles.hm.programs.editors.neovim.enable = true;
     tensorfiles.hm.programs.editors.emacs-doom.enable = true;
@@ -60,10 +61,10 @@
       unrar
       xclip
       dosfstools
+      # chromium
       # other
       beeper
       armcord
-      btop
       feh
       cbatticon
       mpv

@@ -1,4 +1,4 @@
-# --- parts/pkgs/default.nix
+# --- parts/pkgs/my_cookies.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -14,19 +14,29 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   lib,
-  inputs,
-  projectPath,
+  python3,
   ...
-}: {
-  perSystem = {
-    pkgs,
-    system,
-    ...
-  }: {
-    packages = {
-      pywalfox-native = pkgs.callPackage ./pywalfox-native.nix {};
-      docs = pkgs.callPackage ./docs {inherit lib inputs system projectPath;};
-      my_cookies = pkgs.callPackage ./my_cookies.nix {};
+}:
+with python3.pkgs;
+  buildPythonApplication rec {
+    pname = "my_cookies";
+    version = "0.1.3";
+
+    src = fetchPypi {
+      inherit pname version;
+      sha256 = "ddee63d0714e5d4c94a3a61550a4276dac6f014b43a114f31aa5bc1d47f3ad0f";
     };
-  };
-}
+
+    propagatedBuildInputs = [setuptools browser-cookie3];
+
+    # No tests included
+    doCheck = false;
+    pythonImportsCheck = ["my_cookies"];
+
+    meta = with lib; {
+      homepage = "https://github.com/kaiwk/my_cookies";
+      description = "This package is used for retrieve leetcode cookies from Chrome with local keyring.";
+      license = licenses.mit;
+      maintainers = with tensorfiles.maintainers; [tsandrini];
+    };
+  }
