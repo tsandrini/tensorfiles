@@ -13,4 +13,10 @@ result
 .devcontainer.json
 .pre-commit-config.yaml
 
-tsandrini*
+# home-manager
+tsandrini
+tsandrini-*-link
+
+# tmp
+etc/dotfiles/config/wal/templates/Xresources
+etc/dotfiles/config/wal/templates/dunstrc

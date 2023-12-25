@@ -23,6 +23,7 @@
     devenv.shells.dev = import ./dev.nix {
       inherit pkgs inputs';
       treefmt = config.treefmt.build.wrapper;
+      nh = inputs'.nh.packages.default;
     };
   };
 }

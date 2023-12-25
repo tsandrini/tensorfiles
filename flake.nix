@@ -82,7 +82,9 @@
     };
   };
 
-  # Here you can add additional binary cache substituers that you trust
+  # Here you can add additional binary cache substituers that you trust.
+  # There are also some sensible default caches commented out that you
+  # might consider using.
   nixConfig = {
     extra-substituters = [
       "https://cache.nixos.org"

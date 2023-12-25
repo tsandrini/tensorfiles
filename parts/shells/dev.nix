@@ -14,15 +14,11 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   pkgs,
-  inputs',
   treefmt,
+  nh,
   ...
 }: {
   packages = with pkgs; [
-    # -- greeting --
-    cowsay
-    fortune
-    lolcat
     # -- nix --
     nil # LSP
     alejandra # formatting
@@ -39,7 +35,7 @@
     fh # flakehub cli
 
     treefmt
-    inputs'.nh.packages.default
+    nh
   ];
 
   languages.nix.enable = true;
@@ -48,12 +44,6 @@
   devenv.flakesIntegration = true;
 
   pre-commit = {
-    excludes = [
-      "etc"
-      "secrets"
-      ".*png"
-      ".*woff2"
-    ];
     hooks = {
       treefmt.enable = true;
       # Everything below is stuff that I couldn't make work with treefmt
@@ -66,13 +56,16 @@
     settings = {
       treefmt.package = treefmt;
     };
+    excludes = [
+      "etc"
+      "secrets"
+      ".*png"
+      ".*woff2"
+    ];
   };
 
   enterShell = ''
-    echo ""
-    echo "~~ Welcome to the tensorfiles devshell! ~~
-
-    [Fortune of the Day] $(fortune)" | cowsay -W 120 -T "U " | lolcat -F 0.3 -p 10 -t
-    echo ""
+    # Greeting upon devshell activation
+    echo ""; echo -e "\e[1;37;42mWelcome to the tensorfiles devshell!\e[0m"; echo ""
   '';
 }

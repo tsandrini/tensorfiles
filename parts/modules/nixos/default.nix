@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 _: {
   flake.nixosModules = {
-    # misc --
+    # -- misc --
     misc_gtk = import ./misc/gtk.nix;
     misc_nix = import ./misc/nix.nix;
     misc_xdg = import ./misc/xdg.nix;
