@@ -58,11 +58,11 @@ in {
 
   config = {
     flake.homeConfigurations = {
-      "jetbundle@tsandrini" = withSystem "x86_64-linux" (args: mkHome args "jetbundle@tsandrini" {});
+      "tsandrini@jetbundle" = withSystem "x86_64-linux" (args: mkHome args "tsandrini@jetbundle" {});
     };
 
     flake.checks."x86_64-linux" = {
-      "home-jetbundle@tsandrini" = config.flake.homeConfigurations."jetbundle@tsandrini".config.home.path;
+      "home-tsandrini@jetbundle" = config.flake.homeConfigurations."tsandrini@jetbundle".config.home.path;
     };
   };
 }

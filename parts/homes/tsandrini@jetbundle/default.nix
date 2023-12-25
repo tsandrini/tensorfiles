@@ -1,4 +1,4 @@
-# --- parts/homes/jetbundle@tsandrini/default.nix
+# --- parts/homes/tsandrini@jetbundle/default.nix
 {
   config,
   pkgs,
@@ -22,6 +22,7 @@
     tensorfiles.hm.programs.pywal.enable = true;
     tensorfiles.hm.programs.shells.zsh.enable = true;
     tensorfiles.hm.programs.terminals.kitty.enable = true;
+    tensorfiles.hm.programs.file-managers.yazi.enable = true;
     tensorfiles.hm.programs.browsers.firefox.enable = true;
     # security
     tensorfiles.hm.security.agenix.enable = true;
@@ -92,7 +93,7 @@
       w3m
       zathura
       zotero
-      yazi
+      lapack
     ];
 
     fonts.fontconfig.enable = true;
