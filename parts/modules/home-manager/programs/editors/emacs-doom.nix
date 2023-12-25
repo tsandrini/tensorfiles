@@ -60,7 +60,7 @@ in {
         ## Emacs itself
         binutils # native-comp needs 'as', provided by this
         # 28.2 + native-comp
-        ((emacsPackagesFor emacsNativeComp).emacsWithPackages
+        ((emacsPackagesFor emacs-unstable).emacsWithPackages
           (epkgs: [epkgs.vterm]))
 
         ## Doom dependencies
@@ -92,8 +92,6 @@ in {
         (nerdfonts.override {fonts = ["NerdFontsSymbolsOnly"];})
         (python311.withPackages (ps: with ps; [grip pyflakes isort pipenv nose pytest self'.packages.my_cookies]))
         self'.packages.my_cookies
-        alejandra # TODO test?
-        shellcheck
         pandoc
         discount
         html-tidy
