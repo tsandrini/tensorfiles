@@ -24,7 +24,7 @@ with python3.pkgs;
 
     src = fetchPypi {
       inherit pname version;
-      sha256 = "ddee63d0714e5d4c94a3a61550a4276dac6f014b43a114f31aa5bc1d47f3ad0f";
+      hash = "sha256-3e5j0HFOXUyUo6YVUKQnbaxvAUtDoRTzGqW8HUfzrQ8=";
     };
 
     propagatedBuildInputs = [setuptools browser-cookie3];
