@@ -43,6 +43,7 @@
     programs_shells_zsh = import ./programs/shells/zsh;
     ## -- file-managers --
     programs_file-managers_lf = import ./programs/file-managers/lf;
+    programs_file-managers_yazi = import ./programs/file-managers/yazi.nix;
     ## -- terminals --
     programs_terminals_kitty = import ./programs/terminals/kitty.nix;
     programs_terminals_alacritty = import ./programs/terminals/alacritty.nix;
