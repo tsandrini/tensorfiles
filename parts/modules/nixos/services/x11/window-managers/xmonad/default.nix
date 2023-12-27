@@ -204,7 +204,6 @@ in {
 
         displayManager = {
           defaultSession = _ "home-manager";
-          lightdm.enable = _ false;
           startx.enable = _ true;
         };
 

@@ -46,7 +46,7 @@ in {
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
           auto-optimise-store = _ true;
-          builders-use-substitutes = _ true; # TODO ?
+          builders-use-substitutes = _ true;
           trusted-substituters = [
             "https://cache.nixos.org"
             "https://nix-community.cachix.org/"

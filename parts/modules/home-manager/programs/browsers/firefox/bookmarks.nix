@@ -1,4 +1,4 @@
-# --- profiles/home-firefox/bookmarks.nix
+# --- parts/modules/home-manager/profiles/home-firefox/bookmarks.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

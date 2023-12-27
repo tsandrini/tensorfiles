@@ -1,4 +1,4 @@
-# --- modules/misc/xdg.nix
+# --- parts/modules/home-manager/misc/xdg.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles

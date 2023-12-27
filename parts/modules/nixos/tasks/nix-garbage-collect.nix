@@ -1,4 +1,4 @@
-# --- modules/tasks/nix-garbage-collect.nix
+# --- parts/nixos/modules/tasks/nix-garbage-collect.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,7 +19,7 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.tasks.nix-garbage-collect;
   _ = mkOverrideAtModuleLevel;

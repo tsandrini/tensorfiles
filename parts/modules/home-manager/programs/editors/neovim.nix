@@ -1,4 +1,4 @@
-# --- modules/home-manager/programs/editors/neovim.nix
+# --- parts/modules/home-manager/programs/editors/neovim.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles.hm
@@ -23,7 +23,7 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles.modules) mkOverrideAtHmModuleLevel;
+  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.editors.neovim;
   _ = mkOverrideAtHmModuleLevel;

@@ -1,4 +1,4 @@
-# --- modules/programs/terminals/alacritty.nix
+# --- parts/modules/home-manager/programs/thunderbird.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,54 +15,34 @@
 {
   config,
   lib,
-  pkgs,
+  self,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  tensorfiles = self.lib;
+  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
 
-  cfg = config.tensorfiles.programs.terminals.alacritty;
-  _ = mkOverrideAtModuleLevel;
+  cfg = config.tensorfiles.hm.programs.thunderbird;
+  _ = mkOverrideAtHmModuleLevel;
 in {
-  options.tensorfiles.programs.terminals.alacritty = with types;
+  options.tensorfiles.hm.programs.thunderbird = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures/handles the alacritty terminal.
+      TODO
     '');
-
-    home = {
-      enable = mkHomeEnableOption;
-
-      settings = mkHomeSettingsOption (_user: {});
-    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        home.packages = with pkgs; [meslo-lgs-nf];
-
-        programs.alacritty = {
-          enable = _ true;
-
-          settings = {
-            window = {
-              opacity = _ 0.8;
-              decorations = _ "full";
-            };
-            dynamic_title = _ true;
-            font = {
-              size = _ 7.0;
-              normal.family = _ "MesloLGS NF";
-            };
-            bell.duration = _ 0;
-            cursor.style.shape = _ "Block";
-          };
-        };
-      });
-    })
+    {
+      programs.thunderbird = {
+        enable = _ true;
+        # profiles.default = {
+        #   isDefault = _ true;
+        # };
+      };
+    }
     # |----------------------------------------------------------------------| #
   ]);
 

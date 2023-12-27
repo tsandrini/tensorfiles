@@ -1,4 +1,4 @@
-# --- modules/misc/gtk.nix
+# --- parts/modules/home-manager/services/keepassxc.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,49 +16,51 @@
   config,
   lib,
   pkgs,
+  self,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  tensorfiles = self.lib;
+  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
 
-  cfg = config.tensorfiles.misc.gtk;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverrideAtHmModuleLevel;
+
+  cfg = config.tensorfiles.hm.services.keepassxc;
 in {
-  # TODO create a theme system
-  options.tensorfiles.misc.gtk = with types;
+  # TODO maybe use toINIWithGlobalSection generator? however the ini config file
+  # also contains some initial keys? I should investigate this more
+  options.tensorfiles.hm.services.keepassxc = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures/handles the gtk system.
+      TODO
     '');
 
-    home = {
-      enable = mkHomeEnableOption;
-
-      settings = mkHomeSettingsOption (_user: {});
+    pkg = mkOption {
+      type = package;
+      default = pkgs.keepassxc;
+      description = ''
+        The package to use for keepassxc.
+      '';
     };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        home.packages = with pkgs; [dconf];
+    {
+      home.packages = [cfg.pkg];
 
-        gtk = {
-          enable = _ true;
-          theme = {
-            name = _ "Arc-Dark";
-            package = _ pkgs.arc-theme;
-          };
-
-          iconTheme = {
-            name = _ "Arc";
-            package = _ pkgs.arc-icon-theme;
-          };
+      systemd.user.services.keepassxc = {
+        Unit = {
+          Description = _ "KeePassXC password manager";
+          After = ["graphical-session-pre.target"];
+          PartOf = ["graphical-session.target"];
         };
-      });
-    })
+
+        Install = {WantedBy = ["graphical-session.target"];};
+        Service = {ExecStart = _ "${getExe pkgs.keepassxc}";};
+      };
+    }
     # |----------------------------------------------------------------------| #
   ]);
 

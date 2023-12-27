@@ -36,6 +36,7 @@
     programs_newsboat = import ./programs/newsboat.nix;
     programs_btop = import ./programs/btop.nix;
     programs_pywal = import ./programs/pywal.nix;
+    programs_thunderbird = import ./programs/thunderbird.nix;
     ## -- editors --
     programs_editors_neovim = import ./programs/editors/neovim.nix;
     programs_editors_emacs-doom = import ./programs/editors/emacs-doom.nix;
@@ -54,11 +55,13 @@
     security_agenix = import ./security/agenix.nix;
 
     # -- services --
+    services_keepassxc = import ./services/keepassxc.nix;
     services_dunst = import ./services/dunst.nix;
     services_pywalfox-native = import ./services/pywalfox-native.nix;
     ## -- x11 --
     services_x11_picom = import ./services/x11/picom.nix;
     services_x11_redshift = import ./services/x11/redshift.nix;
+    services_x11_window-managers_xmonad = import ./services/x11/window-managers/xmonad;
 
     # -- system --
 

@@ -1,4 +1,4 @@
-# --- modules/services/x11/redshift.nix
+# --- parts/modules/nixos/services/x11/desktop-managers/startx-home-manager.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,43 +15,53 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles) mkOverrideAtModuleLevel;
 
-  cfg = config.tensorfiles.services.x11.redshift;
+  cfg = config.tensorfiles.services.x11.desktop-managers.startx-home-manager;
   _ = mkOverrideAtModuleLevel;
 in {
-  options.tensorfiles.services.x11.redshift = with types;
+  options.tensorfiles.services.x11.desktop-managers.startx-home-manager = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures/handles the x11 redshift service
+      Enable NixOS module that sets up the simple startx X11 displayManager with
+      home-manager as the default session. This can be useful in cases where you
+      want to delegate the X11 userspace completely to the user as well as its
+      configuration instead of clogging your base NixOS setup.
+
+      References
+      - https://wiki.archlinux.org/title/xinit
+      - https://www.x.org/releases/X11R7.6/doc/man/man1/startx.1.xhtml
     '');
-
-    home = {
-      enable = mkHomeEnableOption;
-
-      settings = mkHomeSettingsOption (_user: {});
-    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.home.enable {
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        services.redshift = {
-          enable = _ true;
-          tray = _ true;
-          provider = _ "manual";
-          latitude = _ 50.1386267;
-          longitude = _ 14.4295628;
-          temperature.day = _ 5700;
-          temperature.night = _ 3500;
+    {
+      services.xserver = {
+        enable = _ true;
+        libinput.enable = _ true;
+
+        displayManager = {
+          defaultSession = _ "home-manager";
+          startx.enable = _ true;
         };
-      });
-    })
+
+        desktopManager.session = [
+          {
+            name = "home-manager";
+            start = ''
+              ${pkgs.runtimeShell} $HOME/.xinitrc &
+              waitPID=$!
+            '';
+          }
+        ];
+      };
+    }
     # |----------------------------------------------------------------------| #
   ]);
 
