@@ -35,7 +35,15 @@ in
 
     *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
     */
-    mkOverrideAtHmModuleLevel = mkOverride 600;
+    mkOverrideAtHmModuleLevel = mkOverride 700;
+
+    /*
+    mkOverride function with a preset priority set for all of the
+    home-manager profile modules.
+
+    *Type*: `mkOverrideAtHmProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
+    */
+    mkOverrideAtHmProfileLevel = mkOverride 600;
 
     /*
     mkOverride function with a preset priority set for all of the nixos

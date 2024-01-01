@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {lib, ...}:
 with lib;
-with builtins; rec {
+with builtins; {
   /*
   Map function with flipped arguments.
 

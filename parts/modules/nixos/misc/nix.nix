@@ -1,4 +1,4 @@
-# --- modules/misc/nix.nix
+# --- parts/modules/nixos/misc/nix.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -21,12 +21,11 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.misc.nix;
   _ = mkOverrideAtModuleLevel;
 in {
-  # TODO Modularize unstable/stable branches into an enum option
   options.tensorfiles.misc.nix = with types;
   with tensorfiles.types; {
     enable = mkEnableOption (mdDoc ''

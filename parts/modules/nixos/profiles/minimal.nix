@@ -1,4 +1,4 @@
-# --- modules/profiles/minimal.nix
+# --- parts/modules/nixos/profiles/minimal.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -20,7 +20,7 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
+  inherit (tensorfiles) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.minimal;
   _ = mkOverrideAtProfileLevel;
@@ -65,13 +65,20 @@ in {
         killall
         openssl
         vim
+        calcurse
+        w3m
         # HW
-        exfat
+        # error: builder for '/nix/store/3hgsz0vvcb5pcxf76j9m0ma61dbxfgzd-home-manager-path.drv' failed with exit code 25;
+        # last 1 log lines:
+        # > error: collision between `/nix/store/aiijczmfaifjm7q5lfarqv9dh5qmk461-exfatprogs-1.2.2/bin/exfatlabel' and `/nix/store/9pqqdaigrvm4r4csbv0zavnxkanrwamr-exfat-1.4.0/bin/exfatlabel'
+        # exfat
         dosfstools
         exfatprogs
         udisks
         pciutils
         usbutils
+        iotop
+        unrar
       ];
     }
     # |----------------------------------------------------------------------| #

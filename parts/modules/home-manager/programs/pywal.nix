@@ -48,6 +48,7 @@ in {
     {
       home.packages = [cfg.pkg];
 
+      # TODO add a conditional for Xorg vs Wayland
       systemd.user.tmpfiles.rules = ["L ${config.home.homeDirectory}/.Xresources - - - - ${config.xdg.cacheHome}/wal/Xresources"];
       xdg.configFile."wal/templates/Xresources".text = mkBefore ''
         ! Xft.autohint: 0

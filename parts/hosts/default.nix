@@ -16,7 +16,6 @@
   lib,
   inputs,
   projectPath,
-  secretsPath,
   withSystem,
   config,
   ...
@@ -24,21 +23,17 @@
   mkHost = args: hostName: {
     extraSpecialArgs ? {},
     extraModules ? [],
+    withHomeManager ? false,
+    ...
   }:
     lib.nixosSystem {
       inherit (args) system pkgs;
       specialArgs =
         {
           inherit (args) system;
-          inherit inputs lib hostName projectPath secretsPath;
-          # TODO also maybe do something about this
-          secretsAttrset =
-            if builtins.pathExists (secretsPath + "/secrets.nix")
-            then (import (secretsPath + "/secrets.nix"))
-            else {};
+          inherit inputs lib hostName projectPath;
+          inherit (config.secrets) secretsPath pubkeys;
           host.hostName = hostName;
-          # TODO REMOVE THIS TODO REMOVE THIS
-          user = "tsandrini"; # TODO REMOVE THIS
         }
         // extraSpecialArgs;
       modules =
@@ -52,18 +47,21 @@
         ++ extraModules
         # Disabled by default, therefore load every module and enable via attributes
         # instead of imports
-        ++ (lib.attrValues config.flake.nixosModules);
+        ++ (lib.attrValues config.flake.nixosModules)
+        ++ (lib.optional withHomeManager [
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+            }
+          ]
+          ++ (lib.attrValues config.flake.homeModules));
     };
 in {
   flake.nixosConfigurations = {
     spinorbundle = withSystem "x86_64-linux" (args:
       mkHost args "spinorbundle" {
-        extraModules = with inputs; [
-          impermanence.nixosModules.impermanence
-          home-manager.nixosModules.home-manager
-          agenix.nixosModules.default
-          nur.nixosModules.nur
-        ];
+        withHomeManager = true;
       });
   };
 }

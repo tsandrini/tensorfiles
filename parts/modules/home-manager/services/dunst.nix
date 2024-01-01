@@ -43,6 +43,7 @@ in {
     {
       home.packages = with pkgs; [
         iosevka
+        libnotify
         (nerdfonts.override {fonts = ["Iosevka"];})
       ];
 

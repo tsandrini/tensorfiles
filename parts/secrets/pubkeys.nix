@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/security/agenix.nix
+# --- parts/secrets/pubkeys.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,34 +12,25 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  config,
-  lib,
-  self,
-  inputs,
-  ...
-}:
-with builtins;
-with lib; let
-  tensorfiles = self.lib;
+let
+  # spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
+  # jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
 
-  cfg = config.tensorfiles.hm.security.agenix;
+  tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
 in {
-  options.tensorfiles.hm.security.agenix = with types;
-  with tensorfiles.options; {
-    enable = mkEnableOption (mdDoc ''
-      TODO
-    '');
+  common = {};
+  hosts = {
+    spinorbundle = {
+      users = {
+        root = {
+          userKey = null;
+          authorizedKeys = [];
+        };
+        tsandrini = {
+          userKey = null;
+          authorizedKeys = [tsandrini];
+        };
+      };
+    };
   };
-
-  imports = with inputs; [agenix.homeManagerModules.default];
-
-  config = mkIf cfg.enable (mkMerge [
-    # |----------------------------------------------------------------------| #
-    {
-    }
-    # |----------------------------------------------------------------------| #
-  ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

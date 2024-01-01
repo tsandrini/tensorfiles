@@ -1,4 +1,4 @@
-# --- hosts/spinorbundle/default.nix
+# --- parts/hosts/spinorbundle/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,11 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  pkgs,
-  user ? "root",
-  ...
-}: {
+{pkgs, ...}: {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -30,16 +26,74 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [pavucontrol];
+  # environment.systemPackages = with pkgs; [];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
   # ----------------------------
-  home-manager.users.${user} = {home.packages = with pkgs; [];};
+  # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
+  tensorfiles = {
+    profiles.graphical-startx-home-manager.enable = true;
+    # TODO
+    # services.networking.openssh.genHostKey.enable = false;
+    # services.networking.openssh.agenix.hostKey.enable = false;
+
+    security.agenix.enable = true;
+    system.impermanence = {
+      enable = true;
+      btrfsWipe = {
+        enable = true;
+        rootPartition = "/dev/mapper/enc";
+      };
+    };
+    system.users.usersSettings."root" = {
+      agenixPassword.enable = true;
+    };
+    system.users.usersSettings."tsandrini" = {
+      isSudoer = true;
+      isNixTrusted = true;
+      agenixPassword.enable = true;
+    };
+  };
+
+  home-manager.users."tsandrini" = {
+    tensorfiles.hm = {
+      profiles.graphical-xmonad.enable = true;
+
+      security.agenix.enable = true;
+      systems.impermanence.enable = true;
+
+      programs.pywal.enable = true;
+      services.pywalfox-native.enable = true;
+      services.keepassxc.enable = true;
+    };
+
+    home.username = "tsandrini";
+    home.homeDirectory = "/home/tsandrini";
+    home.sessionVariables = {
+      DEFAULT_USERNAME = "tsandrini";
+      DEFAULT_MAIL = "tomas.sandrini@seznam.cz";
+    };
+
+    home.packages = with pkgs; [
+      beeper
+      armcord
+      anki
+      shfmt
+      libreoffice
+      neofetch
+      pavucontrol
+      spotify
+      texlive.combined.scheme-medium
+      zotero
+      lapack
+    ];
+  };
+
   boot = {
     loader = {
       timeout = 1;
@@ -86,23 +140,12 @@
         STOP_CHARGE_THRESH_BAT1 = 80;
       };
     };
-    openssh = {
-      enable = true;
-      settings.PasswordAuthentication = true;
-    };
     pipewire = {
       enable = true;
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
     };
-  };
-
-  tensorfiles = {
-    # profiles.graphical-xmonad.enable = true;
-    profiles.graphical-hyprland.enable = true;
-    services.networking.openssh.genHostKey.enable = false;
-    services.networking.openssh.agenix.hostKey.enable = false;
   };
 
   programs.steam.enable = true; # just trying it out

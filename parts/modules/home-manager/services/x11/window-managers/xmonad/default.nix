@@ -108,26 +108,6 @@ in {
       };
     };
 
-    volumeicon = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Enable the volumeicon volume indicator.
-        Doing so install the appropriate derivation and adds code to spawn
-        it into the trayer.
-
-        http://nullwise.com/volumeicon.html
-      '');
-
-      pkg = mkOption {
-        type = package;
-        default = pkgs.volumeicon;
-        description = mdDoc ''
-          Which package to use for the volumeicon indicator.
-          You can provide any custom derivation as long as the main binary
-          resides at `$pkg/bin/volumeicon`.
-        '';
-      };
-    };
-
     playerctl = {
       enable = mkAlreadyEnabledOption (mdDoc ''
         Enable integration with the playerctl toolset. Doing so enables the
@@ -183,10 +163,11 @@ in {
             i3lock-fancy-rapid
             ubuntu_font_family
             (nerdfonts.override {fonts = ["Ubuntu" "UbuntuMono"];})
+            ubuntu_font_family
             feh
             trayer
             xfce.xfce4-clipman-plugin
-            xfce.xfce4-screenshooter
+            light
           ]
           ++ (
             if cfg.dmenu.enable
@@ -198,7 +179,6 @@ in {
               )
             else []
           )
-          ++ (optional cfg.volumeicon.enable cfg.volumeicon.pkg)
           ++ (optional cfg.cbatticon.enable cfg.cbatticon.pkg)
           ++ (optional cfg.playerctl.enable cfg.playerctl.pkg);
 
@@ -279,6 +259,15 @@ in {
       systemd.user.tmpfiles.rules = [
         "L ${config.xdg.configHome}/xmobar/xmobarrc - - - - ${config.xdg.cacheHome}/wal/xmobarrc"
       ];
+
+      services.flameshot = {
+        enable = _ true;
+        settings = {
+          General.showStartupLaunchMessage = _ false;
+        };
+      };
+
+      services.pasystray.enable = _ true;
 
       xsession = {
         enable = _ true;
@@ -488,17 +477,7 @@ in {
               ''
               else ""
             }
-
               -- Apps: base
-              ${
-              with cfg.volumeicon; (
-                if enable
-                then ''
-                  spawn "pgrep volumeicon > /dev/null || ${pkg}/bin/volumeicon &"
-                ''
-                else ""
-              )
-            }
               ${
               with cfg.cbatticon; (
                 if enable
@@ -576,9 +555,9 @@ in {
               )
             }
                 ("<XF86Display>", spawn "autorandr --cycle"),
-                -- ("<XF86MonBrightnessUp>", spawn "light -A 5"),
-                -- ("<XF86MonBrightnessDown>", spawn "light -U 5"),
-                ("<Print>", spawn "xfce4-screenshooter")
+                ("<XF86MonBrightnessUp>", spawn "light -A 5"),
+                ("<XF86MonBrightnessDown>", spawn "light -U 5"),
+                ("<Print>", spawn "flameshot gui")
               ]
 
             remap ::

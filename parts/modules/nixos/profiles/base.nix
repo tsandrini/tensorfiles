@@ -1,4 +1,4 @@
-# --- modules/profiles/base.nix
+# --- parts/modules/nixos/profiles/base.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,7 +19,7 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
+  inherit (tensorfiles) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.base;
   _ = mkOverrideAtProfileLevel;
@@ -44,7 +44,6 @@ in {
       tensorfiles = {
         system.users.enable = _ true;
         misc.nix.enable = _ true;
-        misc.xdg.enable = _ true;
       };
     }
     # |----------------------------------------------------------------------| #

@@ -1,4 +1,4 @@
-# --- modules/profiles/headless.nix
+# --- parts/modules/nixos/profiles/headless.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,18 +15,15 @@
 {
   config,
   lib,
-  user ? "root",
-  inputs,
-  system,
+  inputs',
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
+  inherit (tensorfiles) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.headless;
   _ = mkOverrideAtProfileLevel;
-  enableMainUser = user != "root";
 in {
   options.tensorfiles.profiles.headless = with types;
   with tensorfiles.options; {
@@ -45,56 +42,21 @@ in {
       tensorfiles = {
         profiles.minimal.enable = _ true;
 
-        programs = {
-          editors.neovim.enable = _ true;
-          git.enable = _ true;
-          shells.zsh.enable = _ true;
-          direnv.enable = _ true;
-        };
-
         security.agenix.enable = _ true;
 
         services.networking.networkmanager.enable = _ true;
-        services.networking.openssh.enable = _ true;
+        services.networking.ssh.enable = _ true;
 
-        misc.xdg.home.settings = {
-          "root" = {};
-          "${
-            if enableMainUser
-            then user
-            else "_"
-          }" =
-            mkIf enableMainUser {};
-        };
-
-        system.users.home.settings = {
-          "root" = {
-            isSudoer = _ false;
-            agenixPassword.enable = _ true;
-            # agenixPassword.enable = _ (pathExists (secretsPath
-            #   + "/${usersRootCfg.agenixPassword.passwordSecretsPath}.age"));
-          };
-          "${
-            if enableMainUser
-            then user
-            else "_"
-          }" = mkIf enableMainUser {
-            isSudoer = _ true;
-            isNixTrusted = _ true;
-            email = _ "tomas.sandrini@seznam.cz"; # TODO uhhh dunno, do smth
-            agenixPassword.enable = _ true;
-            browser = _ "firefox";
-            editor = _ "nvim";
-            IDE = _ "emacs";
-            terminal = _ "kitty";
-            # agenixPassword.enable = _ (pathExists (secretsPath
-            #   + "/${usersMainCfg.agenixPassword.passwordSecretsPath}.age"));
+        system.users = {
+          enable = _ true;
+          usersSettings = {
+            "root" = {};
           };
         };
       };
 
       environment.systemPackages = [
-        inputs.nh.packages.${system}.default
+        inputs'.nh.packages.default
       ];
     }
     # |----------------------------------------------------------------------| #

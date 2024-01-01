@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/programs/direnv.nix
+# --- parts/modules/home-manager/profiles/minimal.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -21,31 +21,23 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) mkOverrideAtHmProfileLevel;
 
-  cfg = config.tensorfiles.hm.programs.direnv;
-  _ = mkOverrideAtHmModuleLevel;
+  cfg = config.tensorfiles.hm.profiles.minimal;
+  _ = mkOverrideAtHmProfileLevel;
 in {
-  options.tensorfiles.hm.programs.direnv = with types;
+  options.tensorfiles.hm.profiles.minimal = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables a HomeManager module that sets up direnv.
-
-      References
-      - https://github.com/direnv/direnv
+      TODO
     '');
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      programs.direnv = {
-        enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
-        nix-direnv.enable = _ true;
+      tensorfiles.hm = {
+        profiles.base.enable = _ true;
       };
     }
     # |----------------------------------------------------------------------| #

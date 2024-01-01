@@ -27,6 +27,10 @@
     misc_gtk = import ./misc/gtk.nix;
 
     # -- profiles --
+    profiles_base = import ./profiles/base.nix;
+    profiles_minimal = import ./profiles/minimal.nix;
+    profiles_headless = import ./profiles/headless.nix;
+    profiles_graphical-xmonad = import ./profiles/graphical-xmonad.nix;
 
     # -- programs --
     programs_direnv = import ./programs/direnv.nix;
@@ -52,7 +56,6 @@
     programs_browsers_firefox = import ./programs/browsers/firefox;
 
     # -- security --
-    security_agenix = import ./security/agenix.nix;
 
     # -- services --
     services_keepassxc = import ./services/keepassxc.nix;
@@ -64,6 +67,7 @@
     services_x11_window-managers_xmonad = import ./services/x11/window-managers/xmonad;
 
     # -- system --
+    system_impermanence = import ./system/impermanence.nix;
 
     # -- tasks --
   };

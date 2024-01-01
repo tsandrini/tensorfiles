@@ -16,7 +16,6 @@
   lib,
   inputs,
   projectPath,
-  secretsPath,
   withSystem,
   self,
   config,
@@ -30,15 +29,9 @@
       inherit (args) pkgs;
       extraSpecialArgs =
         {
-          inherit (args) system self';
-          inherit inputs home projectPath secretsPath self;
-          # TODO also maybe do something about this
-          secretsAttrset =
-            if builtins.pathExists (secretsPath + "/secrets.nix")
-            then (import (secretsPath + "/secrets.nix"))
-            else {};
-          # TODO REMOVE THIS TODO REMOVE THIS
-          user = "tsandrini"; # TODO REMOVE THIS
+          inherit (args) system self' inputs';
+          inherit inputs home projectPath self;
+          inherit (config.secrets) secretsPath pubkeys;
         }
         // extraSpecialArgs;
       modules =

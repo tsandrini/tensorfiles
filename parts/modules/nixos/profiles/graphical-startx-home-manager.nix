@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/programs/direnv.nix
+# --- parts/modules/nixos/profiles/graphical-startx-home-manager.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,37 +15,29 @@
 {
   config,
   lib,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.hm.programs.direnv;
-  _ = mkOverrideAtHmModuleLevel;
+  cfg = config.tensorfiles.profiles.graphical-startx-home-manager;
+  _ = mkOverrideAtProfileLevel;
 in {
-  options.tensorfiles.hm.programs.direnv = with types;
+  options.tensorfiles.profiles.graphical-startx-home-manager = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables a HomeManager module that sets up direnv.
-
-      References
-      - https://github.com/direnv/direnv
+      TODO
     '');
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      programs.direnv = {
-        enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
-        nix-direnv.enable = _ true;
+      tensorfiles = {
+        profiles.headless.enable = _ true;
+
+        services.x11.desktop-managers.startx-home-manager.enable = _ true;
       };
     }
     # |----------------------------------------------------------------------| #

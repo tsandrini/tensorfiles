@@ -114,7 +114,6 @@
     # however, if needed you can use the `projectPath` variable that is passed
     # to every flakeModule to properly anchor your absolute paths.
     projectPath = ./.;
-    secretsPath = projectPath + "/secrets";
 
     # We extend the base <nixpkgs> library with our own custom helpers as well
     # as override any of the nixpkgs default functions that we'd like
@@ -122,12 +121,12 @@
     # you can use it in your custom modules
     lib = nixpkgs.lib.extend (self: _super: {
       tensorfiles = import ./lib {
-        inherit inputs projectPath secretsPath;
+        inherit inputs projectPath;
         pkgs = nixpkgs;
         lib = self;
       };
     });
-    specialArgs = {inherit lib projectPath secretsPath;};
+    specialArgs = {inherit lib projectPath;};
   in
     flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
       # We recursively traverse all of the flakeModules in ./parts and import only

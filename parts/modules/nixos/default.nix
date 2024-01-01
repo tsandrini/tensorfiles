@@ -15,60 +15,27 @@
 _: {
   flake.nixosModules = {
     # -- misc --
-    # misc_gtk = import ./misc/gtk.nix; # TODO removed
     misc_nix = import ./misc/nix.nix;
-    # misc_xdg = import ./misc/xdg.nix; # TODO removed
 
     # -- profiles --
     profiles_base = import ./profiles/base.nix;
-    profiles_graphical-hyprland = import ./profiles/graphical-hyprland.nix;
-    profiles_graphical-xmonad = import ./profiles/graphical-xmonad.nix;
-    profiles_headless = import ./profiles/headless.nix;
     profiles_minimal = import ./profiles/minimal.nix;
+    profiles_headless = import ./profiles/headless.nix;
+    profiles_graphical-startx-home-manager = import ./profiles/graphical-startx-home-manager.nix;
 
     # -- programs --
-    # programs_direnv = import ./programs/direnv.nix; # TODO removed
-    # programs_dmenu = import ./programs/dmenu.nix; # TODO removed
-    # programs_git = import ./programs/git.nix; # TODO removed
-    # programs_newsboat = import ./programs/newsboat.nix; # TODO removed
-    # programs_pywal = import ./programs/pywal.nix; # TODO removed
-    ## -- browsers --
-    # programs_browsers_firefox = import ./programs/browsers/firefox;
-    ## -- editors --
-    # programs_editors_neovim = import ./programs/editors/neovim.nix;
-    ## -- file-managers --
-    # programs_file-managers_lf = import ./programs/file-managers/lf;
-    ## -- shells --
-    programs_shells_zsh = import ./programs/shells/zsh;
-    ## -- terminals --
-    # programs_terminals_alacritty = import ./programs/terminals/alacritty.nix;
-    # programs_terminals_kitty = import ./programs/terminals/kitty.nix;
-    ## -- wayland --
-    programs_wayland_waybar = import ./programs/wayland/waybar;
-    programs_wayland_anyrun = import ./programs/wayland/anyrun.nix;
-    programs_wayland_ags = import ./programs/wayland/ags.nix;
 
     # -- security --
-    security_agenix = import ./security/agenix.nix;
 
     # -- services --
-    # services_dunst = import ./services/dunst.nix;
-    # services_pywalfox-native = import ./services/pywalfox-native.nix;
     ## -- networking --
     services_networking_networkmanager = import ./services/networking/networkmanager.nix;
-    services_networking_openssh = import ./services/networking/openssh.nix;
-    ## -- x11 --
-    # services_x11_picom = import ./services/x11/picom.nix;
-    # services_x11_redshift = import ./services/x11/redshift.nix;
+    services_networking_ssh = import ./services/networking/ssh.nix;
     ### -- window-managers --
-    services_x11_window-managers_xmonad = import ./services/x11/window-managers/xmonad;
     services_x11_desktop-managers_startx-home-manager = import ./services/x11/desktop-managers/startx-home-manager.nix;
-    ## -- wayland --
-    ### -- window-managers --
-    services_wayland_window-managers_hyprland = import ./services/wayland/window-managers/hyprland.nix;
 
     # -- system --
-    system_persistence = import ./system/persistence.nix;
+    system_impermanence = import ./system/impermanence.nix;
     system_users = import ./system/users.nix;
 
     # -- tasks --

@@ -1,4 +1,4 @@
-# --- modules/system/persistence.nix
+# --- parts/modules/nixos/system/impermanence.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,17 +15,18 @@
 {
   config,
   lib,
+  inputs,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
+  inherit (tensorfiles) mkOverrideAtModuleLevel;
 
-  cfg = config.tensorfiles.system.persistence;
+  cfg = config.tensorfiles.system.impermanence;
   _ = mkOverrideAtModuleLevel;
 in {
-  # TODO move bluetooth dir to hardware
-  options.tensorfiles.system.persistence = with types; {
+  options.tensorfiles.system.impermanence = with types;
+  with tensorfiles.types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the persistence ecosystem.
       Doing so enables other modules to automatically use the persistence instead
@@ -116,13 +117,15 @@ in {
     };
   };
 
+  imports = [inputs.impermanence.nixosModules.impermanence];
+
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       assertions = [
         {
-          assertion = hasAttr "persistence" config.environment;
-          message = "environment.persistence missing, please install and import the impermanence module";
+          assertion = hasAttr "impermanence" inputs;
+          message = "Impermanence flake missing in the inputs library. Please add it to your flake inputs.";
         }
       ];
     }
@@ -132,7 +135,7 @@ in {
         "${cfg.persistentRoot}" = {
           hideMounts = _ true;
           directories = [
-            "/etc/tensorfiles"
+            "/etc/tensorfiles" # TODO probably not needed anymore ? not sure
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
             "/var/lib/systemd/coredump"
           ];

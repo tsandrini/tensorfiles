@@ -1,4 +1,4 @@
-# --- modules/services/networking/networkmanager.nix
+# --- parts/modules/nixos/services/networking/networkmanager.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,11 +19,16 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-  inherit (tensorfiles.nixos) isPersistenceEnabled;
+  inherit (tensorfiles) mkOverrideAtModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.services.networking.networkmanager;
   _ = mkOverrideAtModuleLevel;
+
+  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.system.impermanence
+    else {};
 in {
   options.tensorfiles.services.networking.networkmanager = with types;
   with tensorfiles.options; {
@@ -31,46 +36,22 @@ in {
       Enables NixOS module that configures/handles the networkmanager service.
     '');
 
-    persistence = {enable = mkPersistenceEnableOption;};
-
-    home = {
-      enable = mkHomeEnableOption;
-
-      settings = mkHomeSettingsOption (_user: {
-        addUserToGroup = mkOption {
-          type = bool;
-          default = true;
-          description = mdDoc ''
-            Whether the given user should be added to the
-            `networkmanager` group.
-          '';
-        };
-      });
-    };
+    impermanence = {enable = mkImpermanenceEnableOption;};
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {networking.networkmanager.enable = _ true;}
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.persistence.enable && (isPersistenceEnabled config))
-      (let
-        inherit (config.tensorfiles.system) persistence;
-      in {
-        environment.persistence."${persistence.persistentRoot}" = {
-          directories = ["/etc/NetworkManager/system-connections"];
-          files = [
-            "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
-            "/var/lib/NetworkManager/seen-bssids"
-            "/var/lib/NetworkManager/timestamps"
-          ];
-        };
-      }))
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.home.enable {
-      users.users = genAttrs (attrNames cfg.home.settings) (_user: let
-        userCfg = cfg.home.settings."${_user}";
-      in {extraGroups = optional userCfg.addUserToGroup "networkmanager";});
+    (mkIf impermanenceCheck {
+      environment.persistence."${impermanence.persistentRoot}" = {
+        directories = ["/etc/NetworkManager/system-connections"];
+        files = [
+          "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
+          "/var/lib/NetworkManager/seen-bssids"
+          "/var/lib/NetworkManager/timestamps"
+        ];
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);

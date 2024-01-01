@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/programs/direnv.nix
+# --- parts/modules/home-manager/system/impermanence.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,37 +16,39 @@
   config,
   lib,
   self,
+  inputs,
   ...
 }:
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  # inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
-  cfg = config.tensorfiles.hm.programs.direnv;
-  _ = mkOverrideAtHmModuleLevel;
+  cfg = config.tensorfiles.hm.system.impermanence;
+  # _ = mkOverrideAtHmModuleLevel;
 in {
-  options.tensorfiles.hm.programs.direnv = with types;
+  options.tensorfiles.hm.system.impermanence = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables a HomeManager module that sets up direnv.
-
-      References
-      - https://github.com/direnv/direnv
+      TODO
     '');
   };
+
+  imports = [inputs.impermanence.nixosModules.home-manager.impermanence];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      programs.direnv = {
-        enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
-        nix-direnv.enable = _ true;
-      };
+      assertions = [
+        {
+          assertion = hasAttr "impermanence" inputs;
+          message = "Impermanence flake missing in the inputs library. Please add it to your flake inputs.";
+        }
+      ];
+    }
+    # |----------------------------------------------------------------------| #
+    {
+      #
     }
     # |----------------------------------------------------------------------| #
   ]);

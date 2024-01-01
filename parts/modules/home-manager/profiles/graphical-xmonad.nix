@@ -1,4 +1,4 @@
-# --- modules/profiles/graphical-xmonad.nix
+# --- parts/modules/home-manager/profiles/graphical-xmonad.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,40 +15,42 @@
 {
   config,
   lib,
+  pkgs,
+  self,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
+  tensorfiles = self.lib;
+  inherit (tensorfiles) mkOverrideAtHmProfileLevel;
 
-  cfg = config.tensorfiles.profiles.graphical-xmonad;
-  _ = mkOverrideAtProfileLevel;
+  cfg = config.tensorfiles.hm.profiles.graphical-xmonad;
+  _ = mkOverrideAtHmProfileLevel;
 in {
-  options.tensorfiles.profiles.graphical-xmonad = with types;
+  options.tensorfiles.hm.profiles.graphical-xmonad = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures/handles the graphical-xmonad system profile.
-
-      **TODO**: decouple this into a graphical + xmonad + persitence profiles
+      TODO
     '');
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      tensorfiles = {
+      tensorfiles.hm = {
         profiles.headless.enable = _ true;
+
+        hardware.nixGL.enable = _ true;
 
         misc.gtk.enable = _ true;
 
         programs = {
           newsboat.enable = _ true;
           dmenu.enable = _ true;
-          file-managers.lf.enable = _ true;
           pywal.enable = _ true;
           terminals.kitty.enable = _ true;
-          # terminals.alacritty.enable = _ true;
           browsers.firefox.enable = _ true;
+          editors.emacs-doom.enable = _ true;
         };
 
         services = {
@@ -61,15 +63,25 @@ in {
             window-managers.xmonad.enable = _ true;
           };
         };
-
-        system.persistence = {
-          enable = _ true;
-          btrfsWipe = {
-            enable = _ true;
-            rootPartition = _ "/dev/mapper/enc";
-          };
-        };
       };
+
+      home.sessionVariables = {
+        # Default programs
+        BROWSER = "firefox";
+        TERMINAL = "kitty";
+        IDE = "emacs";
+      };
+
+      home.packages = with pkgs; [
+        arandr
+        mpv
+        feh
+        zathura
+      ];
+
+      fonts.fontconfig.enable = _ true;
+
+      services.network-manager-applet.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

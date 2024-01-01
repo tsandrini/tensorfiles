@@ -38,10 +38,6 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      # home.sessionVariables = mkIf (userGraphicalBackend == "wayland") {
-      #   MOZ_ENABLE_WAYLAND = _ "1";
-      # };
-
       programs.firefox = {
         enable = _ true;
         package = pkgs.firefox.override {
