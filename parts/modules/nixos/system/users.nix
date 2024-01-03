@@ -111,9 +111,9 @@ in {
         name = _ _user;
         isNormalUser = _ (_user != "root");
         isSystemUser = _ (_user == "root");
-        # TODO better handling of groups and their privileges
+        createHome = _ true;
         extraGroups =
-          ["video" "audio" "camera"]
+          ["video" "audio" "camera" "networkmanager" "input"]
           ++ (optional (_user != "root") "wheel");
         home = _ (
           if _user == "root"

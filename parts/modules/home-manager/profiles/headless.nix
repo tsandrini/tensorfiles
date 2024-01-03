@@ -31,7 +31,7 @@ with lib; let
     if impermanenceCheck
     then config.tensorfiles.hm.system.impermanence
     else {};
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = x: "~/" + (strings.removePrefix "${config.home.homeDirectory}/" x);
 in {
   options.tensorfiles.hm.profiles.headless = with types;
   with tensorfiles.options; {
