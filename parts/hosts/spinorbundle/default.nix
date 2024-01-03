@@ -61,6 +61,8 @@
     };
   };
 
+  users.users."tsandrini".shell = pkgs.zsh;
+
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-xmonad.enable = true;
