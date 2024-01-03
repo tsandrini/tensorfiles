@@ -98,11 +98,11 @@ in {
       home.sessionPath = ["${config.xdg.configHome}/emacs/bin"];
 
       home.activation.installDoomEmacs = lib.hm.dag.entryAfter ["writeBoundary"] ''
-        if [ ! -d "$XDG_CONFIG_HOME/emacs" ]; then
-           ${getExe pkgs.git} clone --depth=1 --single-branch "${cfg.repoUrl}" "$XDG_CONFIG_HOME/emacs"
+        if [ ! -d "${config.xdg.configHome}/emacs" ]; then
+           ${getExe pkgs.git} clone --depth=1 --single-branch "${cfg.repoUrl}" "${config.xdg.configHome}/emacs"
         fi
-        if [ ! -d "$XDG_CONFIG_HOME/doom" ]; then
-           ${getExe pkgs.git} clone "${cfg.configRepoUrl}" "$XDG_CONFIG_HOME/doom"
+        if [ ! -d "${config.xdg.configHome}/doom" ]; then
+           ${getExe pkgs.git} clone "${cfg.configRepoUrl}" "${config.xdg.configHome}/doom"
         fi
       '';
     }

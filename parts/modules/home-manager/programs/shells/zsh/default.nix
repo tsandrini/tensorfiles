@@ -26,6 +26,12 @@ with lib; let
 
   cfg = config.tensorfiles.hm.programs.shells.zsh;
   _ = mkOverrideAtHmModuleLevel;
+
+  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
 in {
   options.tensorfiles.hm.programs.shells.zsh = with types;
   with tensorfiles.options; {
@@ -214,6 +220,12 @@ in {
     (mkIf cfg.shellAliases.grepToRipgrep {
       programs.ripgrep = {
         enable = _ true;
+      };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf impermanenceCheck {
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        files = [".zsh_history"];
       };
     })
     # |----------------------------------------------------------------------| #
