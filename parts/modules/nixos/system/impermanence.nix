@@ -28,7 +28,7 @@ with lib; let
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
   options.tensorfiles.system.impermanence = with types;
-  with tensorfiles.types; {
+  with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the persistence ecosystem.
       Doing so enables other modules to automatically use the persistence instead
