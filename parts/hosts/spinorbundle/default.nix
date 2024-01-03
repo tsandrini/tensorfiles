@@ -62,7 +62,7 @@
   };
 
   programs.zsh.enable = true;
-  users.users."tsandrini".shell = pkgs.zsh;
+  users.defaultUserShell = pkgs.zsh;
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
