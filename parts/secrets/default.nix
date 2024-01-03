@@ -77,7 +77,7 @@
           '');
         };
 
-        imports = [inputs.agenix.nixosModules.default];
+        imports = with inputs; [agenix.nixosModules.default];
 
         config = mkIf cfg.enable {
           environment.systemPackages = [
@@ -85,7 +85,7 @@
             pkgs.age
           ];
 
-          age.identityPaths = ["/root/.ssh/id_ed25519"];
+          age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
         };
 
         meta.maintainers = with tensorfiles.maintainers; [tsandrini];
@@ -114,7 +114,7 @@
           '');
         };
 
-        imports = [inputs.agenix.homeManagerModules.default];
+        imports = with inputs; [agenix.homeManagerModules.default];
 
         config = mkIf cfg.enable {
           age.identityPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];

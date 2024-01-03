@@ -20,10 +20,12 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
+  inherit (tensorfiles) mkOverrideAtModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.system.impermanence;
   _ = mkOverrideAtModuleLevel;
+
+  agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
   options.tensorfiles.system.impermanence = with types;
   with tensorfiles.types; {
@@ -32,6 +34,8 @@ in {
       Doing so enables other modules to automatically use the persistence instead
       of manually having to set it up yourself.
     '');
+
+    agenix = {enable = mkAgenixEnableOption;};
 
     disableSudoLectures = mkOption {
       type = bool;
@@ -203,6 +207,10 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf cfg.allowOther {
       programs.fuse.userAllowOther = true;
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf agenixCheck {
+      age.identityPaths = ["${cfg.persistentRoot}/etc/ssh/id_ed25519"];
     })
     # |----------------------------------------------------------------------| #
   ]);
