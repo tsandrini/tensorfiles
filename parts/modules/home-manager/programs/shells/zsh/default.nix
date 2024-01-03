@@ -41,6 +41,8 @@ in {
 
     pywal = {enable = mkPywalEnableOption;};
 
+    impermanence = {enable = mkImpermanenceEnableOption;};
+
     withAutocompletions = mkOption {
       type = bool;
       default = true;
