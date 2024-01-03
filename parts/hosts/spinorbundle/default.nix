@@ -61,6 +61,7 @@
     };
   };
 
+  programs.zsh.enable = true;
   users.users."tsandrini".shell = pkgs.zsh;
 
   home-manager.users."tsandrini" = {
