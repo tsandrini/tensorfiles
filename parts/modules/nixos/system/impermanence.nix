@@ -210,7 +210,13 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
-      age.identityPaths = ["${cfg.persistentRoot}/etc/ssh/id_ed25519"];
+      age.identityPaths = ["${cfg.persistentRoot}/etc/ssh/ssh_host_ed25519_key"];
+
+      environment.persistence = {
+        "${cfg.persistentRoot}" = {
+          files = ["/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_ed25519_key.pub"];
+        };
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);
