@@ -19,6 +19,8 @@
 }: {
   tensorfiles.hm = {
     profiles.graphical-xmonad.enable = true;
+    # enable patches since we arent on NixOS
+    hardware.nixGL.programPatches.enable = true;
 
     # security.agenix.enable = true;
     programs.pywal.enable = true;

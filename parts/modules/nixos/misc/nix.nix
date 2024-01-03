@@ -21,11 +21,12 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
+  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.misc.nix;
   _ = mkOverrideAtModuleLevel;
 in {
+  # TODO Modularize unstable/stable branches into an enum option
   options.tensorfiles.misc.nix = with types;
   with tensorfiles.types; {
     enable = mkEnableOption (mdDoc ''

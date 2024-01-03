@@ -29,7 +29,7 @@ with lib; let
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
     if impermanenceCheck
-    then config.tensorfiles.system.impermanence
+    then config.tensorfiles.hm.system.impermanence
     else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
@@ -38,6 +38,8 @@ in {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
+
+    impermanence = {enable = mkImpermanenceEnableOption;};
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -94,11 +96,9 @@ in {
         directories = [
           {
             directory = ".gnupg";
-            mode = "0700";
           }
           {
             directory = ".ssh";
-            mode = "0700";
           }
           (pathToRelative config.xdg.cacheHome)
           (pathToRelative config.xdg.stateHome)

@@ -35,7 +35,6 @@
       url = "github:viperML/nh";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -59,22 +58,22 @@
       url = "github:arkenfox/user.js";
       flake = false;
     };
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      #inputs.nixpkgs.follows = "nixpkgs";
-    };
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
     };
-    anyrun = {
-      url = "github:Kirottu/anyrun";
-      #inputs.nixpkgs.follows = "nixpkgs";
-    };
-    ags = {
-      url = "github:Aylur/ags";
-      #inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # hyprland = {
+    #   url = "github:hyprwm/Hyprland";
+    #   #inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # anyrun = {
+    #   url = "github:Kirottu/anyrun";
+    #   #inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # ags = {
+    #   url = "github:Aylur/ags";
+    #   #inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     kitty-scrollback-nvim = {
       url = "github:mikesmithgh/kitty-scrollback.nvim";
@@ -91,9 +90,9 @@
       "https://nix-community.cachix.org/"
       "https://devenv.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
-      "https://hyprland.cachix.org"
-      "https://anyrun.cachix.org"
       "https://viperml.cachix.org"
+      # "https://hyprland.cachix.org"
+      # "https://anyrun.cachix.org"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
@@ -101,14 +100,14 @@
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-      "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
+      # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+      # "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
     ];
   };
 
   outputs = inputs @ {flake-parts, ...}: let
     inherit (inputs) nixpkgs;
-    inherit (lib.tensorfiles) mapModules mkNixpkgs flatten;
+    inherit (lib.tensorfiles) mapModules flatten;
 
     # You should ideally use relative paths in each individual part from ./parts,
     # however, if needed you can use the `projectPath` variable that is passed
@@ -153,16 +152,5 @@
 
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
-
-      # Finally, we bootstrap the `pkgs` argument to use our custom nixpkgs
-      # instance bootstrapped with overlays, loaded system and other defaults.
-      # For more info refer to `lib/modules.nix:mkNixpkgs`
-      perSystem = {
-        system,
-        pkgs,
-        ...
-      }: {
-        _module.args.pkgs = mkNixpkgs inputs.nixpkgs system [inputs.neovim-nightly-overlay.overlay];
-      };
     };
 }

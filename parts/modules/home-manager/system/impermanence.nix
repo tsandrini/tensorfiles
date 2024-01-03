@@ -32,9 +32,29 @@ in {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
+
+    persistentRoot = mkOption {
+      type = path;
+      default = "/persist";
+      description = mdDoc ''
+        Path on the already mounted filesystem for the persistent root, that is,
+        a root where we should store the persistent files and against which should
+        we link the temporary files against.
+
+        This is usually simply just /persist.
+      '';
+    };
+
+    allowOther = mkOption {
+      type = bool;
+      default = false;
+      description = mdDoc ''
+        TODO
+      '';
+    };
   };
 
-  imports = [inputs.impermanence.nixosModules.home-manager.impermanence];
+  imports = with inputs; [impermanence.nixosModules.home-manager.impermanence];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -48,7 +68,9 @@ in {
     }
     # |----------------------------------------------------------------------| #
     {
-      #
+      home.persistence."${cfg.persistentRoot}" = {
+        inherit (cfg) allowOther;
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);

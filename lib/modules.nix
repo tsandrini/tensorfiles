@@ -163,13 +163,8 @@ in
             pkgsOverlay = _final: _prev: {
               tensorfiles = inputs.self.packages.${system};
             };
-            nurOverlay = final: _prev: {
-              nur = import inputs.nur {pkgs = final;};
-            };
           in
             [pkgsOverlay]
-            ++ (optional (hasAttr "nur" inputs) nurOverlay)
-            ++ (attrValues inputs.self.overlays)
             ++ extraOverlays;
         };
 

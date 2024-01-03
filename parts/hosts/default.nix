@@ -15,6 +15,7 @@
 {
   lib,
   inputs,
+  self,
   projectPath,
   withSystem,
   config,
@@ -23,23 +24,31 @@
   mkHost = args: hostName: {
     extraSpecialArgs ? {},
     extraModules ? [],
+    extraOverlays ? [],
     withHomeManager ? false,
     ...
-  }:
+  }: let
+    baseSpecialArgs =
+      {
+        inherit (args) system self' inputs';
+        inherit inputs self hostName projectPath;
+        inherit (config.secrets) secretsPath pubkeys;
+      }
+      // extraSpecialArgs;
+  in
     lib.nixosSystem {
-      inherit (args) system pkgs;
+      inherit (args) system;
       specialArgs =
-        {
-          inherit (args) system;
-          inherit inputs lib hostName projectPath;
-          inherit (config.secrets) secretsPath pubkeys;
+        baseSpecialArgs
+        // {
+          inherit lib hostName;
           host.hostName = hostName;
-        }
-        // extraSpecialArgs;
+        };
       modules =
         [
           {
-            nixpkgs.pkgs = lib.mkDefault args.pkgs;
+            nixpkgs.overlays = extraOverlays;
+            nixpkgs.config.allowUnfree = true;
             networking.hostName = hostName;
           }
           ./${hostName}
@@ -48,20 +57,34 @@
         # Disabled by default, therefore load every module and enable via attributes
         # instead of imports
         ++ (lib.attrValues config.flake.nixosModules)
-        ++ (lib.optional withHomeManager [
+        ++ (
+          if withHomeManager
+          then [
             inputs.home-manager.nixosModules.home-manager
             {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = baseSpecialArgs;
+                sharedModules = lib.attrValues config.flake.homeModules;
+              };
             }
           ]
-          ++ (lib.attrValues config.flake.homeModules));
+          else []
+        );
     };
 in {
   flake.nixosConfigurations = {
     spinorbundle = withSystem "x86_64-linux" (args:
       mkHost args "spinorbundle" {
         withHomeManager = true;
+        extraOverlays = with inputs; [
+          emacs-overlay.overlay
+          neovim-nightly-overlay.overlay
+          (final: _prev: {
+            nur = import inputs.nur {pkgs = final;};
+          })
+        ];
       });
   };
 }

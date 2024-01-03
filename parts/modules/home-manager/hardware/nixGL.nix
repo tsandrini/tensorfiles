@@ -17,8 +17,7 @@
   lib,
   pkgs,
   self,
-  inputs,
-  system,
+  inputs',
   ...
 }:
 with builtins;
@@ -29,6 +28,7 @@ with lib; let
   cfg = config.tensorfiles.hm.hardware.nixGL;
   _ = mkOverride 550;
 
+  # TODO unfortunately nixGL doesnt have a mainprogram set
   nixGLWrap = pkg:
     pkgs.runCommand "${pkg.name}-nixgl-wrapper" {} ''
       mkdir $out
@@ -37,7 +37,7 @@ with lib; let
       mkdir $out/bin
       for bin in ${pkg}/bin/*; do
        wrapped_bin=$out/bin/$(basename $bin)
-       echo "exec ${lib.getExe cfg.pkg} $bin \$@" > $wrapped_bin
+       echo "exec ${cfg.pkg}/bin/nixGL $bin \$@" > $wrapped_bin
        chmod +x $wrapped_bin
       done
     '';
@@ -50,13 +50,17 @@ in {
 
     pkg = mkOption {
       type = package;
-      inherit (inputs.nixGL.packages.${system}) default;
+      inherit (inputs'.nixGL.packages) default;
       description = ''
         NixGL binary that should be used for wrapping other graphical executables.
       '';
     };
 
-    integrations = {
+    programPatches = {
+      enable = mkEnableOption (mdDoc ''
+        Enables the nixGL program patches
+      '');
+
       kitty = mkAlreadyEnabledOption (mdDoc ''
         Enables the kitty executable wrapper
       '');
@@ -66,12 +70,14 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages = [inputs.nixGL.packages.${system}.default];
+      home.packages = [cfg.pkg];
     }
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.integrations.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty")) {
-      programs.kitty.package = _ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg);
-    })
+    (mkIf cfg.programPatches.enable (let
+      kittyCheck = cfg.programPatches.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.program.terminals.kitty");
+    in {
+      programs.kitty.package = mkIf kittyCheck (_ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg));
+    }))
     # |----------------------------------------------------------------------| #
   ]);
 

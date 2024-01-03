@@ -24,6 +24,8 @@
   mkHome = args: home: {
     extraSpecialArgs ? {},
     extraModules ? [],
+    extraOverlays ? [],
+    ...
   }:
     inputs.home-manager.lib.homeManagerConfiguration {
       inherit (args) pkgs;
@@ -36,6 +38,11 @@
         // extraSpecialArgs;
       modules =
         [
+          {
+            # nixpkgs.pkgs = lib.mkDefault args.pkgs;
+            nixpkgs.overlays = extraOverlays;
+            nixpkgs.config.allowUnfree = true;
+          }
           ./${home}
         ]
         ++ extraModules
@@ -51,7 +58,16 @@ in {
 
   config = {
     flake.homeConfigurations = {
-      "tsandrini@jetbundle" = withSystem "x86_64-linux" (args: mkHome args "tsandrini@jetbundle" {});
+      "tsandrini@jetbundle" = withSystem "x86_64-linux" (args:
+        mkHome args "tsandrini@jetbundle" {
+          extraOverlays = with inputs; [
+            neovim-nightly-overlay.overlay
+            emacs-overlay.overlay
+            (final: _prev: {
+              nur = import inputs.nur {pkgs = final;};
+            })
+          ];
+        });
     };
 
     flake.checks."x86_64-linux" = {

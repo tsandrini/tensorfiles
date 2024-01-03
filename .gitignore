@@ -16,6 +16,7 @@ result
 # home-manager
 tsandrini
 tsandrini-*-link
+!parts/**/tsandrini
 
 # tmp
 etc/dotfiles/config/wal/templates/Xresources

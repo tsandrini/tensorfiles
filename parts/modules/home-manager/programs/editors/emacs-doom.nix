@@ -17,7 +17,6 @@
   lib,
   pkgs,
   self,
-  inputs,
   self',
   ...
 }:
@@ -54,8 +53,6 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      nixpkgs.overlays = [inputs.emacs-overlay.overlay];
-
       home.packages = with pkgs; [
         ## Emacs itself
         binutils # native-comp needs 'as', provided by this

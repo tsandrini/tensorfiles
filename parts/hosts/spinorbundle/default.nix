@@ -45,6 +45,7 @@
     security.agenix.enable = true;
     system.impermanence = {
       enable = true;
+      allowOther = true;
       btrfsWipe = {
         enable = true;
         rootPartition = "/dev/mapper/enc";
@@ -64,8 +65,12 @@
     tensorfiles.hm = {
       profiles.graphical-xmonad.enable = true;
 
+      system.impermanence = {
+        enable = true;
+        allowOther = true;
+      };
+
       security.agenix.enable = true;
-      systems.impermanence.enable = true;
 
       programs.pywal.enable = true;
       services.pywalfox-native.enable = true;

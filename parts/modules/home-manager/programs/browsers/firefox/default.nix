@@ -24,8 +24,6 @@ with builtins;
 with lib; let
   tensorfiles = self.lib;
   inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
-  cfg = config.tensorfiles.hm.programs.browsers.firefox;
   _ = mkOverrideAtHmModuleLevel;
 in {
   options.tensorfiles.hm.programs.browsers.firefox = with types;
@@ -35,7 +33,7 @@ in {
     '');
   };
 
-  config = mkIf cfg.enable (mkMerge [
+  config = mkIf false (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       programs.firefox = {

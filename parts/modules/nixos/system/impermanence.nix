@@ -54,6 +54,14 @@ in {
       '';
     };
 
+    allowOther = mkOption {
+      type = bool;
+      default = false;
+      description = mdDoc ''
+        TODO
+      '';
+    };
+
     btrfsWipe = {
       enable = mkEnableOption (mdDoc ''
         Enable btrfs based root filesystem wiping.
@@ -191,6 +199,10 @@ in {
           # we can unmount ${mountpoint} and continue on the boot process.
           umount ${mountpoint}
         '';
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.allowOther {
+      programs.fuse.userAllowOther = true;
     })
     # |----------------------------------------------------------------------| #
   ]);

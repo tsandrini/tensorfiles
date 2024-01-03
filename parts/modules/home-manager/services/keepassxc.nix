@@ -58,7 +58,8 @@ in {
         };
 
         Install = {WantedBy = ["graphical-session.target"];};
-        Service = {ExecStart = _ "${getExe pkgs.keepassxc}";};
+        # TODO pkgs.keepassxc doesnt have a mainProgram for getExe set
+        Service = {ExecStart = _ "${cfg.pkg}/bin/keepassxc";};
       };
     }
     # |----------------------------------------------------------------------| #

@@ -46,7 +46,9 @@ in {
         enable = _ true;
         viAlias = _ true;
         vimAlias = _ true;
-        withPython3 = _ true;
+        # error: The option `programs.neovim.withPython' can no longer be used
+        # since it's been removed. Python2 support has been removed from neovim
+        # withPython3 = _ true;
         withNodeJs = _ true;
         extraConfig = ''
           set number
