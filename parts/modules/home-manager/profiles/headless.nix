@@ -94,14 +94,8 @@ in {
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}" = {
         directories = [
-          {
-            directory = ".gnupg";
-            mode = "0700";
-          }
-          {
-            directory = ".ssh";
-            mode = "0700";
-          }
+          ".gnupg"
+          ".ssh"
           config.xdg.cacheHome
           config.xdg.stateHome
           config.home.sessionVariables.DOWNLOADS_DIR
