@@ -38,7 +38,7 @@ The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/te
   of individual modules, which is why I opted for the behaviour --
   import everything and enable only the parts that you need.
 - Isolate home manager functionality in such a way so it can be used in non
-  NixOS environments 👥 
+  NixOS environments 👥
 
 ## 3. Software 🖥️
 
