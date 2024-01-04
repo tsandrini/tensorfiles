@@ -96,8 +96,8 @@ in {
         directories = [
           ".gnupg"
           ".ssh"
-          ".cache"
-          ".local/state"
+          # ".cache"
+          # ".local/state"
           "Downloads"
           "OrgBundle"
           "ProjectBundle"
