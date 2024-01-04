@@ -969,8 +969,25 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-wayland": "nixpkgs-wayland",
         "nur": "nur",
+        "shadow-nix": "shadow-nix",
         "systems": "systems_7",
         "treefmt-nix": "treefmt-nix_2"
+      }
+    },
+    "shadow-nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1686590930,
+        "narHash": "sha256-SQO98VrvAI58B8UCX6y9B/2/FoK1NnSxUA/ido+/tE8=",
+        "owner": "Exaltia",
+        "repo": "shadow-nix",
+        "rev": "b0ceabc3febadc9184e3c50ede8261ddbfdc1808",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Exaltia",
+        "repo": "shadow-nix",
+        "type": "github"
       }
     },
     "systems": {

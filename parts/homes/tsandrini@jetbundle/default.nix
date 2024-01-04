@@ -24,9 +24,12 @@
 
     # security.agenix.enable = true;
     programs.pywal.enable = true;
+    programs.shadow-nix.enable = true;
     services.pywalfox-native.enable = true;
     services.keepassxc.enable = true;
   };
+
+  programs.shadow-client.forceDriver = "iHD";
 
   home.username = "tsandrini";
   home.homeDirectory = "/home/tsandrini";

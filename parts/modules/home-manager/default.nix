@@ -41,6 +41,7 @@
     programs_btop = import ./programs/btop.nix;
     programs_pywal = import ./programs/pywal.nix;
     programs_thunderbird = import ./programs/thunderbird.nix;
+    programs_shadow-nix = import ./programs/shadow-nix.nix;
     ## -- editors --
     programs_editors_neovim = import ./programs/editors/neovim.nix;
     programs_editors_emacs-doom = import ./programs/editors/emacs-doom.nix;

@@ -79,6 +79,12 @@
       url = "github:mikesmithgh/kitty-scrollback.nvim";
       flake = false;
     };
+
+    # TODO some serious maintenance sheningans
+    shadow-nix = {
+      url = "github:Exaltia/shadow-nix";
+      flake = false;
+    };
   };
 
   # Here you can add additional binary cache substituers that you trust.

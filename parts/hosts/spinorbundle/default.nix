@@ -26,7 +26,7 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  # environment.systemPackages = with pkgs; [];
+  environment.systemPackages = with pkgs; [libva-utils];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -51,6 +51,7 @@
         rootPartition = "/dev/mapper/enc";
       };
     };
+    programs.shadow-nix.enable = true;
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
     };
@@ -60,7 +61,7 @@
       agenixPassword.enable = true;
     };
   };
-
+  programs.shadow-client.forceDriver = "iHD";
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
@@ -137,6 +138,10 @@
       enable = true;
       package = pkgs.bluez;
     };
+  };
+  # Hardware hybrid decoding
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
   };
 
   services = {

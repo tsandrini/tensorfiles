@@ -24,6 +24,7 @@ _: {
     profiles_graphical-startx-home-manager = import ./profiles/graphical-startx-home-manager.nix;
 
     # -- programs --
+    programs_shadow-nix = import ./programs/shadow-nix.nix;
 
     # -- security --
 
