@@ -33,7 +33,7 @@ in {
     '');
   };
 
-  config = mkIf false (mkMerge [
+  config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       programs.firefox = {

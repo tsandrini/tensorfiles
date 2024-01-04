@@ -94,18 +94,14 @@ in {
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         directories = [
-          {
-            directory = ".gnupg";
-          }
-          {
-            directory = ".ssh";
-          }
+          ".gnupg"
+          ".ssh"
+          "Downloads"
+          "OrgBundle"
+          "ProjectBundle"
+          "FiberBundle"
           (pathToRelative config.xdg.cacheHome)
           (pathToRelative config.xdg.stateHome)
-          (pathToRelative config.home.sessionVariables.DOWNLOADS_DIR)
-          (pathToRelative config.home.sessionVariables.ORG_DIR)
-          (pathToRelative config.home.sessionVariables.PROJECTS_DIR)
-          (pathToRelative config.home.sessionVariables.MISC_DATA_DIR)
         ];
       };
     })
