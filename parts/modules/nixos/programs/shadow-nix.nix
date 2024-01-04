@@ -39,7 +39,7 @@ in {
     {
       programs.shadow-client = {
         enable = _ cfg.enable;
-        xsession.enable = _ cfg.enable;
+        x-session.enable = _ cfg.enable;
       };
     }
     # |----------------------------------------------------------------------| #
