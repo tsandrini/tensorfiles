@@ -241,7 +241,7 @@ in {
             ]
             else []
           );
-        directories = optional cfg.p10k.enable (pathToRelative "${config.xdg.cacheHome}/p10k-${cfg.home.username}");
+        directories = optional cfg.p10k.enable (pathToRelative "${config.xdg.cacheHome}/p10k-${config.home.username}");
       };
     })
     # |----------------------------------------------------------------------| #
