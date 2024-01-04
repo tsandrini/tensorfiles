@@ -96,12 +96,18 @@ in {
         directories = [
           ".gnupg"
           ".ssh"
-          config.xdg.cacheHome
-          config.xdg.stateHome
-          config.home.sessionVariables.DOWNLOADS_DIR
-          config.home.sessionVariables.ORG_DIR
-          config.home.sessionVariables.PROJECTS_DIR
-          config.home.sessionVariables.MISC_DATA_DIR
+          ".cache"
+          ".local/state"
+          "Downloads"
+          "OrgBundle"
+          "ProjectBundle"
+          "FiberBundle"
+          # config.xdg.cacheHome
+          # config.xdg.stateHome
+          # config.home.sessionVariables.DOWNLOADS_DIR
+          # config.home.sessionVariables.ORG_DIR
+          # config.home.sessionVariables.PROJECTS_DIR
+          # config.home.sessionVariables.MISC_DATA_DIR
         ];
       };
     })
