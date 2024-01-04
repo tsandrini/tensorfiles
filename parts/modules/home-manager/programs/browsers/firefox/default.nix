@@ -23,16 +23,25 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
+  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   _ = mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.browsers.firefox;
+
+  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
+  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
   options.tensorfiles.hm.programs.browsers.firefox = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
+
+    impermanence = {enable = mkImpermanenceEnableOption;};
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -237,6 +246,15 @@ in {
         };
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf impermanenceCheck {
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        directories = [
+          ".mozilla/firefox/default"
+          (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox/default")
+        ];
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

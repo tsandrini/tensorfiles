@@ -32,6 +32,7 @@ with lib; let
     if impermanenceCheck
     then config.tensorfiles.hm.system.impermanence
     else {};
+  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
   options.tensorfiles.hm.programs.shells.zsh = with types;
   with tensorfiles.options; {
@@ -227,7 +228,20 @@ in {
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        files = [".zsh_history"];
+        files =
+          [".zsh_history"]
+          ++ (optional cfg.oh-my-zsh.enable (pathToRelative "${config.xdg.cacheHome}/oh-my-zsh"))
+          ++ (
+            if cfg.p10k.enable
+            then [
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${cfg.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${cfg.home.username}.zsh.zwc")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${cfg.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${cfg.home.username}.zsh.zwc")
+            ]
+            else []
+          );
+        directories = optional cfg.p10k.enable (pathToRelative "${config.xdg.cacheHome}/p10k-${cfg.home.username}");
       };
     })
     # |----------------------------------------------------------------------| #

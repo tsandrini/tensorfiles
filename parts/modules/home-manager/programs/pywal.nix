@@ -22,8 +22,16 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.pywal;
+
+  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
+  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
   options.tensorfiles.hm.programs.pywal = with types;
   with tensorfiles.options; {
@@ -97,6 +105,15 @@ in {
         *color15:  {color15}
       '';
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf impermanenceCheck {
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        directories = [
+          (pathToRelative "${config.xdg.cacheHome}/wal")
+        ];
+        files = [".fehbg"];
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

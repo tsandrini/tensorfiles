@@ -23,14 +23,24 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.editors.emacs-doom;
+
+  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence =
+    if impermanenceCheck
+    then config.tensorfiles.hm.system.impermanence
+    else {};
+  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
   options.tensorfiles.hm.programs.editors.emacs-doom = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
+
+    impermanence = {enable = mkImpermanenceEnableOption;};
 
     repoUrl = mkOption {
       type = str;
@@ -92,7 +102,7 @@ in {
         pandoc
         discount
         html-tidy
-        dockfmt
+        # dockfmt
       ];
 
       home.sessionPath = ["${config.xdg.configHome}/emacs/bin"];
@@ -106,6 +116,15 @@ in {
         fi
       '';
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf impermanenceCheck {
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        directories = [
+          (pathToRelative "${config.xdg.configHome}/emacs")
+          (pathToRelative "${config.xdg.configHome}/doom")
+        ];
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 
