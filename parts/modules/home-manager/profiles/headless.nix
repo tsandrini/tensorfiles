@@ -92,7 +92,7 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}" = {
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         directories = [
           ".gnupg"
           ".ssh"
