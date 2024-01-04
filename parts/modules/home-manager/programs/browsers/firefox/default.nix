@@ -25,6 +25,8 @@ with lib; let
   tensorfiles = self.lib;
   inherit (tensorfiles) mkOverrideAtHmModuleLevel;
   _ = mkOverrideAtHmModuleLevel;
+
+  cfg = config.tensorfiles.hm.programs.browsers.firefox;
 in {
   options.tensorfiles.hm.programs.browsers.firefox = with types;
   with tensorfiles.options; {
