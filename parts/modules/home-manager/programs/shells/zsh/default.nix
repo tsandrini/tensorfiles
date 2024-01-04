@@ -234,10 +234,10 @@ in {
           ++ (
             if cfg.p10k.enable
             then [
-              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${cfg.home.username}.zsh")
-              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${cfg.home.username}.zsh.zwc")
-              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${cfg.home.username}.zsh")
-              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${cfg.home.username}.zsh.zwc")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh.zwc")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh.zwc")
             ]
             else []
           );
