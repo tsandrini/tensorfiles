@@ -3,35 +3,48 @@
 ## Table of Contents
 
 1. [About](1-about)
-2. [Software](2-software)
-   1. [Academics](21-academics)
-   2. [Secrets](22-secrets)
-3. [Installation](3-installation)
-4. [(rough) Roadmap](4-rough-roadmap)
+2. [Design choices](2-design-choices)
+3. [Software](3-software)
+   1. [Academics](31-academics)
+   2. [Secrets](32-secrets)
+4. [Installation](4-installation)
 5. [Troubleshooting](5-troubleshooting)
    1. [`Write error: disk full;` during `nixos-install`](write-error-disk-full-during-nixos-install)
 6. [Impurities](6-impurities)
 7. [References](7-references)
 
-## 1. About
+## 1. About ❄️
 
 **tensorfiles** represent a set of _fully covariant_, that is invariant to the
 chosen coordinate system (**they work on every machine**), fundamental
-laws of computing (**how to build my fancy flashy terminals**)
+laws of computing (**how to build my fancy flashy terminals**) ☁️
 
-![img](pkgs/docs/docs/assets/images/showcase_1.png)
-![img](pkgs/docs/docs/assets/images/showcase_2.png)
+![img](parts/pkgs/docs/docs/assets/images/showcase_1.png)
+![img](parts/pkgs/docs/docs/assets/images/showcase_2.png)
 
 For more info refer to the [documentation](https://tsandrini.github.io/tensorfiles/).
-The project is also hosted at on [FlakeHub](https://flakehub.com/flake/tsandrini/tensorfiles/).
+The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/tensorfiles/).
 
-## 2. Software
+## 2. Design choices ⚙️
 
-I use the following software
+- This project follow the following template
+  [https://github.com/tsandrini/practical-flakes-template](https://github.com/tsandrini/practical-flakes-template)
+  which makes it super easy to share modularity between different projects.
+- Modules are disabled by default. Why you might ask? 🤓 ... Setting
+  `myModule.enable = true;` can be done from multiple places, moreover we can
+  even assign priorities to these expressions (by utilising `lib.mkOverride`),
+  however, we can import a given module once and only once ... additional imports
+  will yield errors. This behaviour makes it hard to reason about the dependencies
+  of individual modules, which is why I opted for the behaviour --
+  import everything and enable only the parts that you need.
+- Isolate home manager functionality in such a way so it can be used in non
+  NixOS environments 👥 
 
-TODO rewrite into a list, tables are super unreadable in code
+## 3. Software 🖥️
 
-### 2.1. Academics
+TODO
+
+### 3.1. Academia 👩🏽‍💼
 
 TODO comment more?
 
@@ -50,7 +63,7 @@ TODO comment more?
    keep my long-term memory of different subjects fresh using flashcards. I sync
    the cards using ankis official cloud.
 
-### 2.2. Secrets
+### 3.2. Secrets 🔑
 
 For my day to day passwords I use a locally synced
 [keepassxc](https://keepassxc.org/) encrypted database and for the NixOS based
@@ -61,34 +74,11 @@ ones instead (for obvious reasons).
 _Note_: plz no pwn xd, if you see any vulnerabilities please DM me instead,
 thanks <3.
 
-## 3. Installation
+## 4. Installation 💾
 
 TODO
 
-## 4. (rough) Roadmap
-
-- [-] \***\*organization\*\***
-  - [ ] finish doc
-  - [x] decouple <nix/roles/base.nix>
-  - [x] decouple <nix/flake.nix>
-  - [x] move nix/ to be the project root
-- [-] \***\*implementation\*\***
-  - [ ] syncthing (local version)
-  - [ ] syncthing (remote)
-  - [ ] searx (remote)
-  - [x] newsboat
-  - [ ] thunderbird
-  - [ ] zotero
-  - [ ] anki
-  - [ ] emacs
-  - [ ] discord
-  - [ ] misc? vlc? libre?
-- [ ] \***\*machines\*\***
-  - [ ] jetbundle
-  - [ ] pi
-  - [ ] server
-
-## 5. Troubleshooting
+## 5. Troubleshooting 😵‍💫
 
 ### `Write error: disk full;` during `nixos-install`
 
@@ -120,13 +110,13 @@ tmpfs, for example
 mount -o remount,size=15G /tmp
 ```
 
-## 6. Impurities
+## 6. Impurities 💩
 
 - some of the packages in [NUR](https://github.com/nix-community/NUR) require
   running `--impure`
 - devenv requires `--impure` flag for commands
 
-## 7. References
+## 7. References 📚
 
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you&rsquo;ve really
@@ -150,3 +140,4 @@ manual.org?)
 - [balsoft/nixos-config: more modularized but not overly complicated config](https://github.com/balsoft/nixos-config)
 - [A really nice blogpost/tutorial on encrypted nixos opt-in system using btrfs](https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html)
 - [Github code search: thanks to how the nix lang works the code search should be of a huge help, included an example](https://github.com/search?q=pkgs.writeShellScriptBin+language%3ANix&type=code&l=Nix)
+- [This is where flake-parts finally clicked for me, huge thanks to viperml~~](https://github.com/viperML/dotfiles)
