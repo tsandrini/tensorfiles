@@ -31,7 +31,7 @@ with lib; let
     if impermanenceCheck
     then config.tensorfiles.hm.system.impermanence
     else {};
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  # pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
   options.tensorfiles.hm.profiles.headless = with types;
   with tensorfiles.options; {
@@ -92,16 +92,22 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+      home.persistence."${impermanence.persistentRoot}" = {
         directories = [
-          ".gnupg"
-          ".ssh"
-          "Downloads"
-          "OrgBundle"
-          "ProjectBundle"
-          "FiberBundle"
-          (pathToRelative config.xdg.cacheHome)
-          (pathToRelative config.xdg.stateHome)
+          {
+            directory = ".gnupg";
+            mode = "0700";
+          }
+          {
+            directory = ".ssh";
+            mode = "0700";
+          }
+          config.xdg.cacheHome
+          config.xdg.stateHome
+          config.home.sessionVariables.DOWNLOADS_DIR
+          config.home.sessionVariables.ORG_DIR
+          config.home.sessionVariables.PROJECTS_DIR
+          config.home.sessionVariables.MISC_DATA_DIR
         ];
       };
     })
