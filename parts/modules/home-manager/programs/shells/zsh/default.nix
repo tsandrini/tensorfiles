@@ -227,6 +227,8 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
+      home.file."${config.xdg.cacheHome}/oh-my-zsh/.keep".enable = false;
+
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         files =
           [".zsh_history"]
