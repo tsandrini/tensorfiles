@@ -39,6 +39,8 @@ in {
       Enables NixOS module that configures/handles pywal colorscheme generator.
     '');
 
+    impermanence = {enable = mkImpermanenceEnableOption;};
+
     pkg = mkOption {
       type = package;
       default = pkgs.pywal;
