@@ -16,9 +16,7 @@
   pkgs,
   lib,
   inputs,
-  user ? "root",
   projectPath ? ./..,
-  secretsPath ? (projectPath + "/secrets"),
   ...
 }: let
   inherit (bootstrap) mapModules';
@@ -29,7 +27,7 @@
     with self;
       mapModules' ./. (file:
         import file {
-          inherit pkgs lib self inputs user projectPath secretsPath;
+          inherit pkgs lib self inputs projectPath;
         }));
 in
   tensorfiles.extend

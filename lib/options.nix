@@ -12,11 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  lib,
-  user ? "root",
-  ...
-}:
+{lib, ...}:
 with lib;
 with lib.types;
 with builtins; rec {
@@ -33,13 +29,13 @@ with builtins; rec {
     };
 
   /*
-  Creates an enableOption targeted for the management of the persistence
+  Creates an enableOption targeted for the management of the impermanence
   system.
 
   *Type*: `Option`
   */
-  mkPersistenceEnableOption =
-    mkEnableOption (mdDoc ''
+  mkImpermanenceEnableOption =
+    mkAlreadyEnabledOption (mdDoc ''
       Whether to autoappend files/folders to the persistence system.
       For more info on the persistence system refer to the system.persistence
       NixOS module documentation.
@@ -63,7 +59,7 @@ with builtins; rec {
   *Type*: `Option`
   */
   mkPywalEnableOption =
-    mkEnableOption (mdDoc ''
+    mkAlreadyEnabledOption (mdDoc ''
       Whether to enable the integration with the pywal colorscheme generator
       program. The integration may range from just some color parsing/loading to
       sometimes full on detailed plugins depending on the context.
@@ -87,7 +83,7 @@ with builtins; rec {
   *Type*: `Option`
   */
   mkAgenixEnableOption =
-    mkEnableOption (mdDoc ''
+    mkAlreadyEnabledOption (mdDoc ''
       Whether to enable the agenix ecosystem for handling secrets, which includes
 
       a. passwords
@@ -115,40 +111,27 @@ with builtins; rec {
     };
 
   /*
-  Creates an enableOption targeted for the management of the home
-  system.
+  Submodule option used for handling multiple-user configuration setups.
+  After the definition you can iterate over the users in the following manner
 
-  *Type*: `Option`
-  */
-  mkHomeEnableOption = mkOption {
-    type = bool;
-    default = true;
-    example = false;
-    description = mdDoc ''
-      Enable multi-user configuration via home-manager.
-
-      The configuration is then done via the settings option with the toplevel
-      attribute being the name of the user, for more info please refer to the
-      documentation and example of the `settings` option.
-    '';
+  Example:
+  ```
+  users.users = genAttrs (attrNames cfg.usersSettings) (_user: let
+    userCfg = cfg.usersSettings."${_user}";
+  in {
+    myOption = userCfg.myOption;
+    myOtherOption = 2 * userCfg.myOtherOption;
   };
-
-  /*
-  Creates an enableOption targeted for the management of the home
-  system.
-
-  *Type*: `(String -> AttrSet a) -> Option`
+  ```
   */
-  mkHomeSettingsOption =
-    # (String -> AttrSet a) Function that, given a username, yields all of the home related options for that given user
+  mkUsersSettingsOption =
+    # (String -> AttrSet a) Function that, given a username, yields all of the users related options for that given user
     generatorFunction:
       mkOption {
         type =
           attrsOf
           (submodule ({name, ...}: {options = generatorFunction name;}));
-        # Note: It's sufficient to just create the toplevel attribute and the
-        # rest will be automatically populated with the default option values.
-        default = {"${user}" = {};};
+        default = {};
         example = {
           "root" = {
             myOption = false;
@@ -162,14 +145,8 @@ with builtins; rec {
           "myOtherUser" = {};
         };
         description = mdDoc ''
-          Multiuser home-manager configuration option submodule.
-          Enables doing hm module level configurations via simple attrsets.
-
-          In the case of an enabled home configuration, but not passing any
-          concrete values, ie. meaning that `home.enable = true`, however,
-          `home.settings` is left unchanged, it will be populated with the
-          default values specific to each module using the user provided
-          during the initialization of `lib.tensorfiles.options` (by default "root").
+          Multiuser users configuration option submodule.
+          Enables doing module level configurations via simple attrsets.
         '';
       };
 }

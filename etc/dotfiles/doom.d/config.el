@@ -396,3 +396,6 @@
 ;; (add-hook 'tuareg-mode-hook #'merlin-mode)
 ;; (add-hook 'caml-mode-hook #'merlin-mode)
 ;; (use-package! merlin-company)
+
+(setq leetcode-save-solutions t)
+(setq leetcode-directory "~/leetcode")

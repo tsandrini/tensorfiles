@@ -14,20 +14,12 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {lib, ...}:
 with lib;
-with builtins; rec {
+with builtins; {
   /*
-  Given an absolute path to a file, return the dirname of that file.
+  Check if a substring is present in a given string.
+  Uses simple splitting instead of creating and escaping a general regex
 
-  *Type*: `dirnameFromPath :: Path -> Path`
-
-  Example:
-  ```nix title="Example" linenums="1"
-  dirnameFromPath "/etc/myDir/file.nix"
-   => "/etc/myDir"
-   ```
+  *Type*: `hasSubstring :: String -> String -> Bool`
   */
-  dirnameFromPath =
-    # (Path) Absolute path to a given file
-    dir:
-      trivial.pipe dir [toString (strings.splitString "/") lists.last];
+  hasSubstring = str: substr: (splitString substr str) > 1;
 }

@@ -13,17 +13,12 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
-  pkgs,
   lib,
   self,
   inputs,
-  projectPath ? ./..,
-  secretsPath ? (projectPath + "/secrets"),
-  user ? "root",
   ...
 }: let
   inherit (self.attrsets) mapFilterAttrs;
-  inherit (self.strings) dirnameFromPath;
 in
   with lib;
   with builtins; rec {
@@ -33,6 +28,22 @@ in
     # mkImageMediaOverride = 60:
     # mkForce = 50:
     # mkVMOverride = 10: used by ‘nixos-rebuild build-vm’
+
+    /*
+    mkOverride function with a preset priority set for all of the
+    home-manager modules.
+
+    *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
+    */
+    mkOverrideAtHmModuleLevel = mkOverride 700;
+
+    /*
+    mkOverride function with a preset priority set for all of the
+    home-manager profile modules.
+
+    *Type*: `mkOverrideAtHmProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
+    */
+    mkOverrideAtHmProfileLevel = mkOverride 600;
 
     /*
     mkOverride function with a preset priority set for all of the nixos
@@ -49,6 +60,34 @@ in
     *Type*: `mkOverrideAtProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
     */
     mkOverrideAtProfileLevel = mkOverride 400;
+
+    /*
+    Recursively checks the presence of a nixos/home-manager module and whether
+    its enabled.
+
+    One might ask why not `?` or `hasAttr` instead?
+    1. The `?` operator is indeed able to handle nested attributes, however, I've
+       had some errors while linting and running the `check` command during
+       development, which seems to be due to the inline direct syntax with a
+       potentially nonexisting attributes.
+    2. The `hasAttr` takes a string identifier instead, which is more safe, however,
+        it doesn't support nested attributes.
+
+    The solution is then to construct a recursive traverse over the identifier
+    using the `hasAttr` function.
+
+    *Type*: `isModuleLoadedAndEnabled :: AttrSet -> String -> Bool`
+    */
+    isModuleLoadedAndEnabled = cfg: identifier: let
+      aux = acc: parts: let
+        elem = head parts;
+        rest = tail parts;
+      in
+        if length rest == 0
+        then (hasAttr elem acc) && (hasAttr "enable" acc.${elem}) && acc.${elem}.enable
+        else (hasAttr elem acc) && (aux acc.${elem} rest);
+    in
+      aux cfg (splitString "." identifier);
 
     /*
     Recursively read a directory and apply a provided function to every `.nix`
@@ -124,72 +163,9 @@ in
             pkgsOverlay = _final: _prev: {
               tensorfiles = inputs.self.packages.${system};
             };
-            nurOverlay = final: _prev: {
-              nur = import inputs.nur {pkgs = final;};
-            };
           in
             [pkgsOverlay]
-            ++ (optional (hasAttr "nur" inputs) nurOverlay)
-            ++ (attrValues inputs.self.overlays)
             ++ extraOverlays;
-        };
-
-    /*
-    Custom host (that is, nixosSystem) constructor. It expects a target host
-    dir path as its first argument, that is, not a `.nix` file, but a directory.
-    The reasons for this are the following:
-
-    1. Each host gets its specifically constructed version of nixpkgs for its
-       target platform, which is specified in the `myHostDir/system` file.
-
-    2. Apart from some main host `.nix` file almost every host has some
-       `hardware-configuration.nix` thus implying a host directory structure
-       holding atleast 2 files + the system file.
-
-    This means that the minimal required structure for a host dir is
-    - myHostDir/
-      - (required) default.nix
-      - (required) system
-      - (optional) hardware-configuration.nix
-
-    *Type*: `mkHost :: Path -> Attrset`
-    */
-    mkHost =
-      # (Path) Path to the root directory further providing the "system" and "default.nix" files
-      dir: let
-        hostName = dirnameFromPath dir;
-        system = removeSuffix "\n" (readFile "${dir}/system");
-        systemPkgs = mkNixpkgs inputs.nixpkgs system [];
-        secretsAttrset =
-          if pathExists (secretsPath + "/secrets.nix")
-          then (import (secretsPath + "/secrets.nix"))
-          else {};
-      in
-        lib.nixosSystem {
-          inherit system;
-          pkgs = systemPkgs;
-          specialArgs = {
-            inherit
-              inputs
-              lib
-              system
-              user
-              hostName
-              projectPath
-              secretsPath
-              secretsAttrset
-              ;
-            host.hostName = hostName;
-            # lintCompatibility = false;
-          };
-          modules = [
-            {
-              nixpkgs.pkgs = mkDefault systemPkgs;
-              networking.hostName = hostName;
-            }
-            (projectPath + "/modules/profiles/_load-all-modules.nix")
-            dir
-          ];
         };
 
     /*

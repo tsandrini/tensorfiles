@@ -14,10 +14,10 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
 
       - name: pre-commit checks
-        run: nix develop .#devenv --impure --command bash -c "pre-commit run --all-files"
+        run: nix develop .#dev --impure --command bash -c "pre-commit run --all-files"
 
       - name: Check the flake
-        run: nix develop .#devenv --impure --command bash -c "nix flake check --impure --show-trace"
+        run: nix develop .#dev --impure --command bash -c "nix flake check --impure --show-trace"
         # TODO this would be a great addition to update in the future, right now
         # some minor stuff isn't passing, but I don't have the time to
         # emulate all other platforms that I don't care about at the moment

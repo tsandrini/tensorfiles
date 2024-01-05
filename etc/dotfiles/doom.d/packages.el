@@ -61,6 +61,8 @@
 ;; (package! emacsql-sqlite)
 (package! doct)
 
+(package! leetcode)
+
 ;; Fun stuff :)
 ;(package! speed-type)
 
