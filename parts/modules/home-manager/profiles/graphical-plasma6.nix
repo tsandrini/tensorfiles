@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/profiles/graphical-xmonad.nix
+# --- parts/modules/home-manager/profiles/graphical-plasma6.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -24,10 +24,10 @@ with lib; let
   tensorfiles = self.lib;
   inherit (tensorfiles) mkOverrideAtHmProfileLevel;
 
-  cfg = config.tensorfiles.hm.profiles.graphical-xmonad;
+  cfg = config.tensorfiles.hm.profiles.graphical-plasma6;
   _ = mkOverrideAtHmProfileLevel;
 in {
-  options.tensorfiles.hm.profiles.graphical-xmonad = with types;
+  options.tensorfiles.hm.profiles.graphical-plasma6 = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -58,9 +58,9 @@ in {
           pywalfox-native.enable = _ true;
 
           x11 = {
-            picom.enable = _ true;
-            redshift.enable = _ true;
-            window-managers.xmonad.enable = _ true;
+            # picom.enable = _ true;
+            # redshift.enable = _ true;
+            # window-managers.plasma6.enable = _ true;
           };
         };
       };
@@ -81,7 +81,7 @@ in {
 
       fonts.fontconfig.enable = _ true;
 
-      services.network-manager-applet.enable = _ true;
+      # services.network-manager-applet.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

@@ -85,6 +85,8 @@
       url = "github:Exaltia/shadow-nix";
       flake = false;
     };
+
+    kde2nix.url = "github:nix-community/kde2nix";
   };
 
   # Here you can add additional binary cache substituers that you trust.
@@ -156,6 +158,10 @@
       #    - mySimpleModule.nix
       imports = flatten (mapModules ./parts (x: x));
 
+      # We use the default `systems` defined by the `nix-systems` flake, if you
+      # need any additional systems, simply add them in the following manner
+      #
+      # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
     };

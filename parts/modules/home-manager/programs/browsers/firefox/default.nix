@@ -250,8 +250,8 @@ in {
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         directories = [
-          ".mozilla/firefox/default"
-          (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox/default")
+          ".mozilla/firefox"
+          (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox")
         ];
       };
     })
