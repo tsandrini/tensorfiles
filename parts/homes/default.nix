@@ -39,7 +39,6 @@
       modules =
         [
           {
-            # nixpkgs.pkgs = lib.mkDefault args.pkgs;
             nixpkgs.overlays = extraOverlays;
             nixpkgs.config.allowUnfree = true;
           }

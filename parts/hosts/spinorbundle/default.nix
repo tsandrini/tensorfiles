@@ -42,7 +42,7 @@
     # services.networking.openssh.genHostKey.enable = false;
     # services.networking.openssh.agenix.hostKey.enable = false;
 
-    services.x11.desktopManager.plasma6.enable = true;
+    services.x11.desktop-managers.plasma6.enable = true;
 
     security.agenix.enable = true;
     system.impermanence = {
