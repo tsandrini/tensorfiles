@@ -1,4 +1,4 @@
-# --- parts/modules/nixos/services/x11/desktop-managers/plasma6.nix
+# --- parts/modules/nixos/services/x11/desktop-managers/plasma.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,15 +15,11 @@
 {
   config,
   lib,
-  inputs,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
-
-  cfg = config.tensorfiles.services.x11.desktop-managers.plasma6;
-  _ = mkOverrideAtModuleLevel;
+  cfg = config.tensorfiles.services.x11.desktop-managers.plasma;
 in {
   options.tensorfiles.services.x11.desktop-managers.plasma6 = with types;
   with tensorfiles.options; {
@@ -32,12 +28,10 @@ in {
     '');
   };
 
-  imports = with inputs; [kde2nix.nixosModules.plasma6];
-
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      services.xserver.desktopManager.plasma6.enable = _ true;
+      # services.xserver.desktopManager.plasma.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

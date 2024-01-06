@@ -31,7 +31,7 @@
     profiles_minimal = import ./profiles/minimal.nix;
     profiles_headless = import ./profiles/headless.nix;
     profiles_graphical-xmonad = import ./profiles/graphical-xmonad.nix;
-    profiles_graphical-plasma6 = import ./profiles/graphical-plasma6.nix;
+    # profiles_graphical-plasma6 = import ./profiles/graphical-plasma6.nix;
 
     # -- programs --
     programs_direnv = import ./programs/direnv.nix;

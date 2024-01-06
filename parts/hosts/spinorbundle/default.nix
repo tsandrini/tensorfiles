@@ -38,11 +38,9 @@
   # ---------------------
   tensorfiles = {
     # profiles.graphical-startx-home-manager.enable = true;
-    # TODO
-    # services.networking.openssh.genHostKey.enable = false;
-    # services.networking.openssh.agenix.hostKey.enable = false;
+    profiles.headless.enable = true;
 
-    services.x11.desktop-managers.plasma6.enable = true;
+    # services.x11.desktop-managers.plasma6.enable = true;
 
     security.agenix.enable = true;
     system.impermanence = {
@@ -67,9 +65,15 @@
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
+  # TODO plasma stuff
+  services.xserver.enable = true;
+  services.xserver.displayManager.sddm.enable = true;
+  services.xserver.desktopManager.plasma5.enable = true;
+  services.xserver.displayManager.defaultSession = "plasmawayland";
+
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
-      profiles.graphical-xmonad.enable = true;
+      profiles.graphical-plasma.enable = true;
 
       system.impermanence = {
         enable = true;
@@ -148,13 +152,13 @@
 
   services = {
     blueman.enable = true;
-    tlp = {
-      enable = true;
-      settings = {
-        START_CHARGE_THRESH_BAT1 = 75;
-        STOP_CHARGE_THRESH_BAT1 = 80;
-      };
-    };
+    # tlp = {
+    #   enable = true;
+    #   settings = {
+    #     start_charge_thresh_bat1 = 75;
+    #     stop_charge_thresh_bat1 = 80;
+    #   };
+    # };
     pipewire = {
       enable = true;
       alsa.enable = true;

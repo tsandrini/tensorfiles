@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/profiles/graphical-plasma6.nix
+# --- parts/modules/home-manager/profiles/graphical-plasma.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -24,10 +24,10 @@ with lib; let
   tensorfiles = self.lib;
   inherit (tensorfiles) mkOverrideAtHmProfileLevel;
 
-  cfg = config.tensorfiles.hm.profiles.graphical-plasma6;
+  cfg = config.tensorfiles.hm.profiles.graphical-plasma;
   _ = mkOverrideAtHmProfileLevel;
 in {
-  options.tensorfiles.hm.profiles.graphical-plasma6 = with types;
+  options.tensorfiles.hm.profiles.graphical-plasma = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -46,7 +46,7 @@ in {
 
         programs = {
           newsboat.enable = _ true;
-          dmenu.enable = _ true;
+          # dmenu.enable = _ true;
           pywal.enable = _ true;
           terminals.kitty.enable = _ true;
           browsers.firefox.enable = _ true;
@@ -73,9 +73,9 @@ in {
       };
 
       home.packages = with pkgs; [
-        arandr
+        # arandr
         mpv
-        feh
+        # feh
         zathura
       ];
 

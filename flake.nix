@@ -86,7 +86,7 @@
       flake = false;
     };
 
-    kde2nix.url = "github:nix-community/kde2nix";
+    # kde2nix.url = "github:nix-community/kde2nix";
   };
 
   # Here you can add additional binary cache substituers that you trust.
