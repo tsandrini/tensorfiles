@@ -65,6 +65,10 @@ in {
         };
       };
 
+      programs.firefox.profiles.default.extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+        plasma-integration
+      ];
+
       home.sessionVariables = {
         # Default programs
         BROWSER = "firefox";
@@ -77,6 +81,8 @@ in {
         mpv
         # feh
         zathura
+        libsForQt5.polonium
+        catppuccin-kde
       ];
 
       fonts.fontconfig.enable = _ true;

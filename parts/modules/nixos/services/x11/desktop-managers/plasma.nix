@@ -21,7 +21,7 @@ with builtins;
 with lib; let
   cfg = config.tensorfiles.services.x11.desktop-managers.plasma;
 in {
-  options.tensorfiles.services.x11.desktop-managers.plasma6 = with types;
+  options.tensorfiles.services.x11.desktop-managers.plasma = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
       TODO
