@@ -27,13 +27,13 @@
   boot = {
     initrd = {
       availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc"];
-      kernelModules = ["radeon" "amdgpu"];
+      kernelModules = [];
       # luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
     };
 
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
-    blacklistedKernelModules = [];
+    blacklistedKernelModules = ["radeon" "amdgpu"];
   };
 
   # swapDevices = [{device = "/dev/disk/by-label/swap";}];

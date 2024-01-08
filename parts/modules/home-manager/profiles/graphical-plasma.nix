@@ -54,7 +54,7 @@ in {
         };
 
         services = {
-          dunst.enable = _ true;
+          # dunst.enable = _ true;
           pywalfox-native.enable = _ true;
 
           x11 = {
@@ -114,6 +114,8 @@ in {
         rsibreak
         libsForQt5.merkuro
         libsForQt5.kcalc
+        libsForQt5.kdeplasma-addons
+        libsForQt5.plasma-browser-integration
       ];
 
       fonts.fontconfig.enable = _ true;
