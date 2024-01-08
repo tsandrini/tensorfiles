@@ -42,7 +42,8 @@ in {
 
         hardware.nixGL.enable = _ true;
 
-        misc.gtk.enable = _ true;
+        # not needed, since plasma sets it up itself
+        # misc.gtk.enable = _ true;
 
         programs = {
           newsboat.enable = _ true;
