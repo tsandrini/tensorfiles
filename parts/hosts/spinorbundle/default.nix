@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{pkgs, ...}: {
+{
+  pkgs,
+  inputs,
+  ...
+}: {
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -21,12 +25,16 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = [./hardware-configuration.nix];
+  imports = [
+    inputs.disko.nixosModules.disko
+    ./hardware-configuration.nix
+    ./disko.nix
+  ];
 
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [libva-utils];
+  # environment.systemPackages = with pkgs; [libva-utils];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -37,20 +45,9 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    # profiles.graphical-startx-home-manager.enable = true;
     profiles.headless.enable = true;
 
-    # services.x11.desktop-managers.plasma6.enable = true;
-
     security.agenix.enable = true;
-    system.impermanence = {
-      enable = true;
-      allowOther = true;
-      btrfsWipe = {
-        enable = true;
-        rootPartition = "/dev/mapper/enc";
-      };
-    };
     programs.shadow-nix.enable = true;
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -61,6 +58,7 @@
       agenixPassword.enable = true;
     };
   };
+
   programs.shadow-client.forceDriver = "iHD";
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
@@ -70,16 +68,30 @@
   services.xserver.displayManager.sddm.enable = true;
   services.xserver.desktopManager.plasma5.enable = true;
   services.xserver.displayManager.defaultSession = "plasmawayland";
+  programs.kdeconnect.enable = true;
+
+  services = {
+    # blueman.enable = true;
+    # tlp = {
+    #   enable = true;
+    #   settings = {
+    #     start_charge_thresh_bat1 = 75;
+    #     stop_charge_thresh_bat1 = 80;
+    #   };
+    # };
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse.enable = true;
+      jack.enable = true;
+    };
+  };
+
+  programs.steam.enable = true; # just trying it out
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-plasma.enable = true;
-
-      system.impermanence = {
-        enable = true;
-        allowOther = true;
-      };
-
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
@@ -108,64 +120,4 @@
       lapack
     ];
   };
-
-  boot = {
-    loader = {
-      timeout = 1;
-      grub.enable = false;
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot";
-      };
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 3;
-      };
-    };
-    binfmt.emulatedSystems = ["aarch64-linux"];
-    kernelPackages = pkgs.linuxPackages_latest;
-  };
-
-  hardware = {
-    enableAllFirmware = true;
-    cpu.intel.updateMicrocode = true;
-
-    opengl = {
-      enable = true;
-      extraPackages = with pkgs; [
-        intel-media-driver
-        vaapiIntel
-        vaapiVdpau
-        libvdpau-va-gl
-      ];
-    };
-
-    bluetooth = {
-      enable = true;
-      package = pkgs.bluez;
-    };
-  };
-  # Hardware hybrid decoding
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
-  };
-
-  services = {
-    blueman.enable = true;
-    # tlp = {
-    #   enable = true;
-    #   settings = {
-    #     start_charge_thresh_bat1 = 75;
-    #     stop_charge_thresh_bat1 = 80;
-    #   };
-    # };
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      jack.enable = true;
-    };
-  };
-
-  programs.steam.enable = true; # just trying it out
 }

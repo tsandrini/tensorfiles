@@ -65,6 +65,13 @@ in {
         };
       };
 
+      services.flameshot = {
+        enable = _ true;
+        settings = {
+          General.showStartupLaunchMessage = _ false;
+        };
+      };
+
       programs.firefox.profiles.default.extensions = with pkgs.nur.repos.rycee.firefox-addons; [
         plasma-integration
       ];
@@ -82,7 +89,31 @@ in {
         # feh
         zathura
         libsForQt5.polonium
+        libsForQt5.lightly
         catppuccin-kde
+
+        haruna
+        partition-manager
+        libsForQt5.ark
+        libsForQt5.ksshaskpass
+        krita
+        libsForQt5.kdenlive
+        libsForQt5.filelight
+        libsForQt5.kcolorchooser
+        libsForQt5.kate
+        libsForQt5.kolourpaint
+        libsForQt5.kamoso
+        libsForQt5.kruler
+        libsForQt5.elisa
+        libsForQt5.kmag
+        libsForQt5.kalarm
+        libsForQt5.kweather
+        okteta
+        libsForQt5.itinerary
+        libsForQt5.kclock
+        rsibreak
+        libsForQt5.merkuro
+        libsForQt5.kcalc
       ];
 
       fonts.fontconfig.enable = _ true;
