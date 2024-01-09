@@ -45,6 +45,13 @@ in {
         system.users.enable = _ true;
         misc.nix.enable = _ true;
       };
+
+      i18n = {
+        defaultLocale = "en_US.UTF-8";
+        extraLocaleSettings = {
+          LANGUAGE = "en_US.UTF-8";
+        };
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);
