@@ -245,7 +245,13 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages = [cfg.pkg] ++ (optional plasmaCheck [wal-switch kdewallpaperset kdegencolorscheme]);
+      home.packages =
+        [cfg.pkg]
+        ++ (
+          if plasmaCheck
+          then [wal-switch kdewallpaperset kdegencolorscheme]
+          else []
+        );
 
       # TODO add a conditional for Xorg vs Wayland
       systemd.user.tmpfiles.rules = ["L ${config.home.homeDirectory}/.Xresources - - - - ${config.xdg.cacheHome}/wal/Xresources"];
