@@ -57,8 +57,8 @@ with lib; let
         for (i=0;i<allDesktops.length;i++)
         {
             d = allDesktops[i];
-            d.wallpaperPlugin = ''${type}';
-            d.currentConfigGroup = Array('Wallpaper', ''${type}', 'General');
+            d.wallpaperPlugin = \"''${type}\";
+            d.currentConfigGroup = Array('Wallpaper', \"''${type}\", 'General');
             d.writeConfig('Image', 'file:///dev/null')
             d.writeConfig('$write', 'file://''${full_image_path}')
         }"
@@ -196,26 +196,34 @@ with lib; let
     kwriteconfig5 --file ~/.config/kdeglobals --group WM --key inactiveFrame $color0 #they are used to change the color of the border around windows, useful if you use borders
   '';
 
-  wal-switch = pkgs.writeShellScriptBin "pywal-switch" ''
+  wal-switch = pkgs.writeShellScriptBin "wal-switch" ''
     #!/usr/bin/env bash
     wal -i $1
 
     ${
       if (isModuleLoadedAndEnabled config "tensorfiles.hm.services.pywalfox-native")
-      then "pywalfox update"
+      then ''
+        echo "Changing firefox theme to pywalfox-native..."
+        pywalfox-native
+      ''
       else ""
     }
     ${
       if (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.emacs-doom")
-      then ''emacsclient -e "(progn (load-theme 'ewal-doom-one))"''
+      then ''
+        echo "Changing emacs theme to ewal-doom-one..."
+        emacsclient -e "(progn (load-theme 'ewal-doom-one))"
+      ''
       else ""
     }
     ${
       if plasmaCheck
       then ''
+        echo "Changing KDE wallpaper ...."
         ${kdewallpaperset}/bin/kdewallpaperset $1
+        echo "Changing KDE color scheme ...."
         rm ~/.local/share/color-schemes/pywal*
-        basename $1 | ${kdegencolorscheme}/bin/kdegencolorscheme
+        ${kdegencolorscheme}/bin/kdegencolorscheme $(basename $1)
         plasma-apply-colorscheme "pywal-$(basename $1)"
       ''
       else ""
