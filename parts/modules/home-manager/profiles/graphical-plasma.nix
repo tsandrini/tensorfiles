@@ -48,7 +48,7 @@ in {
           terminals.kitty.enable = _ true;
           browsers.firefox.enable = _ true;
           editors.emacs-doom.enable = _ true;
-          thunderbird.enable = _ true;
+          #thunderbird.enable = _ true;
         };
 
         services = {
@@ -73,6 +73,9 @@ in {
       };
 
       home.packages = with pkgs; [
+        wl-clipboard
+        maim
+
         mpv
         zathura
         libsForQt5.polonium

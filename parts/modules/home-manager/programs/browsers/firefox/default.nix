@@ -54,8 +54,9 @@ in {
         package = pkgs.firefox.override {
           cfg = {
             enablePlasmaBrowserIntegration = plasmaCheck;
+            enableTridactylNative = true;
           };
-          nativeMessagingHosts = with pkgs; ([tridactyl-native] ++ (optional plasmaCheck plasma-browser-integration));
+          # nativeMessagingHosts = with pkgs; ([tridactyl-native] ++ (optional plasmaCheck plasma-browser-integration));
           extraPolicies = {
             CaptivePortal = false;
             DisableFirefoxStudies = true;

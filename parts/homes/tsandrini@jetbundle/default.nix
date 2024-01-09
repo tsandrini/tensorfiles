@@ -30,6 +30,10 @@
   };
 
   programs.shadow-client.forceDriver = "iHD";
+  services.syncthing = {
+    enable = true;
+    tray.enable = true;
+  };
 
   home.username = "tsandrini";
   home.homeDirectory = "/home/tsandrini";
