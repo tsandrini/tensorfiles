@@ -211,7 +211,7 @@ with lib; let
       else ""
     }
     ${
-      if plasmCheck
+      if plasmaCheck
       then ''
         ${kdewallpaperset}/bin/kdewallpaperset $1
         rm ~/.local/share/color-schemes/pywal*
