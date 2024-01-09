@@ -204,7 +204,7 @@ with lib; let
       if (isModuleLoadedAndEnabled config "tensorfiles.hm.services.pywalfox-native")
       then ''
         echo "Changing firefox theme to pywalfox-native..."
-        pywalfox-native
+        pywalfox update
       ''
       else ""
     }
@@ -223,8 +223,8 @@ with lib; let
         ${kdewallpaperset}/bin/kdewallpaperset $1
         echo "Changing KDE color scheme ...."
         rm ~/.local/share/color-schemes/pywal*
-        ${kdegencolorscheme}/bin/kdegencolorscheme $(basename $1)
-        plasma-apply-colorscheme "pywal-$(basename $1)"
+        ${kdegencolorscheme}/bin/kdegencolorscheme $(basename $1 | cut -d. -f1)
+        plasma-apply-colorscheme "pywal-$(basename $1 | cut -d. -f1)"
       ''
       else ""
     }
