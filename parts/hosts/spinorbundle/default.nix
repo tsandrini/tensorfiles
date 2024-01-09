@@ -88,7 +88,7 @@
   };
 
   programs.steam.enable = true; # just trying it out
-  programs.partiotion-manager.enable = true;
+  programs.partition-manager.enable = true;
 
   virtualisation.docker = {
     enable = true;
