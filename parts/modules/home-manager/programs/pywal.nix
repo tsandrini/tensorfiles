@@ -32,6 +32,195 @@ with lib; let
     then config.tensorfiles.hm.system.impermanence
     else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+
+  plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
+  kdewallpaperset = pkgs.writeShellScriptBin "kdewallpaperset" ''
+    #!/usr/bin/env bash
+
+    full_image_path=$(realpath "$1")
+    ext=$(${lib.getExe pkgs.file} -b --mime-type "$full_image_path")
+
+    if [ -z "$2" ]; then
+        # Identify filetype and make changes
+        case $(echo $ext | cut -d'/' -f2) in
+            "mp4"|"webm") type='VideoWallpaper' ; write='VideoWallpaperBackgroundVideo';;
+            "png"|"jpeg") type='org.kde.image' ; write='Image' ;;
+            "gif"|"webp") type='GifWallpaper' ; write="GifWallpaperBackgroundGif" ;;
+        esac
+    else
+        type="$2";
+        write="$3";
+    fi
+
+    wallpaper_set_script="var allDesktops = desktops();
+        print (allDesktops);
+        for (i=0;i<allDesktops.length;i++)
+        {
+            d = allDesktops[i];
+            d.wallpaperPlugin = ''${type}';
+            d.currentConfigGroup = Array('Wallpaper', ''${type}', 'General');
+            d.writeConfig('Image', 'file:///dev/null')
+            d.writeConfig('$write', 'file://''${full_image_path}')
+        }"
+
+    qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "''${wallpaper_set_script}"
+
+    # Optional, change lockscreen if you want
+    kwriteconfig5 --file kscreenlockerrc --group Greeter --group Wallpaper --group org.kde.image --group General --key Image "file://$full_image_path"
+  '';
+  kdegencolorscheme = pkgs.writeShellScriptBin "kdegencolorscheme" ''
+    #!/usr/bin/env bash
+    #move pywal generated colors to a kde colorscheme, names the color scheme after the first given argument
+    #to be run after pywal
+
+    background=$(grep -A 1 Background] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    foreground=$(grep -A 1 Foreground] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+
+    color0=$(grep -A 1 Color0Intense] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color1=$(grep -A 1 Color1] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color2=$(grep -A 1 Color2] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color3=$(grep -A 1 Color3] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color4=$(grep -A 1 Color4] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color5=$(grep -A 1 Color5] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color6=$(grep -A 1 Color6] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+    color7=$(grep -A 1 Color7] ~/.cache/wal/colors-konsole.colorscheme | sed -r 's#.*=##' | tail -n 1)
+
+    name=$1 #take input for a name to be used for the colorscheme
+    echo "
+    [ColorEffects:Disabled]
+    Color=$background
+    ColorAmount=0
+    ColorEffect=3
+    ContrastAmount=0.55
+    ContrastEffect=1
+    IntensityAmount=-1
+    IntensityEffect=0
+
+    [ColorEffects:Inactive]
+    ChangeSelectionColor=true
+    Color=$background
+    ColorAmount=0
+    ColorEffect=0
+    ContrastAmount=0
+    ContrastEffect=0
+    Enable=false
+    IntensityAmount=-1
+    IntensityEffect=0
+
+    [Colors:Button]
+    BackgroundAlternate=$color0
+    BackgroundNormal=$background
+    DecorationFocus=$color3
+    DecorationHover=$color3
+    ForegroundActive=$color3
+    ForegroundInactive=$color0
+    ForegroundLink=$color3
+    ForegroundNegative=$color2
+    ForegroundNeutral=$color6
+    ForegroundNormal=$foreground
+    ForegroundPositive=$color5
+    ForegroundVisited=$color0
+
+    [Colors:Selection]
+    BackgroundAlternate=$color3
+    BackgroundNormal=$color3
+    DecorationFocus=$color3
+    DecorationHover=$color3
+    ForegroundActive=$background
+    ForegroundInactive=$color0
+    ForegroundLink=$color3
+    ForegroundNegative=$color2
+    ForegroundNeutral=$color6
+    ForegroundNormal=$foreground
+    ForegroundPositive=$color5
+    ForegroundVisited=$color0
+
+    [Colors:Tooltip]
+    BackgroundAlternate=$color0
+    BackgroundNormal=$background
+    DecorationFocus=$color3
+    DecorationHover=$color3
+    ForegroundActive=$color3
+    ForegroundInactive=$color0
+    ForegroundLink=$color3
+    ForegroundNegative=$color2
+    ForegroundNeutral=$color6
+    ForegroundNormal=$foreground
+    ForegroundPositive=$color5
+    ForegroundVisited=$color0
+
+    [Colors:View]
+    BackgroundAlternate=$color0
+    BackgroundNormal=$background
+    DecorationFocus=$color3
+    DecorationHover=$color3
+    ForegroundActive=$color3
+    ForegroundInactive=$color0
+    ForegroundLink=$color3
+    ForegroundNegative=$color2
+    ForegroundNeutral=$color6
+    ForegroundNormal=$foreground
+    ForegroundPositive=$color5
+    ForegroundVisited=$color0
+
+    [Colors:Window]
+    BackgroundAlternate=$color0
+    BackgroundNormal=$background
+    DecorationFocus=$color3
+    DecorationHover=$color3
+    ForegroundActive=$color3
+    ForegroundInactive=$color0
+    ForegroundLink=$color3
+    ForegroundNegative=$color2
+    ForegroundNeutral=$color6
+    ForegroundNormal=$foreground
+    ForegroundPositive=$color5
+    ForegroundVisited=$color0
+
+    [General]
+    ColorScheme=$1
+    Name=$1
+    shadeSortColumn=true
+
+    [KDE]
+    contrast=5
+
+    [WM]
+    activeBackground=$color3
+    activeBlend=$color3
+    activeForeground=$foreground
+    inactiveBackground=$color0
+    inactiveBlend=$color0
+    inactiveForeground=$color7" > ~/.local/share/color-schemes/pywal-$1.colors
+    kwriteconfig5 --file ~/.config/kdeglobals --group WM --key frame $color3 #these lines come from https://github.com/gikari/bismuth/blob/master/TWEAKS.md
+    kwriteconfig5 --file ~/.config/kdeglobals --group WM --key inactiveFrame $color0 #they are used to change the color of the border around windows, useful if you use borders
+  '';
+
+  wal-switch = pkgs.writeShellScriptBin "pywal-switch" ''
+    #!/usr/bin/env bash
+    wal -i $1
+
+    ${
+      if (isModuleLoadedAndEnabled config "tensorfiles.hm.services.pywalfox-native")
+      then "pywalfox update"
+      else ""
+    }
+    ${
+      if (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.emacs-doom")
+      then ''emacsclient -e "(progn (load-theme 'ewal-doom-one))"''
+      else ""
+    }
+    ${
+      if plasmCheck
+      then ''
+        ${kdewallpaperset}/bin/kdewallpaperset $1
+        rm ~/.local/share/color-schemes/pywal*
+        basename $1 | ${kdegencolorscheme}/bin/kdegencolorscheme
+        plasma-apply-colorscheme "pywal-$(basename $1)"
+      ''
+      else ""
+    }
+  '';
 in {
   options.tensorfiles.hm.programs.pywal = with types;
   with tensorfiles.options; {
@@ -56,7 +245,7 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages = [cfg.pkg];
+      home.packages = [cfg.pkg] ++ (optional plasmaCheck [wal-switch kdewallpaperset kdegencolorscheme]);
 
       # TODO add a conditional for Xorg vs Wayland
       systemd.user.tmpfiles.rules = ["L ${config.home.homeDirectory}/.Xresources - - - - ${config.xdg.cacheHome}/wal/Xresources"];

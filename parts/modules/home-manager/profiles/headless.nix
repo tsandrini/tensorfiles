@@ -79,15 +79,14 @@ in {
         "${config.xdg.cacheHome}/.blank".text = mkBefore "";
         "${config.xdg.dataHome}/.blank".text = mkBefore "";
         "${config.xdg.stateHome}/.blank".text = mkBefore "";
-
-        "${config.home.sessionVariables.DOWNLOADS_DIR}/.blank".text =
-          mkIf (config.home.sessionVariables.DOWNLOADS_DIR != null) (mkBefore "");
-        "${config.home.sessionVariables.ORG_DIR}/.blank".text =
-          mkIf (config.home.sessionVariables.ORG_DIR != null) (mkBefore "");
-        "${config.home.sessionVariables.PROJECTS_DIR}/.blank".text =
-          mkIf (config.home.sessionVariables.PROJECTS_DIR != null) (mkBefore "");
-        "${config.home.sessionVariables.MISC_DATA_DIR}/.blank".text =
-          mkIf (config.home.sessionVariables.MISC_DATA_DIR != null) (mkBefore "");
+        # "${config.home.sessionVariables.DOWNLOADS_DIR}/.blank".text =
+        #   mkIf (config.home.sessionVariables.DOWNLOADS_DIR != null) (mkBefore "");
+        # "${config.home.sessionVariables.ORG_DIR}/.blank".text =
+        #   mkIf (config.home.sessionVariables.ORG_DIR != null) (mkBefore "");
+        # "${config.home.sessionVariables.PROJECTS_DIR}/.blank".text =
+        #   mkIf (config.home.sessionVariables.PROJECTS_DIR != null) (mkBefore "");
+        # "${config.home.sessionVariables.MISC_DATA_DIR}/.blank".text =
+        #   mkIf (config.home.sessionVariables.MISC_DATA_DIR != null) (mkBefore "");
       };
     }
     # |----------------------------------------------------------------------| #
