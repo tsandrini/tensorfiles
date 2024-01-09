@@ -28,17 +28,16 @@
     initrd = {
       availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc"];
       kernelModules = [];
-      # luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
     };
-
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
     blacklistedKernelModules = ["radeon" "amdgpu"];
   };
 
-  # swapDevices = [{device = "/dev/disk/by-label/swap";}];
-
-  powerManagement.cpuFreqGovernor = "performance";
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
+  };
 
   boot = {
     loader = {
@@ -73,7 +72,6 @@
 
     bluetooth = {
       enable = true;
-      package = pkgs.bluez;
     };
   };
   # Hardware hybrid decoding

@@ -88,6 +88,12 @@
   };
 
   programs.steam.enable = true; # just trying it out
+  programs.partitionmanager.enable = true;
+
+  virtualisation.docker = {
+    enable = true;
+    autoPrune.enable = true;
+  };
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
@@ -97,6 +103,11 @@
       programs.pywal.enable = true;
       services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
+    };
+
+    services.syncthing = {
+      enable = true;
+      tray.enable = true;
     };
 
     home.username = "tsandrini";

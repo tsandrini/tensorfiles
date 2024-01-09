@@ -42,7 +42,7 @@ with lib; let
       done
     '';
 
-  kittyPatchCheck = cfg.programPatches.enable && cfg.programPatches.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.program.terminals.kitty");
+  kittyPatchCheck = cfg.programPatches.enable && cfg.programPatches.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty");
 in {
   options.tensorfiles.hm.hardware.nixGL = with types;
   with tensorfiles.options; {

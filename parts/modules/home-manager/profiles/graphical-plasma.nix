@@ -42,27 +42,17 @@ in {
 
         hardware.nixGL.enable = _ true;
 
-        # not needed, since plasma sets it up itself
-        # misc.gtk.enable = _ true;
-
         programs = {
           newsboat.enable = _ true;
-          # dmenu.enable = _ true;
           pywal.enable = _ true;
           terminals.kitty.enable = _ true;
           browsers.firefox.enable = _ true;
           editors.emacs-doom.enable = _ true;
+          thunderbird.enable = _ true;
         };
 
         services = {
-          # dunst.enable = _ true;
           pywalfox-native.enable = _ true;
-
-          x11 = {
-            # picom.enable = _ true;
-            # redshift.enable = _ true;
-            # window-managers.plasma6.enable = _ true;
-          };
         };
       };
 
@@ -73,28 +63,23 @@ in {
         };
       };
 
-      programs.firefox.profiles.default.extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-        plasma-integration
-      ];
+      services.rsibreak.enable = _ true;
 
       home.sessionVariables = {
         # Default programs
-        BROWSER = "firefox";
-        TERMINAL = "kitty";
-        IDE = "emacs";
+        BROWSER = _ "firefox";
+        TERMINAL = _ "kitty";
+        IDE = _ "emacs";
       };
 
       home.packages = with pkgs; [
-        # arandr
         mpv
-        # feh
         zathura
         libsForQt5.polonium
         libsForQt5.lightly
         catppuccin-kde
 
         haruna
-        partition-manager
         libsForQt5.ark
         libsForQt5.ksshaskpass
         krita
@@ -112,7 +97,6 @@ in {
         okteta
         libsForQt5.itinerary
         libsForQt5.kclock
-        rsibreak
         libsForQt5.merkuro
         libsForQt5.kcalc
         libsForQt5.kdeplasma-addons
@@ -120,8 +104,6 @@ in {
       ];
 
       fonts.fontconfig.enable = _ true;
-
-      # services.network-manager-applet.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);
