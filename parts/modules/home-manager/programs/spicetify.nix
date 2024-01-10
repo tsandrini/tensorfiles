@@ -1,4 +1,4 @@
-# --- parts/modules/nixos/tasks/system-autoupgrade.nix
+# --- parts/modules/home-manager/programs/spicetify.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,39 +15,43 @@
 {
   config,
   lib,
+  self,
+  inputs,
+  inputs',
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
+  tensorfiles = self.lib;
 
-  cfg = config.tensorfiles.tasks.system-autoupgrade;
-  _ = mkOverrideAtModuleLevel;
+  cfg = config.tensorfiles.hm.programs.spicetify;
+
+  spicePkgs = inputs'.spicetify-nix.packages.default;
 in {
-  # TODO configure autoUpgrade.flake endpoint -- for example
-  # flake  = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
-  options.tensorfiles.tasks.system-autoupgrade = with types;
+  options.tensorfiles.hm.programs.spicetify = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Module enabling system wide nixpkgs & host autoupgrade
-      Enables NixOS module that configures the task handling periodix nixpkgs
-      and host autoupgrades.
+      TODO
     '');
   };
+
+  imports = with inputs; [spicetify-nix.homeManagerModule];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      system.autoUpgrade = {
-        enable = _ true;
-        # flake = _ "github:tsandrini/tensorfiles#${hostName}";
-        channel = _ "https://nixos.org/channels/nixos-unstable";
-        allowReboot = _ true;
-        randomizedDelaySec = _ "5m";
-        rebootWindow = {
-          lower = _ "02:00";
-          upper = _ "05:00";
-        };
+      programs.spicetify = {
+        enable = true;
+        theme = spicePkgs.themes.catppuccin;
+        colorScheme = "mocha";
+
+        enabledExtensions = with spicePkgs.extensions; [
+          fullAppDisplay
+          shuffle # shuffle+ (special characters are sanitized out of ext names)
+          keyboardShortcut
+          powerBar
+          history
+        ];
       };
     }
     # |----------------------------------------------------------------------| #

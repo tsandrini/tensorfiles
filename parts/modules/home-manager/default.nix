@@ -40,6 +40,7 @@
     programs_git = import ./programs/git.nix;
     programs_newsboat = import ./programs/newsboat.nix;
     programs_btop = import ./programs/btop.nix;
+    programs_spicetify = import ./programs/spicetify.nix;
     programs_pywal = import ./programs/pywal.nix;
     programs_thunderbird = import ./programs/thunderbird.nix;
     programs_shadow-nix = import ./programs/shadow-nix.nix;

@@ -26,6 +26,7 @@
       nh = inputs'.nh.packages.default;
       inherit (inputs'.disko.packages) disko;
       inherit (inputs'.disko.packages) disko-doc;
+      inherit (inputs'.plasma-manager) rc2nix;
     };
   };
 }
