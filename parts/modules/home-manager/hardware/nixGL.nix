@@ -37,7 +37,7 @@ with lib; let
       mkdir $out/bin
       for bin in ${pkg}/bin/*; do
        wrapped_bin=$out/bin/$(basename $bin)
-       echo "exec ${lib.getExe cfg.pkg} $bin \$@" > $wrapped_bin
+       echo "exec ${lib.getExe' cfg.pkg "nixGL"} $bin \$@" > $wrapped_bin
        chmod +x $wrapped_bin
       done
     '';

@@ -52,13 +52,10 @@ in {
       programs.firefox = {
         enable = _ true;
         package = pkgs.firefox.override {
-          cfg = {
-            enablePlasmaBrowserIntegration = plasmaCheck;
-          };
           # trace: warning: The cfg.enableTridactylNative argument for
           # `firefox.override` is deprecated, please add `pkgs.tridactyl-native`
           # to `nativeMessagingHosts.packages` instead
-          nativeMessagingHosts = with pkgs; [tridactyl-native];
+          nativeMessagingHosts = with pkgs; ([tridactyl-native] ++ (optional plasmaCheck plasma-browser-integration));
           extraPolicies = {
             CaptivePortal = false;
             DisableFirefoxStudies = true;

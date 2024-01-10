@@ -27,7 +27,7 @@
   # --------------------------
   imports = [
     inputs.disko.nixosModules.disko
-    inputs.nixos-hardware.lenovo-thinkpad-x270
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
     ./hardware-configuration.nix
     ./disko.nix
   ];
