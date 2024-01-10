@@ -18,6 +18,7 @@
   nh,
   disko,
   disko-doc,
+  rc2nix,
   ...
 }: {
   packages = with pkgs; [
@@ -40,6 +41,7 @@
     nh
     disko
     disko-doc
+    rc2nix
   ];
 
   languages.nix.enable = true;

@@ -71,14 +71,6 @@
   programs.kdeconnect.enable = true;
 
   services = {
-    # blueman.enable = true;
-    # tlp = {
-    #   enable = true;
-    #   settings = {
-    #     start_charge_thresh_bat1 = 75;
-    #     stop_charge_thresh_bat1 = 80;
-    #   };
-    # };
     pipewire = {
       enable = true;
       alsa.enable = true;
