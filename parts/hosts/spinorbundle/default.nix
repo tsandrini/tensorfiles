@@ -122,6 +122,9 @@
       texlive.combined.scheme-medium
       zotero
       lapack
+
+      slack
+      signal-desktop
     ];
   };
 }

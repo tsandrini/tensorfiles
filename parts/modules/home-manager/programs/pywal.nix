@@ -150,7 +150,7 @@ with lib; let
     ForegroundVisited=$color0
 
     [Colors:View]
-    BackgroundAlternate=$color0
+    BackgroundAlternate=$background
     BackgroundNormal=$background
     DecorationFocus=$color3
     DecorationHover=$color3
@@ -222,6 +222,8 @@ with lib; let
         echo "Changing KDE wallpaper ...."
         ${kdewallpaperset}/bin/kdewallpaperset $1
         echo "Changing KDE color scheme ...."
+        # In case it doesnt exist
+        mkdir -p ~/.local/share/color-schemes
         rm ~/.local/share/color-schemes/pywal*
         ${kdegencolorscheme}/bin/kdegencolorscheme $(basename $1 | cut -d. -f1)
         plasma-apply-colorscheme "pywal-$(basename $1 | cut -d. -f1)"

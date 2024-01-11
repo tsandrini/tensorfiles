@@ -109,6 +109,28 @@ in {
         libsForQt5.kcalc
         libsForQt5.kdeplasma-addons
         libsForQt5.plasma-browser-integration
+
+        # needed for calendar apps to share data
+        libsForQt5.kdepim-addons
+        libsForQt5.kdepim-runtime
+        libsForQt5.libkdepim
+        kaddressbook
+        plasma5Packages.akonadi
+
+        libsForQt5.kdepim-addons
+        libsForQt5.kdepim-runtime
+        libsForQt5.libkdepim
+        plasma5Packages.akonadi
+        plasma5Packages.akonadi-notes
+        plasma5Packages.knotes
+        plasma5Packages.akonadi-search
+        plasma5Packages.akonadi-mime
+        plasma5Packages.accounts-qt
+        plasma5Packages.calendarsupport
+        plasma5Packages.kaccounts-integration
+        plasma5Packages.kaccounts-providers
+        plasma5Packages.akonadi-contacts
+        plasma5Packages.akonadiconsole
       ];
 
       fonts.fontconfig.enable = _ true;

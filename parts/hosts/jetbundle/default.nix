@@ -35,7 +35,9 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  # environment.systemPackages = with pkgs; [libva-utils];
+  environment.systemPackages = with pkgs; [
+    libva-utils
+  ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -99,6 +101,10 @@
       services.keepassxc.enable = true;
     };
 
+    manual.html.enable = false;
+    manual.json.enable = false;
+    manual.manpages.enable = false;
+
     services.syncthing = {
       enable = true;
       tray.enable = true;
@@ -123,6 +129,9 @@
       texlive.combined.scheme-medium
       zotero
       lapack
+
+      slack
+      signal-desktop
     ];
   };
 }
