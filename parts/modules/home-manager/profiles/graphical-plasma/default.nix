@@ -78,59 +78,9 @@ in {
       };
 
       home.packages = with pkgs; [
-        wl-clipboard
-        maim
-
         mpv
         zathura
         libsForQt5.polonium
-        libsForQt5.lightly
-        catppuccin-kde
-
-        haruna
-        libsForQt5.ark
-        libsForQt5.ksshaskpass
-        krita
-        libsForQt5.kdenlive
-        libsForQt5.filelight
-        libsForQt5.kcolorchooser
-        libsForQt5.kate
-        libsForQt5.kolourpaint
-        libsForQt5.kamoso
-        libsForQt5.kruler
-        libsForQt5.elisa
-        libsForQt5.kmag
-        libsForQt5.kalarm
-        libsForQt5.kweather
-        okteta
-        libsForQt5.itinerary
-        libsForQt5.kclock
-        libsForQt5.merkuro
-        libsForQt5.kcalc
-        libsForQt5.kdeplasma-addons
-        libsForQt5.plasma-browser-integration
-
-        # needed for calendar apps to share data
-        libsForQt5.kdepim-addons
-        libsForQt5.kdepim-runtime
-        libsForQt5.libkdepim
-        kaddressbook
-        plasma5Packages.akonadi
-
-        libsForQt5.kdepim-addons
-        libsForQt5.kdepim-runtime
-        libsForQt5.libkdepim
-        plasma5Packages.akonadi
-        plasma5Packages.akonadi-notes
-        plasma5Packages.knotes
-        plasma5Packages.akonadi-search
-        plasma5Packages.akonadi-mime
-        plasma5Packages.accounts-qt
-        plasma5Packages.calendarsupport
-        plasma5Packages.kaccounts-integration
-        plasma5Packages.kaccounts-providers
-        plasma5Packages.akonadi-contacts
-        plasma5Packages.akonadiconsole
       ];
 
       fonts.fontconfig.enable = _ true;

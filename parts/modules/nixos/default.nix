@@ -22,6 +22,7 @@ _: {
     profiles_minimal = import ./profiles/minimal.nix;
     profiles_headless = import ./profiles/headless.nix;
     profiles_graphical-startx-home-manager = import ./profiles/graphical-startx-home-manager.nix;
+    profiles_graphical-plasma = import ./profiles/graphical-plasma.nix;
 
     # -- programs --
     programs_shadow-nix = import ./programs/shadow-nix.nix;

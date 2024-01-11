@@ -35,9 +35,7 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    libva-utils
-  ];
+  environment.systemPackages = with pkgs; [libva-utils];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -48,7 +46,7 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    profiles.headless.enable = true;
+    profiles.graphical-plasma.enable = true;
 
     security.agenix.enable = true;
     programs.shadow-nix.enable = true;
@@ -66,13 +64,6 @@
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
 
-  # TODO plasma stuff
-  services.xserver.enable = true;
-  services.xserver.displayManager.sddm.enable = true;
-  services.xserver.desktopManager.plasma5.enable = true;
-  services.xserver.displayManager.defaultSession = "plasmawayland";
-  programs.kdeconnect.enable = true;
-
   services = {
     pipewire = {
       enable = true;
@@ -83,7 +74,6 @@
   };
 
   programs.steam.enable = true; # just trying it out
-  programs.partition-manager.enable = true;
 
   virtualisation.docker = {
     enable = true;
@@ -101,6 +91,7 @@
       services.keepassxc.enable = true;
     };
 
+    # TODO remove
     manual.html.enable = false;
     manual.json.enable = false;
     manual.manpages.enable = false;
@@ -125,7 +116,6 @@
       shfmt
       libreoffice
       neofetch
-      pavucontrol
       texlive.combined.scheme-medium
       zotero
       lapack

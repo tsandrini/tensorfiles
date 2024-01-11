@@ -50,6 +50,18 @@ in {
       time.timeZone = _ "Europe/Prague";
       i18n.defaultLocale = _ "en_US.UTF-8";
 
+      i18n.extraLocaleSettings = {
+        LC_ADDRESS = _ "cs_CZ.UTF-8";
+        LC_IDENTIFICATION = _ "cs_CZ.UTF-8";
+        LC_MEASUREMENT = _ "cs_CZ.UTF-8";
+        LC_MONETARY = _ "cs_CZ.UTF-8";
+        LC_NAME = _ "cs_CZ.UTF-8";
+        LC_NUMERIC = _ "cs_CZ.UTF-8";
+        LC_PAPER = _ "cs_CZ.UTF-8";
+        LC_TELEPHONE = _ "cs_CZ.UTF-8";
+        LC_TIME = _ "cs_CZ.UTF-8";
+      };
+
       console = {
         enable = _ true;
         useXkbConfig = _ true;
@@ -67,18 +79,35 @@ in {
         vim
         calcurse
         w3m
-        # HW
-        # error: builder for '/nix/store/3hgsz0vvcb5pcxf76j9m0ma61dbxfgzd-home-manager-path.drv' failed with exit code 25;
-        # last 1 log lines:
-        # > error: collision between `/nix/store/aiijczmfaifjm7q5lfarqv9dh5qmk461-exfatprogs-1.2.2/bin/exfatlabel' and `/nix/store/9pqqdaigrvm4r4csbv0zavnxkanrwamr-exfat-1.4.0/bin/exfatlabel'
-        # exfat
+
         dosfstools
         exfatprogs
         udisks
         pciutils
         usbutils
         iotop
+        hw-probe
+        ntfs3g
+
+        atool
+        gzip
+        lz4
+        lzip
+        lzop
+        p7zip
+        rar
         unrar
+        rzip
+        unzip
+        xz
+        zip
+        zstd
+
+        sqlite
+        sqlitebrowser
+
+        libarchive
+        libbtbb
       ];
     }
     # |----------------------------------------------------------------------| #
