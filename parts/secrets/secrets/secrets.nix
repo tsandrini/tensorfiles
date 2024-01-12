@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 let
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
-  # jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
+  jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   # hosts = [jetbundle spinorbundle];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
@@ -33,4 +33,10 @@ in {
     [spinorbundle] ++ [tsandrini];
   "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys =
     [spinorbundle] ++ [tsandrini];
+
+  # II. #jetbundle
+  "hosts/jetbundle/users/root/system-password.age".publicKeys =
+    [jetbundle] ++ [tsandrini];
+  "hosts/jetbundle/users/tsandrini/system-password.age".publicKeys =
+    [jetbundle] ++ [tsandrini];
 }

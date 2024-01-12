@@ -61,7 +61,7 @@ in {
           set wildmenu
           set wildmode=full"
           set wildignorecase
-          set clipboard=unnamedplus
+          set clipboard+=unnamedplus
 
           set tabstop=8
           set softtabstop=0
@@ -110,6 +110,13 @@ in {
           lexima-vim
           vim-vsnip-integ
           friendly-snippets
+          {
+            plugin = pywal-nvim;
+            type = "lua";
+            config = ''
+              require('pywal').setup()
+            '';
+          }
           {
             plugin = indentLine;
             type = "lua";
@@ -164,7 +171,7 @@ in {
             config = ''
               require('lualine').setup{
                 options = {
-                  theme = "auto",
+                  theme = "pywal-nvim",
                   icons_enabled = true
                 },
                 sections = {

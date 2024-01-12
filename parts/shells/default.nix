@@ -24,6 +24,9 @@
       inherit pkgs inputs';
       treefmt = config.treefmt.build.wrapper;
       nh = inputs'.nh.packages.default;
+      inherit (inputs'.disko.packages) disko;
+      inherit (inputs'.disko.packages) disko-doc;
+      inherit (inputs'.plasma-manager.packages) rc2nix;
     };
   };
 }

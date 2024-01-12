@@ -16,6 +16,9 @@
   pkgs,
   treefmt,
   nh,
+  disko,
+  disko-doc,
+  rc2nix,
   ...
 }: {
   packages = with pkgs; [
@@ -36,6 +39,9 @@
 
     treefmt
     nh
+    disko
+    disko-doc
+    rc2nix
   ];
 
   languages.nix.enable = true;
@@ -61,6 +67,7 @@
       "secrets"
       ".*png"
       ".*woff2"
+      "disko.nix"
     ];
   };
 

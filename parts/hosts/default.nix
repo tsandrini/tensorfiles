@@ -86,5 +86,16 @@ in {
           })
         ];
       });
+    jetbundle = withSystem "x86_64-linux" (args:
+      mkHost args "jetbundle" {
+        withHomeManager = true;
+        extraOverlays = with inputs; [
+          emacs-overlay.overlay
+          neovim-nightly-overlay.overlay
+          (final: _prev: {
+            nur = import inputs.nur {pkgs = final;};
+          })
+        ];
+      });
   };
 }

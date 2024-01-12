@@ -13,65 +13,69 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
-  config,
   lib,
   modulesPath,
+  pkgs,
   ...
 }: {
   imports = [(modulesPath + "/installer/scan/not-detected.nix")];
+
+  environment.systemPackages = with pkgs; [libva-utils];
+
+  networking.useDHCP = lib.mkDefault true;
 
   boot = {
     initrd = {
       availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc"];
       kernelModules = [];
-      luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
     };
-
     kernelModules = ["kvm-intel"];
     extraModulePackages = [];
     blacklistedKernelModules = ["radeon" "amdgpu"];
   };
 
-  fileSystems = {
-    "/" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "btrfs";
-      options = ["subvol=root" "compress=zstd" "noatime"];
-    };
-    "/nix" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "btrfs";
-      options = ["subvol=nix" "compress=zstd" "noatime"];
-    };
-    "/persist" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "btrfs";
-      options = ["subvol=persist" "compress=zstd" "noatime"];
-      neededForBoot = true;
-    };
-    "/var/log" = {
-      device = "/dev/disk/by-label/root";
-      fsType = "btrfs";
-      options = ["subvol=log" "compress=zstd" "noatime"];
-      neededForBoot = true;
-    };
-    "/boot" = {
-      device = "/dev/disk/by-label/boot";
-      fsType = "vfat";
-    };
+  powerManagement = {
+    enable = true;
+    cpuFreqGovernor = "performance";
   };
 
-  swapDevices = [{device = "/dev/disk/by-label/swap";}];
+  boot = {
+    loader = {
+      timeout = 1;
+      grub.enable = false;
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 3;
+      };
+    };
+    binfmt.emulatedSystems = ["aarch64-linux"];
+    kernelPackages = pkgs.linuxPackages_latest;
+  };
 
-  # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-  # (the default) this is the recommended approach. When using systemd-networkd it's
-  # still possible to use this option, but it's recommended to use it in conjunction
-  # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-  networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.enp2s0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.wlp3s0.useDHCP = lib.mkDefault true;
+  hardware = {
+    enableAllFirmware = true;
+    cpu.intel.updateMicrocode = true;
 
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
-  hardware.cpu.intel.updateMicrocode =
-    lib.mkDefault config.hardware.enableRedistributableFirmware;
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        vaapiIntel
+        vaapiVdpau
+        libvdpau-va-gl
+      ];
+    };
+
+    bluetooth = {
+      enable = true;
+    };
+  };
+  # Hardware hybrid decoding
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
+  };
 }

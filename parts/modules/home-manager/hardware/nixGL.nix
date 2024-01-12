@@ -37,12 +37,12 @@ with lib; let
       mkdir $out/bin
       for bin in ${pkg}/bin/*; do
        wrapped_bin=$out/bin/$(basename $bin)
-       echo "exec ${lib.getExe cfg.pkg} $bin \$@" > $wrapped_bin
+       echo "exec ${lib.getExe' cfg.pkg "nixGL"} $bin \$@" > $wrapped_bin
        chmod +x $wrapped_bin
       done
     '';
 
-  kittyPatchCheck = cfg.programPatches.enable && cfg.programPatches.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.program.terminals.kitty");
+  kittyPatchCheck = cfg.programPatches.enable && cfg.programPatches.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty");
 in {
   options.tensorfiles.hm.hardware.nixGL = with types;
   with tensorfiles.options; {

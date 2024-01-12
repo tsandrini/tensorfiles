@@ -31,6 +31,7 @@
     profiles_minimal = import ./profiles/minimal.nix;
     profiles_headless = import ./profiles/headless.nix;
     profiles_graphical-xmonad = import ./profiles/graphical-xmonad.nix;
+    profiles_graphical-plasma = import ./profiles/graphical-plasma;
 
     # -- programs --
     programs_direnv = import ./programs/direnv.nix;
@@ -39,6 +40,7 @@
     programs_git = import ./programs/git.nix;
     programs_newsboat = import ./programs/newsboat.nix;
     programs_btop = import ./programs/btop.nix;
+    programs_spicetify = import ./programs/spicetify.nix;
     programs_pywal = import ./programs/pywal.nix;
     programs_thunderbird = import ./programs/thunderbird.nix;
     programs_shadow-nix = import ./programs/shadow-nix.nix;

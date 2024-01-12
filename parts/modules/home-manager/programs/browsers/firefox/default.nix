@@ -28,6 +28,8 @@ with lib; let
 
   cfg = config.tensorfiles.hm.programs.browsers.firefox;
 
+  plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
+
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
     if impermanenceCheck
@@ -50,6 +52,10 @@ in {
       programs.firefox = {
         enable = _ true;
         package = pkgs.firefox.override {
+          # trace: warning: The cfg.enableTridactylNative argument for
+          # `firefox.override` is deprecated, please add `pkgs.tridactyl-native`
+          # to `nativeMessagingHosts.packages` instead
+          nativeMessagingHosts = with pkgs; ([tridactyl-native] ++ (optional plasmaCheck plasma-browser-integration));
           extraPolicies = {
             CaptivePortal = false;
             DisableFirefoxStudies = true;
@@ -86,23 +92,24 @@ in {
           id = _ 0;
           name = _ "Default";
           isDefault = _ true;
-          extensions = with pkgs.nur.repos.rycee.firefox-addons; [
-            # ~ Privacy & content blocking
-            ublock-origin
-            skip-redirect
-            multi-account-containers
+          extensions = with pkgs.nur.repos.rycee.firefox-addons; ([
+              # ~ Privacy & content blocking
+              ublock-origin
+              skip-redirect
+              multi-account-containers
 
-            # ~ Utils
-            keepassxc-browser
-            tridactyl
-            behave
-            header-editor
-            pywalfox
-            enhancer-for-youtube
+              # ~ Utils
+              keepassxc-browser
+              tridactyl
+              behave
+              header-editor
+              pywalfox
+              enhancer-for-youtube
 
-            # DEV related
-            vue-js-devtools
-          ];
+              # DEV related
+              vue-js-devtools
+            ]
+            ++ (optional plasmaCheck plasma-integration));
           bookmarks = import ./bookmarks.nix;
           search = {
             force = _ true;
@@ -250,8 +257,8 @@ in {
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
         directories = [
-          ".mozilla/firefox/default"
-          (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox/default")
+          ".mozilla/firefox"
+          (pathToRelative "${config.xdg.cacheHome}/.mozilla/firefox")
         ];
       };
     })

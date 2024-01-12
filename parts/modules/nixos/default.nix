@@ -22,6 +22,7 @@ _: {
     profiles_minimal = import ./profiles/minimal.nix;
     profiles_headless = import ./profiles/headless.nix;
     profiles_graphical-startx-home-manager = import ./profiles/graphical-startx-home-manager.nix;
+    profiles_graphical-plasma = import ./profiles/graphical-plasma.nix;
 
     # -- programs --
     programs_shadow-nix = import ./programs/shadow-nix.nix;
@@ -34,6 +35,7 @@ _: {
     services_networking_ssh = import ./services/networking/ssh.nix;
     ### -- window-managers --
     services_x11_desktop-managers_startx-home-manager = import ./services/x11/desktop-managers/startx-home-manager.nix;
+    # services_x11_desktop-managers_plasma6 = import ./services/x11/desktop-managers/plasma6.nix;
 
     # -- system --
     system_impermanence = import ./system/impermanence.nix;

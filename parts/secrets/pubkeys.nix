@@ -31,5 +31,17 @@ in {
         };
       };
     };
+    jetbundle = {
+      users = {
+        root = {
+          userKey = null;
+          authorizedKeys = [];
+        };
+        tsandrini = {
+          userKey = null;
+          authorizedKeys = [tsandrini];
+        };
+      };
+    };
   };
 }

@@ -19,8 +19,8 @@
 chosen coordinate system (**they work on every machine**), fundamental
 laws of computing (**how to build my fancy flashy terminals**) ☁️
 
+![img](parts/pkgs/docs/docs/assets/images/showcase_3.png)
 ![img](parts/pkgs/docs/docs/assets/images/showcase_1.png)
-![img](parts/pkgs/docs/docs/assets/images/showcase_2.png)
 
 For more info refer to the [documentation](https://tsandrini.github.io/tensorfiles/).
 The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/tensorfiles/).
@@ -37,16 +37,19 @@ The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/te
   will yield errors. This behaviour makes it hard to reason about the dependencies
   of individual modules, which is why I opted for the behaviour --
   import everything and enable only the parts that you need.
+- Use **profiles** to define and share common configurations packs. Profiles
+  typically don't create and add any new functionality but instead preconfigure
+  stuff.
 - Isolate home manager functionality in such a way so it can be used in non
   NixOS environments 👥
 
 ## 3. Software 🖥️
 
-TODO
+I have a bunch of machines running some nix or directly NixOS with a variety
+of setups. To discern between them but still use the same base I use nixos/hm
+modules and their appropriate profiles.
 
 ### 3.1. Academia 👩🏽‍💼
-
-TODO comment more?
 
 1. [org-roam](https://www.orgroam.com/): This is the heart of everything that I
    do, TODOs, daily journals, scratchpads, notetaking and personal research wiki.

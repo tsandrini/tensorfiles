@@ -25,11 +25,16 @@
     # security.agenix.enable = true;
     programs.pywal.enable = true;
     programs.shadow-nix.enable = true;
+    programs.spicetify.enable = true;
     services.pywalfox-native.enable = true;
     services.keepassxc.enable = true;
   };
 
   programs.shadow-client.forceDriver = "iHD";
+  services.syncthing = {
+    enable = true;
+    tray.enable = true;
+  };
 
   home.username = "tsandrini";
   home.homeDirectory = "/home/tsandrini";
@@ -46,7 +51,7 @@
     libreoffice
     neofetch
     pavucontrol
-    spotify
+    # spotify
     texlive.combined.scheme-medium
     zotero
     lapack

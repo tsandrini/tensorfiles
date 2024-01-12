@@ -31,6 +31,11 @@
     };
 
     # Project specific dependencies
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nh = {
       url = "github:viperML/nh";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -85,6 +90,19 @@
       url = "github:Exaltia/shadow-nix";
       flake = false;
     };
+
+    spicetify-nix = {
+      url = "github:the-argus/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    plasma-manager = {
+      url = "github:pjones/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+
+    # kde2nix.url = "github:nix-community/kde2nix";
   };
 
   # Here you can add additional binary cache substituers that you trust.
@@ -156,6 +174,10 @@
       #    - mySimpleModule.nix
       imports = flatten (mapModules ./parts (x: x));
 
+      # We use the default `systems` defined by the `nix-systems` flake, if you
+      # need any additional systems, simply add them in the following manner
+      #
+      # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
     };
