@@ -15,6 +15,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 with builtins;

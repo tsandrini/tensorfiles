@@ -35,7 +35,10 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [libva-utils];
+  environment.systemPackages = with pkgs; [
+    libva-utils
+    networkmanagerapplet # need this to configure L2TP ipsec
+  ];
 
   # ----------------------------
   # | ADDITIONAL USER PACKAGES |
@@ -74,6 +77,10 @@
   };
 
   programs.steam.enable = true; # just trying it out
+
+  networking.networkmanager.enable = true;
+  networking.networkmanager.enableStrongSwan = true;
+  services.strongswan.enable = true;
 
   virtualisation.docker = {
     enable = true;
