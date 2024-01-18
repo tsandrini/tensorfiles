@@ -59,6 +59,7 @@
   hardware = {
     enableAllFirmware = true;
     cpu.intel.updateMicrocode = true;
+    opentabletdriver.enable = true;
 
     opengl = {
       enable = true;

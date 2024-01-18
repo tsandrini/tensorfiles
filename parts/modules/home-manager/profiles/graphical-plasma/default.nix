@@ -15,7 +15,6 @@
 {
   config,
   lib,
-  pkgs,
   self,
   inputs,
   ...
@@ -76,12 +75,6 @@ in {
         TERMINAL = _ "kitty";
         IDE = _ "emacs";
       };
-
-      home.packages = with pkgs; [
-        mpv
-        zathura
-        libsForQt5.polonium
-      ];
 
       fonts.fontconfig.enable = _ true;
     }

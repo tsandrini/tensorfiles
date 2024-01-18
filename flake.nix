@@ -102,7 +102,7 @@
       inputs.home-manager.follows = "home-manager";
     };
 
-    # kde2nix.url = "github:nix-community/kde2nix";
+    nix-gaming.url = "github:fufexan/nix-gaming";
   };
 
   # Here you can add additional binary cache substituers that you trust.
@@ -115,6 +115,7 @@
       "https://devenv.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://viperml.cachix.org"
+      "https://nix-gaming.cachix.org"
       # "https://hyprland.cachix.org"
       # "https://anyrun.cachix.org"
     ];
@@ -124,6 +125,7 @@
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
+      "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       # "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
     ];

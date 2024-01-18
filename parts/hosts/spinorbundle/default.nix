@@ -15,6 +15,7 @@
 {
   pkgs,
   inputs,
+  system,
   ...
 }: {
   # -----------------
@@ -120,9 +121,18 @@
       texlive.combined.scheme-medium
       zotero
       lapack
+      ungoogled-chromium
 
       slack
       signal-desktop
+
+      todoist
+      todoist-electron
+
+      mpv
+      zathura
+
+      inputs.nix-gaming.packages.${system}.osu-lazer-bin
     ];
   };
 }

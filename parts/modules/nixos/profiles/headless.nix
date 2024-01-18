@@ -16,6 +16,7 @@
   config,
   lib,
   inputs',
+  pkgs,
   ...
 }:
 with builtins;
@@ -55,8 +56,9 @@ in {
         };
       };
 
-      environment.systemPackages = [
+      environment.systemPackages = with pkgs; [
         inputs'.nh.packages.default
+        nmap
       ];
     }
     # |----------------------------------------------------------------------| #

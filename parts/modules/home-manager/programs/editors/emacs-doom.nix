@@ -23,9 +23,10 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.editors.emacs-doom;
+  _ = mkOverrideAtHmModuleLevel;
 
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -33,6 +34,8 @@ with lib; let
     then config.tensorfiles.hm.system.impermanence
     else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+
+  emacsPkg = with pkgs; ((emacsPackagesFor emacs-unstable).emacsWithPackages (epkgs: [epkgs.vterm]));
 in {
   options.tensorfiles.hm.programs.editors.emacs-doom = with types;
   with tensorfiles.options; {
@@ -67,8 +70,7 @@ in {
         ## Emacs itself
         binutils # native-comp needs 'as', provided by this
         # 28.2 + native-comp
-        ((emacsPackagesFor emacs-unstable).emacsWithPackages
-          (epkgs: [epkgs.vterm]))
+        emacsPkg
 
         ## Doom dependencies
         git
@@ -107,6 +109,12 @@ in {
         html-tidy
         # dockfmt
       ];
+
+      services.emacs = {
+        enable = _ true;
+        package = emacsPkg;
+        startWithUserSession = _ "graphical";
+      };
 
       home.sessionPath = ["${config.xdg.configHome}/emacs/bin"];
 
