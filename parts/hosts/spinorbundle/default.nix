@@ -26,8 +26,10 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = [
-    inputs.disko.nixosModules.disko
+  imports = with inputs; [
+    disko.nixosModules.disko
+    nix-gaming.nixosModules.pipewireLowLatency
+    nix-gaming.nixosModules.steamCompat
     ./hardware-configuration.nix
     ./disko.nix
   ];
@@ -73,6 +75,7 @@
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
+      lowLatency.enable = true;
     };
   };
 

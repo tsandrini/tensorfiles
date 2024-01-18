@@ -39,6 +39,8 @@
     cpuFreqGovernor = "performance";
   };
 
+  programs.gamemode.enable = true;
+
   boot = {
     loader = {
       timeout = 1;

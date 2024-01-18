@@ -26,9 +26,11 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = [
-    inputs.disko.nixosModules.disko
-    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
+  imports = with inputs; [
+    disko.nixosModules.disko
+    nixos-hardware.nixosModules.lenovo-thinkpad-x270
+    nix-gaming.nixosModules.pipewireLowLatency
+    nix-gaming.nixosModules.steamCompat
     ./hardware-configuration.nix
     ./disko.nix
   ];
@@ -74,6 +76,7 @@
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
+      lowLatency.enable = true;
     };
   };
 
