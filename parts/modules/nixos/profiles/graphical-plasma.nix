@@ -16,6 +16,8 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with builtins;
@@ -102,8 +104,9 @@ in {
         libsForQt5.kmag # A small Linux utility to magnify a part of the screen
         libsForQt5.itinerary
 
-        libsForQt5.bismuth # A dynamic tiling extension for KWin
-        polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
+        #libsForQt5.bismuth # A dynamic tiling extension for KWin
+        # libsForQt5.polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
+        inputs.self.packages.${system}.polonium-nightly
       ];
 
       services.xserver.enable = _ true;
