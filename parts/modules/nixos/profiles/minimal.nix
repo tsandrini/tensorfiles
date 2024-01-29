@@ -79,6 +79,7 @@ in {
         vim
         calcurse
         w3m
+        dig
 
         dosfstools
         exfatprogs

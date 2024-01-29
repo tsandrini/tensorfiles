@@ -35,6 +35,7 @@
 
     # -- programs --
     programs_direnv = import ./programs/direnv.nix;
+    programs_gpg = import ./programs/gpg.nix;
     programs_ssh = import ./programs/ssh.nix;
     programs_dmenu = import ./programs/dmenu.nix;
     programs_git = import ./programs/git.nix;

@@ -84,7 +84,11 @@
 
   networking.networkmanager.enable = true;
   networking.networkmanager.enableStrongSwan = true;
+  services.xl2tpd.enable = true;
   services.strongswan.enable = true;
+
+  # Needed for gpg pinetry
+  services.pcscd.enable = true;
 
   virtualisation.docker = {
     enable = true;
@@ -118,6 +122,7 @@
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "tomas.sandrini@seznam.cz";
     };
+    programs.git.signing.key = "3E83AD690FA4F657";
 
     home.packages = with pkgs; [
       thunderbird
@@ -143,6 +148,8 @@
 
       inputs.nix-gaming.packages.${system}.osu-stable
       inputs.nix-gaming.packages.${system}.osu-lazer-bin
+
+      inputs.self.packages.${system}.pywalfox-native
     ];
   };
 }

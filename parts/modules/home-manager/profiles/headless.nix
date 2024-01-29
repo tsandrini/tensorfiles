@@ -57,6 +57,7 @@ in {
           direnv.enable = _ true;
           git.enable = _ true;
           ssh.enable = _ true;
+          gpg.enable = _ true;
         };
       };
 

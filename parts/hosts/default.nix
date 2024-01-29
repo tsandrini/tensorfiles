@@ -95,6 +95,16 @@ in {
           (final: _prev: {
             nur = import inputs.nur {pkgs = final;};
           })
+          (final: prev: {
+            polonium = prev.libsForQt5.polonium.overrideAttrs (_old: {
+              src = final.fetchFromGitHub {
+                owner = "zeroxoneafour";
+                repo = "polonium";
+                rev = "dbb86e5e829d8ae57caf78cd3ef0606fdc1fbca5";
+                hash = "sha256-fZgNOcOq+owmqtplwnxeOIQpWmrga/WitCNCj89O5XA=";
+              };
+            });
+          })
         ];
       });
   };

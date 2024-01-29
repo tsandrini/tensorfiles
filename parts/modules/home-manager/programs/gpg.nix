@@ -1,4 +1,4 @@
-# --- parts/modules/home-manager/services/pywalfox-native.nix
+# --- parts/modules/home-manager/programs/gpg.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,43 +15,43 @@
 {
   config,
   lib,
-  pkgs,
   self,
-  self',
   ...
 }:
 with builtins;
 with lib; let
   tensorfiles = self.lib;
+  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
-  inherit (self'.packages) pywalfox-native;
-  pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
-    ${pywalfox-native}/bin/pywalfox start
-  '';
+  cfg = config.tensorfiles.hm.programs.gpg;
+  _ = mkOverrideAtHmModuleLevel;
 in {
-  options.tensorfiles.hm.services.pywalfox-native = with types;
+  options.tensorfiles.hm.programs.gpg = with types;
   with tensorfiles.options; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
+      TODO
     '');
-
-    pkg = mkOption {
-      type = package;
-      default = pkgs.kitty;
-      description = ''
-        TODO
-      '';
-    };
   };
 
-  config = mkIf false (mkMerge [
+  config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages = [pywalfox-native];
+      programs.gpg = {
+        enable = _ true;
+      };
 
-      home.file.".mozilla/native-messaging-hosts/pywalfox.json".text =
-        replaceStrings ["<path>"] ["${pywalfox-wrapper}/bin/pywalfox-wrapper"] (readFile
-          "${pywalfox-native}/lib/python3.11/site-packages/pywalfox/assets/manifest.json");
+      services.gpg-agent = {
+        enable = _ true;
+        pinentryFlavor = _ "qt";
+        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+      };
+
+      programs.git.signing = {
+        signByDefault = _ true;
+        key = _ null;
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);

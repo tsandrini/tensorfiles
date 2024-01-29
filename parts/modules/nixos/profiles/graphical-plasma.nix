@@ -103,7 +103,7 @@ in {
         libsForQt5.itinerary
 
         libsForQt5.bismuth # A dynamic tiling extension for KWin
-        libsForQt5.polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
+        polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
       ];
 
       services.xserver.enable = _ true;

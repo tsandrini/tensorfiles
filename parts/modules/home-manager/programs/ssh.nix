@@ -17,6 +17,7 @@
   lib,
   self,
   pubkeys,
+  hostName,
   secretsPath,
   ...
 }:
@@ -28,7 +29,7 @@ with lib; let
   cfg = config.tensorfiles.hm.programs.ssh;
   _ = mkOverrideAtHmModuleLevel;
 
-  userKeyCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.userKey.enable;
+  sshKeyCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
 in {
   options.tensorfiles.hm.programs.ssh = with types;
   with tensorfiles.options; {
@@ -36,7 +37,7 @@ in {
       TODO
     '');
 
-    userKey = {
+    sshKey = {
       enable = mkEnableOption (mdDoc ''
         TODO
       '');
@@ -75,7 +76,7 @@ in {
 
       publicKeySecretsAttrsetKey = mkOption {
         type = str;
-        default = "hosts.${hostName}.users.$user.userKey";
+        default = "hosts.${hostName}.users.$user.sshKey";
         description = mdDoc ''
           TODO
         '';
@@ -104,14 +105,14 @@ in {
       services.ssh-agent.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
-    (mkIf userKeyCheck {
-      age.secrets."${cfg.userKey.privateKeySecretsPath}" = {
-        file = _ (secretsPath + "/${cfg.userKey.privateKeySecretsPath}.age");
+    (mkIf sshKeyCheck {
+      age.secrets."${cfg.sshKey.privateKeySecretsPath}" = {
+        file = _ (secretsPath + "/${cfg.sshKey.privateKeySecretsPath}.age");
         mode = _ "700";
         owner = _ config.home.username;
       };
 
-      home.file = with cfg.userKey; {
+      home.file = with cfg.sshKey; {
         "${privateKeyHomePath}".source = _ (config.lib.file.mkOutOfStoreSymlink config.age.secrets."${privateKeySecretsPath}".path);
 
         "${publicKeyHomePath}".text = let
