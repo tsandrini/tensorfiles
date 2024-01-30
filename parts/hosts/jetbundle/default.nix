@@ -125,30 +125,27 @@
     programs.git.signing.key = "3E83AD690FA4F657";
 
     home.packages = with pkgs; [
-      thunderbird
-      beeper
-      armcord
-      anki
-      shfmt
-      libreoffice
-      neofetch
-      texlive.combined.scheme-medium
-      zotero
-      lapack
-      ungoogled-chromium
+      thunderbird # A full-featured e-mail client
+      beeper # Universal chat app.
+      armcord # Lightweight, alternative desktop client for Discord
+      anki # Spaced repetition flashcard program
+      libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
+      texlive.combined.scheme-medium # TeX Live environment
+      zotero # Collect, organize, cite, and share your research sources
+      lapack # openblas with just the LAPACK C and FORTRAN ABI
+      ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
+      zoom # Player for Z-Code, TADS and HUGO stories or games
 
-      slack
-      signal-desktop
+      slack # Desktop client for Slack
+      signal-desktop # Private, simple, and secure messenger
 
-      todoist
-      todoist-electron
+      todoist # Todoist CLI Client
+      todoist-electron # The official Todoist electron app
 
-      mpv
-      zathura
+      mpv # General-purpose media player, fork of MPlayer and mplayer2
+      zathura # A highly customizable and functional PDF viewer
 
-      inputs.nix-gaming.packages.${system}.osu-stable
       inputs.nix-gaming.packages.${system}.osu-lazer-bin
-
       inputs.self.packages.${system}.pywalfox-native
     ];
   };

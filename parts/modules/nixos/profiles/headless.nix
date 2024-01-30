@@ -58,7 +58,6 @@ in {
 
       environment.systemPackages = with pkgs; [
         inputs'.nh.packages.default
-        nmap
       ];
     }
     # |----------------------------------------------------------------------| #
