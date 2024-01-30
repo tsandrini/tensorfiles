@@ -16,22 +16,16 @@
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
-  _ = mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.services.keepassxc;
+  _ = mkOverride 700;
 in {
   # TODO maybe use toINIWithGlobalSection generator? however the ini config file
   # also contains some initial keys? I should investigate this more
-  options.tensorfiles.hm.services.keepassxc = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.services.keepassxc = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -64,6 +58,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

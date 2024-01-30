@@ -21,11 +21,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
   inherit (tensorfiles.nixos) getUserTerminal;
 
   cfg = config.tensorfiles.programs.wayland.anyrun;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
   options.tensorfiles.programs.wayland.anyrun = with types;
   with tensorfiles.options; {
@@ -158,6 +157,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

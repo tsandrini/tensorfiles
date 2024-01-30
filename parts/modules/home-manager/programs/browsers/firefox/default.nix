@@ -23,8 +23,8 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
-  _ = mkOverrideAtHmModuleLevel;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  _ = mkOverride 700;
 
   cfg = config.tensorfiles.hm.programs.browsers.firefox;
 
@@ -264,6 +264,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

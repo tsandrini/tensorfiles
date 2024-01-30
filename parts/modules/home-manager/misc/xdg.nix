@@ -15,16 +15,12 @@
 {
   config,
   lib,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.misc.xdg;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   defaultBrowser =
     if cfg.defaultApplications.browser != null
@@ -56,16 +52,17 @@ with lib; let
         else null
       );
 in {
-  options.tensorfiles.hm.misc.xdg = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.misc.xdg = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the xdg toolset.
     '');
 
     defaultApplications = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        TODO
-      '');
+      enable =
+        mkEnableOption (mdDoc ''
+          TODO
+        '')
+        // {default = true;};
 
       browser = mkOption {
         type = nullOr str;
@@ -143,6 +140,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

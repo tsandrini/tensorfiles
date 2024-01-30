@@ -21,10 +21,10 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmProfileLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.profiles.headless;
-  _ = mkOverrideAtHmProfileLevel;
+  _ = mkOverride 600;
 
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -107,6 +107,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

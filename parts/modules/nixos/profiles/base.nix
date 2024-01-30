@@ -19,13 +19,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.profiles.base;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 400;
 in {
-  options.tensorfiles.profiles.base = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.profiles.base = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the base system profile.
 
@@ -55,6 +52,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

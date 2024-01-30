@@ -16,19 +16,14 @@
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmProfileLevel;
-
   cfg = config.tensorfiles.hm.profiles.graphical-xmonad;
-  _ = mkOverrideAtHmProfileLevel;
+  _ = mkOverride 600;
 in {
-  options.tensorfiles.hm.profiles.graphical-xmonad = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.profiles.graphical-xmonad = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -85,6 +80,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

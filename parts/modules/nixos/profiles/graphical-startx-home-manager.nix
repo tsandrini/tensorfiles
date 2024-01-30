@@ -19,13 +19,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.profiles.graphical-startx-home-manager;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 400;
 in {
-  options.tensorfiles.profiles.graphical-startx-home-manager = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.profiles.graphical-startx-home-manager = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -42,6 +39,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

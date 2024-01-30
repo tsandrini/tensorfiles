@@ -24,15 +24,14 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.ssh;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   sshKeyCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
 in {
-  options.tensorfiles.hm.programs.ssh = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.ssh = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -129,6 +128,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

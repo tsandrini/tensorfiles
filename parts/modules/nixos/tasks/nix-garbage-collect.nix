@@ -19,13 +19,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.tasks.nix-garbage-collect;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
-  options.tensorfiles.tasks.nix-garbage-collect = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.tasks.nix-garbage-collect = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures the task handling periodix nix store
       garbage collection.
@@ -43,6 +40,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

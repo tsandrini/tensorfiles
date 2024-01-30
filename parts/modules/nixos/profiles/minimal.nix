@@ -20,13 +20,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.profiles.minimal;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 400;
 in {
-  options.tensorfiles.profiles.minimal = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.profiles.minimal = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the minimal system profile.
 
@@ -130,6 +127,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -17,16 +17,17 @@
   lib,
   pkgs,
   self,
-  self',
+  inputs,
+  system,
   ...
 }:
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled mkOverrideAtHmModuleLevel;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.editors.emacs-doom;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence")
@@ -112,9 +113,9 @@ in {
             pipenv
             nose
             pytest
-            self'.packages.my_cookies
+            inputs.self.packages.${system}.my_cookies
           ]))
-        self'.packages.my_cookies
+        inputs.self.packages.${system}.my_cookies
         pandoc
         discount # Implementation of Markdown markup language in C
 
@@ -188,6 +189,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

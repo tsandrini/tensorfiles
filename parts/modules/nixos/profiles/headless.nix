@@ -15,19 +15,17 @@
 {
   config,
   lib,
-  inputs',
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.profiles.headless;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 400;
 in {
-  options.tensorfiles.profiles.headless = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.profiles.headless = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the headless system profile.
 
@@ -57,11 +55,9 @@ in {
       };
 
       environment.systemPackages = with pkgs; [
-        inputs'.nh.packages.default
+        inputs.nh.packages.${system}.default
       ];
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

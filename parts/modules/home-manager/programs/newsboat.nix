@@ -16,16 +16,12 @@
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.programs.newsboat;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   urlType = types.listOf (types.submodule {
     options = {
@@ -51,18 +47,19 @@ with lib; let
     };
   });
 in {
-  options.tensorfiles.hm.programs.newsboat = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.newsboat = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
 
     urls = {
       news = {
-        enable = mkAlreadyEnabledOption (mdDoc ''
-          Enable the addition of news related urls into the newsboat
-          rss reader.
-        '');
+        enable =
+          mkEnableOption (mdDoc ''
+            Enable the addition of news related urls into the newsboat
+            rss reader.
+          '')
+          // {default = true;};
 
         urls = mkOption {
           type = urlType;
@@ -99,10 +96,12 @@ in {
       };
 
       tech = {
-        enable = mkAlreadyEnabledOption (mdDoc ''
-          Enable the addition of tech related urls into the newsboat
-          rss reader.
-        '');
+        enable =
+          mkEnableOption (mdDoc ''
+            Enable the addition of tech related urls into the newsboat
+            rss reader.
+          '')
+          // {default = true;};
 
         urls = mkOption {
           type = urlType;
@@ -135,10 +134,12 @@ in {
       };
 
       sci = {
-        enable = mkAlreadyEnabledOption (mdDoc ''
-          Enable the addition of science related urls into the newsboat
-          rss reader.
-        '');
+        enable =
+          mkEnableOption (mdDoc ''
+            Enable the addition of science related urls into the newsboat
+            rss reader.
+          '')
+          // {default = true;};
 
         urls = mkOption {
           type = urlType;
@@ -243,6 +244,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

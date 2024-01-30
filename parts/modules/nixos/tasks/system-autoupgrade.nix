@@ -19,15 +19,12 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.tasks.system-autoupgrade;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
   # TODO configure autoUpgrade.flake endpoint -- for example
   # flake  = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
-  options.tensorfiles.tasks.system-autoupgrade = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.tasks.system-autoupgrade = with types; {
     enable = mkEnableOption (mdDoc ''
       Module enabling system wide nixpkgs & host autoupgrade
       Enables NixOS module that configures the task handling periodix nixpkgs
@@ -52,6 +49,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

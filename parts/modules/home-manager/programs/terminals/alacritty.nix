@@ -16,19 +16,14 @@
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.programs.terminals.alacritty;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 in {
-  options.tensorfiles.hm.programs.terminals.alacritty = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.terminals.alacritty = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -58,6 +53,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

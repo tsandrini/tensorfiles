@@ -22,13 +22,12 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  # inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  # inherit (tensorfiles) mkOverride 700 isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.system.impermanence;
-  # _ = mkOverrideAtHmModuleLevel;
+  # _ = mkOverride 700;
 in {
-  options.tensorfiles.hm.system.impermanence = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.system.impermanence = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -74,6 +73,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -19,10 +19,8 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.services.networking.ssh;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
   options.tensorfiles.services.networking.ssh = with types;
   with tensorfiles.options; {
@@ -89,6 +87,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

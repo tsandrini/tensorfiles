@@ -21,14 +21,11 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.misc.nix;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
   # TODO Modularize unstable/stable branches into an enum option
-  options.tensorfiles.misc.nix = with types;
-  with tensorfiles.types; {
+  options.tensorfiles.misc.nix = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles defaults regarding nix
       language & nix package manager.
@@ -77,6 +74,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

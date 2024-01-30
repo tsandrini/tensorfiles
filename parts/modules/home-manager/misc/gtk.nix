@@ -16,19 +16,14 @@
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.misc.gtk;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 in {
-  options.tensorfiles.hm.misc.gtk = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.misc.gtk = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -54,6 +49,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

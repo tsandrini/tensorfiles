@@ -20,10 +20,8 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.services.x11.desktop-managers.startx-home-manager;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
   options.tensorfiles.services.x11.desktop-managers.startx-home-manager = with types;
   with tensorfiles.options; {
@@ -64,6 +62,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

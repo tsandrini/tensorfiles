@@ -23,23 +23,24 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.terminals.kitty;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   nvimScrollbackCheck = cfg.nvim-scrollback.enable && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.neovim");
 in {
-  options.tensorfiles.hm.programs.terminals.kitty = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.terminals.kitty = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
     '');
 
     nvim-scrollback = {
-      enable = mkAlreadyEnabledOption ''
-        TODO
-      '';
+      enable =
+        mkEnableOption (mdDoc ''
+          TODO
+        '')
+        // {default = true;};
     };
 
     pkg = mkOption {
@@ -103,6 +104,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }
