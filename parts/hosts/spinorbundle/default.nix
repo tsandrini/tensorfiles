@@ -138,6 +138,7 @@
       mpv # General-purpose media player, fork of MPlayer and mplayer2
       zathura # A highly customizable and functional PDF viewer
 
+      inputs.nix-gaming.packages.${system}.osu-stable
       inputs.nix-gaming.packages.${system}.osu-lazer-bin
       inputs.self.packages.${system}.pywalfox-native
     ];
