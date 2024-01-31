@@ -21,10 +21,8 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.programs.wayland.waybar;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
   options.tensorfiles.programs.wayland.waybar = with types;
   with tensorfiles.options; {
@@ -183,6 +181,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

@@ -22,11 +22,11 @@ in {
     spinorbundle = {
       users = {
         root = {
-          userKey = null;
+          sshKey = null;
           authorizedKeys = [];
         };
         tsandrini = {
-          userKey = null;
+          sshKey = null;
           authorizedKeys = [tsandrini];
         };
       };
@@ -34,11 +34,11 @@ in {
     jetbundle = {
       users = {
         root = {
-          userKey = null;
+          sshKey = null;
           authorizedKeys = [];
         };
         tsandrini = {
-          userKey = null;
+          sshKey = null;
           authorizedKeys = [tsandrini];
         };
       };

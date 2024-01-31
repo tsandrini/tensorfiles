@@ -20,13 +20,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtModuleLevel;
-
   cfg = config.tensorfiles.programs.shadow-nix;
-  _ = mkOverrideAtModuleLevel;
+  _ = mkOverride 500;
 in {
-  options.tensorfiles.programs.shadow-nix = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.programs.shadow-nix = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -44,6 +41,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

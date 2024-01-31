@@ -15,19 +15,14 @@
 {
   config,
   lib,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmProfileLevel;
-
   cfg = config.tensorfiles.hm.profiles.base;
-  _ = mkOverrideAtHmProfileLevel;
+  _ = mkOverride 600;
 in {
-  options.tensorfiles.hm.profiles.base = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.profiles.base = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -46,6 +41,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

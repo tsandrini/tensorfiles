@@ -17,26 +17,26 @@
   lib,
   self,
   pubkeys,
+  hostName,
   secretsPath,
   ...
 }:
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.ssh;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
-  userKeyCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.userKey.enable;
+  sshKeyCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
 in {
-  options.tensorfiles.hm.programs.ssh = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.ssh = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
 
-    userKey = {
+    sshKey = {
       enable = mkEnableOption (mdDoc ''
         TODO
       '');
@@ -75,7 +75,7 @@ in {
 
       publicKeySecretsAttrsetKey = mkOption {
         type = str;
-        default = "hosts.${hostName}.users.$user.userKey";
+        default = "hosts.${hostName}.users.$user.sshKey";
         description = mdDoc ''
           TODO
         '';
@@ -104,14 +104,14 @@ in {
       services.ssh-agent.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
-    (mkIf userKeyCheck {
-      age.secrets."${cfg.userKey.privateKeySecretsPath}" = {
-        file = _ (secretsPath + "/${cfg.userKey.privateKeySecretsPath}.age");
+    (mkIf sshKeyCheck {
+      age.secrets."${cfg.sshKey.privateKeySecretsPath}" = {
+        file = _ (secretsPath + "/${cfg.sshKey.privateKeySecretsPath}.age");
         mode = _ "700";
         owner = _ config.home.username;
       };
 
-      home.file = with cfg.userKey; {
+      home.file = with cfg.sshKey; {
         "${privateKeyHomePath}".source = _ (config.lib.file.mkOutOfStoreSymlink config.age.secrets."${privateKeySecretsPath}".path);
 
         "${publicKeyHomePath}".text = let
@@ -128,6 +128,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

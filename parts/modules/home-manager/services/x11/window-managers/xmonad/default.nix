@@ -22,10 +22,10 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.services.x11.window-managers.xmonad;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
   dmenuCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.dmenu";
@@ -89,13 +89,15 @@ in {
     pywal = {enable = mkPywalEnableOption;};
 
     cbatticon = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Enable the cbatticon battery indicator.
-        Doing so install the appropriate derivation and adds the
-        management code into the xmonad configuration.
+      enable =
+        mkEnableOption (mdDoc ''
+          Enable the cbatticon battery indicator.
+          Doing so install the appropriate derivation and adds the
+          management code into the xmonad configuration.
 
-        https://github.com/valr/cbatticon
-      '');
+          https://github.com/valr/cbatticon
+        '')
+        // {default = true;};
 
       pkg = mkOption {
         type = package;
@@ -109,12 +111,14 @@ in {
     };
 
     playerctl = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Enable integration with the playerctl toolset. Doing so enables the
-        media keys functionality.
+      enable =
+        mkEnableOption (mdDoc ''
+          Enable integration with the playerctl toolset. Doing so enables the
+          media keys functionality.
 
-        https://github.com/altdesktop/playerctl
-      '');
+          https://github.com/altdesktop/playerctl
+        '')
+        // {default = true;};
 
       pkg = mkOption {
         type = package;
@@ -128,17 +132,19 @@ in {
     };
 
     dmenu = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Enable the dmenu app launcher integration.
-        This does **one of** two things, first off
+      enable =
+        mkEnableOption (mdDoc ''
+          Enable the dmenu app launcher integration.
+          This does **one of** two things, first off
 
-        1. If `tensorfiles.programs.dmenu` is installed and enabled it will
-           use whatever is defined inside that module.
+          1. If `tensorfiles.programs.dmenu` is installed and enabled it will
+             use whatever is defined inside that module.
 
-        2. If not, it will install `dmenu.pkg` and use that version.
+          2. If not, it will install `dmenu.pkg` and use that version.
 
-        and secondly, it creates the keyboard mappings.
-      '');
+          and secondly, it creates the keyboard mappings.
+        '')
+        // {default = true;};
 
       pkg = mkOption {
         type = package;
@@ -629,6 +635,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

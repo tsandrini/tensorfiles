@@ -21,8 +21,7 @@ with builtins;
 with lib; let
   cfg = config.tensorfiles.services.x11.desktop-managers.plasma;
 in {
-  options.tensorfiles.services.x11.desktop-managers.plasma = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.services.x11.desktop-managers.plasma = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -35,6 +34,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

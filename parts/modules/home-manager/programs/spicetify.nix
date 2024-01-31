@@ -15,21 +15,17 @@
 {
   config,
   lib,
-  self,
   inputs,
-  inputs',
+  system,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-
   cfg = config.tensorfiles.hm.programs.spicetify;
 
-  spicePkgs = inputs'.spicetify-nix.packages.default;
+  spicePkgs = inputs.spicetify-nix.packages.${system}.default;
 in {
-  options.tensorfiles.hm.programs.spicetify = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.spicetify = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -56,6 +52,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

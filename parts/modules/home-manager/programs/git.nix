@@ -15,19 +15,14 @@
 {
   config,
   lib,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.programs.git;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 in {
-  options.tensorfiles.hm.programs.git = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.git = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -99,6 +94,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

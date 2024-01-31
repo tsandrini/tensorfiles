@@ -22,10 +22,10 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.shells.zsh;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -53,10 +53,12 @@ in {
     };
 
     p10k = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Whether to enable the powerlevel10k theme (and plugins) related
-        code.
-      '');
+      enable =
+        mkEnableOption (mdDoc ''
+          Whether to enable the powerlevel10k theme (and plugins) related
+          code.
+        '')
+        // {default = true;};
 
       cfgSrc = mkOption {
         type = path;
@@ -81,9 +83,11 @@ in {
     };
 
     oh-my-zsh = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Whether to enable the oh-my-zsh framework related code
-      '');
+      enable =
+        mkEnableOption (mdDoc ''
+          Whether to enable the oh-my-zsh framework related code
+        '')
+        // {default = true;};
 
       plugins = mkOption {
         type = listOf str;
@@ -248,6 +252,4 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

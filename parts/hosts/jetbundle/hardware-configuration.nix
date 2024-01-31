@@ -39,6 +39,8 @@
     cpuFreqGovernor = "performance";
   };
 
+  programs.gamemode.enable = true;
+
   boot = {
     loader = {
       timeout = 1;
@@ -59,6 +61,7 @@
   hardware = {
     enableAllFirmware = true;
     cpu.intel.updateMicrocode = true;
+    opentabletdriver.enable = true;
 
     opengl = {
       enable = true;

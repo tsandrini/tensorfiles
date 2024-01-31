@@ -16,16 +16,12 @@
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.programs.file-managers.lf;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 
   lf-previewer = let
     name = "lf-previewer";
@@ -216,8 +212,7 @@ with lib; let
       )
   );
 in {
-  options.tensorfiles.hm.programs.file-managers.lf = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.file-managers.lf = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the lf file manager.
 
@@ -244,14 +239,16 @@ in {
     };
 
     previewer = {
-      enable = mkAlreadyEnabledOption (mdDoc ''
-        Whether to include a custom previewer solution as well.
-        Aside the less complicated text file previewing this includes
-        a solution for the image previewing as well, since lf
-        doesn't have yet a builtin solution for this issue.
-        That's the primary reason for these options since it requires
-        sticking up together a bunch of tools with custom scripts.
-      '');
+      enable =
+        mkEnableOption (mdDoc ''
+          Whether to include a custom previewer solution as well.
+          Aside the less complicated text file previewing this includes
+          a solution for the image previewing as well, since lf
+          doesn't have yet a builtin solution for this issue.
+          That's the primary reason for these options since it requires
+          sticking up together a bunch of tools with custom scripts.
+        '')
+        // {default = true;};
 
       backend = mkOption {
         type = enum ["ueberzug" "kitty"];
@@ -344,6 +341,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

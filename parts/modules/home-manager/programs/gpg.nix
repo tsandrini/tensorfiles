@@ -1,4 +1,4 @@
-# --- modules/programs/wayland/ags.nix
+# --- parts/modules/home-manager/programs/gpg.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -15,51 +15,43 @@
 {
   config,
   lib,
-  inputs,
+  self,
   ...
 }:
 with builtins;
 with lib; let
-  cfg = config.tensorfiles.programs.wayland.ags;
-  _ = mkOverride 500;
+  tensorfiles = self.lib;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
+
+  cfg = config.tensorfiles.hm.programs.gpg;
+  _ = mkOverride 700;
 in {
-  options.tensorfiles.programs.wayland.ags = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.gpg = with types; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures/handles the ags.nix app launcher
-
-
-       https://github.com/Aylur/ags
+      TODO
     '');
-
-    home = {
-      enable = mkHomeEnableOption;
-
-      settings = mkHomeSettingsOption (_user: {});
-    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.home.enable {
-      services.upower.enable = _ true;
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (_user: {
-        # Since this module is completely isolated and single purpose
-        # (meaning that the only possible place to import it from tensorfiles
-        # is here) we can leave the import call here
-        imports = [inputs.ags.homeManagerModules.default];
+    {
+      programs.gpg = {
+        enable = _ true;
+      };
 
-        programs.ags = {
-          enable = _ true;
-          # extraPackages = with pkgs; [
-          #   sassc
-          #   swww
-          #   brightnessctl
-          #   slurp
-          # ];
-        };
-      });
-    })
+      services.gpg-agent = {
+        enable = _ true;
+        pinentryFlavor = _ "qt";
+        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+      };
+
+      programs.git.signing = {
+        signByDefault = _ true;
+        key = _ null;
+      };
+    }
     # |----------------------------------------------------------------------| #
   ]);
 }

@@ -1,23 +1,46 @@
-# --- parts/modules/home-manager/profiles/graphical-plasma/rc2nix.nix
-#
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
-# URL:     https://github.com/tsandrini/tensorfiles
-# License: MIT
-#
-# 888                                                .d888 d8b 888
-# 888                                               d88P"  Y8P 888
-# 888                                               888        888
-# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
-# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
-# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
-# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
-#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   programs.plasma = {
     enable = true;
     shortcuts = {
       "ActivityManager"."switch-to-activity-42310903-cee3-40bb-a0f4-0b42e2373132" = [];
-      "KDE Keyboard Layout Switcher"."Switch to Next Keyboard Layout" = "Meta+Alt+K";
+      "KDE Keyboard Layout Switcher"."Switch keyboard layout to Czech (QWERTY)" = [];
+      "KDE Keyboard Layout Switcher"."Switch keyboard layout to English (US)" = [];
+      "KDE Keyboard Layout Switcher"."Switch to Next Keyboard Layout" = "Meta+N";
+      "bismuth"."decrease_master_size" = [];
+      "bismuth"."decrease_master_win_count" = [];
+      "bismuth"."decrease_window_height" = [];
+      "bismuth"."decrease_window_width" = [];
+      "bismuth"."focus_bottom_window" = [];
+      "bismuth"."focus_left_window" = [];
+      "bismuth"."focus_next_window" = [];
+      "bismuth"."focus_prev_window" = [];
+      "bismuth"."focus_right_window" = [];
+      "bismuth"."focus_upper_window" = [];
+      "bismuth"."increase_master_size" = [];
+      "bismuth"."increase_master_win_count" = [];
+      "bismuth"."increase_window_height" = [];
+      "bismuth"."increase_window_width" = [];
+      "bismuth"."move_window_to_bottom_pos" = [];
+      "bismuth"."move_window_to_left_pos" = [];
+      "bismuth"."move_window_to_next_pos" = [];
+      "bismuth"."move_window_to_prev_pos" = [];
+      "bismuth"."move_window_to_right_pos" = [];
+      "bismuth"."move_window_to_upper_pos" = [];
+      "bismuth"."next_layout" = "Meta+Space";
+      "bismuth"."prev_layout" = [];
+      "bismuth"."push_window_to_master" = [];
+      "bismuth"."rotate" = [];
+      "bismuth"."rotate_part" = [];
+      "bismuth"."rotate_reverse" = [];
+      "bismuth"."toggle_float_layout" = [];
+      "bismuth"."toggle_monocle_layout" = [];
+      "bismuth"."toggle_quarter_layout" = [];
+      "bismuth"."toggle_spiral_layout" = [];
+      "bismuth"."toggle_spread_layout" = [];
+      "bismuth"."toggle_stair_layout" = [];
+      "bismuth"."toggle_three_column_layout" = [];
+      "bismuth"."toggle_tile_layout" = [];
+      "bismuth"."toggle_window_floating" = [];
       "kaccess"."Toggle Screen Reader On and Off" = "Meta+Alt+S";
       "kalarm"."newAudio" = [];
       "kalarm"."newCommand" = [];
@@ -62,31 +85,32 @@
       "kwin"."MoveZoomRight" = [];
       "kwin"."MoveZoomUp" = [];
       "kwin"."Overview" = "Meta+W";
-      "kwin"."PoloniumCycleLayouts" = "Meta+Space";
+      "kwin"."PoloniumCycleLayouts" = "Meta+Backspace";
       "kwin"."PoloniumEngineBTree" = [];
       "kwin"."PoloniumEngineHalf" = [];
-      "kwin"."PoloniumEngineKWin" = [];
+      "kwin"."PoloniumEngineKWin" = "Meta+G";
       "kwin"."PoloniumEngineMonocle" = [];
       "kwin"."PoloniumEngineThreeColumn" = [];
-      "kwin"."PoloniumFocusAbove" = "Meta+K";
-      "kwin"."PoloniumFocusBelow" = "Meta+J";
+      "kwin"."PoloniumFocusAbove" = [];
+      "kwin"."PoloniumFocusBelow" = [];
       "kwin"."PoloniumFocusLeft" = "Meta+H";
       "kwin"."PoloniumFocusRight" = "Meta+L";
-      "kwin"."PoloniumInsertAbove" = [];
-      "kwin"."PoloniumInsertBelow" = [];
-      "kwin"."PoloniumInsertLeft" = [];
-      "kwin"."PoloniumInsertRight" = [];
-      "kwin"."PoloniumRebuildLayout" = "Meta+Ctrl+Space";
+      "kwin"."PoloniumInsertAbove" = "Meta+Shift+K";
+      "kwin"."PoloniumInsertBelow" = "Meta+Shift+J";
+      "kwin"."PoloniumInsertLeft" = "Meta+Shift+H";
+      "kwin"."PoloniumInsertRight" = "Meta+Shift+L";
+      "kwin"."PoloniumOpenSettings" = [];
+      "kwin"."PoloniumRebuildLayout" = "Meta+R";
       "kwin"."PoloniumResizeTileDown" = "Meta+U";
-      "kwin"."PoloniumResizeTileLeft" = "Meta+Y";
+      "kwin"."PoloniumResizeTileLeft" = [];
       "kwin"."PoloniumResizeTileRight" = "Meta+O";
       "kwin"."PoloniumResizeTileUp" = "Meta+I";
-      "kwin"."PoloniumRetileWindow" = [];
+      "kwin"."PoloniumRetileWindow" = "Meta+F";
       "kwin"."PoloniumShowSettings" = "Meta+|";
-      "kwin"."PoloniumSwapAbove" = "Meta+Shift+K";
-      "kwin"."PoloniumSwapBelow" = "Meta+Shift+J";
-      "kwin"."PoloniumSwapLeft" = "Meta+Shift+H";
-      "kwin"."PoloniumSwapRight" = "Meta+Shift+L";
+      "kwin"."PoloniumSwapAbove" = [];
+      "kwin"."PoloniumSwapBelow" = [];
+      "kwin"."PoloniumSwapLeft" = [];
+      "kwin"."PoloniumSwapRight" = [];
       "kwin"."Setup Window Shortcut" = [];
       "kwin"."Show Desktop" = [];
       "kwin"."ShowDesktopGrid" = [];
@@ -143,8 +167,8 @@
       "kwin"."Walk Through Desktop List (Reverse)" = [];
       "kwin"."Walk Through Desktops" = "Meta+Tab";
       "kwin"."Walk Through Desktops (Reverse)" = [];
-      "kwin"."Walk Through Windows" = "Alt+Tab";
-      "kwin"."Walk Through Windows (Reverse)" = "Alt+Shift+Backtab";
+      "kwin"."Walk Through Windows" = ["Meta+J" "Alt+Tab"];
+      "kwin"."Walk Through Windows (Reverse)" = ["Meta+K" "Alt+Shift+Backtab"];
       "kwin"."Walk Through Windows Alternative" = [];
       "kwin"."Walk Through Windows Alternative (Reverse)" = [];
       "kwin"."Walk Through Windows of Current Application" = "Alt+`";
@@ -154,7 +178,7 @@
       "kwin"."Window Above Other Windows" = [];
       "kwin"."Window Below Other Windows" = [];
       "kwin"."Window Close" = ["Alt+F4" "Meta+Q"];
-      "kwin"."Window Fullscreen" = "Meta+F";
+      "kwin"."Window Fullscreen" = [];
       "kwin"."Window Grow Horizontal" = [];
       "kwin"."Window Grow Vertical" = [];
       "kwin"."Window Lower" = [];
@@ -314,6 +338,7 @@
       "kded5rc"."Module-device_automounter"."autoload" = false;
       "kded5rc"."PlasmaBrowserIntegration"."shownCount" = 2;
       "kdeglobals"."DirSelect Dialog"."DirSelectDialog Size" = "1403,867";
+      "kdeglobals"."General"."AllowKDEAppsToRememberWindowPositions" = true;
       "kdeglobals"."General"."BrowserApplication" = "firefox.desktop";
       "kdeglobals"."General"."TerminalApplication" = "kitty";
       "kdeglobals"."General"."TerminalService" = "kitty.desktop";
@@ -346,6 +371,7 @@
       "kdeglobals"."WM"."inactiveFrame" = "118,134,132";
       "kglobalshortcutsrc"."ActivityManager"."_k_friendly_name" = "Activity Manager";
       "kglobalshortcutsrc"."KDE Keyboard Layout Switcher"."_k_friendly_name" = "Keyboard Layout Switcher";
+      "kglobalshortcutsrc"."bismuth"."_k_friendly_name" = "Window Tiling";
       "kglobalshortcutsrc"."kaccess"."_k_friendly_name" = "Accessibility";
       "kglobalshortcutsrc"."kalarm"."_k_friendly_name" = "KAlarm";
       "kglobalshortcutsrc"."kcm_touchpad"."_k_friendly_name" = "Touchpad";
@@ -639,7 +665,7 @@
       "khotkeysrc"."Data_3Conditions0"."Type" = "ACTIVE_WINDOW";
       "khotkeysrc"."Data_3Conditions0Window"."Comment" = "Konqueror";
       "khotkeysrc"."Data_3Conditions0Window"."WindowsCount" = 1;
-      "khotkeysrc"."Data_3Conditions0Window0"."Class" = "^konqueror\s";
+      "khotkeysrc"."Data_3Conditions0Window0"."Class" = "^konquerors";
       "khotkeysrc"."Data_3Conditions0Window0"."ClassType" = 3;
       "khotkeysrc"."Data_3Conditions0Window0"."Comment" = "Konqueror";
       "khotkeysrc"."Data_3Conditions0Window0"."Role" = "konqueror-mainwindow#1";
@@ -849,6 +875,7 @@
       "khotkeysrc"."Data_3_9Triggers0"."GesturePointData" = "0,0.0625,-0.5,0.5,1,0.0625,0.0625,-0.5,0.5,0.875,0.125,0.0625,-0.5,0.5,0.75,0.1875,0.0625,-0.5,0.5,0.625,0.25,0.0625,-0.5,0.5,0.5,0.3125,0.0625,-0.5,0.5,0.375,0.375,0.0625,-0.5,0.5,0.25,0.4375,0.0625,-0.5,0.5,0.125,0.5,0.0625,0.5,0.5,0,0.5625,0.0625,0.5,0.5,0.125,0.625,0.0625,0.5,0.5,0.25,0.6875,0.0625,0.5,0.5,0.375,0.75,0.0625,0.5,0.5,0.5,0.8125,0.0625,0.5,0.5,0.625,0.875,0.0625,0.5,0.5,0.75,0.9375,0.0625,0.5,0.5,0.875,1,0,0,0.5,1";
       "khotkeysrc"."Data_3_9Triggers0"."Type" = "GESTURE";
       "khotkeysrc"."DirSelect Dialog"."DirSelectDialog Size[$d]" = "";
+      "khotkeysrc"."General"."AllowKDEAppsToRememberWindowPositions[$d]" = "";
       "khotkeysrc"."General"."BrowserApplication[$d]" = "";
       "khotkeysrc"."General"."ColorSchemeHash[$d]" = "";
       "khotkeysrc"."General"."ColorScheme[$d]" = "";
@@ -892,13 +919,16 @@
       "khotkeysrc"."WM"."inactiveBlend[$d]" = "";
       "khotkeysrc"."WM"."inactiveForeground[$d]" = "";
       "khotkeysrc"."WM"."inactiveFrame[$d]" = "";
+      "kiorc"."Confirmations"."ConfirmEmptyTrash" = true;
+      "klipperrc"."General"."IgnoreImages" = false;
+      "klipperrc"."General"."MaxClipItems" = 50;
       "krunnerrc"."Plugins"."baloosearchEnabled" = true;
-      "kscreenlockerrc"."Greeter.Wallpaper.org.kde.image.General"."Image" = "file:///home/tsandrini/FiberBundle/Images/Wallpapers/ArtDigi/wallhaven-kxxe3q.png";
+      "kscreenlockerrc"."Daemon"."Timeout" = 10;
+      "kscreenlockerrc"."Greeter.Wallpaper.org.kde.image.General"."Image" = "file:///home/tsandrini/FiberBundle/Images/Wallpapers/Ultrawide/wallhaven-7pmovv.jpg";
       "ksmserverrc"."General"."loginMode" = "restoreSavedSession";
       "kwalletrc"."Wallet"."Close When Idle" = false;
       "kwalletrc"."Wallet"."Close on Screensaver" = false;
-      "kwalletrc"."Wallet"."Default Wallet" = "kdewallet";
-      "kwalletrc"."Wallet"."Enabled" = false;
+      "kwalletrc"."Wallet"."Enabled" = true;
       "kwalletrc"."Wallet"."First Use" = false;
       "kwalletrc"."Wallet"."Idle Timeout" = 10;
       "kwalletrc"."Wallet"."Launch Manager" = false;
@@ -916,9 +946,18 @@
       "kwinrc"."Desktops"."Id_7" = "67fe87db-0cc6-4af6-a251-becf4052d647";
       "kwinrc"."Desktops"."Id_8" = "f4c02afe-7443-42dc-b085-0fc1ebb58412";
       "kwinrc"."Desktops"."Id_9" = "5672458c-8491-4137-ad04-aa9f4505adcb";
+      "kwinrc"."Desktops"."Name_2" = "Desktop 3";
+      "kwinrc"."Desktops"."Name_3" = "Desktop 4";
+      "kwinrc"."Desktops"."Name_4" = "Desktop 5";
+      "kwinrc"."Desktops"."Name_5" = "Desktop 6";
+      "kwinrc"."Desktops"."Name_6" = "Desktop 7";
+      "kwinrc"."Desktops"."Name_7" = "Desktop 8";
+      "kwinrc"."Desktops"."Name_8" = "Desktop 9";
       "kwinrc"."Desktops"."Number" = 9;
       "kwinrc"."Desktops"."Rows" = 1;
-      "kwinrc"."Effect-diminactive"."Strength" = 5;
+      "kwinrc"."Desktops"."Strength" = 5;
+      "kwinrc"."Effect-diminactive"."Strength" = 13;
+      "kwinrc"."Effect-overview"."LayoutMode" = 0;
       "kwinrc"."NightColor"."Active" = true;
       "kwinrc"."NightColor"."LatitudeAuto" = 49.8287;
       "kwinrc"."NightColor"."LongitudeAuto" = 18.2923;
@@ -930,14 +969,30 @@
       "kwinrc"."Plugins"."thumbnailasideEnabled" = true;
       "kwinrc"."Plugins"."trackmouseEnabled" = true;
       "kwinrc"."Plugins"."zoomEnabled" = false;
+      "kwinrc"."Script-bismuth"."enableMonocleLayout" = false;
+      "kwinrc"."Script-bismuth"."enableQuarterLayout" = true;
+      "kwinrc"."Script-bismuth"."enableSpreadLayout" = false;
+      "kwinrc"."Script-bismuth"."enableStairLayout" = false;
+      "kwinrc"."Script-bismuth"."ignoreClass" = "yakuake,spectacle,Conky,zoom,krunner, yakuake, kded, polkit, plasmashell,settings,org.kde.plasmashell,rsibreak,keepassxc,KeePassXC";
+      "kwinrc"."Script-bismuth"."maximizeSoleTile" = true;
+      "kwinrc"."Script-bismuth"."screenGapBottom" = 5;
+      "kwinrc"."Script-bismuth"."screenGapLeft" = 5;
+      "kwinrc"."Script-bismuth"."screenGapRight" = 5;
+      "kwinrc"."Script-bismuth"."screenGapTop" = 3;
+      "kwinrc"."Script-bismuth"."tileLayoutGap" = 5;
       "kwinrc"."Script-polonium"."Borders" = 3;
       "kwinrc"."Script-polonium"."FilterProcessName" = "krunner, yakuake, kded, polkit, plasmashell,settings,org.kde.plasmashell,rsibreak,keepassxc,KeePassXC";
       "kwinrc"."Script-polonium"."InsertionPoint" = 1;
       "kwinrc"."Script-polonium"."MaximizeSingle" = true;
       "kwinrc"."Script-polonium"."Unfullscreen" = true;
       "kwinrc"."Tiling"."padding" = 4;
+      "kwinrc"."Tiling.1a88509b-1b0d-564d-bc19-a26d03d9b728"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling.1c3a1a63-c4c1-5598-8f19-4cb816b6cc9d"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.2896ccbc-be4f-5528-8ad7-615fc67c9608"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.39a33a7a-a81d-5a96-b048-6bae7b01acd1"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.8002342e-30d0-5046-bb3f-edf22c7675ce"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling.bd455426-91b5-5aa4-b78c-9e21c3c810ab"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.5},{\"width\":0.5}]}";
+      "kwinrc"."Tiling.e62a896b-7bb1-526e-ad9d-1098bb0b8399"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.5},{\"width\":0.5}]}";
       "kwinrc"."Xwayland"."Scale" = 1;
       "kwinrc"."org.kde.kdecoration2"."BorderSizeAuto" = false;
       "kwinrulesrc"."1"."Description" = "Hide titlebars and window frames";
@@ -967,6 +1022,8 @@
       "kxkbrc"."Layout"."DisplayNames" = ",";
       "kxkbrc"."Layout"."LayoutDefaultGlobal" = 1;
       "kxkbrc"."Layout"."LayoutList" = "cz,us";
+      "kxkbrc"."Layout"."Options" = "mod_led:compose";
+      "kxkbrc"."Layout"."ResetOldOptions" = true;
       "kxkbrc"."Layout"."Use" = true;
       "kxkbrc"."Layout"."VariantList" = "qwerty,";
       "plasma-localerc"."Formats"."LANG" = "en_US.UTF-8";
@@ -982,6 +1039,8 @@
       "plasmanotifyrc"."Notifications"."PopupTimeout" = 15000;
       "plasmarc"."Wallpapers"."usersWallpapers" = "";
       "systemsettingsrc"."KFileDialog Settings"."detailViewIconSize" = 16;
+      "systemsettingsrc"."KFileDialog Settings"."iconViewIconSize" = 64;
+      "systemsettingsrc"."KFileDialog Settings"."listViewIconSize" = 64;
     };
   };
 }

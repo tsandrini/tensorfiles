@@ -16,23 +16,18 @@
   config,
   lib,
   pkgs,
-  self,
-  self',
+  inputs,
+  system,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-
-  cfg = config.tensorfiles.hm.services.pywalfox-native;
-
-  inherit (self'.packages) pywalfox-native;
+  inherit (inputs.self.packages.${system}) pywalfox-native;
   pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
     ${pywalfox-native}/bin/pywalfox start
   '';
 in {
-  options.tensorfiles.hm.services.pywalfox-native = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.services.pywalfox-native = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
     '');
@@ -46,7 +41,8 @@ in {
     };
   };
 
-  config = mkIf cfg.enable (mkMerge [
+  # TODO
+  config = mkIf false (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       home.packages = [pywalfox-native];
@@ -57,6 +53,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

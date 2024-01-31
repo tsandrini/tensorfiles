@@ -20,13 +20,10 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.profiles.minimal;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 400;
 in {
-  options.tensorfiles.profiles.minimal = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.profiles.minimal = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the minimal system profile.
 
@@ -69,49 +66,65 @@ in {
       };
 
       environment.systemPackages = with pkgs; [
-        # BASE UTILS
-        htop
-        wget
-        curl
-        jq
+        # --- BASE UTILS ---
+        htop # An interactive process viewer
+        jq # A lightweight and flexible command-line JSON processor
         killall
-        openssl
-        vim
-        calcurse
-        w3m
+        vim # The most popular clone of the VI editor
+        calcurse # A calendar and scheduling application for the command line
+        w3m # A text-mode web browser
+        neofetch # A fast, highly customizable system info script
 
-        dosfstools
-        exfatprogs
-        udisks
-        pciutils
-        usbutils
-        iotop
-        hw-probe
-        ntfs3g
+        # --- NET UTILS ---
+        dig # Domain name server
+        netcat # Free TLS/SSL implementation
+        wget # Tool for retrieving files using HTTP, HTTPS, and FTP
+        curl # A command line tool for transferring files with URL syntax
+        nmap # A free and open source utility for network discovery and security auditing
 
-        atool
-        gzip
-        lz4
-        lzip
-        lzop
-        p7zip
-        rar
-        unrar
-        rzip
-        unzip
-        xz
-        zip
-        zstd
+        # --- HW UTILS ---
+        dosfstools # Utilities for creating and checking FAT and VFAT file systems
+        exfatprogs # exFAT filesystem userspace utilities
+        udisks # A daemon, tools and libraries to access and manipulate disks, storage devices and technologies
+        pciutils # A collection of programs for inspecting and manipulating configuration of PCI devices
+        usbutils # Tools for working with USB devices, such as lsusb
+        iotop # A tool to find out the processes doing the most IO
+        hw-probe # Probe for hardware, check operability and find drivers
+        ntfs3g # FUSE-based NTFS driver with full write support
 
-        sqlite
-        sqlitebrowser
+        # -- ARCHIVING UTILS --
+        atool # Archive command line helper
+        gzip # GNU zip compression program
+        lz4 # Extremely fast compression algorithm
+        lzip # A lossless data compressor based on the LZMA algorithm
+        lzop # Fast file compressor
+        p7zip # A new p7zip fork with additional codecs and improvements (forked from https://sourceforge.net/projects/p7zip/)
+        rar # Utility for RAR archives
+        unrar # Utility for RAR archives
+        rzip # Compression program
+        unzip # An extraction utility for archives compressed in .zip format
+        xz # A general-purpose data compression software, successor of LZMA
+        zip # Compressor/archiver for creating and modifying zipfiles
+        zstd # Zstandard real-time compression algorithm
 
-        libarchive
-        libbtbb
+        # -- MISC --
+        sqlite # A self-contained, serverless, zero-configuration, transactional SQL database engine
+        sqlitebrowser # DB Browser for SQLite
+        libarchive # Multi-format archive and compression library
+        libbtbb # Bluetooth baseband decoding library
+
+        # -- NIX UTILS --
+        nix-index # A files database for nixpkgs
+        nix-du # A tool to determine which gc-roots take space in your nix store
+        nix-tree # Interactively browse a Nix store paths dependencies
+        nix-health # Check the health of your Nix setup
+        nix-update # Swiss-knife for updating nix packages
+        nix-serve # A utility for sharing a Nix store as a binary cache
+        nix-serve-ng # A drop-in replacement for nix-serve that's faster and more stable
+        nix-prefetch-scripts # Collection of all the nix-prefetch-* scripts which may be used to obtain source hashes
+        nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
       ];
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

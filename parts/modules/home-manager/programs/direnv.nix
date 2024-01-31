@@ -21,13 +21,12 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.direnv;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 in {
-  options.tensorfiles.hm.programs.direnv = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.direnv = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables a HomeManager module that sets up direnv.
 
@@ -50,6 +49,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

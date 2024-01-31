@@ -22,10 +22,8 @@
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles.modules) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.services.wayland.window-managers.hyprland;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 500;
 
   agsCheck = (hasAttr "wayland" config.tensorfiles.programs) && (hasAttr "ags" config.tensorfiles.programs.wayland) && config.tensorfiles.programs.wayland.ags.enable;
 in {
@@ -266,6 +264,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

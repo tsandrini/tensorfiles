@@ -16,21 +16,16 @@
   config,
   lib,
   pkgs,
-  self,
   inputs,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel;
-
   cfg = config.tensorfiles.hm.programs.editors.neovim;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 in {
   # TODO modularize config, cant be bothered to do it now
-  options.tensorfiles.hm.programs.editors.neovim = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.editors.neovim = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the neovim program.
     '');
@@ -336,6 +331,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

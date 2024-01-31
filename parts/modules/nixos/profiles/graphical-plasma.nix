@@ -16,17 +16,16 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) mkOverrideAtProfileLevel;
-
   cfg = config.tensorfiles.profiles.graphical-plasma;
-  _ = mkOverrideAtProfileLevel;
+  _ = mkOverride 400;
 in {
-  options.tensorfiles.profiles.graphical-plasma = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.profiles.graphical-plasma = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -55,6 +54,7 @@ in {
         libsForQt5.kcalc # Scientific calculator
         kdiff3 # Compares and merges 2 or 3 files or directories
         krename # A powerful batch renamer for KDE
+        krusader # Norton/Total Commander clone for KDE
         libsForQt5.filelight # Disk usage statistics
         libsForQt5.kweather
         libsForQt5.kweathercore
@@ -100,18 +100,20 @@ in {
         libsForQt5.elisa # A simple media player for KDE
         libsForQt5.kmag # A small Linux utility to magnify a part of the screen
         libsForQt5.itinerary
+
+        #libsForQt5.bismuth # A dynamic tiling extension for KWin
+        # libsForQt5.polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
+        inputs.self.packages.${system}.polonium-nightly
       ];
 
-      services.xserver.enable = true;
-      services.xserver.displayManager.sddm.enable = true;
-      services.xserver.desktopManager.plasma5.enable = true;
-      services.xserver.displayManager.defaultSession = "plasmawayland";
-      programs.kdeconnect.enable = true;
+      services.xserver.enable = _ true;
+      services.xserver.displayManager.sddm.enable = _ true;
+      services.xserver.desktopManager.plasma5.enable = _ true;
+      services.xserver.displayManager.defaultSession = _ "plasmawayland";
+      programs.kdeconnect.enable = _ true;
 
-      programs.partition-manager.enable = true;
+      programs.partition-manager.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

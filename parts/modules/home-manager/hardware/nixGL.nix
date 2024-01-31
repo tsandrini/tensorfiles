@@ -16,8 +16,9 @@
   config,
   lib,
   pkgs,
+  inputs,
+  system,
   self,
-  inputs',
   ...
 }:
 with builtins;
@@ -42,17 +43,20 @@ with lib; let
       done
     '';
 
-  kittyPatchCheck = cfg.programPatches.enable && cfg.programPatches.kitty && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty");
+  kittyPatchCheck =
+    cfg.programPatches.enable
+    && cfg.programPatches.kitty
+    && (isModuleLoadedAndEnabled config
+      "tensorfiles.hm.programs.terminals.kitty");
 in {
-  options.tensorfiles.hm.hardware.nixGL = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.hardware.nixGL = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
 
     pkg = mkOption {
       type = package;
-      inherit (inputs'.nixGL.packages) default;
+      inherit (inputs.nixGL.packages.${system}) default;
       description = ''
         NixGL binary that should be used for wrapping other graphical executables.
       '';
@@ -63,9 +67,11 @@ in {
         Enables the nixGL program patches
       '');
 
-      kitty = mkAlreadyEnabledOption (mdDoc ''
-        Enables the kitty executable wrapper
-      '');
+      kitty =
+        mkEnableOption (mdDoc ''
+          Enables the kitty executable wrapper
+        '')
+        // {default = true;};
     };
   };
 
@@ -76,10 +82,9 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf kittyPatchCheck {
-      programs.kitty.package = _ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg);
+      programs.kitty.package =
+        _ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg);
     })
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }

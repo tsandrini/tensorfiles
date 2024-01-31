@@ -21,13 +21,12 @@
 with builtins;
 with lib; let
   tensorfiles = self.lib;
-  inherit (tensorfiles) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (tensorfiles) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.file-managers.yazi;
-  _ = mkOverrideAtHmModuleLevel;
+  _ = mkOverride 700;
 in {
-  options.tensorfiles.hm.programs.file-managers.yazi = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.file-managers.yazi = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -54,6 +53,4 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
-
-  meta.maintainers = with tensorfiles.maintainers; [tsandrini];
 }
