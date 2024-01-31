@@ -85,7 +85,12 @@
   networking.networkmanager.enable = true;
   networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
-  services.strongswan.enable = true;
+  services.strongswan = {
+    enable = true;
+    secrets = [
+      "ipsec.d/ipsec.nm-l2tp.secrets"
+    ];
+  };
 
   # Needed for gpg pinetry
   services.pcscd.enable = true;
@@ -134,7 +139,7 @@
       zotero # Collect, organize, cite, and share your research sources
       lapack # openblas with just the LAPACK C and FORTRAN ABI
       ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
-      zoom # Player for Z-Code, TADS and HUGO stories or games
+      zoom-us # Player for Z-Code, TADS and HUGO stories or games
 
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
