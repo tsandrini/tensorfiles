@@ -1,5 +1,8 @@
 # tensorfiles
 
+[![flake check](https://github.com/tsandrini/tensorfiles/actions/workflows/check-on-merge.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/check-on-merge.yml)
+[![FlakeHub](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub.yml)
+
 ## Table of Contents
 
 1. [About](1-about)
@@ -57,7 +60,7 @@ modules and their appropriate profiles.
    - TODOs: [org-agenda](https://orgmode.org/manual/Agenda-Views.html)
    - visualization: [org-roam-ui](https://github.com/org-roam/org-roam-ui)
    - anki connection: [org-anki-editor](https://github.com/louietan/anki-editor)
-     ![img](pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
+     ![img](parts/pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
 2. [zotero](https://www.zotero.org/): This is my backend for all of my
    bibliography as well as the individual `.pdf` files. As of now I keep them up
    to date between machines using [syncthing](https://syncthing.net/), but

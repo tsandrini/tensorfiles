@@ -1,4 +1,4 @@
-name: "Publish every Git push to master to FlakeHub"
+name: "FlakeHub"
 on:
   push:
     branches:
@@ -12,7 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-      - uses: "DeterminateSystems/flakehub-push@main"
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flakehub-push@main
         with:
           name: "tsandrini/tensorfiles"
           rolling: true

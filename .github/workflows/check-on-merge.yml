@@ -1,4 +1,4 @@
-name: "Run various checks on merge (pull) request"
+name: "flake check"
 
 on:
   pull_request:
