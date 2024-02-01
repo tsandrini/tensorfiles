@@ -35,7 +35,9 @@ in {
 
   imports = [(inputs.shadow-nix + "/import/system.nix")];
 
-  config = mkIf cfg.enable (mkMerge [
+  # The shadow module is unfortunately import by default, so we have to explicitly
+  # disable it
+  config = mkIf true (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       programs.shadow-client = {

@@ -12,15 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
+
   cfg = config.tensorfiles.hm.services.x11.redshift;
-  _ = mkOverride 700;
+  _ = mkOverrideAtHmModuleLevel;
 in {
   options.tensorfiles.hm.services.x11.redshift = with types; {
     enable = mkEnableOption (mdDoc ''
@@ -49,4 +51,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

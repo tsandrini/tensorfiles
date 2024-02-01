@@ -45,7 +45,7 @@
   ];
 
   languages.nix.enable = true;
-  difftastic.enable = true;
+  # difftastic.enable = true;
   devcontainer.enable = true; # if anyone needs it
   devenv.flakesIntegration = true;
 

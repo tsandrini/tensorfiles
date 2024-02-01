@@ -27,10 +27,10 @@ in {
 
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
-    profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
-    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake inputs;};
-    profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {inherit localFlake;};
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma.nix {inherit localFlake inputs;};
+    profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {inherit localFlake;};
+    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake inputs;};
+    profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
 
     # -- programs --
     programs_shadow-nix = importApply ./programs/shadow-nix.nix {inherit localFlake inputs;};
@@ -38,12 +38,10 @@ in {
     # -- security --
 
     # -- services --
-    ## -- networking --
+    # services_x11_desktop-managers_plasma6 = import ./services/x11/desktop-managers/plasma6.nix;
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {inherit localFlake;};
     services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
-    ### -- window-managers --
     services_x11_desktop-managers_startx-home-manager = importApply ./services/x11/desktop-managers/startx-home-manager.nix {inherit localFlake;};
-    # services_x11_desktop-managers_plasma6 = import ./services/x11/desktop-managers/plasma6.nix;
 
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};

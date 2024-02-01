@@ -13,15 +13,20 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
-  inputs,
   system,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
+
   cfg = config.tensorfiles.hm.programs.spicetify;
+  _ = mkOverrideAtHmModuleLevel;
 
   spicePkgs = inputs.spicetify-nix.packages.${system}.default;
 in {
@@ -37,9 +42,9 @@ in {
     # |----------------------------------------------------------------------| #
     {
       programs.spicetify = {
-        enable = true;
-        theme = spicePkgs.themes.catppuccin;
-        colorScheme = "mocha";
+        enable = _ true;
+        theme = _ spicePkgs.themes.catppuccin;
+        colorScheme = _ "mocha";
 
         enabledExtensions = with spicePkgs.extensions; [
           fullAppDisplay
@@ -52,4 +57,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

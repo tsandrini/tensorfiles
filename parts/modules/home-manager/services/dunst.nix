@@ -12,25 +12,27 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit
+    (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkPywalEnableOption
+    ;
 
   cfg = config.tensorfiles.hm.services.dunst;
-  _ = mkOverride 700;
+  _ = mkOverrideAtHmModuleLevel;
 
   pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
 in {
-  options.tensorfiles.hm.services.dunst = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.services.dunst = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -162,4 +164,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

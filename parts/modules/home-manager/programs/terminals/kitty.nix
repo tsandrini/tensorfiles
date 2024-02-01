@@ -13,20 +13,20 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
   pkgs,
-  self,
-  inputs,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.terminals.kitty;
-  _ = mkOverride 700;
+  _ = mkOverrideAtHmModuleLevel;
 
   nvimScrollbackCheck = cfg.nvim-scrollback.enable && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.neovim");
 in {
@@ -104,4 +104,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

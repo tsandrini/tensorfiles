@@ -13,21 +13,26 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
   pkgs,
-  self,
-  inputs,
   system,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit
+    (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkImpermanenceEnableOption
+    ;
 
   cfg = config.tensorfiles.hm.programs.editors.emacs-doom;
-  _ = mkOverride 700;
+  _ = mkOverrideAtHmModuleLevel;
 
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence")
@@ -41,8 +46,7 @@ with lib; let
   emacsPkg = with pkgs; ((emacsPackagesFor emacs-unstable).emacsWithPackages
     (epkgs: [epkgs.vterm]));
 in {
-  options.tensorfiles.hm.programs.editors.emacs-doom = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.editors.emacs-doom = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -159,7 +163,7 @@ in {
 
       services.emacs = {
         enable = _ true;
-        package = emacsPkg;
+        package = _ emacsPkg;
         startWithUserSession = _ "graphical";
       };
 
@@ -189,4 +193,6 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }
