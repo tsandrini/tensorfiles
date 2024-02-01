@@ -13,15 +13,19 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
-  inputs,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.programs.shadow-nix;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.programs.shadow-nix = with types; {
     enable = mkEnableOption (mdDoc ''
@@ -31,7 +35,7 @@ in {
 
   imports = [(inputs.shadow-nix + "/import/system.nix")];
 
-  config = mkIf true (mkMerge [
+  config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       programs.shadow-client = {
@@ -41,4 +45,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

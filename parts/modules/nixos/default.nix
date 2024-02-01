@@ -12,37 +12,48 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-_: {
+{
+  config,
+  inputs,
+  self,
+  ...
+}: let
+  inherit (inputs.flake-parts.lib) importApply;
+  localFlake = self;
+in {
   flake.nixosModules = {
     # -- misc --
-    misc_nix = import ./misc/nix.nix;
+    misc_nix = importApply ./misc/nix.nix {inherit inputs localFlake;};
 
     # -- profiles --
-    profiles_base = import ./profiles/base.nix;
-    profiles_minimal = import ./profiles/minimal.nix;
-    profiles_headless = import ./profiles/headless.nix;
-    profiles_graphical-startx-home-manager = import ./profiles/graphical-startx-home-manager.nix;
-    profiles_graphical-plasma = import ./profiles/graphical-plasma.nix;
+    profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
+    profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
+    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake inputs;};
+    profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {inherit localFlake;};
+    profiles_graphical-plasma = importApply ./profiles/graphical-plasma.nix {inherit localFlake inputs;};
 
     # -- programs --
-    programs_shadow-nix = import ./programs/shadow-nix.nix;
+    programs_shadow-nix = importApply ./programs/shadow-nix.nix {inherit localFlake inputs;};
 
     # -- security --
 
     # -- services --
     ## -- networking --
-    services_networking_networkmanager = import ./services/networking/networkmanager.nix;
-    services_networking_ssh = import ./services/networking/ssh.nix;
+    services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {inherit localFlake;};
+    services_networking_ssh = importApply ./services/networking/ssh.nix {inherit localFlake;};
     ### -- window-managers --
-    services_x11_desktop-managers_startx-home-manager = import ./services/x11/desktop-managers/startx-home-manager.nix;
+    services_x11_desktop-managers_startx-home-manager = importApply ./services/x11/desktop-managers/startx-home-manager.nix {inherit localFlake;};
     # services_x11_desktop-managers_plasma6 = import ./services/x11/desktop-managers/plasma6.nix;
 
     # -- system --
-    system_impermanence = import ./system/impermanence.nix;
-    system_users = import ./system/users.nix;
+    system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};
+    system_users = importApply ./system/users.nix {
+      inherit localFlake;
+      inherit (config.secrets) secretsPath pubkeys;
+    };
 
     # -- tasks --
-    tasks_nix-garbage-collect = import ./tasks/nix-garbage-collect.nix;
-    tasks_system-autoupgrade = import ./tasks/system-autoupgrade.nix;
+    tasks_nix-garbage-collect = importApply ./tasks/nix-garbage-collect.nix {inherit localFlake;};
+    tasks_system-autoupgrade = importApply ./tasks/system-autoupgrade.nix {inherit localFlake;};
   };
 }

@@ -13,26 +13,34 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  secretsPath,
+  pubkeys,
+}: {
   config,
   lib,
   hostName,
-  secretsPath,
-  pubkeys,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) isModuleLoadedAndEnabled mapToAttrsAndMerge;
+  inherit
+    (localFlake.lib)
+    mkOverrideAtModuleLevel
+    isModuleLoadedAndEnabled
+    mapToAttrsAndMerge
+    mkImpermanenceEnableOption
+    mkUsersSettingsOption
+    mkAgenixEnableOption
+    ;
 
   cfg = config.tensorfiles.system.users;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in {
   # TODO move bluetooth dir to hardware
-  # TODO move .gpg and .ssh to ssh-agent? or not?
-  options.tensorfiles.system.users = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.system.users = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that sets up the basis for the userspace, that is
       declarative management, basis for the home directories and also
@@ -77,9 +85,11 @@ in {
       };
 
       authorizedKeys = {
-        enable = mkAlreadyEnabledOption (mdDoc ''
-          TODO
-        '');
+        enable =
+          mkEnableOption (mdDoc ''
+            TODO
+          '')
+          // {default = true;};
 
         keysRaw = mkOption {
           type = listOf str;
@@ -154,4 +164,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

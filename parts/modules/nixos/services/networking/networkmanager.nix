@@ -12,17 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
   ...
 }:
 with builtins;
 with lib; let
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit (localFlake.lib) mkOverrideAtModuleLevel isModuleLoadedAndEnabled mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.services.networking.networkmanager;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -30,8 +30,7 @@ with lib; let
     then config.tensorfiles.system.impermanence
     else {};
 in {
-  options.tensorfiles.services.networking.networkmanager = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.services.networking.networkmanager = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the networkmanager service.
     '');
@@ -55,4 +54,6 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }
