@@ -15,9 +15,7 @@
 {
   lib,
   inputs,
-  projectPath,
   withSystem,
-  self,
   config,
   ...
 }: let
@@ -31,9 +29,8 @@
       inherit (args) pkgs;
       extraSpecialArgs =
         {
-          inherit (args) system self' inputs';
-          inherit inputs home projectPath self;
-          inherit (config.secrets) secretsPath pubkeys;
+          inherit (args) system;
+          inherit inputs home;
         }
         // extraSpecialArgs;
       modules =

@@ -14,7 +14,8 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   pkgs,
-  inputs',
+  inputs,
+  system,
   ...
 }: {
   tensorfiles.hm = {
@@ -73,6 +74,6 @@
     iotop
     unrar
     usbutils
-    inputs'.nh.packages.default
+    inputs.nh.packages.${system}.default
   ];
 }

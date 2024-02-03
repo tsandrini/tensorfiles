@@ -15,8 +15,12 @@
 {
   config,
   lib,
+  self,
+  inputs,
   ...
-}: {
+}: let
+  localFlake = self;
+in {
   options.secrets = with lib.types; {
     secretsPath = lib.mkOption {
       type = path;
@@ -55,11 +59,10 @@
     secrets.pubkeys = (import config.secrets.pubkeysFile) // config.secrets.extraPubkeys;
 
     flake.nixosModules.security_agenix = {
-      lib,
       config,
-      inputs',
-      inputs,
+      lib,
       pkgs,
+      system,
       ...
     }:
       with builtins;
@@ -81,26 +84,23 @@
 
         config = mkIf cfg.enable {
           environment.systemPackages = [
-            inputs'.agenix.packages.default
+            inputs.agenix.packages.${system}.default
             pkgs.age
           ];
 
           age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
         };
 
-        meta.maintainers = with tensorfiles.maintainers; [tsandrini];
+        meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
       };
 
     flake.homeModules.security_agenix = {
       config,
       lib,
-      self,
-      inputs,
       ...
     }:
       with builtins;
       with lib; let
-        tensorfiles = self.lib;
         cfg = config.tensorfiles.hm.security.agenix;
       in {
         options.tensorfiles.hm.security.agenix = with types; {
@@ -120,7 +120,7 @@
           age.identityPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
         };
 
-        meta.maintainers = with tensorfiles.maintainers; [tsandrini];
+        meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
       };
   };
 }

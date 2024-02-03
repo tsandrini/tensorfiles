@@ -13,18 +13,21 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.misc.nix;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
-  # TODO Modularize unstable/stable branches into an enum option
   options.tensorfiles.misc.nix = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles defaults regarding nix
@@ -74,4 +77,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

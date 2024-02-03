@@ -12,19 +12,21 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.tasks.nix-garbage-collect;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
   options.tensorfiles.tasks.nix-garbage-collect = with types; {
     enable = mkEnableOption (mdDoc ''
-      Enables NixOS module that configures the task handling periodix nix store
+      Enables NixOS module that configures the task handling periodic nix store
       garbage collection.
     '');
   };
@@ -40,4 +42,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

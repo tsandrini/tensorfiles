@@ -12,20 +12,24 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit
+    (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkPywalEnableOption
+    mkImpermanenceEnableOption
+    ;
 
   cfg = config.tensorfiles.hm.programs.shells.zsh;
-  _ = mkOverride 700;
+  _ = mkOverrideAtHmModuleLevel;
 
   impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence =
@@ -34,8 +38,7 @@ with lib; let
     else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
-  options.tensorfiles.hm.programs.shells.zsh = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.shells.zsh = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the zsh shell.
     '');
@@ -252,4 +255,6 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

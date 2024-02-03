@@ -12,18 +12,19 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
+  hostName,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.tasks.system-autoupgrade;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
-  # TODO configure autoUpgrade.flake endpoint -- for example
-  # flake  = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
   options.tensorfiles.tasks.system-autoupgrade = with types; {
     enable = mkEnableOption (mdDoc ''
       Module enabling system wide nixpkgs & host autoupgrade
@@ -37,16 +38,22 @@ in {
     {
       system.autoUpgrade = {
         enable = _ true;
-        # flake = _ "github:tsandrini/tensorfiles#${hostName}";
-        channel = _ "https://nixos.org/channels/nixos-unstable";
+        flake = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
+        # channel = _ "https://nixos.org/channels/nixos-unstable";
         allowReboot = _ true;
         randomizedDelaySec = _ "5m";
         rebootWindow = {
           lower = _ "02:00";
           upper = _ "05:00";
         };
+        flags = [
+          "--impure"
+          "--accept-flake-config"
+        ];
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

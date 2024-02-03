@@ -12,7 +12,16 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{lib, ...}: {
+{
+  config,
+  lib,
+  inputs,
+  self,
+  ...
+}: let
+  inherit (inputs.flake-parts.lib) importApply;
+  localFlake = self;
+in {
   options.flake.homeModules = lib.mkOption {
     type = with lib.types; lazyAttrsOf unspecified;
     default = {};
@@ -20,58 +29,55 @@
 
   config.flake.homeModules = {
     # -- hardware --
-    hardware_nixGL = import ./hardware/nixGL.nix;
+    hardware_nixGL = importApply ./hardware/nixGL.nix {inherit localFlake inputs;};
 
     # -- misc --
-    misc_xdg = import ./misc/xdg.nix;
-    misc_gtk = import ./misc/gtk.nix;
+    misc_gtk = importApply ./misc/gtk.nix {inherit localFlake;};
+    misc_xdg = importApply ./misc/xdg.nix {inherit localFlake;};
 
     # -- profiles --
-    profiles_base = import ./profiles/base.nix;
-    profiles_minimal = import ./profiles/minimal.nix;
-    profiles_headless = import ./profiles/headless.nix;
-    profiles_graphical-xmonad = import ./profiles/graphical-xmonad.nix;
-    profiles_graphical-plasma = import ./profiles/graphical-plasma;
+    profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
+    profiles_graphical-plasma = importApply ./profiles/graphical-plasma {inherit localFlake inputs;};
+    profiles_graphical-xmonad = importApply ./profiles/graphical-xmonad.nix {inherit localFlake;};
+    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake;};
+    profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
 
     # -- programs --
-    programs_direnv = import ./programs/direnv.nix;
-    programs_gpg = import ./programs/gpg.nix;
-    programs_ssh = import ./programs/ssh.nix;
-    programs_dmenu = import ./programs/dmenu.nix;
-    programs_git = import ./programs/git.nix;
-    programs_newsboat = import ./programs/newsboat.nix;
-    programs_btop = import ./programs/btop.nix;
-    programs_spicetify = import ./programs/spicetify.nix;
-    programs_pywal = import ./programs/pywal.nix;
-    programs_thunderbird = import ./programs/thunderbird.nix;
-    programs_shadow-nix = import ./programs/shadow-nix.nix;
-    ## -- editors --
-    programs_editors_neovim = import ./programs/editors/neovim.nix;
-    programs_editors_emacs-doom = import ./programs/editors/emacs-doom.nix;
-    ## -- shells --
-    programs_shells_zsh = import ./programs/shells/zsh;
-    ## -- file-managers --
-    programs_file-managers_lf = import ./programs/file-managers/lf;
-    programs_file-managers_yazi = import ./programs/file-managers/yazi.nix;
-    ## -- terminals --
-    programs_terminals_kitty = import ./programs/terminals/kitty.nix;
-    programs_terminals_alacritty = import ./programs/terminals/alacritty.nix;
-    ## -- browsers --
-    programs_browsers_firefox = import ./programs/browsers/firefox;
+    programs_browsers_firefox = importApply ./programs/browsers/firefox {inherit localFlake inputs;};
+    programs_btop = importApply ./programs/btop.nix {inherit localFlake;};
+    programs_direnv = importApply ./programs/direnv.nix {inherit localFlake;};
+    programs_dmenu = importApply ./programs/dmenu.nix {inherit localFlake;};
+    programs_editors_emacs-doom = importApply ./programs/editors/emacs-doom.nix {inherit localFlake inputs;};
+    programs_editors_neovim = importApply ./programs/editors/neovim.nix {inherit localFlake inputs;};
+    programs_file-managers_lf = importApply ./programs/file-managers/lf {inherit localFlake;};
+    programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix {inherit localFlake;};
+    programs_git = importApply ./programs/git.nix {inherit localFlake;};
+    programs_gpg = importApply ./programs/gpg.nix {inherit localFlake;};
+    programs_newsboat = importApply ./programs/newsboat.nix {inherit localFlake;};
+    programs_pywal = importApply ./programs/pywal.nix {inherit localFlake;};
+    programs_shadow-nix = importApply ./programs/shadow-nix.nix {inherit localFlake inputs;};
+    programs_shells_zsh = importApply ./programs/shells/zsh {inherit localFlake;};
+    programs_spicetify = importApply ./programs/spicetify.nix {inherit localFlake inputs;};
+    programs_ssh = importApply ./programs/ssh.nix {
+      inherit (config.secrets) secretsPath pubkeys;
+      inherit localFlake;
+    };
+    programs_terminals_alacritty = importApply ./programs/terminals/alacritty.nix {inherit localFlake;};
+    programs_terminals_kitty = importApply ./programs/terminals/kitty.nix {inherit localFlake inputs;};
+    programs_thunderbird = importApply ./programs/thunderbird.nix {inherit localFlake;};
 
     # -- security --
 
     # -- services --
-    services_keepassxc = import ./services/keepassxc.nix;
-    services_dunst = import ./services/dunst.nix;
-    services_pywalfox-native = import ./services/pywalfox-native.nix;
-    ## -- x11 --
-    services_x11_picom = import ./services/x11/picom.nix;
-    services_x11_redshift = import ./services/x11/redshift.nix;
-    services_x11_window-managers_xmonad = import ./services/x11/window-managers/xmonad;
+    services_dunst = importApply ./services/dunst.nix {inherit localFlake;};
+    services_keepassxc = importApply ./services/keepassxc.nix {inherit localFlake;};
+    services_pywalfox-native = importApply ./services/pywalfox-native.nix {inherit localFlake inputs;};
+    services_x11_picom = importApply ./services/x11/picom.nix {inherit localFlake;};
+    services_x11_redshift = importApply ./services/x11/redshift.nix {inherit localFlake;};
+    services_x11_window-managers_xmonad = importApply ./services/x11/window-managers/xmonad {inherit localFlake;};
 
     # -- system --
-    system_impermanence = import ./system/impermanence.nix;
+    system_impermanence = importApply ./system/impermanence.nix {inherit localFlake inputs;};
 
     # -- tasks --
   };

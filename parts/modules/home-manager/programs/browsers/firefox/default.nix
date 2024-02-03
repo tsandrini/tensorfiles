@@ -13,20 +13,25 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
   pkgs,
-  self,
-  inputs,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
-  _ = mkOverride 700;
+  inherit
+    (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkImpermanenceEnableOption
+    ;
 
   cfg = config.tensorfiles.hm.programs.browsers.firefox;
+  _ = mkOverrideAtHmModuleLevel;
 
   plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
 
@@ -37,8 +42,7 @@ with lib; let
     else {};
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
 in {
-  options.tensorfiles.hm.programs.browsers.firefox = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.programs.browsers.firefox = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -264,4 +268,6 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }

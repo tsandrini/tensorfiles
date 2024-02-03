@@ -12,20 +12,23 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
+{localFlake}: {
   config,
   lib,
   pkgs,
-  self,
   ...
 }:
 with builtins;
 with lib; let
-  tensorfiles = self.lib;
-  inherit (tensorfiles) isModuleLoadedAndEnabled;
+  inherit
+    (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkPywalEnableOption
+    ;
 
   cfg = config.tensorfiles.hm.services.x11.window-managers.xmonad;
-  _ = mkOverride 700;
+  _ = mkOverrideAtHmModuleLevel;
 
   pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
   dmenuCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.dmenu";
@@ -80,8 +83,7 @@ with lib; let
     echo "<icon=''${iconfile}/>"
   '';
 in {
-  options.tensorfiles.hm.services.x11.window-managers.xmonad = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.hm.services.x11.window-managers.xmonad = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the xmonad window manager.
     '');
@@ -635,4 +637,6 @@ in {
     }
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }
