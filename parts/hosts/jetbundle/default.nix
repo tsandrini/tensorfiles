@@ -126,7 +126,6 @@
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "tomas.sandrini@seznam.cz";
-      LIBVA_DRIVER_NAME = "iHD";
     };
     programs.git.signing.key = "3E83AD690FA4F657";
 

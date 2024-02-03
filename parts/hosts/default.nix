@@ -15,8 +15,6 @@
 {
   lib,
   inputs,
-  self,
-  projectPath,
   withSystem,
   config,
   ...
@@ -30,9 +28,8 @@
   }: let
     baseSpecialArgs =
       {
-        inherit (args) system self' inputs';
-        inherit inputs self hostName projectPath;
-        inherit (config.secrets) secretsPath pubkeys;
+        inherit (args) system;
+        inherit inputs hostName;
       }
       // extraSpecialArgs;
   in

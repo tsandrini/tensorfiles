@@ -13,28 +13,31 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
+  localFlake,
+  inputs,
+}: {
   config,
   lib,
-  inputs,
   system,
   ...
 }:
 with builtins;
 with lib; let
+  inherit (localFlake.lib) mkOverrideAtModuleLevel;
+
   cfg = config.tensorfiles.programs.wayland.waybar;
-  _ = mkOverride 500;
+  _ = mkOverrideAtModuleLevel;
 in {
-  options.tensorfiles.programs.wayland.waybar = with types;
-  with tensorfiles.options; {
+  options.tensorfiles.programs.wayland.waybar = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the waybar wayland bar.
     '');
 
-    home = {
-      enable = mkHomeEnableOption;
+    # home = {
+    #   enable = mkHomeEnableOption;
 
-      settings = mkHomeSettingsOption (_user: {});
-    };
+    #   settings = mkHomeSettingsOption (_user: {});
+    # };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -181,4 +184,6 @@ in {
     })
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
 }
