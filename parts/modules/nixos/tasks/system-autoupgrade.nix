@@ -39,13 +39,17 @@ in {
       system.autoUpgrade = {
         enable = _ true;
         flake = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
-        channel = _ "https://nixos.org/channels/nixos-unstable";
+        # channel = _ "https://nixos.org/channels/nixos-unstable";
         allowReboot = _ true;
         randomizedDelaySec = _ "5m";
         rebootWindow = {
           lower = _ "02:00";
           upper = _ "05:00";
         };
+        flags = [
+          "--impure"
+          "--accept-flake-config"
+        ];
       };
     }
     # |----------------------------------------------------------------------| #
