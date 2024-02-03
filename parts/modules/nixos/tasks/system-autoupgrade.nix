@@ -15,6 +15,7 @@
 {localFlake}: {
   config,
   lib,
+  hostName,
   ...
 }:
 with builtins;
@@ -24,8 +25,6 @@ with lib; let
   cfg = config.tensorfiles.tasks.system-autoupgrade;
   _ = mkOverrideAtModuleLevel;
 in {
-  # TODO configure autoUpgrade.flake endpoint -- for example
-  # flake  = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
   options.tensorfiles.tasks.system-autoupgrade = with types; {
     enable = mkEnableOption (mdDoc ''
       Module enabling system wide nixpkgs & host autoupgrade
@@ -38,8 +37,8 @@ in {
     # |----------------------------------------------------------------------| #
     {
       system.autoUpgrade = {
-        enable = _ false;
-        # flake = _ "github:tsandrini/tensorfiles#${hostName}";
+        enable = _ true;
+        flake = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
         channel = _ "https://nixos.org/channels/nixos-unstable";
         allowReboot = _ true;
         randomizedDelaySec = _ "5m";
