@@ -98,20 +98,23 @@ in {
           isDefault = _ true;
           extensions = with pkgs.nur.repos.rycee.firefox-addons; ([
               # ~ Privacy & content blocking
-              ublock-origin
-              skip-redirect
-              multi-account-containers
+              ublock-origin # Finally, an efficient wide-spectrum content blocker. Easy on CPU and memory.
+              skip-redirect # This add-on tries to extract the final url from the intermediary url and goes there straight away if successful.
+              multi-account-containers # Firefox Multi-Account Containers lets you keep parts of your online life separated into color-coded tabs.
 
               # ~ Utils
-              keepassxc-browser
-              tridactyl
-              behave
-              header-editor
-              pywalfox
-              enhancer-for-youtube
+              keepassxc-browser # Official browser plugin for the KeePassXC password manager
+              tree-style-tab # Show tabs like a tree.
+              tab-unload-for-tree-style-tab # Tab unload options for Tree Style Tab.
+              tridactyl # Vim, but in your browser. Replace Firefox’s control mechanism with one modelled on Vim.
+              behave # A monitoring browser extension for pages acting as bad boys
+              header-editor # Manage browser’s requests, include modify the request headers and response headers, redirect requests, cancel requests
+              pywalfox # Dynamic theming of Firefox using your Pywal colors
+              enhancer-for-youtube # Take control of YouTube and boost your user experience!
 
               # DEV related
-              vue-js-devtools
+              vue-js-devtools # DevTools extension for debugging Vue.js applications.
+              react-devtools # React Developer Tools is a tool that allows you to inspect a React tree, including the component hierarchy, props, state, and more.
             ]
             ++ (optional plasmaCheck plasma-integration));
           bookmarks = import ./bookmarks.nix;
