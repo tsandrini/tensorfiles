@@ -45,6 +45,9 @@ The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/te
   stuff.
 - Isolate home manager functionality in such a way so it can be used in non
   NixOS environments 👥
+- I prefer to only use `inputs` and `system` variables instead of the more
+  convenient `inputs'` and `self'` of flake-parts due to the code being easier
+  to copy and transfer to older non flake-parts codebases.
 
 ## 3. Software 🖥️
 
