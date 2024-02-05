@@ -88,8 +88,8 @@ in {
         ## Optional dependencies
         fd # faster projectile indexing
         imagemagick # for image-dired
-        # (mkIf (config.programs.gnupg.agent.enable) # TODO
-        #   pinentry_emacs) # in-emacs gnupg prompts
+        (mkIf (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.gpg")
+          pinentry-emacs) # in-emacs gnupg prompts
         zstd # for undo-fu-session/undo-tree compression
 
         ## Module dependencies
@@ -128,7 +128,8 @@ in {
         ansible # Radically simple IT automation
         ansible-lint # Best practices checker for Ansible
         clang-tools # Standalone command line tools for C++ development
-        shfmt
+        shfmt # A shell parser and formatter
+        nodePackages.vscode-json-languageserver # JSON language server
         libxml2 # XML parsing library for C
         libxmlb # A library to help create and query binary XML blobs
         haskell-language-server # LSP server for GHC
