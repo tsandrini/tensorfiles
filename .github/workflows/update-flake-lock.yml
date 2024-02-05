@@ -15,7 +15,6 @@ jobs:
       - name: Update flake.lock
         uses: DeterminateSystems/update-flake-lock@main
         with:
-          pr-reviewers: tsandrini
           pr-assignees: tsandrini
           pr-title: "Automated action - Update flake.lock" # Title of PR to be created
           pr-labels: | # Labels to be set on the PR
