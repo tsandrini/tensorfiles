@@ -125,6 +125,8 @@ in {
         nix-serve-ng # A drop-in replacement for nix-serve that's faster and more stable
         nix-prefetch-scripts # Collection of all the nix-prefetch-* scripts which may be used to obtain source hashes
         nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
+        nh # Yet another nix cli helper
+        disko # Declarative disk partitioning and formatting using nix
       ];
     }
     # |----------------------------------------------------------------------| #

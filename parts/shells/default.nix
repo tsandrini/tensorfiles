@@ -23,9 +23,6 @@
     devenv.shells.dev = import ./dev.nix {
       inherit pkgs system;
       treefmt = config.treefmt.build.wrapper;
-      nh = inputs.nh.packages.${system}.default;
-      inherit (inputs.disko.packages.${system}) disko;
-      inherit (inputs.disko.packages.${system}) disko-doc;
       inherit (inputs.plasma-manager.packages.${system}) rc2nix;
     };
   };
