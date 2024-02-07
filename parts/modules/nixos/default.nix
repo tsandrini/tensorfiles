@@ -29,7 +29,7 @@ in {
     profiles_base = importApply ./profiles/base.nix {inherit localFlake;};
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma.nix {inherit localFlake inputs;};
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {inherit localFlake;};
-    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake inputs;};
+    profiles_headless = importApply ./profiles/headless.nix {inherit localFlake;};
     profiles_minimal = importApply ./profiles/minimal.nix {inherit localFlake;};
 
     # -- programs --
