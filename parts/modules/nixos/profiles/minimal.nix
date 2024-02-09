@@ -117,6 +117,7 @@ in {
 
         # -- NIX UTILS --
         nix-index # A files database for nixpkgs
+        nix-ld # Run unpatched dynamic binaries on NixOS
         nix-du # A tool to determine which gc-roots take space in your nix store
         nix-tree # Interactively browse a Nix store paths dependencies
         nix-health # Check the health of your Nix setup

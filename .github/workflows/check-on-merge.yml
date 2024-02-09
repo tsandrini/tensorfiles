@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: DeterminateSystems/nix-installer-action@main
-      # - uses: DeterminateSystems/magic-nix-cache-action@main
-      - run: nix flake check --impure --show-trace --accept-flake-config
+      - uses: DeterminateSystems/magic-nix-cache-action@main
+      - run: nix flake check --no-build --impure --show-trace --accept-flake-config
       - name: Check Nix flake Nixpkgs inputs
         uses: DeterminateSystems/flake-checker-action@main
