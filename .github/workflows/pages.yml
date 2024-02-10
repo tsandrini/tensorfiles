@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["null"] # disable for now
+    branches: ["main"] # disable for now
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -23,14 +23,12 @@ concurrency:
 
 jobs:
   build-and-deploy:
+    if: false # TODO docs derivation currently not maintained
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Complete nix setup
-        uses: DeterminateSystems/nix-installer-action@main
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/magic-nix-cache-action@main
 
       - name: Build docs using Nix
         run: nix build .#docs
