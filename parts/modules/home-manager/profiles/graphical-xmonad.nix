@@ -37,8 +37,6 @@ in {
       tensorfiles.hm = {
         profiles.headless.enable = _ true;
 
-        hardware.nixGL.enable = _ true;
-
         misc.gtk.enable = _ true;
 
         programs = {

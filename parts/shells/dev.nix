@@ -15,43 +15,44 @@
 {
   pkgs,
   treefmt,
-  nh,
-  disko,
-  disko-doc,
   rc2nix,
   ...
 }: {
   packages = with pkgs; [
-    # -- nix --
-    nil # LSP
-    alejandra # formatting
-    statix # static code analysis
-    deadnix # find dead nix code
-    nix-output-monitor # readable derivation outputs
-    # -- misc --
-    markdownlint-cli # markdown linting
-    nodePackages.prettier
-    typos # spell checking
-    # -- git, flakehub --
-    commitizen
-    cz-cli
-    fh # flakehub cli
+    # -- NIX UTILS --
+    nil # Yet another language server for Nix
+    alejandra # The Uncompromising Nix Code Formatter
+    statix # Lints and suggestions for the nix programming language
+    deadnix # Find and remove unused code in .nix source files
+    nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
 
-    treefmt
-    nh
-    disko
-    disko-doc
-    rc2nix
+    # -- GIT RELATED UTILS --
+    commitizen # Tool to create committing rules for projects, auto bump versions, and generate changelogs
+    cz-cli # The commitizen command line utility
+    fh # The official FlakeHub CLI
+    gh # GitHub CLI tool
+
+    # -- LANGUAGE RELATED UTILS --
+    markdownlint-cli # Command line interface for MarkdownLint
+    nodePackages.prettier # Prettier is an opinionated code formatter
+    typos # Source code spell checker
+    treefmt # one CLI to format the code tree
+
+    # -- NIXOS UTILS --
+    nh # Yet another nix cli helper
+    disko # Declarative disk partitioning and formatting using nix
+    rc2nix # KDE: Convert rc files to nix expressions
   ];
 
   languages.nix.enable = true;
-  # difftastic.enable = true;
+  difftastic.enable = true;
   devcontainer.enable = true; # if anyone needs it
   devenv.flakesIntegration = true;
 
   pre-commit = {
     hooks = {
       treefmt.enable = true;
+
       # Everything below is stuff that I couldn't make work with treefmt
       nil.enable = true;
       commitizen.enable = true;

@@ -35,11 +35,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nh = {
-      url = "github:viperML/nh";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -67,18 +62,6 @@
       url = "github:nix-community/nixpkgs-wayland";
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
     };
-    # hyprland = {
-    #   url = "github:hyprwm/Hyprland";
-    #   #inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # anyrun = {
-    #   url = "github:Kirottu/anyrun";
-    #   #inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # ags = {
-    #   url = "github:Aylur/ags";
-    #   #inputs.nixpkgs.follows = "nixpkgs";
-    # };
 
     kitty-scrollback-nvim = {
       url = "github:mikesmithgh/kitty-scrollback.nvim";
@@ -103,6 +86,19 @@
     };
 
     nix-gaming.url = "github:fufexan/nix-gaming";
+
+    # hyprland = {
+    #   url = "github:hyprwm/Hyprland";
+    #   #inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # anyrun = {
+    #   url = "github:Kirottu/anyrun";
+    #   #inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # ags = {
+    #   url = "github:Aylur/ags";
+    #   #inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   # Here you can add additional binary cache substituers that you trust.
@@ -114,7 +110,6 @@
       "https://nix-community.cachix.org/"
       "https://devenv.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
-      "https://viperml.cachix.org"
       "https://nix-gaming.cachix.org"
       # "https://hyprland.cachix.org"
       # "https://anyrun.cachix.org"
@@ -124,7 +119,6 @@
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
-      "viperml.cachix.org-1:qZhKBMTfmcLL+OG6fj/hzsMEedgKvZVFRRAhq7j8Vh8="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       # "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="

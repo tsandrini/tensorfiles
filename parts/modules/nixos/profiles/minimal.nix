@@ -102,7 +102,7 @@ in {
         lzop # Fast file compressor
         p7zip # A new p7zip fork with additional codecs and improvements (forked from https://sourceforge.net/projects/p7zip/)
         rar # Utility for RAR archives
-        unrar # Utility for RAR archives
+        # unrar # Utility for RAR archives # NOTE collision with rar
         rzip # Compression program
         unzip # An extraction utility for archives compressed in .zip format
         xz # A general-purpose data compression software, successor of LZMA
@@ -117,14 +117,17 @@ in {
 
         # -- NIX UTILS --
         nix-index # A files database for nixpkgs
+        nix-ld # Run unpatched dynamic binaries on NixOS
         nix-du # A tool to determine which gc-roots take space in your nix store
         nix-tree # Interactively browse a Nix store paths dependencies
         nix-health # Check the health of your Nix setup
         nix-update # Swiss-knife for updating nix packages
-        nix-serve # A utility for sharing a Nix store as a binary cache
+        # nix-serve # A utility for sharing a Nix store as a binary cache # NOTE conflict with serve-ng
         nix-serve-ng # A drop-in replacement for nix-serve that's faster and more stable
         nix-prefetch-scripts # Collection of all the nix-prefetch-* scripts which may be used to obtain source hashes
         nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
+        nh # Yet another nix cli helper
+        disko # Declarative disk partitioning and formatting using nix
       ];
     }
     # |----------------------------------------------------------------------| #

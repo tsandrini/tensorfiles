@@ -2,6 +2,8 @@
 
 [![flake check](https://github.com/tsandrini/tensorfiles/actions/workflows/check-on-merge.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/check-on-merge.yml)
 [![FlakeHub](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub.yml)
+[![update-flake-lock](https://github.com/tsandrini/tensorfiles/actions/workflows/update-flake-lock.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/update-flake-lock.yml)
+[![Deploy static content to Pages](https://github.com/tsandrini/tensorfiles/actions/workflows/pages.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/pages.yml)
 
 ## Table of Contents
 
