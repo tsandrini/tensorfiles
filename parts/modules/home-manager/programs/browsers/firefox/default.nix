@@ -116,7 +116,7 @@ in {
               react-devtools # React Developer Tools is a tool that allows you to inspect a React tree, including the component hierarchy, props, state, and more.
             ]
             ++ (optional plasmaCheck plasma-integration));
-          bookmarks = import ./bookmarks.nix;
+          # bookmarks = import ./bookmarks.nix;
           search = {
             force = _ true;
             default = _ "Kagi";
@@ -222,7 +222,7 @@ in {
             "services.sync.engine.prefs" = _ false;
             "services.sync.engine.history" = _ true;
             "services.sync.engine.creditcards" = _ false;
-            "services.sync.engine.bookmarks" = _ false;
+            "services.sync.engine.bookmarks" = _ true;
             "services.sync.engine.tabs" = _ true;
             "services.sync.engine.addons" = _ false;
             "services.sync.declinedEngines" =
@@ -243,6 +243,12 @@ in {
               user_pref("browser.startup.page", 3);
               user_pref("privacy.clearOnShutdown.history", false);
               user_pref("privacy.clearOnShutdown.downloads", false);
+
+              // TODO: think off a better way to declaratively manage
+              // cookie exepctions
+              user_pref("privacy.clearOnShutdown.cookies", false);
+              user_pref("privacy.clearOnShutdown.cache", false);
+              user_pref("privacy.clearOnShutdown.sessions", false);
 
               // 4504: TODO figure out some alternative since I cannot stand
               // how it works by default but I'd like to have it
