@@ -1,4 +1,4 @@
-# --- parts/modules/nixos/profiles/graphical-plasma.nix
+# --- parts/modules/nixos/profiles/graphical-plasma5.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -26,10 +26,10 @@ with builtins;
 with lib; let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.profiles.graphical-plasma;
+  cfg = config.tensorfiles.profiles.graphical-plasma5;
   _ = mkOverrideAtProfileLevel;
 in {
-  options.tensorfiles.profiles.graphical-plasma = with types; {
+  options.tensorfiles.profiles.graphical-plasma5 = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');

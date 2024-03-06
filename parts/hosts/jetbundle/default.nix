@@ -52,7 +52,7 @@
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    profiles.graphical-plasma.enable = true;
+    profiles.graphical-plasma5.enable = true;
 
     security.agenix.enable = true;
     programs.shadow-nix.enable = true;
