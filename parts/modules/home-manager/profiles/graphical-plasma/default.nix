@@ -66,7 +66,7 @@ in {
         };
       };
 
-      services.rsibreak.enable = _ true;
+      services.rsibreak.enable = _ false;
 
       home.sessionVariables = {
         # Default programs

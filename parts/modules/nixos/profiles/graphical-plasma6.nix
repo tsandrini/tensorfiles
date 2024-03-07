@@ -43,6 +43,7 @@ in {
       };
 
       environment.systemPackages = with pkgs; [
+        # -- GENERAL PACKAGES --
         libnotify
         notify-desktop
 
@@ -51,7 +52,14 @@ in {
 
         wireshark
 
-        # KDE stuff
+        # -- UTILS NEEDED FOR INFO-CENTER --
+        clinfo # Print all known information about all available OpenCL platforms and devices in the system
+        glxinfo # Test utilities for OpenGL
+        vulkan-tools # Khronos official Vulkan Tools and Utilities
+        wayland-utils # Wayland utilities (wayland-info)
+        aha # ANSI HTML Adapter
+
+        # -- KDE PACKAGES --
         kdePackages.ark # Graphical file compression/decompression utility
         haruna # Open source video player built with Qt/QML and libmpv
         kdePackages.kate # Advanced text editor
@@ -89,7 +97,11 @@ in {
         kdePackages.kdepim-runtime
         kdePackages.kdepim-addons
         kdePackages.libkdepim
+
+        # TODO: akonadi not working due to missing qmysql connector? HElp?
         mariadb # An enhanced, drop-in replacement for MySQL, needed for akonadictl
+        libmysqlclient # Client library that can be used to connect to MySQL or MariaDB
+        libmysqlconnectorcpp # C++ library for connecting to mysql servers
 
         krita # A free and open source painting application
         kdePackages.kdenlive # Video editor
