@@ -112,8 +112,8 @@ in {
 
       services.xserver.enable = _ true;
       services.xserver.displayManager.sddm.enable = _ true;
-      services.xserver.desktopManager.plasma5.enable = _ true;
-      services.xserver.displayManager.defaultSession = _ "plasmawayland";
+      services.xserver.desktopManager.plasma6.enable = _ true;
+      services.xserver.displayManager.defaultSession = _ "plasma";
       programs.kdeconnect.enable = _ true;
 
       programs.partition-manager.enable = _ true;
