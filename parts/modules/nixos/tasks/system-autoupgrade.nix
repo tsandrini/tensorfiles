@@ -37,7 +37,7 @@ in {
     # |----------------------------------------------------------------------| #
     {
       system.autoUpgrade = {
-        enable = _ true;
+        enable = _ false;
         flake = _ "github:tsandrini/tensorfiles#${config.networking.hostName}";
         # channel = _ "https://nixos.org/channels/nixos-unstable";
         allowReboot = _ true;
