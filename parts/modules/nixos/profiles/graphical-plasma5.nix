@@ -1,4 +1,4 @@
-# --- parts/modules/nixos/profiles/graphical-plasma.nix
+# --- parts/modules/nixos/profiles/graphical-plasma5.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -26,10 +26,10 @@ with builtins;
 with lib; let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.profiles.graphical-plasma;
+  cfg = config.tensorfiles.profiles.graphical-plasma5;
   _ = mkOverrideAtProfileLevel;
 in {
-  options.tensorfiles.profiles.graphical-plasma = with types; {
+  options.tensorfiles.profiles.graphical-plasma5 = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
@@ -112,8 +112,8 @@ in {
 
       services.xserver.enable = _ true;
       services.xserver.displayManager.sddm.enable = _ true;
-      services.xserver.desktopManager.plasma5.enable = _ true;
-      services.xserver.displayManager.defaultSession = _ "plasmawayland";
+      services.xserver.desktopManager.plasma6.enable = _ true;
+      services.xserver.displayManager.defaultSession = _ "plasma";
       programs.kdeconnect.enable = _ true;
 
       programs.partition-manager.enable = _ true;

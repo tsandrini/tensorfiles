@@ -40,6 +40,7 @@
   };
 
   programs.gamemode.enable = true;
+  services.fwupd.enable = true;
 
   boot = {
     loader = {
