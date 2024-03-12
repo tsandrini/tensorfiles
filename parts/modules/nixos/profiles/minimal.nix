@@ -114,6 +114,7 @@ in {
         sqlitebrowser # DB Browser for SQLite
         libarchive # Multi-format archive and compression library
         libbtbb # Bluetooth baseband decoding library
+        adminer # Database management in a single PHP file
 
         # -- NIX UTILS --
         nix-index # A files database for nixpkgs

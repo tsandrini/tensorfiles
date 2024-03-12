@@ -50,7 +50,7 @@ in {
         maim # A command-line screenshot utility
 
         wireshark # Powerful network protocol analyzer
-        pgadmin4 # Administration and development platform for PostgreSQL
+        pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
         mqttui # Terminal client for MQTT
         mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
 
