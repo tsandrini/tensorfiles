@@ -16,6 +16,7 @@
   localFlake,
   inputs,
 }: {
+  pkgs,
   config,
   lib,
   ...
@@ -59,6 +60,10 @@ in {
         };
       };
 
+      home.packages = with pkgs; [
+        vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment. Should allow for easy usage of extensions without nix-specific modifications.
+      ];
+
       services.flameshot = {
         enable = _ true;
         settings = {
@@ -72,7 +77,7 @@ in {
         # Default programs
         BROWSER = _ "firefox";
         TERMINAL = _ "kitty";
-        IDE = _ "emacs";
+        IDE = _ "code";
       };
 
       fonts.fontconfig.enable = _ true;

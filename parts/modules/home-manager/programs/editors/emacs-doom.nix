@@ -103,8 +103,8 @@ in {
         texlive.combined.scheme-medium
         # :lang beancount
         fava # HACK Momentarily broken on nixos-unstable
-        nodejs-slim
         graphviz
+        nodejs_21
 
         # fonts
         emacs-all-the-icons-fonts
