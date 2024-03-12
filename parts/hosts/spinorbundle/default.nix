@@ -29,7 +29,12 @@
   imports = with inputs; [
     disko.nixosModules.disko
     nix-gaming.nixosModules.pipewireLowLatency
-    nix-gaming.nixosModules.steamCompat
+
+    # TODO fails with The option `programs.steam.extraCompatPackages' in
+    # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
+    # is already declared in
+    # `/nix/store/cqapfi5bvhzvarrbi2h1qrf2dav5r1nd-source/flake.nix#nixosModules.steamCompat'.
+    # nix-gaming.nixosModules.steamCompat
     ./hardware-configuration.nix
     ./disko.nix
   ];

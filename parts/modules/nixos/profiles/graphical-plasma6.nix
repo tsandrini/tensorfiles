@@ -44,13 +44,15 @@ in {
 
       environment.systemPackages = with pkgs; [
         # -- GENERAL PACKAGES --
-        libnotify
-        notify-desktop
+        libnotify # A library that sends desktop notifications to a notification daemon
+        notify-desktop # Little application that lets you send desktop notifications with one command
+        wl-clipboard # Command-line copy/paste utilities for Wayland
+        maim # A command-line screenshot utility
 
-        wl-clipboard
-        maim
-
-        wireshark
+        wireshark # Powerful network protocol analyzer
+        pgadmin4 # Administration and development platform for PostgreSQL
+        mqttui # Terminal client for MQTT
+        mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
 
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
@@ -97,11 +99,6 @@ in {
         kdePackages.kdepim-runtime
         kdePackages.kdepim-addons
         kdePackages.libkdepim
-
-        # TODO: akonadi not working due to missing qmysql connector? HElp?
-        mariadb # An enhanced, drop-in replacement for MySQL, needed for akonadictl
-        libmysqlclient # Client library that can be used to connect to MySQL or MariaDB
-        libmysqlconnectorcpp # C++ library for connecting to mysql servers
 
         krita # A free and open source painting application
         kdePackages.kdenlive # Video editor
