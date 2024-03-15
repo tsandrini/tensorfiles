@@ -18,21 +18,22 @@
   withSystem,
   config,
   ...
-}: let
-  mkHome = args: home: {
-    extraSpecialArgs ? {},
-    extraModules ? [],
-    extraOverlays ? [],
-    ...
-  }:
+}:
+let
+  mkHome =
+    args: home:
+    {
+      extraSpecialArgs ? { },
+      extraModules ? [ ],
+      extraOverlays ? [ ],
+      ...
+    }:
     inputs.home-manager.lib.homeManagerConfiguration {
       inherit (args) pkgs;
-      extraSpecialArgs =
-        {
-          inherit (args) system;
-          inherit inputs home;
-        }
-        // extraSpecialArgs;
+      extraSpecialArgs = {
+        inherit (args) system;
+        inherit inputs home;
+      } // extraSpecialArgs;
       modules =
         [
           {
@@ -46,24 +47,25 @@
         # instead of imports
         ++ (lib.attrValues config.flake.homeModules);
     };
-in {
+in
+{
   options.flake.homeConfigurations = lib.mkOption {
     type = with lib.types; lazyAttrsOf unspecified;
-    default = {};
+    default = { };
   };
 
   config = {
     flake.homeConfigurations = {
-      "tsandrini@jetbundle" = withSystem "x86_64-linux" (args:
+      "tsandrini@jetbundle" = withSystem "x86_64-linux" (
+        args:
         mkHome args "tsandrini@jetbundle" {
           extraOverlays = with inputs; [
             neovim-nightly-overlay.overlay
             emacs-overlay.overlay
-            (final: _prev: {
-              nur = import inputs.nur {pkgs = final;};
-            })
+            (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
           ];
-        });
+        }
+      );
     };
 
     flake.checks."x86_64-linux" = {

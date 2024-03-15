@@ -12,23 +12,19 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  localFlake,
-  inputs,
-}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake, inputs }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtModuleLevel isModuleLoadedAndEnabled mkAgenixEnableOption;
 
   cfg = config.tensorfiles.system.impermanence;
   _ = mkOverrideAtModuleLevel;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
-in {
+in
+{
   options.tensorfiles.system.impermanence = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the persistence ecosystem.
@@ -36,7 +32,9 @@ in {
       of manually having to set it up yourself.
     '');
 
-    agenix = {enable = mkAgenixEnableOption;};
+    agenix = {
+      enable = mkAgenixEnableOption;
+    };
 
     disableSudoLectures = mkOption {
       type = bool;
@@ -130,7 +128,7 @@ in {
     };
   };
 
-  imports = [inputs.impermanence.nixosModules.impermanence];
+  imports = [ inputs.impermanence.nixosModules.impermanence ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -152,7 +150,10 @@ in {
             "/var/lib/bluetooth" # TODO move bluetooth to hardware
             "/var/lib/systemd/coredump"
           ];
-          files = ["/etc/adjtime" "/etc/machine-id"];
+          files = [
+            "/etc/adjtime"
+            "/etc/machine-id"
+          ];
         };
       };
     }
@@ -165,7 +166,8 @@ in {
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.btrfsWipe.enable {
-      boot.initrd.postDeviceCommands = with cfg.btrfsWipe;
+      boot.initrd.postDeviceCommands =
+        with cfg.btrfsWipe;
         mkBefore ''
           mkdir -p ${mountpoint}
 
@@ -206,21 +208,22 @@ in {
         '';
     })
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.allowOther {
-      programs.fuse.userAllowOther = true;
-    })
+    (mkIf cfg.allowOther { programs.fuse.userAllowOther = true; })
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
-      age.identityPaths = ["${cfg.persistentRoot}/etc/ssh/ssh_host_ed25519_key"];
+      age.identityPaths = [ "${cfg.persistentRoot}/etc/ssh/ssh_host_ed25519_key" ];
 
       environment.persistence = {
         "${cfg.persistentRoot}" = {
-          files = ["/etc/ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_ed25519_key.pub"];
+          files = [
+            "/etc/ssh/ssh_host_ed25519_key"
+            "/etc/ssh/ssh_host_ed25519_key.pub"
+          ];
         };
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

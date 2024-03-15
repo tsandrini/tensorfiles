@@ -12,19 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
+{ localFlake }:
+{
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.services.keepassxc;
   _ = mkOverrideAtHmModuleLevel;
-in {
+in
+{
   # TODO maybe use toINIWithGlobalSection generator? however the ini config file
   # also contains some initial keys? I should investigate this more
   options.tensorfiles.hm.services.keepassxc = with types; {
@@ -44,22 +47,26 @@ in {
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages = [cfg.pkg];
+      home.packages = [ cfg.pkg ];
 
       systemd.user.services.keepassxc = {
         Unit = {
           Description = _ "KeePassXC password manager";
-          After = ["graphical-session-pre.target"];
-          PartOf = ["graphical-session.target"];
+          After = [ "graphical-session-pre.target" ];
+          PartOf = [ "graphical-session.target" ];
         };
 
-        Install = {WantedBy = ["graphical-session.target"];};
+        Install = {
+          WantedBy = [ "graphical-session.target" ];
+        };
         # TODO pkgs.keepassxc doesnt have a mainProgram for getExe set
-        Service = {ExecStart = _ "${cfg.pkg}/bin/keepassxc";};
+        Service = {
+          ExecStart = _ "${cfg.pkg}/bin/keepassxc";
+        };
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

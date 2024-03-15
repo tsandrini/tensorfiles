@@ -12,19 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
+{ localFlake }:
+{
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.minimal;
   _ = mkOverrideAtProfileLevel;
-in {
+in
+{
   options.tensorfiles.profiles.minimal = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the minimal system profile.
@@ -76,6 +79,8 @@ in {
         calcurse # A calendar and scheduling application for the command line
         w3m # A text-mode web browser
         neofetch # A fast, highly customizable system info script
+        gnumake # A tool to control the generation of non-source files from sources
+        cmake # Cross-platform, open-source build system generator
 
         # --- NET UTILS ---
         dig # Domain name server
@@ -116,9 +121,13 @@ in {
         libbtbb # Bluetooth baseband decoding library
         adminer # Database management in a single PHP file
 
+        # -- PACKAGING UTILS --
+        nix-ld # Run unpatched dynamic binaries on NixOS
+        appimage-run # Run unpatched AppImages on NixOS
+        libappimage # Implements functionality for dealing with AppImage files
+
         # -- NIX UTILS --
         nix-index # A files database for nixpkgs
-        nix-ld # Run unpatched dynamic binaries on NixOS
         nix-du # A tool to determine which gc-roots take space in your nix store
         nix-tree # Interactively browse a Nix store paths dependencies
         nix-health # Check the health of your Nix setup
@@ -134,5 +143,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

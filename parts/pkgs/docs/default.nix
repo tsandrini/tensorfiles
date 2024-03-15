@@ -28,66 +28,73 @@
   perl,
   system,
   ...
-}: let
-  READMEs = let
-    readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
-  in {
-    main = readmeToDerivation (projectPath + "/README.md");
-    hosts = {
-      "spinorbundle" =
-        readmeToDerivation (projectPath + "/parts/hosts/spinorbundle/README.md");
+}:
+let
+  READMEs =
+    let
+      readmeToDerivation = path: writeText "README.md" (builtins.readFile path);
+    in
+    {
+      main = readmeToDerivation (projectPath + "/README.md");
+      hosts = {
+        "spinorbundle" = readmeToDerivation (projectPath + "/parts/hosts/spinorbundle/README.md");
+      };
     };
-  };
 
-  lib-doc = let
-    libsets = [
-      {
-        name = "asserts";
-        description = "assertion functions";
-      }
-      {
-        name = "attrsets";
-        description = "attribute set functions";
-      }
-      {
-        name = "licenses";
-        description = "tensorfiles licenses";
-      }
-      {
-        name = "lists";
-        description = "list manipulation functions";
-      }
-      {
-        name = "maintainers";
-        description = "tensorfiles maintainers";
-      }
-      {
-        name = "modules";
-        description = "general modularity functions";
-      }
-      {
-        name = "nixos";
-        description = "NixOS related functionality";
-      }
-      {
-        name = "options";
-        description = "NixOS / nixpkgs option handling";
-      }
-      {
-        name = "strings";
-        description = "string manipulation functions";
-      }
-      {
-        name = "types";
-        description = "additional types definitions";
-      }
-    ];
-  in
+  lib-doc =
+    let
+      libsets = [
+        {
+          name = "asserts";
+          description = "assertion functions";
+        }
+        {
+          name = "attrsets";
+          description = "attribute set functions";
+        }
+        {
+          name = "licenses";
+          description = "tensorfiles licenses";
+        }
+        {
+          name = "lists";
+          description = "list manipulation functions";
+        }
+        {
+          name = "maintainers";
+          description = "tensorfiles maintainers";
+        }
+        {
+          name = "modules";
+          description = "general modularity functions";
+        }
+        {
+          name = "nixos";
+          description = "NixOS related functionality";
+        }
+        {
+          name = "options";
+          description = "NixOS / nixpkgs option handling";
+        }
+        {
+          name = "strings";
+          description = "string manipulation functions";
+        }
+        {
+          name = "types";
+          description = "additional types definitions";
+        }
+      ];
+    in
     stdenv.mkDerivation {
       name = "tensorfiles-docs-lib";
       src = projectPath + "/lib";
 
-      buildInputs = [nixdoc pandoc python3];
+      buildInputs = [
+        nixdoc
+        pandoc
+        python3
+      ];
       installPhase = ''
         function docgen {
           name=$1
@@ -128,90 +135,104 @@
         mkdir -p "$out"
 
         # Run the docgen function for every libset
-        ${lib.concatMapStrings ({
+        ${lib.concatMapStrings (
+          {
             name,
             baseName ? name,
             description,
-          }: ''
+          }:
+          ''
             docgen ${name} ${baseName} ${lib.escapeShellArg description}
-          '')
-          libsets}
+          ''
+        ) libsets}
       '';
     };
 
-  options-doc = let
-    eval = lib.evalModules {
-      modules = [{_module.check = false;}] ++ (lib.attrValues inputs.self.nixosModules);
-      specialArgs = rec {
-        # TODO: Warning!!!!
-        # This is very bad practice and should be usually avoided at all costs,
-        # but modules cannot be easily evaluated otherwise. In the future it would
-        # be probably best to just create the inputs manually directly here.
-        inherit lib pkgs inputs system;
-        lintCompatibility = true;
-        inherit projectPath;
-        secretsPath = projectPath + "/secrets";
-        secretsAttrset = {};
-        hostName = "exampleHost";
-        user = "‹name›";
+  options-doc =
+    let
+      eval = lib.evalModules {
+        modules = [ { _module.check = false; } ] ++ (lib.attrValues inputs.self.nixosModules);
+        specialArgs = rec {
+          # TODO: Warning!!!!
+          # This is very bad practice and should be usually avoided at all costs,
+          # but modules cannot be easily evaluated otherwise. In the future it would
+          # be probably best to just create the inputs manually directly here.
+          inherit
+            lib
+            pkgs
+            inputs
+            system
+            ;
+          lintCompatibility = true;
+          inherit projectPath;
+          secretsPath = projectPath + "/secrets";
+          secretsAttrset = { };
+          hostName = "exampleHost";
+          user = "‹name›";
+        };
       };
-    };
-    optionsDoc = nixosOptionsDoc {inherit (eval) options;};
-  in
-    runCommand "options-doc.md" {} ''
+      optionsDoc = nixosOptionsDoc { inherit (eval) options; };
+    in
+    runCommand "options-doc.md" { } ''
       cat ${optionsDoc.optionsCommonMark} >> $out
       sed -i "s/\\\./\./g" $out
       # TODO this unfortunately breaks the whole document
       # ${perl}/bin/perl -i -0777 -pe 's/```\n(.*?)\n```/```nix linenums="1"\n\1\n```/gs' $out
     '';
 in
-  stdenv.mkDerivation {
-    src = ./.;
-    name = "tensorfiles-docs";
+stdenv.mkDerivation {
+  src = ./.;
+  name = "tensorfiles-docs";
 
-    buildInput =
-      [options-doc lib-doc]
-      ++ (with READMEs; [main hosts."spinorbundle"]);
+  buildInput =
+    [
+      options-doc
+      lib-doc
+    ]
+    ++ (with READMEs; [
+      main
+      hosts."spinorbundle"
+    ]);
 
-    nativeBuildInputs = [
-      (python3.withPackages
-        (ps:
-          with ps; [
-            setuptools
-            mkdocs
-            mkdocs-material
-            # I've had issues while trying to include files from the /nix/store
-            # using the jinja macros so just for this I've included the markdown-include
-            # package
-            markdown-include
-            pygments
-            cairosvg
-          ]))
-    ];
+  nativeBuildInputs = [
+    (python3.withPackages (
+      ps: with ps; [
+        setuptools
+        mkdocs
+        mkdocs-material
+        # I've had issues while trying to include files from the /nix/store
+        # using the jinja macros so just for this I've included the markdown-include
+        # package
+        markdown-include
+        pygments
+        cairosvg
+      ]
+    ))
+  ];
 
-    buildPhase = ''
-      mkdir -p docs docs/hosts
+  buildPhase = ''
+    mkdir -p docs docs/hosts
 
-      cp -v ${READMEs.main} docs/index.md
-      cp -v ${READMEs.hosts."spinorbundle"} docs/hosts/spinorbundle.md
+    cp -v ${READMEs.main} docs/index.md
+    cp -v ${READMEs.hosts."spinorbundle"} docs/hosts/spinorbundle.md
 
-      cp -v ${options-doc} docs/nixos-options.md
-      cp -v ${lib-doc}/index.md docs/lib.md
+    cp -v ${options-doc} docs/nixos-options.md
+    cp -v ${lib-doc}/index.md docs/lib.md
 
-      # Patches
-      find . -type f -exec sed -i "s|pkgs/docs/docs/||g" {} +
+    # Patches
+    find . -type f -exec sed -i "s|pkgs/docs/docs/||g" {} +
 
-      mkdocs build
-    '';
+    mkdocs build
+  '';
 
-    installPhase = ''
-      mv -v site $out
-    '';
+  installPhase = ''
+    mv -v site $out
+  '';
 
-    meta = with lib; {
-      homepage = "https://github.com/tsandrini/tensorfiles";
-      description = "The combined Documentation of the whole tensorfiles flake.";
-      license = licenses.mit;
-      maintainers = with lib.tensorfiles.maintainers; [tsandrini];
-    };
-  }
+  meta = with lib; {
+    homepage = "https://github.com/tsandrini/tensorfiles";
+    description = "The combined Documentation of the whole tensorfiles flake.";
+    license = licenses.mit;
+    maintainers = with lib.tensorfiles.maintainers; [ tsandrini ];
+  };
+}

@@ -12,22 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.editors.neovim;
   _ = mkOverrideAtHmModuleLevel;
-in {
+in
+{
   # TODO modularize config, cant be bothered to do it now
   options.tensorfiles.hm.programs.editors.neovim = with types; {
     enable = mkEnableOption (mdDoc ''
@@ -324,17 +324,16 @@ in {
               }, { prefix = "<leader>" })
             '';
           }
-          (pkgs.vimUtils.buildVimPlugin
-            {
-              pname = "kitty-scrollback.nvim";
-              version = inputs.kitty-scrollback-nvim.rev;
-              src = inputs.kitty-scrollback-nvim;
-            })
+          (pkgs.vimUtils.buildVimPlugin {
+            pname = "kitty-scrollback.nvim";
+            version = inputs.kitty-scrollback-nvim.rev;
+            src = inputs.kitty-scrollback-nvim;
+          })
         ];
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

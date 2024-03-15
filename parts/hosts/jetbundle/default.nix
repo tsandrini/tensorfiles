@@ -17,7 +17,8 @@
   inputs,
   system,
   ...
-}: {
+}:
+{
   # -----------------
   # | SPECIFICATION |
   # -----------------
@@ -92,9 +93,7 @@
   services.xl2tpd.enable = true;
   services.strongswan = {
     enable = true;
-    secrets = [
-      "ipsec.d/ipsec.nm-l2tp.secrets"
-    ];
+    secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
 
   # Needed for gpg pinetry

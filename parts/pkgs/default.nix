@@ -17,17 +17,23 @@
   inputs,
   projectPath,
   ...
-}: {
-  perSystem = {
-    pkgs,
-    system,
-    ...
-  }: {
-    packages = {
-      pywalfox-native = pkgs.callPackage ./pywalfox-native.nix {};
-      docs = pkgs.callPackage ./docs {inherit lib inputs system projectPath;};
-      my_cookies = pkgs.callPackage ./my_cookies.nix {};
-      polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix {inherit lib;};
+}:
+{
+  perSystem =
+    { pkgs, system, ... }:
+    {
+      packages = {
+        pywalfox-native = pkgs.callPackage ./pywalfox-native.nix { };
+        docs = pkgs.callPackage ./docs {
+          inherit
+            lib
+            inputs
+            system
+            projectPath
+            ;
+        };
+        my_cookies = pkgs.callPackage ./my_cookies.nix { };
+        polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
+      };
     };
-  };
 }

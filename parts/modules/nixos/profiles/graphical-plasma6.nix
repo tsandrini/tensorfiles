@@ -12,10 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
   config,
   lib,
   pkgs,
@@ -23,12 +21,14 @@
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-plasma6;
   _ = mkOverrideAtProfileLevel;
-in {
+in
+{
   options.tensorfiles.profiles.graphical-plasma6 = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -122,8 +122,8 @@ in {
 
       services.xserver.enable = _ true;
       services.xserver.displayManager.sddm.enable = _ true;
-      services.xserver.desktopManager.plasma6.enable = _ true;
-      services.xserver.displayManager.defaultSession = _ "plasma";
+      services.desktopManager.plasma6.enable = _ true;
+      # services.xserver.displayManager.defaultSession = _ "plasma";
       programs.kdeconnect.enable = _ true;
 
       programs.partition-manager.enable = _ true;
@@ -131,5 +131,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

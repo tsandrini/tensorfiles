@@ -12,28 +12,24 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  localFlake,
-  inputs,
-}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake, inputs }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.shadow-nix;
   _ = mkOverrideAtHmModuleLevel;
-in {
+in
+{
   options.tensorfiles.hm.programs.shadow-nix = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
   };
 
-  imports = [(inputs.shadow-nix + "/import/home-manager.nix")];
+  imports = [ (inputs.shadow-nix + "/import/home-manager.nix") ];
 
   # The shadow module is unfortunately import by default, so we have to explicitly
   # disable it
@@ -47,5 +43,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

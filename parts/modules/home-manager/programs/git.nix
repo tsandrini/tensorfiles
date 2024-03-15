@@ -12,18 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.git;
   _ = mkOverrideAtHmModuleLevel;
-in {
+in
+{
   options.tensorfiles.hm.programs.git = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -42,9 +41,17 @@ in {
             syntax-theme = _ "Nord";
           };
         };
-        userName = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (_ config.home.sessionVariables.DEFAULT_USERNAME);
-        userEmail = mkIf (config.home.sessionVariables.DEFAULT_MAIL != null) (_ config.home.sessionVariables.DEFAULT_MAIL);
-        extraConfig = {github.user = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (_ config.home.sessionVariables.DEFAULT_USERNAME);};
+        userName = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (
+          _ config.home.sessionVariables.DEFAULT_USERNAME
+        );
+        userEmail = mkIf (config.home.sessionVariables.DEFAULT_MAIL != null) (
+          _ config.home.sessionVariables.DEFAULT_MAIL
+        );
+        extraConfig = {
+          github.user = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (
+            _ config.home.sessionVariables.DEFAULT_USERNAME
+          );
+        };
         aliases = {
           b = _ "branch";
           bl = _ "branch";
@@ -82,20 +89,14 @@ in {
           i = _ "init";
           d = _ "diff";
           l = _ "log";
-          lg1 =
-            _
-            "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
-          lg2 =
-            _
-            "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
-          lg3 =
-            _
-            "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'";
+          lg1 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
+          lg2 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
+          lg3 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'";
         };
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

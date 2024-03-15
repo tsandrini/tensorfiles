@@ -12,10 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
   config,
   lib,
   pkgs,
@@ -23,12 +21,14 @@
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-plasma5;
   _ = mkOverrideAtProfileLevel;
-in {
+in
+{
   options.tensorfiles.profiles.graphical-plasma5 = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -121,5 +121,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

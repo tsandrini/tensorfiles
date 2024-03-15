@@ -16,21 +16,25 @@
   localFlake,
   secretsPath,
   pubkeys,
-}: {
+}:
+{
   config,
   lib,
   hostName,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.ssh;
   _ = mkOverrideAtHmModuleLevel;
 
-  sshKeyCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
-in {
+  sshKeyCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
+in
+{
   options.tensorfiles.hm.programs.ssh = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -95,10 +99,15 @@ in {
         enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
         enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
         enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell");
-        agents = ["ssh"];
-        extraFlags = ["--nogui" "--quiet"];
-        keys = ["id_ed25519"];
+        enableNushellIntegration = _ (
+          isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
+        );
+        agents = [ "ssh" ];
+        extraFlags = [
+          "--nogui"
+          "--quiet"
+        ];
+        keys = [ "id_ed25519" ];
       };
 
       services.ssh-agent.enable = _ true;
@@ -112,22 +121,25 @@ in {
       };
 
       home.file = with cfg.sshKey; {
-        "${privateKeyHomePath}".source = _ (config.lib.file.mkOutOfStoreSymlink config.age.secrets."${privateKeySecretsPath}".path);
+        "${privateKeyHomePath}".source = _ (
+          config.lib.file.mkOutOfStoreSymlink config.age.secrets."${privateKeySecretsPath}".path
+        );
 
-        "${publicKeyHomePath}".text = let
-          key =
-            if publicKeyRaw != null
-            then publicKeyRaw
-            else
-              (attrsets.attrByPath
-                (replaceStrings ["$user"] [config.home.username] (splitString "." publicKeySecretsAttrsetKey)) ""
-                pubkeys);
-        in
+        "${publicKeyHomePath}".text =
+          let
+            key =
+              if publicKeyRaw != null then
+                publicKeyRaw
+              else
+                (attrsets.attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
+                  splitString "." publicKeySecretsAttrsetKey
+                )) "" pubkeys);
+          in
           _ key;
       };
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

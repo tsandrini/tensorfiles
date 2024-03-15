@@ -12,14 +12,15 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{lib, ...}:
+{ lib, ... }:
 with lib;
-with builtins; {
+with builtins;
+{
   /*
-  Check if a substring is present in a given string.
-  Uses simple splitting instead of creating and escaping a general regex
+    Check if a substring is present in a given string.
+    Uses simple splitting instead of creating and escaping a general regex
 
-  *Type*: `hasSubstring :: String -> String -> Bool`
+    *Type*: `hasSubstring :: String -> String -> Bool`
   */
   hasSubstring = str: substr: (splitString substr str) > 1;
 }

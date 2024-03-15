@@ -12,10 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
   config,
   lib,
   pkgs,
@@ -23,15 +21,17 @@
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.hardware.nixGL;
   _ = mkOverride 550;
 
   # TODO unfortunately nixGL doesnt have a mainprogram set
-  nixGLWrap = pkg:
-    pkgs.runCommand "${pkg.name}-nixgl-wrapper" {} ''
+  nixGLWrap =
+    pkg:
+    pkgs.runCommand "${pkg.name}-nixgl-wrapper" { } ''
       mkdir $out
       ln -s ${pkg}/* $out
       rm $out/bin
@@ -46,9 +46,9 @@ with lib; let
   kittyPatchCheck =
     cfg.programPatches.enable
     && cfg.programPatches.kitty
-    && (isModuleLoadedAndEnabled config
-      "tensorfiles.hm.programs.terminals.kitty");
-in {
+    && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty");
+in
+{
   options.tensorfiles.hm.hardware.nixGL = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -71,22 +71,21 @@ in {
         mkEnableOption (mdDoc ''
           Enables the kitty executable wrapper
         '')
-        // {default = true;};
+        // {
+          default = true;
+        };
     };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    {
-      home.packages = [cfg.pkg];
-    }
+    { home.packages = [ cfg.pkg ]; }
     # |----------------------------------------------------------------------| #
     (mkIf kittyPatchCheck {
-      programs.kitty.package =
-        _ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg);
+      programs.kitty.package = _ (nixGLWrap config.tensorfiles.hm.programs.terminals.kitty.pkg);
     })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }
