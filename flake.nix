@@ -182,5 +182,16 @@
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
+
+      # Since the official flakes output schema is unfortunately very limited
+      # you can enable the debug mode if you need to inspect certain outputs
+      # of your flake. Simply
+      #
+      # 1. uncomment the following line
+      # 2. hop into a repl from the project root - `nix repl`
+      # 3. load the flake - `:lf .`
+      #
+      # After that you can inspect the flake from the root attribute `debug.flake`
+      # debug = true;
     };
 }

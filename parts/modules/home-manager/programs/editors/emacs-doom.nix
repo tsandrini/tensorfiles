@@ -214,7 +214,7 @@ in
       ];
 
       services.emacs = {
-        enable = _ false;
+        enable = _ true;
         package = _ emacsPkg;
         startWithUserSession = _ "graphical";
       };
