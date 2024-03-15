@@ -12,28 +12,29 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
+  pkgs,
   config,
   lib,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.graphical-plasma;
   _ = mkOverrideAtHmProfileLevel;
-in {
+in
+{
   options.tensorfiles.hm.profiles.graphical-plasma = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
   };
 
-  imports = with inputs; [plasma-manager.homeManagerModules.plasma-manager];
+  imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -59,6 +60,10 @@ in {
         };
       };
 
+      home.packages = with pkgs; [
+        vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment. Should allow for easy usage of extensions without nix-specific modifications.
+      ];
+
       services.flameshot = {
         enable = _ true;
         settings = {
@@ -72,7 +77,7 @@ in {
         # Default programs
         BROWSER = _ "firefox";
         TERMINAL = _ "kitty";
-        IDE = _ "emacs";
+        IDE = _ "code";
       };
 
       fonts.fontconfig.enable = _ true;
@@ -80,5 +85,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

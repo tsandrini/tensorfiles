@@ -16,16 +16,17 @@
   localFlake,
   secretsPath,
   pubkeys,
-}: {
+}:
+{
   config,
   lib,
   hostName,
   ...
 }:
 with builtins;
-with lib; let
-  inherit
-    (localFlake.lib)
+with lib;
+let
+  inherit (localFlake.lib)
     mkOverrideAtModuleLevel
     isModuleLoadedAndEnabled
     mapToAttrsAndMerge
@@ -38,7 +39,8 @@ with lib; let
   _ = mkOverrideAtModuleLevel;
 
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
-in {
+in
+{
   # TODO move bluetooth dir to hardware
   options.tensorfiles.system.users = with types; {
     enable = mkEnableOption (mdDoc ''
@@ -47,9 +49,13 @@ in {
       configures home-manager, persistence, agenix if they are enabled.
     '');
 
-    impermanence = {enable = mkImpermanenceEnableOption;};
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
 
-    agenix = {enable = mkAgenixEnableOption;};
+    agenix = {
+      enable = mkAgenixEnableOption;
+    };
 
     usersSettings = mkUsersSettingsOption (_user: {
       isSudoer = mkOption {
@@ -89,11 +95,13 @@ in {
           mkEnableOption (mdDoc ''
             TODO
           '')
-          // {default = true;};
+          // {
+            default = true;
+          };
 
         keysRaw = mkOption {
           type = listOf str;
-          default = [];
+          default = [ ];
           description = mdDoc ''
             TODO
           '';
@@ -112,58 +120,70 @@ in {
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    {users.mutableUsers = _ false;}
+    { users.mutableUsers = _ false; }
     # |----------------------------------------------------------------------| #
     {
-      users.users = genAttrs (attrNames cfg.usersSettings) (_user: let
-        userCfg = cfg.usersSettings."${_user}";
-      in {
-        name = _ _user;
-        isNormalUser = _ (_user != "root");
-        isSystemUser = _ (_user == "root");
-        createHome = _ true;
-        extraGroups =
-          ["video" "audio" "camera" "networkmanager" "input"]
-          ++ (optional (_user != "root") "wheel");
-        home = _ (
-          if _user == "root"
-          then "/root"
-          else "/home/${_user}"
-        );
+      users.users = genAttrs (attrNames cfg.usersSettings) (
+        _user:
+        let
+          userCfg = cfg.usersSettings."${_user}";
+        in
+        {
+          name = _ _user;
+          isNormalUser = _ (_user != "root");
+          isSystemUser = _ (_user == "root");
+          createHome = _ true;
+          extraGroups = [
+            "video"
+            "audio"
+            "camera"
+            "networkmanager"
+            "input"
+          ] ++ (optional (_user != "root") "wheel");
+          home = _ (if _user == "root" then "/root" else "/home/${_user}");
 
-        hashedPasswordFile =
-          mkIf (agenixCheck && userCfg.agenixPassword.enable) (_
-            config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path);
+          hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
+            _ config.age.secrets.${userCfg.agenixPassword.passwordSecretsPath}.path
+          );
 
-        openssh.authorizedKeys.keys = with userCfg.authorizedKeys; (mkIf enable (keysRaw
-          ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) []
-            pubkeys)));
-      });
+          openssh.authorizedKeys.keys =
+            with userCfg.authorizedKeys;
+            (mkIf enable (
+              keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [ ] pubkeys)
+            ));
+        }
+      );
     }
     # |----------------------------------------------------------------------| #
     (mkIf agenixCheck {
-      age.secrets = mapToAttrsAndMerge (attrNames cfg.usersSettings) (_user: let
-        userCfg = cfg.usersSettings."${_user}";
-      in
-        with userCfg.agenixPassword; {
+      age.secrets = mapToAttrsAndMerge (attrNames cfg.usersSettings) (
+        _user:
+        let
+          userCfg = cfg.usersSettings."${_user}";
+        in
+        with userCfg.agenixPassword;
+        {
           "${passwordSecretsPath}" = mkIf enable {
             file = _ (secretsPath + "/${passwordSecretsPath}.age");
             mode = _ "700";
             owner = _ _user;
           };
-        });
+        }
+      );
     })
     # |----------------------------------------------------------------------| #
     {
-      nix.settings = let
-        users = filter (_user: cfg.usersSettings."${_user}".isNixTrusted) (attrNames cfg.usersSettings);
-      in {
-        trusted-users = users;
-        allowed-users = users;
-      };
+      nix.settings =
+        let
+          users = filter (_user: cfg.usersSettings."${_user}".isNixTrusted) (attrNames cfg.usersSettings);
+        in
+        {
+          trusted-users = users;
+          allowed-users = users;
+        };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

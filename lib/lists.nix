@@ -12,19 +12,20 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{lib, ...}:
+{ lib, ... }:
 with lib;
-with builtins; {
+with builtins;
+{
   /*
-  Map function with flipped arguments.
+    Map function with flipped arguments.
 
-  *Type*: `flipMap :: (a -> b) -> [a] -> [b]`
+    *Type*: `flipMap :: (a -> b) -> [a] -> [b]`
 
-  Example:
-  ```nix title="Example" linenums="1"
-  flipmap (x: x * x) [ 1 2 3 ]
-    => [ 1 4 9 ]
-  ```
+    Example:
+    ```nix title="Example" linenums="1"
+    flipmap (x: x * x) [ 1 2 3 ]
+      => [ 1 4 9 ]
+    ```
   */
   flipMap = flip map;
 }

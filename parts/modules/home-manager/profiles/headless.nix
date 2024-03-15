@@ -12,15 +12,12 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
-  inherit
-    (localFlake.lib)
+with lib;
+let
+  inherit (localFlake.lib)
     mkOverrideAtHmProfileLevel
     isModuleLoadedAndEnabled
     mkImpermanenceEnableOption
@@ -29,19 +26,20 @@ with lib; let
   cfg = config.tensorfiles.hm.profiles.headless;
   _ = mkOverrideAtHmProfileLevel;
 
-  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
-  impermanence =
-    if impermanenceCheck
-    then config.tensorfiles.hm.system.impermanence
-    else {};
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
-in {
+in
+{
   options.tensorfiles.hm.profiles.headless = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
 
-    impermanence = {enable = mkImpermanenceEnableOption;};
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -110,5 +108,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

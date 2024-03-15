@@ -125,29 +125,35 @@
     ];
   };
 
-  outputs = inputs @ {flake-parts, ...}: let
-    inherit (inputs) nixpkgs;
-    inherit (lib.tensorfiles) mapModules flatten;
+  outputs =
+    inputs@{ flake-parts, ... }:
+    let
+      inherit (inputs) nixpkgs;
+      inherit (lib.tensorfiles) mapModules flatten;
 
-    # You should ideally use relative paths in each individual part from ./parts,
-    # however, if needed you can use the `projectPath` variable that is passed
-    # to every flakeModule to properly anchor your absolute paths.
-    projectPath = ./.;
+      # You should ideally use relative paths in each individual part from ./parts,
+      # however, if needed you can use the `projectPath` variable that is passed
+      # to every flakeModule to properly anchor your absolute paths.
+      projectPath = ./.;
 
-    # We extend the base <nixpkgs> library with our own custom helpers as well
-    # as override any of the nixpkgs default functions that we'd like
-    # to override. This instance is then passed to every part in ./parts so that
-    # you can use it in your custom modules
-    lib = nixpkgs.lib.extend (self: _super: {
-      tensorfiles = import ./lib {
-        inherit inputs projectPath;
-        pkgs = nixpkgs;
-        lib = self;
+      # We extend the base <nixpkgs> library with our own custom helpers as well
+      # as override any of the nixpkgs default functions that we'd like
+      # to override. This instance is then passed to every part in ./parts so that
+      # you can use it in your custom modules
+      lib = nixpkgs.lib.extend (
+        self: _super: {
+          tensorfiles = import ./lib {
+            inherit inputs projectPath;
+            pkgs = nixpkgs;
+            lib = self;
+          };
+        }
+      );
+      specialArgs = {
+        inherit lib projectPath;
       };
-    });
-    specialArgs = {inherit lib projectPath;};
-  in
-    flake-parts.lib.mkFlake {inherit inputs specialArgs;} {
+    in
+    flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
       # We recursively traverse all of the flakeModules in ./parts and import only
       # the final modules, meaning that you can have an arbitrary nested structure
       # that suffices your needs. For example
@@ -176,5 +182,16 @@
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
+
+      # Since the official flakes output schema is unfortunately very limited
+      # you can enable the debug mode if you need to inspect certain outputs
+      # of your flake. Simply
+      #
+      # 1. uncomment the following line
+      # 2. hop into a repl from the project root - `nix repl`
+      # 3. load the flake - `:lf .`
+      #
+      # After that you can inspect the flake from the root attribute `debug.flake`
+      # debug = true;
     };
 }

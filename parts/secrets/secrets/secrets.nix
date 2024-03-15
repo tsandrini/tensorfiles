@@ -18,8 +18,9 @@ let
   # hosts = [jetbundle spinorbundle];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
-  # users = [tsandrini];
-in {
+in
+# users = [tsandrini];
+{
   # ----------
   # | COMMON |
   # ----------
@@ -29,14 +30,12 @@ in {
   # ---------
 
   # I. #spinorbundle
-  "hosts/spinorbundle/users/root/system-password.age".publicKeys =
-    [spinorbundle] ++ [tsandrini];
-  "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys =
-    [spinorbundle] ++ [tsandrini];
+  "hosts/spinorbundle/users/root/system-password.age".publicKeys = [ spinorbundle ] ++ [ tsandrini ];
+  "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys = [
+    spinorbundle
+  ] ++ [ tsandrini ];
 
   # II. #jetbundle
-  "hosts/jetbundle/users/root/system-password.age".publicKeys =
-    [jetbundle] ++ [tsandrini];
-  "hosts/jetbundle/users/tsandrini/system-password.age".publicKeys =
-    [jetbundle] ++ [tsandrini];
+  "hosts/jetbundle/users/root/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
+  "hosts/jetbundle/users/tsandrini/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
 }

@@ -18,9 +18,11 @@
   self,
   inputs,
   ...
-}: let
+}:
+let
   localFlake = self;
-in {
+in
+{
   options.secrets = with lib.types; {
     secretsPath = lib.mkOption {
       type = path;
@@ -30,7 +32,7 @@ in {
 
     pubkeys = lib.mkOption {
       type = attrsOf (attrsOf anything);
-      default = {};
+      default = { };
       description = ''
         The resulting option that will hold the various public keys used around
         the flake.
@@ -48,7 +50,7 @@ in {
 
     extraPubkeys = lib.mkOption {
       type = attrsOf (attrsOf anything);
-      default = {};
+      default = { };
       description = ''
         Additional public keys that will be merged into the `secrets.pubkeys`
       '';
@@ -58,17 +60,20 @@ in {
   config = {
     secrets.pubkeys = (import config.secrets.pubkeysFile) // config.secrets.extraPubkeys;
 
-    flake.nixosModules.security_agenix = {
-      config,
-      lib,
-      pkgs,
-      system,
-      ...
-    }:
+    flake.nixosModules.security_agenix =
+      {
+        config,
+        lib,
+        pkgs,
+        system,
+        ...
+      }:
       with builtins;
-      with lib; let
+      with lib;
+      let
         cfg = config.tensorfiles.security.agenix;
-      in {
+      in
+      {
         options.tensorfiles.security.agenix = with types; {
           enable = mkEnableOption (mdDoc ''
             Enables NixOS module that sets up & configures the agenix secrets
@@ -80,7 +85,7 @@ in {
           '');
         };
 
-        imports = with inputs; [agenix.nixosModules.default];
+        imports = with inputs; [ agenix.nixosModules.default ];
 
         config = mkIf cfg.enable {
           environment.systemPackages = [
@@ -88,21 +93,20 @@ in {
             pkgs.age
           ];
 
-          age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+          age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
         };
 
-        meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+        meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
       };
 
-    flake.homeModules.security_agenix = {
-      config,
-      lib,
-      ...
-    }:
+    flake.homeModules.security_agenix =
+      { config, lib, ... }:
       with builtins;
-      with lib; let
+      with lib;
+      let
         cfg = config.tensorfiles.hm.security.agenix;
-      in {
+      in
+      {
         options.tensorfiles.hm.security.agenix = with types; {
           enable = mkEnableOption (mdDoc ''
             Enable Home Manager module that sets up & configures the agenix
@@ -114,13 +118,13 @@ in {
           '');
         };
 
-        imports = with inputs; [agenix.homeManagerModules.default];
+        imports = with inputs; [ agenix.homeManagerModules.default ];
 
         config = mkIf cfg.enable {
-          age.identityPaths = ["${config.home.homeDirectory}/.ssh/id_ed25519"];
+          age.identityPaths = [ "${config.home.homeDirectory}/.ssh/id_ed25519" ];
         };
 
-        meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+        meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
       };
   };
 }

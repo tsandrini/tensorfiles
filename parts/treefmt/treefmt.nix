@@ -12,45 +12,47 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ pkgs, projectPath, ... }:
 {
-  pkgs,
-  projectPath,
-  ...
-}: {
   package = pkgs.treefmt;
   flakeCheck = true;
   flakeFormatter = true;
   projectRootFile = projectPath + "/flake.nix";
 
-  settings.formatter = let
-    excludes = [
-      "etc/**"
-      "*.png"
-      "*.woff2"
-    ];
-  in {
-    alejandra.excludes = excludes;
-    deadnix.excludes = excludes;
-    statix.excludes = excludes;
-    prettier.excludes = excludes;
-    # TODO, for some reason doesn't work
-    # typos = {
-    #   command = pkgs.runtimeShell;
-    #   options = [
-    #     "-eucx"
-    #     ''
-    #       ${pkgs.typos}/bin/typos --diff --format long --write-changes "$@"
-    #     ''
-    #     "--" # this argument is ignored by bash
-    #   ];
-    #   includes = ["*"];
-    # };
-  };
+  settings.formatter =
+    let
+      excludes = [
+        "etc/**"
+        "*.png"
+        "*.woff2"
+      ];
+    in
+    {
+      deadnix.excludes = excludes;
+      statix.excludes = excludes;
+      prettier.excludes = excludes;
+      nixfmt-rfc-style.excludes = excludes;
+      # TODO, for some reason doesn't work
+      # typos = {
+      #   command = pkgs.runtimeShell;
+      #   options = [
+      #     "-eucx"
+      #     ''
+      #       ${pkgs.typos}/bin/typos --diff --format long --write-changes "$@"
+      #     ''
+      #     "--" # this argument is ignored by bash
+      #   ];
+      #   includes = ["*"];
+      # };
+    };
 
   programs = {
-    alejandra.enable = true;
     deadnix.enable = true;
     statix.enable = true;
     prettier.enable = true;
+    nixfmt-rfc-style.enable = true;
+    # NOTE Choose a different formatter if you'd like to
+    # nixfmt.enable = true;
+    # alejandra.enable = true;
   };
 }

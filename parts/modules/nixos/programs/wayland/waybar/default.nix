@@ -12,22 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
   config,
   lib,
   system,
   ...
 }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.programs.wayland.waybar;
   _ = mkOverrideAtModuleLevel;
-in {
+in
+{
   options.tensorfiles.programs.wayland.waybar = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the waybar wayland bar.
@@ -48,7 +48,7 @@ in {
         #
         programs.waybar = {
           enable = _ true;
-          style = import ./style.nix {};
+          style = import ./style.nix { };
           package = _ inputs.nixpkgs-wayland.packages.${system}.waybar;
           settings = {
             mainBar = {
@@ -59,7 +59,11 @@ in {
               margin-bottom = 0;
               margin-left = 0;
               margin-right = 0;
-              modules-left = ["custom/launcher" "custom/playerctl" "custom/playerlabel"];
+              modules-left = [
+                "custom/launcher"
+                "custom/playerctl"
+                "custom/playerlabel"
+              ];
               modules-center = [
                 "hyprland/workspaces"
                 # "cpu"
@@ -106,8 +110,7 @@ in {
                 format = "{icon}";
                 return-type = "json";
                 max-length = 25;
-                exec = ''
-                  playerctl -a metadata --format '{"text": "{{artist}} - {{markup_escape(title)}}", "tooltip": "{{playerName}} : {{markup_escape(title)}}", "alt": "{{status}}", "class": "{{status}}"}' -F'';
+                exec = ''playerctl -a metadata --format '{"text": "{{artist}} - {{markup_escape(title)}}", "tooltip": "{{playerName}} : {{markup_escape(title)}}", "alt": "{{status}}", "class": "{{status}}"}' -F'';
                 on-click-middle = "playerctl play-pause";
                 on-click = "playerctl previous";
                 on-click-right = "playerctl next";
@@ -122,8 +125,7 @@ in {
                 format = "<span>{}</span>";
                 return-type = "json";
                 max-length = 25;
-                exec = ''
-                  playerctl -a metadata --format '{"text": "{{artist}} - {{markup_escape(title)}}", "tooltip": "{{playerName}} : {{markup_escape(title)}}", "alt": "{{status}}", "class": "{{status}}"}' -F'';
+                exec = ''playerctl -a metadata --format '{"text": "{{artist}} - {{markup_escape(title)}}", "tooltip": "{{playerName}} : {{markup_escape(title)}}", "alt": "{{status}}", "class": "{{status}}"}' -F'';
                 on-click-middle = "playerctl play-pause";
                 on-click = "playerctl previous";
                 on-click-right = "playerctl next";
@@ -162,7 +164,13 @@ in {
               pulseaudio = {
                 format = "{icon} {volume}%";
                 format-muted = "";
-                format-icons = {default = ["" "" ""];};
+                format-icons = {
+                  default = [
+                    ""
+                    ""
+                    ""
+                  ];
+                };
                 # on-click = "bash ~/.config/hypr/scripts/volume mute";
                 # on-scroll-up = "bash ~/.config/hypr/scripts/volume up";
                 # on-scroll-down = "bash ~/.config/hypr/scripts/volume down";
@@ -185,5 +193,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

@@ -18,29 +18,29 @@
   withSystem,
   config,
   ...
-}: let
-  mkHost = args: hostName: {
-    extraSpecialArgs ? {},
-    extraModules ? [],
-    extraOverlays ? [],
-    withHomeManager ? false,
-    ...
-  }: let
-    baseSpecialArgs =
-      {
+}:
+let
+  mkHost =
+    args: hostName:
+    {
+      extraSpecialArgs ? { },
+      extraModules ? [ ],
+      extraOverlays ? [ ],
+      withHomeManager ? false,
+      ...
+    }:
+    let
+      baseSpecialArgs = {
         inherit (args) system;
         inherit inputs hostName;
-      }
-      // extraSpecialArgs;
-  in
+      } // extraSpecialArgs;
+    in
     lib.nixosSystem {
       inherit (args) system;
-      specialArgs =
-        baseSpecialArgs
-        // {
-          inherit lib hostName;
-          host.hostName = hostName;
-        };
+      specialArgs = baseSpecialArgs // {
+        inherit lib hostName;
+        host.hostName = hostName;
+      };
       modules =
         [
           {
@@ -55,44 +55,46 @@
         # instead of imports
         ++ (lib.attrValues config.flake.nixosModules)
         ++ (
-          if withHomeManager
-          then [
-            inputs.home-manager.nixosModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                extraSpecialArgs = baseSpecialArgs;
-                sharedModules = lib.attrValues config.flake.homeModules;
-              };
-            }
-          ]
-          else []
+          if withHomeManager then
+            [
+              inputs.home-manager.nixosModules.home-manager
+              {
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  extraSpecialArgs = baseSpecialArgs;
+                  sharedModules = lib.attrValues config.flake.homeModules;
+                };
+              }
+            ]
+          else
+            [ ]
         );
     };
-in {
+in
+{
   flake.nixosConfigurations = {
-    spinorbundle = withSystem "x86_64-linux" (args:
+    spinorbundle = withSystem "x86_64-linux" (
+      args:
       mkHost args "spinorbundle" {
         withHomeManager = true;
         extraOverlays = with inputs; [
           emacs-overlay.overlay
           neovim-nightly-overlay.overlay
-          (final: _prev: {
-            nur = import inputs.nur {pkgs = final;};
-          })
+          (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
-      });
-    jetbundle = withSystem "x86_64-linux" (args:
+      }
+    );
+    jetbundle = withSystem "x86_64-linux" (
+      args:
       mkHost args "jetbundle" {
         withHomeManager = true;
         extraOverlays = with inputs; [
           emacs-overlay.overlay
           neovim-nightly-overlay.overlay
-          (final: _prev: {
-            nur = import inputs.nur {pkgs = final;};
-          })
+          (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
-      });
+      }
+    );
   };
 }

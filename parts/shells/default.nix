@@ -12,18 +12,21 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{inputs, ...}: {
-  imports = with inputs; [devenv.flakeModule];
-  perSystem = {
-    config,
-    pkgs,
-    system,
-    ...
-  }: {
-    devenv.shells.dev = import ./dev.nix {
-      inherit pkgs system;
-      treefmt = config.treefmt.build.wrapper;
-      inherit (inputs.plasma-manager.packages.${system}) rc2nix;
+{ inputs, ... }:
+{
+  imports = with inputs; [ devenv.flakeModule ];
+  perSystem =
+    {
+      config,
+      pkgs,
+      system,
+      ...
+    }:
+    {
+      devenv.shells.dev = import ./dev.nix {
+        inherit pkgs system;
+        treefmt = config.treefmt.build.wrapper;
+        inherit (inputs.plasma-manager.packages.${system}) rc2nix;
+      };
     };
-  };
 }

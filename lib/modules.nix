@@ -17,51 +17,53 @@
   self,
   inputs,
   ...
-}: let
+}:
+let
   inherit (self.attrsets) mapFilterAttrs;
 in
-  with lib;
-  with builtins; rec {
-    # <nixpkgs>/lib/modules.nix priorities:
-    # mkOptionDefault = 1500: priority of option defaults
-    # mkDefault = 1000: used in config sections of non-user modules to set a default
-    # mkImageMediaOverride = 60:
-    # mkForce = 50:
-    # mkVMOverride = 10: used by ‘nixos-rebuild build-vm’
+with lib;
+with builtins;
+rec {
+  # <nixpkgs>/lib/modules.nix priorities:
+  # mkOptionDefault = 1500: priority of option defaults
+  # mkDefault = 1000: used in config sections of non-user modules to set a default
+  # mkImageMediaOverride = 60:
+  # mkForce = 50:
+  # mkVMOverride = 10: used by ‘nixos-rebuild build-vm’
 
-    /*
+  /*
     mkOverride function with a preset priority set for all of the
     home-manager modules.
 
     *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
-    */
-    mkOverrideAtHmModuleLevel = mkOverride 700;
+  */
+  mkOverrideAtHmModuleLevel = mkOverride 700;
 
-    /*
+  /*
     mkOverride function with a preset priority set for all of the
     home-manager profile modules.
 
     *Type*: `mkOverrideAtHmProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
-    */
-    mkOverrideAtHmProfileLevel = mkOverride 600;
+  */
+  mkOverrideAtHmProfileLevel = mkOverride 600;
 
-    /*
+  /*
     mkOverride function with a preset priority set for all of the nixos
     modules.
 
     *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
-    */
-    mkOverrideAtModuleLevel = mkOverride 500;
+  */
+  mkOverrideAtModuleLevel = mkOverride 500;
 
-    /*
+  /*
     mkOverride function with a preset priority set for all of the nixos
     profiles, that is, modules that preconfigure other modules.
 
     *Type*: `mkOverrideAtProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
-    */
-    mkOverrideAtProfileLevel = mkOverride 400;
+  */
+  mkOverrideAtProfileLevel = mkOverride 400;
 
-    /*
+  /*
     Recursively checks the presence of a nixos/home-manager module and whether
     its enabled.
 
@@ -77,19 +79,24 @@ in
     using the `hasAttr` function.
 
     *Type*: `isModuleLoadedAndEnabled :: AttrSet -> String -> Bool`
-    */
-    isModuleLoadedAndEnabled = cfg: identifier: let
-      aux = acc: parts: let
-        elem = head parts;
-        rest = tail parts;
-      in
-        if length rest == 0
-        then (hasAttr elem acc) && (hasAttr "enable" acc.${elem}) && acc.${elem}.enable
-        else (hasAttr elem acc) && (aux acc.${elem} rest);
+  */
+  isModuleLoadedAndEnabled =
+    cfg: identifier:
+    let
+      aux =
+        acc: parts:
+        let
+          elem = head parts;
+          rest = tail parts;
+        in
+        if length rest == 0 then
+          (hasAttr elem acc) && (hasAttr "enable" acc.${elem}) && acc.${elem}.enable
+        else
+          (hasAttr elem acc) && (aux acc.${elem} rest);
     in
-      aux cfg (splitString "." identifier);
+    aux cfg (splitString "." identifier);
 
-    /*
+  /*
     Recursively read a directory and apply a provided function to every `.nix`
     file. Returns an attrset that reflects the filenames and directory
     structure of the root.
@@ -113,25 +120,28 @@ in
     mapModules ./hosts (host: mkHostCustomFunction myArg host)
       => { hostA = { ... }; hostB = { ... }; }
     ```
-    */
-    mapModules =
-      # (Path) Root directory on which should the recursive mapping be applied
-      dir:
-      # (Path -> AttrSet a) Function that transforms node paths to their custom attrsets
-      fn:
-        mapFilterAttrs
-        (n: v: v != null && !(hasPrefix "_" n) && !(hasPrefix ".git" n)) (n: v: let
-          path = "${toString dir}/${n}";
-        in
-          if v == "directory" && pathExists "${path}/default.nix"
-          then nameValuePair n (fn path)
-          else if v == "directory"
-          then nameValuePair n (mapModules path fn)
-          else if v == "regular" && n != "default.nix" && hasSuffix ".nix" n
-          then nameValuePair (removeSuffix ".nix" n) (fn path)
-          else nameValuePair "" null) (readDir dir);
+  */
+  mapModules =
+    # (Path) Root directory on which should the recursive mapping be applied
+    dir:
+    # (Path -> AttrSet a) Function that transforms node paths to their custom attrsets
+    fn:
+    mapFilterAttrs (n: v: v != null && !(hasPrefix "_" n) && !(hasPrefix ".git" n)) (
+      n: v:
+      let
+        path = "${toString dir}/${n}";
+      in
+      if v == "directory" && pathExists "${path}/default.nix" then
+        nameValuePair n (fn path)
+      else if v == "directory" then
+        nameValuePair n (mapModules path fn)
+      else if v == "regular" && n != "default.nix" && hasSuffix ".nix" n then
+        nameValuePair (removeSuffix ".nix" n) (fn path)
+      else
+        nameValuePair "" null
+    ) (readDir dir);
 
-    /*
+  /*
     Custom nixpkgs constructor. Its purpose is to import provided nixpkgs
     while setting the target platform and all over the needed overlays.
 
@@ -147,28 +157,26 @@ in
     }) ]
       => { ... }
     ```
-    */
-    mkNixpkgs =
-      # (AttrSet) TODO (this is probably not an actual attrset?)
-      pkgs:
-      # (String) System string identifier (eg: "x86_64-linux", "aarch64-linux", "aarch64-darwin")
-      system:
-      # ([AttrSet -> AttrSet -> AttrSet]) Extra overlays that should be applied to the created pkgs
-      extraOverlays:
-        import pkgs {
-          inherit system;
-          config.allowUnfree = true;
-          hostPlatform = system;
-          overlays = let
-            pkgsOverlay = _final: _prev: {
-              tensorfiles = inputs.self.packages.${system};
-            };
-          in
-            [pkgsOverlay]
-            ++ extraOverlays;
-        };
+  */
+  mkNixpkgs =
+    # (AttrSet) TODO (this is probably not an actual attrset?)
+    pkgs:
+    # (String) System string identifier (eg: "x86_64-linux", "aarch64-linux", "aarch64-darwin")
+    system:
+    # ([AttrSet -> AttrSet -> AttrSet]) Extra overlays that should be applied to the created pkgs
+    extraOverlays:
+    import pkgs {
+      inherit system;
+      config.allowUnfree = true;
+      hostPlatform = system;
+      overlays =
+        let
+          pkgsOverlay = _final: _prev: { tensorfiles = inputs.self.packages.${system}; };
+        in
+        [ pkgsOverlay ] ++ extraOverlays;
+    };
 
-    /*
+  /*
     Returns a dummy derivation with a given name as and a platform
     specific builder. Useful when constructing certain defaults or general
     debugging. The resulting derivation can be compiled without errors, but
@@ -184,39 +192,38 @@ in
     mkDummyDerivation "example-pkg2" "x86_64-linux" { meta.license = lib.licenses.gpl20; }
      => derivation
     ```
-    */
-    mkDummyDerivation =
-      # (String) Name of the dummy derivation
-      name:
-      # (String) System architecture string. This is going to be used for choosing the target derivation builder
-      system:
-      # (AttrSet a) An attrset with possibly any additional values that are going to be passed to the mkDerivation call
-      extraArgs: let
-        systemPkgs = mkNixpkgs inputs.nixpkgs system [];
-        args =
-          rec {
-            inherit name;
-            version = "not-for-build";
+  */
+  mkDummyDerivation =
+    # (String) Name of the dummy derivation
+    name:
+    # (String) System architecture string. This is going to be used for choosing the target derivation builder
+    system:
+    # (AttrSet a) An attrset with possibly any additional values that are going to be passed to the mkDerivation call
+    extraArgs:
+    let
+      systemPkgs = mkNixpkgs inputs.nixpkgs system [ ];
+      args = rec {
+        inherit name;
+        version = "not-for-build";
 
-            # In case something tries to actually evaluate this, we have to provide
-            #
-            # 1. Declaratively some source?
-            # 2. Minimally something to do during the installPhase
-            src = ./.;
-            dontBuild = true;
-            installPhase = ''
-              echo "DUMMY PACKAGE for ${name}" && mkdir -p $out
-            '';
+        # In case something tries to actually evaluate this, we have to provide
+        #
+        # 1. Declaratively some source?
+        # 2. Minimally something to do during the installPhase
+        src = ./.;
+        dontBuild = true;
+        installPhase = ''
+          echo "DUMMY PACKAGE for ${name}" && mkdir -p $out
+        '';
 
-            meta = {
-              homepage = "https://github.com/tsandrini/tensorfiles";
-              description = "Dummy package used for ${name} -- not for build";
-              license = licenses.mit;
-              platforms = [system];
-              maintainers = [];
-            };
-          }
-          // extraArgs;
-      in
-        systemPkgs.stdenv.mkDerivation args;
-  }
+        meta = {
+          homepage = "https://github.com/tsandrini/tensorfiles";
+          description = "Dummy package used for ${name} -- not for build";
+          license = licenses.mit;
+          platforms = [ system ];
+          maintainers = [ ];
+        };
+      } // extraArgs;
+    in
+    systemPkgs.stdenv.mkDerivation args;
+}

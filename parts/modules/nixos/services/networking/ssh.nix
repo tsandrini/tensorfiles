@@ -12,18 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.services.networking.ssh;
   _ = mkOverrideAtModuleLevel;
-in {
+in
+{
   options.tensorfiles.services.networking.ssh = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles everything related to ssh,
@@ -83,11 +82,9 @@ in {
       };
     }
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.genHostKey.enable {
-      services.openssh.hostKeys = [cfg.genHostKey.hostKey];
-    })
+    (mkIf cfg.genHostKey.enable { services.openssh.hostKeys = [ cfg.genHostKey.hostKey ]; })
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

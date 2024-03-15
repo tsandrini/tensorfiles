@@ -12,20 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
+{ localFlake }:
+{
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib; let
-  inherit
-    (localFlake.lib)
-    mkOverrideAtHmModuleLevel
-    isModuleLoadedAndEnabled
-    mkPywalEnableOption
-    ;
+with lib;
+let
+  inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled mkPywalEnableOption;
 
   cfg = config.tensorfiles.hm.services.x11.window-managers.xmonad;
   _ = mkOverrideAtHmModuleLevel;
@@ -82,13 +79,16 @@ with lib; let
     # Output the icon tag for xmobar
     echo "<icon=''${iconfile}/>"
   '';
-in {
+in
+{
   options.tensorfiles.hm.services.x11.window-managers.xmonad = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the xmonad window manager.
     '');
 
-    pywal = {enable = mkPywalEnableOption;};
+    pywal = {
+      enable = mkPywalEnableOption;
+    };
 
     cbatticon = {
       enable =
@@ -99,7 +99,9 @@ in {
 
           https://github.com/valr/cbatticon
         '')
-        // {default = true;};
+        // {
+          default = true;
+        };
 
       pkg = mkOption {
         type = package;
@@ -120,7 +122,9 @@ in {
 
           https://github.com/altdesktop/playerctl
         '')
-        // {default = true;};
+        // {
+          default = true;
+        };
 
       pkg = mkOption {
         type = package;
@@ -146,7 +150,9 @@ in {
 
           and secondly, it creates the keyboard mappings.
         '')
-        // {default = true;};
+        // {
+          default = true;
+        };
 
       pkg = mkOption {
         type = package;
@@ -164,35 +170,31 @@ in {
     # |----------------------------------------------------------------------| #
     {
       home = {
-        packages = with pkgs;
+        packages =
+          with pkgs;
           [
             trayer-padding-icon
             haskellPackages.xmobar
             i3lock-fancy-rapid
             ubuntu_font_family
-            (nerdfonts.override {fonts = ["Ubuntu" "UbuntuMono"];})
+            (nerdfonts.override {
+              fonts = [
+                "Ubuntu"
+                "UbuntuMono"
+              ];
+            })
             ubuntu_font_family
             feh
             trayer
             xfce.xfce4-clipman-plugin
             light
           ]
-          ++ (
-            if cfg.dmenu.enable
-            then
-              (
-                if dmenuCheck
-                then []
-                else cfg.dmenu.pkg
-              )
-            else []
-          )
+          ++ (if cfg.dmenu.enable then (if dmenuCheck then [ ] else cfg.dmenu.pkg) else [ ])
           ++ (optional cfg.cbatticon.enable cfg.cbatticon.pkg)
           ++ (optional cfg.playerctl.enable cfg.playerctl.pkg);
 
         # lil haskell icon ^^
-        file."${config.home.homeDirectory}/.xmonad/xpm/haskell_20.xpm".source =
-          _ ./xpm/haskell_20.xpm;
+        file."${config.home.homeDirectory}/.xmonad/xpm/haskell_20.xpm".source = _ ./xpm/haskell_20.xpm;
 
         file."${config.xdg.configHome}/wal/templates/xmobarrc".text = ''
           Config {{
@@ -285,358 +287,367 @@ in {
         windowManager.xmonad = {
           enable = _ true;
           enableContribAndExtras = _ true;
-          config = _ (pkgs.writeText "xmonad.hs" ''
-            import Control.Exception (try)
-            import qualified Data.Map as M
-            import Data.Maybe
-              ( fromJust,
-                fromMaybe,
-              )
-            import Data.Monoid
-            import Graphics.X11.ExtraTypes.XorgDefault
-            import System.Directory
-            import System.Exit (exitSuccess)
-            import System.IO (hPutStrLn)
-            import XMonad
-            import XMonad.Actions.CopyWindow (kill1)
-            import XMonad.Actions.CycleWS (toggleWS)
-            import XMonad.Actions.MouseResize
-            import XMonad.Actions.WindowGo (runOrRaise)
-            import XMonad.Hooks.DynamicLog
-              ( PP (..),
-                dynamicLogWithPP,
-                shorten,
-                wrap,
-                xmobarColor,
-                xmobarPP,
-              )
-            import XMonad.Hooks.EwmhDesktops
-            import XMonad.Hooks.ManageDocks
-              ( avoidStruts,
-                manageDocks,
-              )
-            import XMonad.Hooks.ManageHelpers
-              ( doFullFloat,
-                isFullscreen,
-              )
-            import XMonad.Layout.GridVariants (Grid (Grid))
-            import XMonad.Layout.IndependentScreens
-            import XMonad.Layout.LayoutModifier
-            import XMonad.Layout.LimitWindows (limitWindows)
-            import XMonad.Layout.Magnifier
-            import XMonad.Layout.MultiToggle
-              ( EOT (EOT),
-                mkToggle,
-                single,
-                (??),
-              )
-            import qualified XMonad.Layout.MultiToggle as MT
-              ( Toggle (..),
-              )
-            import XMonad.Layout.MultiToggle.Instances
-              ( StdTransformers
-                  ( MIRROR,
-                    NBFULL,
-                    NOBORDERS
-                  ),
-              )
-            import XMonad.Layout.NoBorders
-            import XMonad.Layout.Renamed
-            import XMonad.Layout.ResizableTile
-            import XMonad.Layout.Simplest
-            import XMonad.Layout.SimplestFloat
-            import XMonad.Layout.Spacing
-            import XMonad.Layout.Spiral (spiral)
-            import XMonad.Layout.SubLayouts
-            import XMonad.Layout.Tabbed
-            import qualified XMonad.Layout.ToggleLayouts as T
-              ( toggleLayouts,
-              )
-            import XMonad.Layout.WindowArranger (windowArrange)
-            import XMonad.Util.EZConfig (additionalKeysP)
-            import XMonad.Util.NamedScratchpad
-            import XMonad.Util.Run (safeSpawn, spawnPipe)
-            import XMonad.Util.SpawnOnce
+          config = _ (
+            pkgs.writeText "xmonad.hs" ''
+              import Control.Exception (try)
+              import qualified Data.Map as M
+              import Data.Maybe
+                ( fromJust,
+                  fromMaybe,
+                )
+              import Data.Monoid
+              import Graphics.X11.ExtraTypes.XorgDefault
+              import System.Directory
+              import System.Exit (exitSuccess)
+              import System.IO (hPutStrLn)
+              import XMonad
+              import XMonad.Actions.CopyWindow (kill1)
+              import XMonad.Actions.CycleWS (toggleWS)
+              import XMonad.Actions.MouseResize
+              import XMonad.Actions.WindowGo (runOrRaise)
+              import XMonad.Hooks.DynamicLog
+                ( PP (..),
+                  dynamicLogWithPP,
+                  shorten,
+                  wrap,
+                  xmobarColor,
+                  xmobarPP,
+                )
+              import XMonad.Hooks.EwmhDesktops
+              import XMonad.Hooks.ManageDocks
+                ( avoidStruts,
+                  manageDocks,
+                )
+              import XMonad.Hooks.ManageHelpers
+                ( doFullFloat,
+                  isFullscreen,
+                )
+              import XMonad.Layout.GridVariants (Grid (Grid))
+              import XMonad.Layout.IndependentScreens
+              import XMonad.Layout.LayoutModifier
+              import XMonad.Layout.LimitWindows (limitWindows)
+              import XMonad.Layout.Magnifier
+              import XMonad.Layout.MultiToggle
+                ( EOT (EOT),
+                  mkToggle,
+                  single,
+                  (??),
+                )
+              import qualified XMonad.Layout.MultiToggle as MT
+                ( Toggle (..),
+                )
+              import XMonad.Layout.MultiToggle.Instances
+                ( StdTransformers
+                    ( MIRROR,
+                      NBFULL,
+                      NOBORDERS
+                    ),
+                )
+              import XMonad.Layout.NoBorders
+              import XMonad.Layout.Renamed
+              import XMonad.Layout.ResizableTile
+              import XMonad.Layout.Simplest
+              import XMonad.Layout.SimplestFloat
+              import XMonad.Layout.Spacing
+              import XMonad.Layout.Spiral (spiral)
+              import XMonad.Layout.SubLayouts
+              import XMonad.Layout.Tabbed
+              import qualified XMonad.Layout.ToggleLayouts as T
+                ( toggleLayouts,
+                )
+              import XMonad.Layout.WindowArranger (windowArrange)
+              import XMonad.Util.EZConfig (additionalKeysP)
+              import XMonad.Util.NamedScratchpad
+              import XMonad.Util.Run (safeSpawn, spawnPipe)
+              import XMonad.Util.SpawnOnce
 
-            myModMask :: KeyMask
-            myModMask = mod4Mask
+              myModMask :: KeyMask
+              myModMask = mod4Mask
 
-            myTerminal :: String
-            myTerminal = "${
-              if config.home.sessionVariables.TERMINAL != null
-              then config.home.sessionVariables.TERMINAL
-              else "xterm"
-            }"
+              myTerminal :: String
+              myTerminal = "${
+                if config.home.sessionVariables.TERMINAL != null then
+                  config.home.sessionVariables.TERMINAL
+                else
+                  "xterm"
+              }"
 
-            myFileManager :: String
-            myFileManager = "lf"
+              myFileManager :: String
+              myFileManager = "lf"
 
-            myBorderWidth :: Dimension
-            myBorderWidth = 2
+              myBorderWidth :: Dimension
+              myBorderWidth = 2
 
-            myWorkspaces :: [String]
-            myWorkspaces = map show [1 .. 9]
+              myWorkspaces :: [String]
+              myWorkspaces = map show [1 .. 9]
 
-            mySpacing ::
-              Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
-            mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
+              mySpacing ::
+                Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
+              mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
 
-            mySpacing' ::
-              Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
-            mySpacing' i = spacingRaw True (Border i i i i) True (Border i i i i) True
+              mySpacing' ::
+                Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
+              mySpacing' i = spacingRaw True (Border i i i i) True (Border i i i i) True
 
-            getColors :: IO [String]
-            ${
-              if pywalCheck
-              then ''
-                getColors = do
-                  contents <- readFile "${config.xdg.cacheHome}/wal/colors"
-                  let colors = lines contents
-                  return (colors ++ replicate (16 - length colors) "#000000")
-              ''
-              else ''
-                getColors = do
-                  return [
-                    "#000000"
-                    "#9AEDFE"
-                    "#000000"
-                    "#000000"
-                    "#000000"
-                    "#000000"
-                    "#000000"
-                    "#000000"
-                    "#000000"
-                    "#292d3e"
-                    "#F07178"
-                    "#000000"
-                    "#c3e88d"
-                    "#c3e88d"
-                    "#82AAFF"
-                    "#000000"
-                  ]
-              ''
-            }
+              getColors :: IO [String]
+              ${
+                if pywalCheck then
+                  ''
+                    getColors = do
+                      contents <- readFile "${config.xdg.cacheHome}/wal/colors"
+                      let colors = lines contents
+                      return (colors ++ replicate (16 - length colors) "#000000")
+                  ''
+                else
+                  ''
+                    getColors = do
+                      return [
+                        "#000000"
+                        "#9AEDFE"
+                        "#000000"
+                        "#000000"
+                        "#000000"
+                        "#000000"
+                        "#000000"
+                        "#000000"
+                        "#000000"
+                        "#292d3e"
+                        "#F07178"
+                        "#000000"
+                        "#c3e88d"
+                        "#c3e88d"
+                        "#82AAFF"
+                        "#000000"
+                      ]
+                  ''
+              }
 
-            tall =
-              renamed [Replace "tall"] $
-                smartBorders $
-                  subLayout [] (smartBorders Simplest) $
-                    limitWindows 30 $
-                      mySpacing 25 $
-                        ResizableTall 1 (3 / 100) (1 / 2) []
-
-            grid =
-              renamed [Replace "grid"] $
-                smartBorders $
-                  subLayout [] (smartBorders Simplest) $
-                    limitWindows 30 $
-                      mySpacing 25 $
-                        mkToggle (single MIRROR) $
-                          Grid (16 / 10)
-
-            fib =
-              renamed [Replace "spiral"] $
-                smartBorders $
-                  subLayout [] (smartBorders Simplest) $
-                    limitWindows 30 $
-                      mySpacing 25 $
-                        spiral (6 / 7)
-
-            magnifyLayout =
-              renamed [Replace "magnify"] $
-                smartBorders $
-                  subLayout [] (smartBorders Simplest) $
-                    magnifier $
+              tall =
+                renamed [Replace "tall"] $
+                  smartBorders $
+                    subLayout [] (smartBorders Simplest) $
                       limitWindows 30 $
                         mySpacing 25 $
                           ResizableTall 1 (3 / 100) (1 / 2) []
 
-            floats =
-              renamed [Replace "floats"] $ smartBorders $ limitWindows 20 simplestFloat
+              grid =
+                renamed [Replace "grid"] $
+                  smartBorders $
+                    subLayout [] (smartBorders Simplest) $
+                      limitWindows 30 $
+                        mySpacing 25 $
+                          mkToggle (single MIRROR) $
+                            Grid (16 / 10)
 
-            myWorkspaceIndices :: M.Map String Integer
-            myWorkspaceIndices = M.fromList $ zip myWorkspaces [1 ..] -- (,) == \x y -> (x,y)
+              fib =
+                renamed [Replace "spiral"] $
+                  smartBorders $
+                    subLayout [] (smartBorders Simplest) $
+                      limitWindows 30 $
+                        mySpacing 25 $
+                          spiral (6 / 7)
 
-            clickable :: [Char] -> [Char]
-            clickable ws =
-              "<action=xdotool key super+" ++ show i ++ ">" ++ ws ++ "</action>"
-              where
-                i = fromJust $ M.lookup ws myWorkspaceIndices
+              magnifyLayout =
+                renamed [Replace "magnify"] $
+                  smartBorders $
+                    subLayout [] (smartBorders Simplest) $
+                      magnifier $
+                        limitWindows 30 $
+                          mySpacing 25 $
+                            ResizableTall 1 (3 / 100) (1 / 2) []
 
-            myLayoutHook =
-              avoidStruts $
-                mouseResize $
-                  windowArrange $
-                    T.toggleLayouts floats $
-                      mkToggle
-                        (NBFULL ?? NOBORDERS ?? EOT)
-                        myDefaultLayout
-              where
-                myDefaultLayout =
-                  withBorder myBorderWidth tall ||| withBorder myBorderWidth grid ||| withBorder myBorderWidth fib ||| magnifyLayout
+              floats =
+                renamed [Replace "floats"] $ smartBorders $ limitWindows 20 simplestFloat
 
-            myStartupHook :: [String] -> X ()
-            myStartupHook colors = do
-              -- X init
-              ${
-              if pywalCheck
-              then ''
-                spawnOnce "wal -R"
-              ''
-              else ""
-            }
-              -- Apps: base
-              ${
-              with cfg.cbatticon; (
-                if enable
-                then ''
-                  spawn "pgrep cbatticon > /dev/null || ${pkg}/bin/cbatticon &"
-                ''
-                else ""
-              )
-            }
-              spawnOnce "pgrep xfce4-clipman > /dev/null || xfce4-clipman &"
+              myWorkspaceIndices :: M.Map String Integer
+              myWorkspaceIndices = M.fromList $ zip myWorkspaces [1 ..] -- (,) == \x y -> (x,y)
 
-              -- Apps: these should restart every time
-              -- spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
-              spawn "systemctl --user restart dunst.service > /dev/null"
+              clickable :: [Char] -> [Char]
+              clickable ws =
+                "<action=xdotool key super+" ++ show i ++ ">" ++ ws ++ "</action>"
+                where
+                  i = fromJust $ M.lookup ws myWorkspaceIndices
 
-              spawn
-                ( "(${pkgs.killall}/bin/killall -q trayer || true) && ${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --padding 6 \
-                  \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
-                  \--transparent true --alpha 80 --height 22 --tint x"
-                    ++ tail (head colors)
-                    ++ " &"
-                )
+              myLayoutHook =
+                avoidStruts $
+                  mouseResize $
+                    windowArrange $
+                      T.toggleLayouts floats $
+                        mkToggle
+                          (NBFULL ?? NOBORDERS ?? EOT)
+                          myDefaultLayout
+                where
+                  myDefaultLayout =
+                    withBorder myBorderWidth tall ||| withBorder myBorderWidth grid ||| withBorder myBorderWidth fib ||| magnifyLayout
 
-            myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
-            myManageHook =
-              composeAll
-                [ className =? "confirm" --> doFloat,
-                  className =? "file_progress" --> doFloat,
-                  className =? "dialog" --> doFloat,
-                  className =? "download" --> doFloat,
-                  className =? "error" --> doFloat,
-                  className =? "Gimp" --> doFloat,
-                  className =? "notification" --> doFloat,
-                  className =? "pinentry-gtk-2" --> doFloat,
-                  className =? "splash" --> doFloat,
-                  className =? "toolbar" --> doFloat,
-                  (className =? "firefox" <&&> resource =? "Dialog") --> doFloat, -- Float Firefox Dialog
-                  isFullscreen --> doFullFloat
+              myStartupHook :: [String] -> X ()
+              myStartupHook colors = do
+                -- X init
+                ${
+                  if pywalCheck then
+                    ''
+                      spawnOnce "wal -R"
+                    ''
+                  else
+                    ""
+                }
+                -- Apps: base
+                ${
+                  with cfg.cbatticon;
+                  (
+                    if enable then
+                      ''
+                        spawn "pgrep cbatticon > /dev/null || ${pkg}/bin/cbatticon &"
+                      ''
+                    else
+                      ""
+                  )
+                }
+                spawnOnce "pgrep xfce4-clipman > /dev/null || xfce4-clipman &"
+
+                -- Apps: these should restart every time
+                -- spawn "(${pkgs.killall}/bin/killall -q dunst || true) && dunst &"
+                spawn "systemctl --user restart dunst.service > /dev/null"
+
+                spawn
+                  ( "(${pkgs.killall}/bin/killall -q trayer || true) && ${pkgs.trayer}/bin/trayer --edge top --align right --widthtype request --padding 6 \
+                    \--SetDockType true --SetPartialStrut true --expand true --monitor 0 \
+                    \--transparent true --alpha 80 --height 22 --tint x"
+                      ++ tail (head colors)
+                      ++ " &"
+                  )
+
+              myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
+              myManageHook =
+                composeAll
+                  [ className =? "confirm" --> doFloat,
+                    className =? "file_progress" --> doFloat,
+                    className =? "dialog" --> doFloat,
+                    className =? "download" --> doFloat,
+                    className =? "error" --> doFloat,
+                    className =? "Gimp" --> doFloat,
+                    className =? "notification" --> doFloat,
+                    className =? "pinentry-gtk-2" --> doFloat,
+                    className =? "splash" --> doFloat,
+                    className =? "toolbar" --> doFloat,
+                    (className =? "firefox" <&&> resource =? "Dialog") --> doFloat, -- Float Firefox Dialog
+                    isFullscreen --> doFullFloat
+                  ]
+
+              myKeys :: [String] -> [(String, X ())]
+              myKeys colors =
+                [ -- Programs
+                  ("M-<Return>", spawn myTerminal),
+                  ${
+                    if cfg.dmenu.enable then
+                      ''
+                        ("M-d", spawn "dmenu_run -i -f -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '"),
+                      ''
+                    else
+                      ""
+                  }
+                  -- TODO I give up, this just won't work how I want ...
+                  -- ("M-f", spawn myTerminal ++ " -e ." ++ myFileManager ++ ""),
+                  ("M-S-i", spawn "i3lock-fancy-rapid 5 'pixel'"),
+                  -- Kill windows
+                  ("M-S-q", kill1), -- Kill the currently focused client
+                  -- Workspaces
+                  ("M-<Tab>", toggleWS),
+                  -- Increase/decrease spacing (gaps)
+                  ("M-u", decWindowSpacing 4), -- Decrease window spacing
+                  ("M-i", incWindowSpacing 4), -- Increase window spacing
+                  -- Multimedia keys
+                  ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird")),
+                  ${
+                    with cfg.playerctl;
+                    (
+                      if enable then
+                        (replaceStrings [ "\n" ] [ "" ] ''
+                          ("<XF86AudioPrev>", spawn "${pkg}/bin/playerctl previous"),
+                          ("<XF86AudioNext>", spawn "${pkg}/bin/playerctl next"),
+                          ("<XF86AudioPlay>", spawn "${pkg}/bin/playerctl play-pause"),
+                          ("<XF86AudioStop>", spawn "${pkg}/bin/playerctl stop"),
+                        '')
+                      else
+                        ""
+                    )
+                  }
+                  ("<XF86Display>", spawn "autorandr --cycle"),
+                  ("<XF86MonBrightnessUp>", spawn "light -A 5"),
+                  ("<XF86MonBrightnessDown>", spawn "light -U 5"),
+                  ("<Print>", spawn "flameshot gui")
                 ]
 
-            myKeys :: [String] -> [(String, X ())]
-            myKeys colors =
-              [ -- Programs
-                ("M-<Return>", spawn myTerminal),
-                ${
-              if cfg.dmenu.enable
-              then ''
-                ("M-d", spawn "dmenu_run -i -f -fn 'Ubuntu:pixelsize=11:antialias=true:hinting=true' -p 'Run: '"),
-              ''
-              else ""
-            }
-                -- TODO I give up, this just won't work how I want ...
-                -- ("M-f", spawn myTerminal ++ " -e ." ++ myFileManager ++ ""),
-                ("M-S-i", spawn "i3lock-fancy-rapid 5 'pixel'"),
-                -- Kill windows
-                ("M-S-q", kill1), -- Kill the currently focused client
-                -- Workspaces
-                ("M-<Tab>", toggleWS),
-                -- Increase/decrease spacing (gaps)
-                ("M-u", decWindowSpacing 4), -- Decrease window spacing
-                ("M-i", incWindowSpacing 4), -- Increase window spacing
-                -- Multimedia keys
-                ("<XF86Mail>", runOrRaise "thunderbird" (resource =? "thunderbird")),
-                ${
-              with cfg.playerctl; (
-                if enable
-                then
-                  (replaceStrings ["\n"] [""] ''
-                    ("<XF86AudioPrev>", spawn "${pkg}/bin/playerctl previous"),
-                    ("<XF86AudioNext>", spawn "${pkg}/bin/playerctl next"),
-                    ("<XF86AudioPlay>", spawn "${pkg}/bin/playerctl play-pause"),
-                    ("<XF86AudioStop>", spawn "${pkg}/bin/playerctl stop"),
-                  '')
-                else ""
-              )
-            }
-                ("<XF86Display>", spawn "autorandr --cycle"),
-                ("<XF86MonBrightnessUp>", spawn "light -A 5"),
-                ("<XF86MonBrightnessDown>", spawn "light -U 5"),
-                ("<Print>", spawn "flameshot gui")
-              ]
+              remap ::
+                (KeySym -> KeySym) ->
+                (XConfig l -> M.Map (KeyMask, KeySym) (X ())) ->
+                (XConfig l -> M.Map (KeyMask, KeySym) (X ()))
+              remap f keybinds = M.mapKeys (\(m, k) -> (m, f k)) . keybinds
 
-            remap ::
-              (KeySym -> KeySym) ->
-              (XConfig l -> M.Map (KeyMask, KeySym) (X ())) ->
-              (XConfig l -> M.Map (KeyMask, KeySym) (X ()))
-            remap f keybinds = M.mapKeys (\(m, k) -> (m, f k)) . keybinds
+              toCzech :: KeySym -> KeySym
+              toCzech = \ks -> fromMaybe ks (M.lookup ks cz)
+                where
+                  cz =
+                    M.fromList $
+                      zip
+                        [xK_1 .. xK_9]
+                        [ xK_plus,
+                          xK_ecaron,
+                          xK_scaron,
+                          xK_ccaron,
+                          xK_rcaron,
+                          xK_zcaron,
+                          xK_yacute,
+                          xK_aacute,
+                          xK_iacute
+                        ]
 
-            toCzech :: KeySym -> KeySym
-            toCzech = \ks -> fromMaybe ks (M.lookup ks cz)
-              where
-                cz =
-                  M.fromList $
-                    zip
-                      [xK_1 .. xK_9]
-                      [ xK_plus,
-                        xK_ecaron,
-                        xK_scaron,
-                        xK_ccaron,
-                        xK_rcaron,
-                        xK_zcaron,
-                        xK_yacute,
-                        xK_aacute,
-                        xK_iacute
-                      ]
-
-            main :: IO ()
-            main = do
-              numScreens <- countScreens
-              colors <- getColors
-              xmprocs <- mapM (\i -> spawnPipe $ "xmobar ${config.xdg.configHome}/xmobar/xmobarrc -x " ++ show i) [0 .. numScreens - 1]
-              xmonad $
-                ewmh
-                  def
-                    { manageHook = myManageHook <+> manageDocks,
-                      modMask = myModMask,
-                      terminal = myTerminal,
-                      startupHook = myStartupHook colors,
-                      layoutHook = myLayoutHook,
-                      borderWidth = myBorderWidth,
-                      workspaces = myWorkspaces,
-                      -- , keys               = remap toCzech (keys def)
-                      keys = keys def,
-                      normalBorderColor = colors !! 10,
-                      focusedBorderColor = colors !! 12,
-                      logHook =
-                        mapM_
-                          ( \handle ->
-                              dynamicLogWithPP $
-                                xmobarPP
-                                  { ppOutput = hPutStrLn handle,
-                                    ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
-                                    ppVisible = xmobarColor (colors !! 13) "" . clickable,
-                                    ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
-                                    ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
-                                    ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
-                                    ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
-                                    ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
-                                    -- , ppExtras = [windowCount],
-                                    ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
-                                  }
-                          )
-                          xmprocs
-                    }
-                  `additionalKeysP` myKeys colors
-          '');
+              main :: IO ()
+              main = do
+                numScreens <- countScreens
+                colors <- getColors
+                xmprocs <- mapM (\i -> spawnPipe $ "xmobar ${config.xdg.configHome}/xmobar/xmobarrc -x " ++ show i) [0 .. numScreens - 1]
+                xmonad $
+                  ewmh
+                    def
+                      { manageHook = myManageHook <+> manageDocks,
+                        modMask = myModMask,
+                        terminal = myTerminal,
+                        startupHook = myStartupHook colors,
+                        layoutHook = myLayoutHook,
+                        borderWidth = myBorderWidth,
+                        workspaces = myWorkspaces,
+                        -- , keys               = remap toCzech (keys def)
+                        keys = keys def,
+                        normalBorderColor = colors !! 10,
+                        focusedBorderColor = colors !! 12,
+                        logHook =
+                          mapM_
+                            ( \handle ->
+                                dynamicLogWithPP $
+                                  xmobarPP
+                                    { ppOutput = hPutStrLn handle,
+                                      ppCurrent = xmobarColor (colors !! 14) "" . wrap "[" "]",
+                                      ppVisible = xmobarColor (colors !! 13) "" . clickable,
+                                      ppHidden = xmobarColor (colors !! 15) "" . wrap "*" "" . clickable,
+                                      ppHiddenNoWindows = xmobarColor (colors !! 11) "" . clickable,
+                                      ppTitle = xmobarColor (colors !! 14) "" . shorten 60,
+                                      ppSep = "<fc=" ++ (colors !! 2) ++ "> | </fc>",
+                                      ppUrgent = xmobarColor (colors !! 15) "" . wrap "!" "!",
+                                      -- , ppExtras = [windowCount],
+                                      ppOrder = \(ws : l : t : ex) -> [ws, l] ++ ex ++ [t]
+                                    }
+                            )
+                            xmprocs
+                      }
+                    `additionalKeysP` myKeys colors
+            ''
+          );
         };
       };
     }
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

@@ -12,18 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.file-managers.yazi;
   _ = mkOverrideAtHmModuleLevel;
-in {
+in
+{
   options.tensorfiles.hm.programs.file-managers.yazi = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
@@ -38,7 +37,9 @@ in {
         enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
         enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
         enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell");
+        enableNushellIntegration = _ (
+          isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
+        );
         settings = {
           manager = {
             # sort_by = _ "alphabetical";
@@ -52,5 +53,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

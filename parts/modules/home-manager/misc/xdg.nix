@@ -12,48 +12,42 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.misc.xdg;
   _ = mkOverrideAtHmModuleLevel;
 
   defaultBrowser =
-    if cfg.defaultApplications.browser != null
-    then cfg.defaultApplications.browser
+    if cfg.defaultApplications.browser != null then
+      cfg.defaultApplications.browser
     else
       (
-        if config.home.sessionVariables.BROWSER != null
-        then config.home.sessionVariables.BROWSER
-        else null
+        if config.home.sessionVariables.BROWSER != null then config.home.sessionVariables.BROWSER else null
       );
 
   defaultEditor =
-    if cfg.defaultApplications.editor != null
-    then cfg.defaultApplications.editor
+    if cfg.defaultApplications.editor != null then
+      cfg.defaultApplications.editor
     else
-      (
-        if config.home.sessionVariables.EDITOR != null
-        then config.home.sessionVariables.EDITOR
-        else null
-      );
+      (if config.home.sessionVariables.EDITOR != null then config.home.sessionVariables.EDITOR else null);
 
   defaultTerminal =
-    if cfg.defaultApplications.terminal != null
-    then cfg.defaultApplications.terminal
+    if cfg.defaultApplications.terminal != null then
+      cfg.defaultApplications.terminal
     else
       (
-        if config.home.sessionVariables.TERMINAL != null
-        then config.home.sessionVariables.TERMINAL
-        else null
+        if config.home.sessionVariables.TERMINAL != null then
+          config.home.sessionVariables.TERMINAL
+        else
+          null
       );
-in {
+in
+{
   options.tensorfiles.hm.misc.xdg = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the xdg toolset.
@@ -64,7 +58,9 @@ in {
         mkEnableOption (mdDoc ''
           TODO
         '')
-        // {default = true;};
+        // {
+          default = true;
+        };
 
       browser = mkOption {
         type = nullOr str;
@@ -143,5 +139,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

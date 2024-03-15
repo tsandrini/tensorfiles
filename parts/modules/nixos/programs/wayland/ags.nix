@@ -12,21 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  localFlake,
-  inputs,
-}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake, inputs }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
+with lib;
+let
   inherit (localFlake.lib) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.programs.wayland.ags;
   _ = mkOverrideAtModuleLevel;
-in {
+in
+{
   options.tensorfiles.programs.wayland.ags = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the ags.nix app launcher
@@ -50,7 +46,7 @@ in {
         # Since this module is completely isolated and single purpose
         # (meaning that the only possible place to import it from tensorfiles
         # is here) we can leave the import call here
-        imports = [inputs.ags.homeManagerModules.default];
+        imports = [ inputs.ags.homeManagerModules.default ];
 
         programs.ags = {
           enable = _ true;
@@ -66,5 +62,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

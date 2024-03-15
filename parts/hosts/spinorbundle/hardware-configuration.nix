@@ -17,21 +17,32 @@
   modulesPath,
   pkgs,
   ...
-}: {
-  imports = [(modulesPath + "/installer/scan/not-detected.nix")];
+}:
+{
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = with pkgs; [libva-utils];
+  environment.systemPackages = with pkgs; [ libva-utils ];
 
   networking.useDHCP = lib.mkDefault true;
 
   boot = {
     initrd = {
-      availableKernelModules = ["xhci_pci" "ahci" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc"];
-      kernelModules = [];
+      availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "usb_storage"
+        "sd_mod"
+        "sr_mod"
+        "rtsx_pci_sdmmc"
+      ];
+      kernelModules = [ ];
     };
-    kernelModules = ["kvm-intel"];
-    extraModulePackages = [];
-    blacklistedKernelModules = ["radeon" "amdgpu"];
+    kernelModules = [ "kvm-intel" ];
+    extraModulePackages = [ ];
+    blacklistedKernelModules = [
+      "radeon"
+      "amdgpu"
+    ];
   };
 
   powerManagement = {
@@ -55,7 +66,7 @@
         configurationLimit = 3;
       };
     };
-    binfmt.emulatedSystems = ["aarch64-linux"];
+    binfmt.emulatedSystems = [ "aarch64-linux" ];
     kernelPackages = pkgs.linuxPackages_latest;
   };
 
@@ -80,6 +91,6 @@
   };
   # Hardware hybrid decoding
   nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override {enableHybridCodec = true;};
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
   };
 }

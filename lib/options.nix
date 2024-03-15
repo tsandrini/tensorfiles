@@ -12,27 +12,24 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{lib, ...}:
+{ lib, ... }:
 with lib;
 with lib.types;
-with builtins; rec {
+with builtins;
+rec {
   /*
-  Creates an enableOption (ie `mkEnableOption`), however, already
-  preenabled.
+    Creates an enableOption (ie `mkEnableOption`), however, already
+    preenabled.
 
-  *Type*: `String -> Option`
+    *Type*: `String -> Option`
   */
-  mkAlreadyEnabledOption = description:
-    (mkEnableOption description)
-    // {
-      default = true;
-    };
+  mkAlreadyEnabledOption = description: (mkEnableOption description) // { default = true; };
 
   /*
-  Creates an enableOption targeted for the management of the impermanence
-  system.
+    Creates an enableOption targeted for the management of the impermanence
+    system.
 
-  *Type*: `Option`
+    *Type*: `Option`
   */
   mkImpermanenceEnableOption =
     mkAlreadyEnabledOption (mdDoc ''
@@ -53,10 +50,10 @@ with builtins; rec {
     };
 
   /*
-  Creates an enableOption targeted for the integration with the pywal
-  colorscheme generator.
+    Creates an enableOption targeted for the integration with the pywal
+    colorscheme generator.
 
-  *Type*: `Option`
+    *Type*: `Option`
   */
   mkPywalEnableOption =
     mkAlreadyEnabledOption (mdDoc ''
@@ -77,10 +74,10 @@ with builtins; rec {
     };
 
   /*
-  Creates an enableOption targeted for the management of the agenix
-  security system.
+    Creates an enableOption targeted for the management of the agenix
+    security system.
 
-  *Type*: `Option`
+    *Type*: `Option`
   */
   mkAgenixEnableOption =
     mkAlreadyEnabledOption (mdDoc ''
@@ -111,42 +108,47 @@ with builtins; rec {
     };
 
   /*
-  Submodule option used for handling multiple-user configuration setups.
-  After the definition you can iterate over the users in the following manner
+    Submodule option used for handling multiple-user configuration setups.
+    After the definition you can iterate over the users in the following manner
 
-  Example:
-  ```
-  users.users = genAttrs (attrNames cfg.usersSettings) (_user: let
-    userCfg = cfg.usersSettings."${_user}";
-  in {
-    myOption = userCfg.myOption;
-    myOtherOption = 2 * userCfg.myOtherOption;
-  };
-  ```
+    Example:
+    ```
+    users.users = genAttrs (attrNames cfg.usersSettings) (_user: let
+      userCfg = cfg.usersSettings."${_user}";
+    in {
+      myOption = userCfg.myOption;
+      myOtherOption = 2 * userCfg.myOtherOption;
+    };
+    ```
   */
   mkUsersSettingsOption =
     # (String -> AttrSet a) Function that, given a username, yields all of the users related options for that given user
     generatorFunction:
-      mkOption {
-        type =
-          attrsOf
-          (submodule ({name, ...}: {options = generatorFunction name;}));
-        default = {};
-        example = {
-          "root" = {
-            myOption = false;
-            otherOption.name = "test1";
-          };
-          "myUser" = {
-            myOption = true;
-            otherOption.name = "test2";
-          };
-          # just initialize the defaults
-          "myOtherUser" = {};
+    mkOption {
+      type = attrsOf (
+        submodule (
+          { name, ... }:
+          {
+            options = generatorFunction name;
+          }
+        )
+      );
+      default = { };
+      example = {
+        "root" = {
+          myOption = false;
+          otherOption.name = "test1";
         };
-        description = mdDoc ''
-          Multiuser users configuration option submodule.
-          Enables doing module level configurations via simple attrsets.
-        '';
+        "myUser" = {
+          myOption = true;
+          otherOption.name = "test2";
+        };
+        # just initialize the defaults
+        "myOtherUser" = { };
       };
+      description = mdDoc ''
+        Multiuser users configuration option submodule.
+        Enables doing module level configurations via simple attrsets.
+      '';
+    };
 }

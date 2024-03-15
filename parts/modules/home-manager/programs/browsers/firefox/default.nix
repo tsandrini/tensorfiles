@@ -12,19 +12,17 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
 {
-  localFlake,
-  inputs,
-}: {
   config,
   lib,
   pkgs,
   ...
 }:
 with builtins;
-with lib; let
-  inherit
-    (localFlake.lib)
+with lib;
+let
+  inherit (localFlake.lib)
     mkOverrideAtHmModuleLevel
     isModuleLoadedAndEnabled
     mkImpermanenceEnableOption
@@ -35,19 +33,20 @@ with lib; let
 
   plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
 
-  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
-  impermanence =
-    if impermanenceCheck
-    then config.tensorfiles.hm.system.impermanence
-    else {};
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
   pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
-in {
+in
+{
   options.tensorfiles.hm.programs.browsers.firefox = with types; {
     enable = mkEnableOption (mdDoc ''
       TODO
     '');
 
-    impermanence = {enable = mkImpermanenceEnableOption;};
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -59,7 +58,9 @@ in {
           # trace: warning: The cfg.enableTridactylNative argument for
           # `firefox.override` is deprecated, please add `pkgs.tridactyl-native`
           # to `nativeMessagingHosts.packages` instead
-          nativeMessagingHosts = with pkgs; ([tridactyl-native] ++ (optional plasmaCheck plasma-browser-integration));
+          nativeMessagingHosts =
+            with pkgs;
+            ([ tridactyl-native ] ++ (optional plasmaCheck plasma-browser-integration));
           extraPolicies = {
             CaptivePortal = false;
             DisableFirefoxStudies = true;
@@ -85,9 +86,7 @@ in {
               "uBlock0@raymondhill.net" = {
                 # uBlock settings are written in JSON to be more compatible with the
                 # backup format. This checks the syntax.
-                adminSettings =
-                  builtins.fromJSON
-                  (builtins.readFile ./ublock-settings.json);
+                adminSettings = builtins.fromJSON (builtins.readFile ./ublock-settings.json);
               };
             };
           };
@@ -96,26 +95,30 @@ in {
           id = _ 0;
           name = _ "Default";
           isDefault = _ true;
-          extensions = with pkgs.nur.repos.rycee.firefox-addons; ([
-              # ~ Privacy & content blocking
-              ublock-origin # Finally, an efficient wide-spectrum content blocker. Easy on CPU and memory.
-              skip-redirect # This add-on tries to extract the final url from the intermediary url and goes there straight away if successful.
-              multi-account-containers # Firefox Multi-Account Containers lets you keep parts of your online life separated into color-coded tabs.
+          extensions =
+            with pkgs.nur.repos.rycee.firefox-addons;
+            (
+              [
+                # ~ Privacy & content blocking
+                ublock-origin # Finally, an efficient wide-spectrum content blocker. Easy on CPU and memory.
+                skip-redirect # This add-on tries to extract the final url from the intermediary url and goes there straight away if successful.
+                multi-account-containers # Firefox Multi-Account Containers lets you keep parts of your online life separated into color-coded tabs.
 
-              # ~ Utils
-              keepassxc-browser # Official browser plugin for the KeePassXC password manager
-              tridactyl # Vim, but in your browser. Replace Firefox’s control mechanism with one modelled on Vim.
-              behave # A monitoring browser extension for pages acting as bad boys
-              header-editor # Manage browser’s requests, include modify the request headers and response headers, redirect requests, cancel requests
-              pywalfox # Dynamic theming of Firefox using your Pywal colors
-              enhancer-for-youtube # Take control of YouTube and boost your user experience!
-              sidebery # Vertical tabs tree and bookmarks in sidebar with advanced containers configuration, grouping and many other features.
+                # ~ Utils
+                keepassxc-browser # Official browser plugin for the KeePassXC password manager
+                tridactyl # Vim, but in your browser. Replace Firefox’s control mechanism with one modelled on Vim.
+                behave # A monitoring browser extension for pages acting as bad boys
+                header-editor # Manage browser’s requests, include modify the request headers and response headers, redirect requests, cancel requests
+                pywalfox # Dynamic theming of Firefox using your Pywal colors
+                enhancer-for-youtube # Take control of YouTube and boost your user experience!
+                sidebery # Vertical tabs tree and bookmarks in sidebar with advanced containers configuration, grouping and many other features.
 
-              # DEV related
-              vue-js-devtools # DevTools extension for debugging Vue.js applications.
-              react-devtools # React Developer Tools is a tool that allows you to inspect a React tree, including the component hierarchy, props, state, and more.
-            ]
-            ++ (optional plasmaCheck plasma-integration));
+                # DEV related
+                vue-js-devtools # DevTools extension for debugging Vue.js applications.
+                react-devtools # React Developer Tools is a tool that allows you to inspect a React tree, including the component hierarchy, props, state, and more.
+              ]
+              ++ (optional plasmaCheck plasma-integration)
+            );
           # bookmarks = import ./bookmarks.nix;
           search = {
             force = _ true;
@@ -129,7 +132,7 @@ in {
                   }
                 ];
                 iconUpdateURL = "https://assets.kagi.com/v1/favicon-32x32.png";
-                definedAliases = ["@k"];
+                definedAliases = [ "@k" ];
               };
               "Nix Packages" = {
                 urls = [
@@ -152,7 +155,7 @@ in {
                   }
                 ];
                 icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-                definedAliases = ["@np"];
+                definedAliases = [ "@np" ];
               };
               "Nix Options" = {
                 urls = [
@@ -175,17 +178,13 @@ in {
                   }
                 ];
                 icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-                definedAliases = ["@no"];
+                definedAliases = [ "@no" ];
               };
               "NixOS Wiki" = {
-                urls = [
-                  {
-                    template = "https://nixos.wiki/index.php?search={searchTerms}";
-                  }
-                ];
+                urls = [ { template = "https://nixos.wiki/index.php?search={searchTerms}"; } ];
                 iconUpdateURL = "https://nixos.wiki/favicon.png";
                 updateInterval = 24 * 60 * 60 * 1000;
-                definedAliases = ["@nw"];
+                definedAliases = [ "@nw" ];
               };
             };
           };
@@ -225,8 +224,7 @@ in {
             "services.sync.engine.bookmarks" = _ true;
             "services.sync.engine.tabs" = _ true;
             "services.sync.engine.addons" = _ false;
-            "services.sync.declinedEngines" =
-              _ "passwords,creditcards,addons,prefs,bookmarks";
+            "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs,bookmarks";
           };
 
           # Download areknfox-user-js and append overrides (order matters)
@@ -277,5 +275,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

@@ -12,39 +12,42 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{localFlake}: {
-  config,
-  lib,
-  ...
-}:
+{ localFlake }:
+{ config, lib, ... }:
 with builtins;
-with lib; let
-  inherit (localFlake.lib) mkOverrideAtModuleLevel isModuleLoadedAndEnabled mkImpermanenceEnableOption;
+with lib;
+let
+  inherit (localFlake.lib)
+    mkOverrideAtModuleLevel
+    isModuleLoadedAndEnabled
+    mkImpermanenceEnableOption
+    ;
 
   cfg = config.tensorfiles.services.networking.networkmanager;
   _ = mkOverrideAtModuleLevel;
 
-  impermanenceCheck = (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
-  impermanence =
-    if impermanenceCheck
-    then config.tensorfiles.system.impermanence
-    else {};
-in {
+  impermanenceCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.system.impermanence") && cfg.impermanence.enable;
+  impermanence = if impermanenceCheck then config.tensorfiles.system.impermanence else { };
+in
+{
   options.tensorfiles.services.networking.networkmanager = with types; {
     enable = mkEnableOption (mdDoc ''
       Enables NixOS module that configures/handles the networkmanager service.
     '');
 
-    impermanence = {enable = mkImpermanenceEnableOption;};
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    {networking.networkmanager.enable = _ true;}
+    { networking.networkmanager.enable = _ true; }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       environment.persistence."${impermanence.persistentRoot}" = {
-        directories = ["/etc/NetworkManager/system-connections"];
+        directories = [ "/etc/NetworkManager/system-connections" ];
         files = [
           "/var/lib/NetworkManager/secret_key" # TODO probably move elsewhere?
           "/var/lib/NetworkManager/seen-bssids"
@@ -55,5 +58,5 @@ in {
     # |----------------------------------------------------------------------| #
   ]);
 
-  meta.maintainers = with localFlake.lib.maintainers; [tsandrini];
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }
