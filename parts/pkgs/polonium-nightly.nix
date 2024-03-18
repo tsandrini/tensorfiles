@@ -29,8 +29,8 @@ buildNpmPackage {
   src = fetchFromGitHub {
     owner = "zeroxoneafour";
     repo = "polonium";
-    rev = "0416e4e2c056dd1264a28547a79b4f8aba2e03e8";
-    hash = "sha256-8+IOEW0Ceq3EYU2zsJu1P/0vxnJ4JdJ+9D9SqGAZYiw=";
+    rev = "8b1986547ccaa9d23f2e562f74beb26d168e0336";
+    hash = "sha256-GXxR9lLCpnPJL1JZESIAygTHElzU61YJpaCXrjacivU=";
   };
 
   npmDepsHash = "sha256-kaT3Uyq+/JkmebakG9xQuR4Kjo7vk6BzI1/LffOj/eo=";
