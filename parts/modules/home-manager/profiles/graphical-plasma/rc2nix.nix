@@ -332,10 +332,21 @@
         "Search"
         "Meta+D"
       ];
-      "services.org.kde.plasma-systemmonitor.desktop"."_launch" = "Ctrl+Esc";
       "services.org.kde.spectacle.desktop"."RecordRegion" = "Meta+Shift+R";
       "services.org.kde.spectacle.desktop"."RecordWindow" = [ ];
-      "services.org.kde.spectacle.desktop"."_launch" = [ ];
+      "services.org.kde.spectacle.desktop"."_launch" = "Meta+Shift+S";
+      "services.services.kitty.desktop"."_launch" = "Meta+Return";
+      "services.services.org.flameshot.Flameshot.desktop"."Capture" = "Print";
+      "services.services.org.kde.krunner.desktop"."RunClipboard" = "Meta+Shift+D";
+      "services.services.org.kde.krunner.desktop"."_launch" = [
+        ""
+        "Search"
+        "Meta+D"
+      ];
+      "services.services.org.kde.plasma-systemmonitor.desktop"."_launch" = "Ctrl+Esc";
+      "services.services.org.kde.spectacle.desktop"."RecordRegion" = "Meta+Shift+R";
+      "services.services.org.kde.spectacle.desktop"."RecordWindow" = [ ];
+      "services.services.org.kde.spectacle.desktop"."_launch" = [ ];
     };
     configFile = {
       "baloofilerc"."General"."dbVersion" = 2;
@@ -344,6 +355,7 @@
       "baloofilerc"."General"."exclude folders[$e]" = "$HOME/Study/";
       "dolphinrc"."KFileDialog Settings"."Places Icons Auto-resize" = false;
       "dolphinrc"."KFileDialog Settings"."Places Icons Static Size" = 22;
+      "dolphinrc"."Search"."Location" = "Everywhere";
       "kactivitymanagerdrc"."activities"."42310903-cee3-40bb-a0f4-0b42e2373132" = "Default";
       "kactivitymanagerdrc"."main"."currentActivity" = "42310903-cee3-40bb-a0f4-0b42e2373132";
       "kcminputrc"."Libinput.2.7.SynPS/2 Synaptics TouchPad"."NaturalScroll" = true;
@@ -376,6 +388,28 @@
       "kdeglobals"."KFileDialog Settings"."Sort reversed" = true;
       "kdeglobals"."KFileDialog Settings"."Speedbar Width" = 138;
       "kdeglobals"."KFileDialog Settings"."View Style" = "Simple";
+      "kdeglobals"."Shortcuts"."AboutApp" = "";
+      "kdeglobals"."Shortcuts"."AboutKDE" = "";
+      "kdeglobals"."Shortcuts"."Clear" = "";
+      "kdeglobals"."Shortcuts"."ConfigureNotifications" = "";
+      "kdeglobals"."Shortcuts"."ConfigureToolbars" = "";
+      "kdeglobals"."Shortcuts"."Donate" = "";
+      "kdeglobals"."Shortcuts"."EditBookmarks" = "";
+      "kdeglobals"."Shortcuts"."FitToHeight" = "";
+      "kdeglobals"."Shortcuts"."FitToPage" = "";
+      "kdeglobals"."Shortcuts"."FitToWidth" = "";
+      "kdeglobals"."Shortcuts"."Goto" = "";
+      "kdeglobals"."Shortcuts"."GotoPage" = "";
+      "kdeglobals"."Shortcuts"."Mail" = "";
+      "kdeglobals"."Shortcuts"."OpenRecent" = "";
+      "kdeglobals"."Shortcuts"."PrintPreview" = "";
+      "kdeglobals"."Shortcuts"."ReportBug" = "";
+      "kdeglobals"."Shortcuts"."Revert" = "";
+      "kdeglobals"."Shortcuts"."ShowStatusbar" = "";
+      "kdeglobals"."Shortcuts"."ShowToolbar" = "";
+      "kdeglobals"."Shortcuts"."Spelling" = "";
+      "kdeglobals"."Shortcuts"."SwitchApplicationLanguage" = "";
+      "kdeglobals"."Shortcuts"."Zoom" = "";
       "kdeglobals"."WM"."activeBackground" = "143,78,71";
       "kdeglobals"."WM"."activeBlend" = "143,78,71";
       "kdeglobals"."WM"."activeForeground" = "190,164,169";
@@ -1000,9 +1034,13 @@
       "kwinrc"."Tiling.1a88509b-1b0d-564d-bc19-a26d03d9b728"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling.1c3a1a63-c4c1-5598-8f19-4cb816b6cc9d"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling.2896ccbc-be4f-5528-8ad7-615fc67c9608"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
-      "kwinrc"."Tiling.2ef69e4d-27ad-506e-a9c4-c6d4d3d1337f"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.2ef69e4d-27ad-506e-a9c4-c6d4d3d1337f"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.5},{\"width\":0.5}]}";
+      "kwinrc"."Tiling.3259a4bc-ed89-521d-a700-0eaf8feaaf7f"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling.39a33a7a-a81d-5a96-b048-6bae7b01acd1"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.428e214b-f2d5-52be-89fb-ab8327b4391f"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling.8002342e-30d0-5046-bb3f-edf22c7675ce"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.8928d167-4b2c-597b-8eff-afef5e7ee9e5"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling.9c7fbc97-8abd-5ec9-819f-619c0db54cb3"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.25},{\"width\":0.5},{\"width\":0.25}]}";
       "kwinrc"."Tiling.bd455426-91b5-5aa4-b78c-9e21c3c810ab"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.5},{\"width\":0.5}]}";
       "kwinrc"."Tiling.e62a896b-7bb1-526e-ad9d-1098bb0b8399"."tiles" = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.5},{\"width\":0.5}]}";
       "kwinrc"."Xwayland"."Scale" = 1;

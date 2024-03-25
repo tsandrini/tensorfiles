@@ -116,6 +116,7 @@ in
                 # DEV related
                 vue-js-devtools # DevTools extension for debugging Vue.js applications.
                 react-devtools # React Developer Tools is a tool that allows you to inspect a React tree, including the component hierarchy, props, state, and more.
+                octotree # GitHub on steroids
               ]
               ++ (optional plasmaCheck plasma-integration)
             );

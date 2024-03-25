@@ -31,6 +31,9 @@
     disko.nixosModules.disko
     nixos-hardware.nixosModules.lenovo-thinkpad-x270
     nix-gaming.nixosModules.pipewireLowLatency
+    # Fingerprint sensor
+    nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
+    nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
     # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
@@ -59,6 +62,7 @@
   # ---------------------
   tensorfiles = {
     profiles.graphical-plasma6.enable = true;
+    profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
     programs.shadow-nix.enable = true;

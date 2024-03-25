@@ -86,6 +86,10 @@
     };
 
     nix-gaming.url = "github:fufexan/nix-gaming";
+    nixos-06cb-009a-fingerprint-sensor = {
+      url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # hyprland = {
     #   url = "github:hyprwm/Hyprland";
