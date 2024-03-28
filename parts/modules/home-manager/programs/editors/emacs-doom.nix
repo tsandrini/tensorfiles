@@ -121,6 +121,7 @@ in
         discount # Implementation of Markdown markup language in C
 
         dockfmt # Dockerfile format
+        dockerfile-language-server-nodejs # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
 
         ## :lang config (json, yaml, xml)
         nodePackages.vscode-json-languageserver # JSON language server
@@ -137,6 +138,7 @@ in
         html-tidy # A HTML validator and `tidier'
         nodePackages.js-beautify # beautifier.io for node
         stylelint # Mighty CSS linter that helps you avoid errors and enforce conventions
+        nodePackages.eslint
 
         ## :lang ansible
         ansible # Radically simple IT automation
