@@ -16,9 +16,13 @@
   pkgs,
   treefmt,
   rc2nix,
+  projectPath,
   ...
 }:
 {
+  # Needed for devenv to run in pure mode
+  devenv.root = builtins.toString projectPath;
+
   packages = with pkgs; [
     # -- NIX UTILS --
     nil # Yet another language server for Nix
@@ -46,12 +50,16 @@
     nh # Yet another nix cli helper
     disko # Declarative disk partitioning and formatting using nix
     rc2nix # KDE: Convert rc files to nix expressions
+    cachix # Command-line client for Nix binary cache hosting https://cachix.org
   ];
 
   languages.nix.enable = true;
   difftastic.enable = true;
   devcontainer.enable = true; # if anyone needs it
   devenv.flakesIntegration = true;
+
+  cachix.pull = [ "pre-commit-hooks" ];
+  cachix.push = "tsandrini";
 
   pre-commit = {
     hooks = {
@@ -60,9 +68,10 @@
       # Everything below is stuff that I couldn't make work with treefmt
       nil.enable = true;
       commitizen.enable = true;
-      markdownlint.enable = true;
       typos.enable = true;
       actionlint.enable = true;
+
+      editorconfig-checker.enable = true;
     };
     settings = {
       treefmt.package = treefmt;

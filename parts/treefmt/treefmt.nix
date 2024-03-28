@@ -49,10 +49,24 @@
   programs = {
     deadnix.enable = true;
     statix.enable = true;
-    prettier.enable = true;
     nixfmt-rfc-style.enable = true;
     # NOTE Choose a different formatter if you'd like to
     # nixfmt.enable = true;
     # alejandra.enable = true;
+
+    mdformat.enable = true;
+    yamlfmt.enable = true;
+    jsonfmt.enable = true;
+
+    shellcheck.enable = true;
+    shfmt.enable = true;
+
+    prettier.enable = true;
+
+    # python
+    # black.enable = true;
+    # isort.enable = true;
+    # mypy.enable = true;
+    # ruff.enable = true;
   };
 }
