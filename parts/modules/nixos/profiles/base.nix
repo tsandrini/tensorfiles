@@ -36,21 +36,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    {
-      system.stateVersion = _ "23.05";
-
-      tensorfiles = {
-        system.users.enable = _ true;
-        misc.nix.enable = _ true;
-      };
-
-      i18n = {
-        defaultLocale = "en_US.UTF-8";
-        extraLocaleSettings = {
-          LANGUAGE = "en_US.UTF-8";
-        };
-      };
-    }
+    { system.stateVersion = _ "23.05"; }
     # |----------------------------------------------------------------------| #
   ]);
 

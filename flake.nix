@@ -16,21 +16,25 @@
   description = "tsandrini's fully covariant tensorfiles";
 
   inputs = {
-    # Base dependencies
+    # --- BASE DEPENDENCIES ---
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
 
-    # Development (devenv and treefmt dependencies)
+    # --- DEV DEPENDENCIES ---
     devenv.url = "github:cachix/devenv";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
+    devenv-root = {
+      url = "file+file:///dev/null";
+      flake = false;
+    };
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     nix2container = {
       url = "github:nlewo/nix2container";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    treefmt-nix.url = "github:numtide/treefmt-nix";
 
-    # Project specific dependencies
+    # --- (NOTE, YOUR) EXTRA DEPENDENCIES ---
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -86,6 +90,11 @@
     };
 
     nix-gaming.url = "github:fufexan/nix-gaming";
+    # Fingreprint sensor
+    # nixos-06cb-009a-fingerprint-sensor = {
+    #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     # hyprland = {
     #   url = "github:hyprwm/Hyprland";
@@ -101,7 +110,7 @@
     # };
   };
 
-  # Here you can add additional binary cache substituers that you trust.
+  # NOTE Here you can add additional binary cache substituers that you trust.
   # There are also some sensible default caches commented out that you
   # might consider using.
   nixConfig = {
@@ -109,6 +118,7 @@
       "https://cache.nixos.org"
       "https://nix-community.cachix.org/"
       "https://devenv.cachix.org"
+      "https://tsandrini.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://nix-gaming.cachix.org"
       # "https://hyprland.cachix.org"
@@ -118,6 +128,7 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
@@ -176,22 +187,21 @@
       #    - mySimpleModule.nix
       imports = flatten (mapModules ./parts (x: x));
 
-      # We use the default `systems` defined by the `nix-systems` flake, if you
-      # need any additional systems, simply add them in the following manner
+      # NOTE We use the default `systems` defined by the `nix-systems` flake, if
+      # you need any additional systems, simply add them in the following manner
       #
       # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
       systems = import inputs.systems;
       flake.lib = lib.tensorfiles;
 
-      # Since the official flakes output schema is unfortunately very limited
-      # you can enable the debug mode if you need to inspect certain outputs
-      # of your flake. Simply
-      #
+      # NOTE Since the official flakes output schema is unfortunately very
+      # limited you can enable the debug mode if you need to inspect certain
+      # outputs of your flake. Simply
       # 1. uncomment the following line
       # 2. hop into a repl from the project root - `nix repl`
       # 3. load the flake - `:lf .`
-      #
       # After that you can inspect the flake from the root attribute `debug.flake`
+      #
       # debug = true;
     };
 }

@@ -58,6 +58,7 @@
   # ---------------------
   tensorfiles = {
     profiles.graphical-plasma6.enable = true;
+    profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
     programs.shadow-nix.enable = true;

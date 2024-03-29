@@ -15,6 +15,7 @@
 { inputs, ... }:
 {
   imports = with inputs; [ devenv.flakeModule ];
+
   perSystem =
     {
       config,
@@ -25,8 +26,9 @@
     {
       devenv.shells.dev = import ./dev.nix {
         inherit pkgs system;
-        treefmt = config.treefmt.build.wrapper;
+        inherit (inputs) devenv-root;
         inherit (inputs.plasma-manager.packages.${system}) rc2nix;
+        treefmt = config.treefmt.build.wrapper;
       };
     };
 }

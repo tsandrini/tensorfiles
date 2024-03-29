@@ -121,6 +121,7 @@ in
         discount # Implementation of Markdown markup language in C
 
         dockfmt # Dockerfile format
+        dockerfile-language-server-nodejs # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
 
         ## :lang config (json, yaml, xml)
         nodePackages.vscode-json-languageserver # JSON language server
@@ -137,6 +138,7 @@ in
         html-tidy # A HTML validator and `tidier'
         nodePackages.js-beautify # beautifier.io for node
         stylelint # Mighty CSS linter that helps you avoid errors and enforce conventions
+        nodePackages.eslint
 
         ## :lang ansible
         ansible # Radically simple IT automation
@@ -160,6 +162,7 @@ in
         nodePackages.bash-language-server # A language server for Bash
 
         ## :lang haskell
+        ghc
         haskell-language-server # LSP server for GHC
         haskellPackages.hoogle # Haskell API Search
         haskellPackages.cabal-install # The command-line interface for Cabal and Hackage
@@ -176,6 +179,9 @@ in
 
         ## :lang julia
         julia
+
+        ## :lang julia
+        lua-language-server # A language server that offers Lua language support
 
         ## :lang go
         gopls # Official language server for the Go language

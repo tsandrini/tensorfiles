@@ -50,6 +50,23 @@
   programs.gamemode.enable = true;
   services.fwupd.enable = true;
 
+  # Thinkpad x270 fingreprint reader
+  # Unfortunately the official services.fprintd option doesn't work and any
+  # custom tos drivers didn't work either. The only way to make it work was to
+  # use open-fprintd and python-validity services.
+  # systemd.units."open-fprintd-suspend".enable = true;
+  # systemd.units."open-fprintd-resume".enable = true;
+  # services.open-fprintd.enable = true;
+  # services.python-validity.enable = true;
+  # security.pam.services = {
+  #   sudo.fprintAuth = true;
+  #   # NOTE doesn't work unfortunately
+  #   # login.fprintAuth = true;
+  #   # sddm.fprintAuth = true;
+  #   # xscreensaver.fprintAuth = true;
+  #   # kwallet.fprintAuth = true;
+  # };
+
   boot = {
     loader = {
       timeout = 1;

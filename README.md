@@ -8,15 +8,15 @@
 ## Table of Contents
 
 1. [About](1-about)
-2. [Design choices](2-design-choices)
-3. [Software](3-software)
+1. [Design choices](2-design-choices)
+1. [Software](3-software)
    1. [Academics](31-academics)
-   2. [Secrets](32-secrets)
-4. [Installation](4-installation)
-5. [Troubleshooting](5-troubleshooting)
+   1. [Secrets](32-secrets)
+1. [Installation](4-installation)
+1. [Troubleshooting](5-troubleshooting)
    1. [`Write error: disk full;` during `nixos-install`](write-error-disk-full-during-nixos-install)
-6. [Impurities](6-impurities)
-7. [References](7-references)
+1. [Impurities](6-impurities)
+1. [References](7-references)
 
 ## 1. About ❄️
 
@@ -66,11 +66,11 @@ modules and their appropriate profiles.
    - visualization: [org-roam-ui](https://github.com/org-roam/org-roam-ui)
    - anki connection: [org-anki-editor](https://github.com/louietan/anki-editor)
      ![img](parts/pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
-2. [zotero](https://www.zotero.org/): This is my backend for all of my
+1. [zotero](https://www.zotero.org/): This is my backend for all of my
    bibliography as well as the individual `.pdf` files. As of now I keep them up
    to date between machines using [syncthing](https://syncthing.net/), but
-   I&rsquo;ll probably set up a personal cloud when I&rsquo;ll have spare time.
-3. [anki](https://apps.ankiweb.net/): Since I have the memory of worm I try to
+   I’ll probably set up a personal cloud when I’ll have spare time.
+1. [anki](https://apps.ankiweb.net/): Since I have the memory of worm I try to
    keep my long-term memory of different subjects fresh using flashcards. I sync
    the cards using ankis official cloud.
 
@@ -83,7 +83,7 @@ using any globally available pubkeys and rather tend to use machine specific
 ones instead (for obvious reasons).
 
 _Note_: plz no pwn xd, if you see any vulnerabilities please DM me instead,
-thanks <3.
+thanks \<3.
 
 ## 4. Installation 💾
 
@@ -107,7 +107,7 @@ system.
 Considering that a quick workaround is to navigate `$TMPDIR` to a different
 folder (this might slow the installation process if you redirect it to a
 spinning disk tmp filesystem, however, assuming you have a decent bandwidth
-is&rsquo;s still just by minutes)
+is’s still just by minutes)
 
 ```bash
 mkdir -p /mnt/tmp
@@ -130,13 +130,13 @@ mount -o remount,size=15G /tmp
 ## 7. References 📚
 
 The whole nix ecosystem is in its foundations a revolutionary piece of
-software and once you get the hang of it you feel like you&rsquo;ve really
-conquered the art of computer wizardry, however, it&rsquo;s so different from
+software and once you get the hang of it you feel like you’ve really
+conquered the art of computer wizardry, however, it’s so different from
 everything that is the current status quo of compsci and thus needs
-appropriate extensive documentation/tutorials/etc&#x2026; which is, however,
+appropriate extensive documentation/tutorials/etc… which is, however,
 currently not the case.
 
-Due to this exact reason I&rsquo;m leaving here a list of resources/flakes that
+Due to this exact reason I’m leaving here a list of resources/flakes that
 helped me to (somewhat) learn the ways of nix (TODO: maybe write more?
 manual.org?)
 
