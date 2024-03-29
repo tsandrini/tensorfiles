@@ -13,7 +13,12 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with builtins;
 with lib;
 let
@@ -103,6 +108,7 @@ in
         deploy-rs # Multi-profile Nix-flake deploy tool
         nh # Yet another nix cli helper
         disko # Declarative disk partitioning and formatting using nix
+        cachix # Command-line client for Nix binary cache hosting https://cachix.org
       ];
     }
     # |----------------------------------------------------------------------| #

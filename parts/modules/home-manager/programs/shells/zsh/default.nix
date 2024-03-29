@@ -173,7 +173,7 @@ in
       programs.zsh = {
         enable = _ true;
         syntaxHighlighting.enable = _ true;
-        enableAutosuggestions = _ cfg.withAutocompletions;
+        autosuggestion.enable = _ cfg.withAutocompletions;
         oh-my-zsh = mkIf cfg.oh-my-zsh.enable {
           enable = _ true;
           plugins = cfg.oh-my-zsh.plugins ++ (optional cfg.oh-my-zsh.withFzf "fzf");

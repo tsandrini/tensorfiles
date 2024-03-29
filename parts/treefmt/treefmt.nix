@@ -14,6 +14,14 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { pkgs, projectPath, ... }:
 {
+  # treefmt is a formatting tool that saves you time: it provides
+  # developers with a universal way to trigger all formatters needed for the
+  # project in one place.
+  # For more information refer to
+  #
+  # - https://numtide.github.io/treefmt/
+  # - https://github.com/numtide/treefmt-nix
+
   package = pkgs.treefmt;
   flakeCheck = true;
   flakeFormatter = true;
@@ -47,26 +55,19 @@
     };
 
   programs = {
-    deadnix.enable = true;
-    statix.enable = true;
-    nixfmt-rfc-style.enable = true;
+    deadnix.enable = true; # Find and remove unused code in .nix source files
+    statix.enable = true; # Lints and suggestions for the nix programming language
+    nixfmt-rfc-style.enable = true; # An opinionated formatter for Nix
     # NOTE Choose a different formatter if you'd like to
-    # nixfmt.enable = true;
-    # alejandra.enable = true;
+    # nixfmt.enable = true; # An opinionated formatter for Nix
+    # alejandra.enable = true; # The Uncompromising Nix Code Formatter
 
-    mdformat.enable = true;
-    yamlfmt.enable = true;
-    jsonfmt.enable = true;
+    prettier.enable = true; # Prettier is an opinionated code formatter
+    mdformat.enable = true; # CommonMark compliant Markdown formatter
+    yamlfmt.enable = true; # An extensible command line tool or library to format yaml files.
+    jsonfmt.enable = true; # Formatter for JSON files
 
     shellcheck.enable = true;
     shfmt.enable = true;
-
-    prettier.enable = true;
-
-    # python
-    # black.enable = true;
-    # isort.enable = true;
-    # mypy.enable = true;
-    # ruff.enable = true;
   };
 }

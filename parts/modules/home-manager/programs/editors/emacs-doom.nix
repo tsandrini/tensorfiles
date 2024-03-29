@@ -162,6 +162,7 @@ in
         nodePackages.bash-language-server # A language server for Bash
 
         ## :lang haskell
+        ghc
         haskell-language-server # LSP server for GHC
         haskellPackages.hoogle # Haskell API Search
         haskellPackages.cabal-install # The command-line interface for Cabal and Hackage
@@ -178,6 +179,9 @@ in
 
         ## :lang julia
         julia
+
+        ## :lang julia
+        lua-language-server # A language server that offers Lua language support
 
         ## :lang go
         gopls # Official language server for the Go language
