@@ -174,6 +174,18 @@ in
         enable = _ true;
         syntaxHighlighting.enable = _ true;
         autosuggestion.enable = _ cfg.withAutocompletions;
+        history = {
+          extended = _ true;
+          expireDuplicatesFirst = _ true;
+          ignoreAllDups = _ true;
+          ignoreDups = _ true;
+          ignoreSpace = _ true;
+          size = _ 100000;
+          save = _ 100000;
+        };
+        # historySubstringSearch = {
+        #   enable = _ true;
+        #};
         oh-my-zsh = mkIf cfg.oh-my-zsh.enable {
           enable = _ true;
           plugins = cfg.oh-my-zsh.plugins ++ (optional cfg.oh-my-zsh.withFzf "fzf");

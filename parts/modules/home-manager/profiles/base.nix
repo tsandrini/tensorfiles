@@ -31,15 +31,7 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    {
-      home.stateVersion = _ "23.05";
-
-      tensorfiles.hm = {
-        misc.xdg.enable = _ true;
-      };
-
-      programs.home-manager.enable = _ true;
-    }
+    { home.stateVersion = _ "23.05"; }
     # |----------------------------------------------------------------------| #
   ]);
 

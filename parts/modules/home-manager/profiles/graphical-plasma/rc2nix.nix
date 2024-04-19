@@ -97,6 +97,7 @@
       "kwin"."MoveZoomRight" = [ ];
       "kwin"."MoveZoomUp" = [ ];
       "kwin"."Overview" = "Meta+W";
+      "kwin"."PoloniumCycleEngine" = [ ];
       "kwin"."PoloniumCycleLayouts" = "Meta+Backspace";
       "kwin"."PoloniumEngineBTree" = [ ];
       "kwin"."PoloniumEngineHalf" = [ ];
@@ -127,6 +128,11 @@
       "kwin"."PoloniumSwapBelow" = [ ];
       "kwin"."PoloniumSwapLeft" = [ ];
       "kwin"."PoloniumSwapRight" = [ ];
+      "kwin"."PoloniumSwitchBTree" = [ ];
+      "kwin"."PoloniumSwitchHalf" = [ ];
+      "kwin"."PoloniumSwitchKwin" = [ ];
+      "kwin"."PoloniumSwitchMonocle" = [ ];
+      "kwin"."PoloniumSwitchThreeColumn" = [ ];
       "kwin"."Setup Window Shortcut" = [ ];
       "kwin"."Show Desktop" = [ ];
       "kwin"."ShowDesktopGrid" = [ ];
@@ -327,18 +333,23 @@
       "plasmashell"."toggle do not disturb" = [ ];
       "services/kitty.desktop"."_launch" = "Meta+Return";
       "services/org.flameshot.Flameshot.desktop"."Capture" = "Print";
-      "services/org.kde.krunner.desktop"."RunClipboard" = "Meta+Shift+D";
-      "services/org.kde.krunner.desktop"."_launch" = [
-        "Search"
-        "Meta+D"
-      ];
-      "services/org.kde.spectacle.desktop"."RecordRegion" = "Meta+Shift+R";
+      "services/org.flameshot.Flameshot.desktop"."_launch" = [ ];
+      "services/org.kde.krunner.desktop"."RunClipboard" = [ ];
+      "services/org.kde.krunner.desktop"."_launch" = "Meta+D";
+      "services/org.kde.spectacle.desktop"."ActiveWindowScreenShot" = [ ];
+      "services/org.kde.spectacle.desktop"."FullScreenScreenShot" = [ ];
+      "services/org.kde.spectacle.desktop"."RecordRegion" = [ ];
+      "services/org.kde.spectacle.desktop"."RecordScreen" = [ ];
       "services/org.kde.spectacle.desktop"."RecordWindow" = [ ];
-      "services/org.kde.spectacle.desktop"."_launch" = "Meta+Shift+S";
+      "services/org.kde.spectacle.desktop"."RectangularRegionScreenShot" = [ ];
+      "services/org.kde.spectacle.desktop"."WindowUnderCursorScreenShot" = [ ];
+      "services/org.kde.spectacle.desktop"."_launch" = [ ];
       "services/services.kitty.desktop"."_launch" = "Meta+Return";
       "services/services.org.flameshot.Flameshot.desktop"."Capture" = "Print";
       "services/services.org.kde.krunner.desktop"."RunClipboard" = "Meta+Shift+D";
       "services/services.org.kde.krunner.desktop"."_launch" = [
+        ""
+        ""
         ""
         "Search"
         "Meta+D"
@@ -1036,7 +1047,7 @@
       "kwinrc"."Tiling/1a88509b-1b0d-564d-bc19-a26d03d9b728"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling/1c3a1a63-c4c1-5598-8f19-4cb816b6cc9d"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling/2896ccbc-be4f-5528-8ad7-615fc67c9608"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
-      "kwinrc"."Tiling/2ef69e4d-27ad-506e-a9c4-c6d4d3d1337f"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
+      "kwinrc"."Tiling/2ef69e4d-27ad-506e-a9c4-c6d4d3d1337f"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[{\"width\":0.5},{\"width\":0.5}]}";
       "kwinrc"."Tiling/3259a4bc-ed89-521d-a700-0eaf8feaaf7f"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling/39a33a7a-a81d-5a96-b048-6bae7b01acd1"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
       "kwinrc"."Tiling/428e214b-f2d5-52be-89fb-ab8327b4391f"."tiles".value = "{\"layoutDirection\":\"horizontal\",\"tiles\":[]}";
