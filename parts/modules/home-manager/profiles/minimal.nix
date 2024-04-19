@@ -34,7 +34,11 @@ in
     {
       tensorfiles.hm = {
         profiles.base.enable = _ true;
+
+        misc.xdg.enable = _ true;
       };
+
+      programs.home-manager.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);
