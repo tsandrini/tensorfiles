@@ -110,6 +110,7 @@
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
+
       profiles.graphical-plasma.enable = true;
       security.agenix.enable = true;
 
