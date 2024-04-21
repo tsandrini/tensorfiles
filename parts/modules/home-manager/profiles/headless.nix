@@ -54,6 +54,7 @@ in
           file-managers.yazi.enable = _ true;
 
           btop.enable = _ true;
+          tmux.enable = _ true;
           direnv.enable = _ true;
           git.enable = _ true;
           ssh.enable = _ true;
