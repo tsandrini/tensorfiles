@@ -46,6 +46,7 @@
   environment.systemPackages = with pkgs; [
     libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec
+    docker-compose
   ];
 
   # ----------------------------
@@ -69,6 +70,14 @@
       isSudoer = true;
       isNixTrusted = true;
       agenixPassword.enable = true;
+      extraGroups = [
+        "video"
+        "camera"
+        "audio"
+        "networkmanager"
+        "input"
+        "docker"
+      ];
     };
   };
 
@@ -102,6 +111,7 @@
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
+    storageDriver = "btrfs";
   };
 
   home-manager.users."tsandrini" = {

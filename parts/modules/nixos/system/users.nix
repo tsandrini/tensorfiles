@@ -76,6 +76,16 @@ in
         '';
       };
 
+      extraGroups = mkOption {
+        type = listOf str;
+        default = [ ];
+        description = mdDoc ''
+          Any additional groups which the user should be a part of. This is
+          basically just a passthrough for `users.users.<user>.extraGroups`
+          for convenience.
+        '';
+      };
+
       agenixPassword = {
         enable = mkEnableOption (mdDoc ''
           TODO
@@ -133,13 +143,7 @@ in
           isNormalUser = _ (_user != "root");
           isSystemUser = _ (_user == "root");
           createHome = _ true;
-          extraGroups = [
-            "video"
-            "audio"
-            "camera"
-            "networkmanager"
-            "input"
-          ] ++ (optional (_user != "root") "wheel");
+          extraGroups = (optional (_user != "root" && userCfg.isSudoer) "wheel") ++ userCfg.extraGroups;
           home = _ (if _user == "root" then "/root" else "/home/${_user}");
 
           hashedPasswordFile = mkIf (agenixCheck && userCfg.agenixPassword.enable) (
