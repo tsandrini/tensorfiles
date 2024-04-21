@@ -45,6 +45,7 @@
     cz-cli # The commitizen command line utility
     fh # The official FlakeHub CLI
     gh # GitHub CLI tool
+    gh-dash # Github Cli extension to display a dashboard with pull requests and issues
 
     # -- BASE LANG UTILS --
     markdownlint-cli # Command line interface for MarkdownLint

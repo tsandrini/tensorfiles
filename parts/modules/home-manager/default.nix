@@ -47,6 +47,7 @@ in
     # -- programs --
     programs_browsers_firefox = importApply ./programs/browsers/firefox { inherit localFlake inputs; };
     programs_btop = importApply ./programs/btop.nix { inherit localFlake; };
+    programs_tmux = importApply ./programs/tmux.nix { inherit localFlake; };
     programs_direnv = importApply ./programs/direnv.nix { inherit localFlake; };
     programs_dmenu = importApply ./programs/dmenu.nix { inherit localFlake; };
     programs_editors_emacs-doom = importApply ./programs/editors/emacs-doom.nix {
