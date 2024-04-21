@@ -179,7 +179,7 @@ in
                 config = ''
                   require('lualine').setup{
                     options = {
-                      ${if pywalCheck then "theme = pywal-nvim," else ""}
+                      ${if pywalCheck then "theme = 'pywal-nvim'," else ""}
                       icons_enabled = true
                     },
                     sections = {
