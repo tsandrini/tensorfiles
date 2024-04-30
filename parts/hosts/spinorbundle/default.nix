@@ -47,6 +47,7 @@
     libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec
     docker-compose
+    wireguard-tools
   ];
 
   # ----------------------------
@@ -113,6 +114,16 @@
     autoPrune.enable = true;
     storageDriver = "btrfs";
   };
+
+  # NOTE for wireguard
+  networking.firewall = {
+    allowedUDPPorts = [ 51820 ];
+  };
+
+  # If you intend to route all your traffic through the wireguard tunnel, the
+  # default configuration of the NixOS firewall will block the traffic because
+  # of rpfilter. You can either disable rpfilter altogether:
+  networking.firewall.checkReversePath = false;
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {

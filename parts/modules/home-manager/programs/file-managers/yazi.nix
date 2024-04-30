@@ -42,7 +42,7 @@ in
         );
         settings = {
           manager = {
-            # sort_by = _ "alphabetical";
+            sort_by = _ "natural";
             linemode = _ "size";
             show_hidden = _ false;
             show_symlink = _ true;
