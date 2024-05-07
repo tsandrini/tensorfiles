@@ -66,6 +66,39 @@
   #   # xscreensaver.fprintAuth = true;
   #   # kwallet.fprintAuth = true;
   # };
+  #
+
+  # BTRFS stuff
+  services.fstrim = {
+    enable = true;
+    interval = "weekly"; # the default
+  };
+
+  # Scrub btrfs to protect data integrity
+  services.btrfs.autoScrub.enable = true;
+
+  services.btrbk.instances."btrbk" = {
+    onCalendar = "*:0/10";
+    settings = {
+      snapshot_preserve = "14d";
+      snapshot_preserve_min = "2d";
+
+      target_preserve_min = "no";
+      target_preserve = "no";
+
+      preserve_day_of_week = "monday";
+      timestamp_format = "long-iso";
+      snapshot_create = "onchange";
+
+      volume."/" = {
+        snapshot_dir = "/.snapshots";
+        subvolume = {
+          "home" = { };
+          "root" = { };
+        };
+      };
+    };
+  };
 
   boot = {
     loader = {

@@ -120,6 +120,7 @@
   };
 
   # NOTE for wireguard
+  networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [ 51820 ];
   };
