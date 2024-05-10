@@ -91,14 +91,17 @@
       snapshot_create = "onchange";
 
       volume."/" = {
-        snapshot_dir = "/.snapshots";
         subvolume = {
-          "home" = { };
-          "root" = { };
+          "home" = {
+            snapshot_dir = "/.snapshots/data/home";
+          };
         };
       };
     };
   };
+
+  # ensure snapshots_dir exists
+  systemd.tmpfiles.rules = [ "d /.snapshots/data/home 0755 root root - -" ];
 
   boot = {
     loader = {

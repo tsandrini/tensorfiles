@@ -111,7 +111,9 @@ in
                 header-editor # Manage browser’s requests, include modify the request headers and response headers, redirect requests, cancel requests
                 pywalfox # Dynamic theming of Firefox using your Pywal colors
                 enhancer-for-youtube # Take control of YouTube and boost your user experience!
-                sidebery # Vertical tabs tree and bookmarks in sidebar with advanced containers configuration, grouping and many other features.
+                # sidebery # Vertical tabs tree and bookmarks in sidebar with advanced containers configuration, grouping and many other features.
+                sponsorblock # Easily skip YouTube video sponsors
+                user-agent-string-switcher # Spoof websites trying to gather information about your web navigation—like your browser type and operating system—to deliver distinct content you may not want.
 
                 # DEV related
                 vue-js-devtools # DevTools extension for debugging Vue.js applications.
