@@ -44,6 +44,7 @@ in
         with pkgs;
         [
           # --- BASE UTILS ---
+          binutils # Tools for manipulating binaries (linker, assembler, etc.) (wrapper script)
           htop # An interactive process viewer
           jq # A lightweight and flexible command-line JSON processor
           killall
@@ -114,6 +115,7 @@ in
           nh # Yet another nix cli helper
           disko # Declarative disk partitioning and formatting using nix
           cachix # Command-line client for Nix binary cache hosting https://cachix.org
+          devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
         ]
         ++ [
           inputs.nix-alien.packages.${system}.nix-alien # Run unpatched binaries on Nix/NixOS

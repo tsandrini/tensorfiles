@@ -17,12 +17,18 @@
   config,
   lib,
   pkgs,
+  system,
   ...
 }:
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled mkPywalEnableOption;
+  inherit (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkPywalEnableOption
+    mkDummyDerivation
+    ;
 
   cfg = config.tensorfiles.hm.programs.editors.neovim;
   _ = mkOverrideAtHmModuleLevel;
@@ -64,7 +70,7 @@ in
           set nofoldenable
 
           set wildmenu
-          set wildmode=full"
+          set wildmode=full
           set wildignorecase
           set clipboard+=unnamedplus
 
@@ -106,7 +112,21 @@ in
         plugins =
           with pkgs.vimPlugins;
           (
-            (optional pywalCheck {
+            [
+              {
+                plugin = mkDummyDerivation "vscode-neovim-setup" system { };
+                # type = "lua";
+                config = ''
+                  if exists('g:vscode')
+                    set noloadplugins
+                    set clipboard^=unnamed,unnamedplus
+
+                    finish
+                  endif
+                '';
+              }
+            ]
+            ++ (optional pywalCheck {
               plugin = pywal-nvim;
               type = "lua";
               config = ''
@@ -164,15 +184,29 @@ in
                 '';
               }
               {
-                plugin = vim-easymotion;
+                plugin = quick-scope;
+                type = "lua";
+                config = '''';
+              }
+              {
+                plugin = hop-nvim;
                 type = "lua";
                 config = ''
-                  vim.g.EasyMotion_do_mapping = false
-                  vim.g.EasyMotion_smartcase = true
+                  require('hop').setup{ keys = 'asdfghjkl' }
 
-                  vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+                  vim.keymap.set("n", ",", "<cmd>HopChar2<CR>", {})
                 '';
               }
+              # {
+              #   plugin = vim-easymotion;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.EasyMotion_do_mapping = false
+              #     vim.g.EasyMotion_smartcase = true
+
+              #     vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+              #   '';
+              # }
               {
                 plugin = lualine-nvim;
                 type = "lua";

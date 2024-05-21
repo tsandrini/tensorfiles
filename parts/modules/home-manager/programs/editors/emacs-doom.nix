@@ -81,6 +81,7 @@ in
         # 28.2 + native-comp
         emacsPkg
         emacsPackages.ws-butler
+        emacsPackages.vterm
 
         ## Doom dependencies
         git
@@ -152,9 +153,8 @@ in
         ocamlPackages.merlin # An editor-independent tool to ease the development of programs in OCaml
 
         ## :lang rust
-        rust-analyzer # A modular compiler frontend for the Rust language
-        cargo # Downloads your Rust project's dependencies and builds your project
         rustc # A safe, concurrent, practical language (wrapper script)
+        rustup # The Rust toolchain installer
 
         ## :lang sh
         shfmt # A shell parser and formatter
