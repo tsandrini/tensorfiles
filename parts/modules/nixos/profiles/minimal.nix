@@ -29,14 +29,14 @@ let
 in
 {
   options.tensorfiles.profiles.minimal = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the minimal system profile.
 
       **Minimal layers** builds on top of the base layer and creates a
       minimal bootable system. It isn't targeted to posses any other functionality,
       for example if you'd like remote access and more of server-like features,
       use the headless profile that build on top of this one.
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

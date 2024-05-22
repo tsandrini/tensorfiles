@@ -33,9 +33,9 @@ let
 in
 {
   options.tensorfiles.hm.profiles.headless = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;

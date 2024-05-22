@@ -30,9 +30,9 @@ let
 in
 {
   options.tensorfiles.hm.services.pywalfox-native = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
-    '');
+    '';
 
     pkg = mkOption {
       type = package;

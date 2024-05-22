@@ -29,9 +29,9 @@ let
 in
 {
   options.tensorfiles.hm.profiles.graphical-plasma = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];

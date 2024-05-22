@@ -62,7 +62,7 @@
 
   enterShell = ''
     # Welcome splash text
-    echo ""; echo -e "\e[1;37;42mWelcome to the practicalFlakes devshell!\e[0m"; echo ""
+    echo ""; echo -e "\e[1;37;42mWelcome to the tensorfiles devshell!\e[0m"; echo ""
   '';
 
   # ---------------
@@ -70,7 +70,7 @@
   # ---------------
   scripts = {
     "rename-project".exec = ''
-      find $1 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s/practicalFlakes/$2/g"
+      find $1 \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i "s/tensorfiles/$2/g"
     '';
   };
 
@@ -103,6 +103,7 @@
   pre-commit = {
     hooks = {
       treefmt.enable = true;
+      treefmt.package = treefmt;
 
       nil.enable = true; # Nix Language server, an incremental analysis assistant for writing in Nix.
       markdownlint.enable = true; # Markdown lint tool
@@ -111,9 +112,6 @@
       actionlint.enable = true; # GitHub workflows linting
       commitizen.enable = true; # Commitizen is release management tool designed for teams.
       editorconfig-checker.enable = true; # A tool to verify that your files are in harmony with your .editorconfig
-    };
-    settings = {
-      treefmt.package = treefmt;
     };
     excludes = [
       "etc"

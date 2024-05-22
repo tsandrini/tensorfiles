@@ -29,9 +29,9 @@ let
 in
 {
   options.tensorfiles.programs.wayland.waybar = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the waybar wayland bar.
-    '');
+    '';
 
     # home = {
     #   enable = mkHomeEnableOption;

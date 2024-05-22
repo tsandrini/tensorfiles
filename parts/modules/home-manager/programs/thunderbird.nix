@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.thunderbird = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

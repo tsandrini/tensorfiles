@@ -24,12 +24,12 @@ let
 in
 {
   options.tensorfiles.programs.wayland.ags = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the ags.nix app launcher
 
 
        https://github.com/Aylur/ags
-    '');
+    '';
 
     # home = {
     #   enable = mkHomeEnableOption;

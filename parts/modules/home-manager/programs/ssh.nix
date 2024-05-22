@@ -36,19 +36,19 @@ let
 in
 {
   options.tensorfiles.hm.programs.ssh = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     sshKey = {
-      enable = mkEnableOption (mdDoc ''
+      enable = mkEnableOption ''
         TODO
-      '');
+      '';
 
       privateKeySecretsPath = mkOption {
         type = str;
         default = "hosts/${hostName}/users/$user/private_key";
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
@@ -56,7 +56,7 @@ in
       privateKeyHomePath = mkOption {
         type = str;
         default = ".ssh/id_ed25519";
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
@@ -64,7 +64,7 @@ in
       publicKeyHomePath = mkOption {
         type = str;
         default = ".ssh/id_ed25519.pub";
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
@@ -72,7 +72,7 @@ in
       publicKeyRaw = mkOption {
         type = nullOr str;
         default = null;
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
@@ -80,7 +80,7 @@ in
       publicKeySecretsAttrsetKey = mkOption {
         type = str;
         default = "hosts.${hostName}.users.$user.sshKey";
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };

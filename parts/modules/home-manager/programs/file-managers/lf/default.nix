@@ -235,16 +235,16 @@ let
 in
 {
   options.tensorfiles.hm.programs.file-managers.lf = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the lf file manager.
 
       https://github.com/gokcehan/lf
-    '');
+    '';
 
     pkg = mkOption {
       type = package;
       default = pkgs.lf;
-      description = mdDoc ''
+      description = ''
         Which package to use for the lf binaries. You can provide any
         custom derivation or forks with differing internals as long
         as the API and binaries stay the same and reside at the
@@ -255,21 +255,21 @@ in
     withIcons = mkOption {
       type = bool;
       default = true;
-      description = mdDoc ''
+      description = ''
         Enable the preview icons defined at ./icons for the lf file manager
       '';
     };
 
     previewer = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Whether to include a custom previewer solution as well.
           Aside the less complicated text file previewing this includes
           a solution for the image previewing as well, since lf
           doesn't have yet a builtin solution for this issue.
           That's the primary reason for these options since it requires
           sticking up together a bunch of tools with custom scripts.
-        '')
+        ''
         // {
           default = true;
         };
@@ -280,7 +280,7 @@ in
           "kitty"
         ];
         default = "ueberzug";
-        description = mdDoc ''
+        description = ''
           As of now the following backends/solutions are supported
 
           1. Ueberzug (https://github.com/ueber-devel/ueberzug)

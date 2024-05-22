@@ -20,9 +20,9 @@ let
 in
 {
   options.tensorfiles.services.x11.desktop-managers.plasma = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

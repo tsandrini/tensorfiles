@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.git = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

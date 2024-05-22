@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.profiles.graphical-startx-home-manager = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

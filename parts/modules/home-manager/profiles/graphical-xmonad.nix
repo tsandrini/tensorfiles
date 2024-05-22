@@ -29,9 +29,9 @@ let
 in
 {
   options.tensorfiles.hm.profiles.graphical-xmonad = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

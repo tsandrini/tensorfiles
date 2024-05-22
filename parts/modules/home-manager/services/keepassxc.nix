@@ -31,9 +31,9 @@ in
   # TODO maybe use toINIWithGlobalSection generator? however the ini config file
   # also contains some initial keys? I should investigate this more
   options.tensorfiles.hm.services.keepassxc = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     pkg = mkOption {
       type = package;

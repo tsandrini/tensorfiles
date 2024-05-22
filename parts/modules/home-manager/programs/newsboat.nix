@@ -58,17 +58,17 @@ let
 in
 {
   options.tensorfiles.hm.programs.newsboat = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     urls = {
       news = {
         enable =
-          mkEnableOption (mdDoc ''
+          mkEnableOption ''
             Enable the addition of news related urls into the newsboat
             rss reader.
-          '')
+          ''
           // {
             default = true;
           };
@@ -119,7 +119,7 @@ in
               ];
             }
           ];
-          description = mdDoc ''
+          description = ''
             News source urls for the newsboat rss reader
           '';
         };
@@ -127,10 +127,10 @@ in
 
       tech = {
         enable =
-          mkEnableOption (mdDoc ''
+          mkEnableOption ''
             Enable the addition of tech related urls into the newsboat
             rss reader.
-          '')
+          ''
           // {
             default = true;
           };
@@ -174,7 +174,7 @@ in
               ];
             }
           ];
-          description = mdDoc ''
+          description = ''
             Tech source urls for the newsboat rss reader
           '';
         };
@@ -182,10 +182,10 @@ in
 
       sci = {
         enable =
-          mkEnableOption (mdDoc ''
+          mkEnableOption ''
             Enable the addition of science related urls into the newsboat
             rss reader.
-          '')
+          ''
           // {
             default = true;
           };
@@ -254,7 +254,7 @@ in
               ];
             }
           ];
-          description = mdDoc ''
+          description = ''
             Science source urls for the newsboat rss reader
           '';
         };

@@ -40,9 +40,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.browsers.firefox = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;

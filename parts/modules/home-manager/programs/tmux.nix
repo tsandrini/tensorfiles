@@ -29,9 +29,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.tmux = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

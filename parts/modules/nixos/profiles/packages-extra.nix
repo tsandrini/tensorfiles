@@ -30,11 +30,11 @@ let
 in
 {
   options.tensorfiles.profiles.packages-extra = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the packages-extra system profile.
 
       **Packages-Extra layer**
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

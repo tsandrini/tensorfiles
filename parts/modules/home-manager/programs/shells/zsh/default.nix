@@ -39,9 +39,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.shells.zsh = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the zsh shell.
-    '');
+    '';
 
     pywal = {
       enable = mkPywalEnableOption;
@@ -54,17 +54,17 @@ in
     withAutocompletions = mkOption {
       type = bool;
       default = true;
-      description = mdDoc ''
+      description = ''
         Whether to enable autosuggestions/autocompletion related code
       '';
     };
 
     p10k = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Whether to enable the powerlevel10k theme (and plugins) related
           code.
-        '')
+        ''
         // {
           default = true;
         };
@@ -72,7 +72,7 @@ in
       cfgSrc = mkOption {
         type = path;
         default = ./.;
-        description = mdDoc ''
+        description = ''
           Path (or ideally, path inside a derivation) for the p10k.zsh
           configuration file
 
@@ -85,7 +85,7 @@ in
       cfgFile = mkOption {
         type = str;
         default = "p10k.zsh";
-        description = mdDoc ''
+        description = ''
           Potential override of the p10k.zsh config filename.
         '';
       };
@@ -93,9 +93,9 @@ in
 
     oh-my-zsh = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Whether to enable the oh-my-zsh framework related code
-        '')
+        ''
         // {
           default = true;
         };
@@ -108,7 +108,7 @@ in
           "colorize"
           "colored-man-pages"
         ];
-        description = mdDoc ''
+        description = ''
           oh-my-zsh plugins that are enabled by default
         '';
       };
@@ -116,7 +116,7 @@ in
       withFzf = mkOption {
         type = bool;
         default = true;
-        description = mdDoc ''
+        description = ''
           Whether to enable the fzf plugin
         '';
       };
@@ -126,7 +126,7 @@ in
       lsToEza = mkOption {
         type = bool;
         default = true;
-        description = mdDoc ''
+        description = ''
           Enable predefined shell aliases
         '';
       };
@@ -134,7 +134,7 @@ in
       catToBat = mkOption {
         type = bool;
         default = true;
-        description = mdDoc ''
+        description = ''
           Remap the cat related commands to its reworked edition bat.
         '';
       };
@@ -142,7 +142,7 @@ in
       findToFd = mkOption {
         type = bool;
         default = true;
-        description = mdDoc ''
+        description = ''
           Remap the find related commands to its reworked edition fd.
         '';
       };
@@ -150,7 +150,7 @@ in
       grepToRipgrep = mkOption {
         type = bool;
         default = true;
-        description = mdDoc ''
+        description = ''
           Remap the find related commands to its reworked edition fd.
         '';
       };

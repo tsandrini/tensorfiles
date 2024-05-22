@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.programs.shadow-nix = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   imports = [ (inputs.shadow-nix + "/import/system.nix") ];

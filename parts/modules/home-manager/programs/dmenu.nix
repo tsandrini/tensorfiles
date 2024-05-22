@@ -48,9 +48,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.dmenu = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     pywal = {
       enable = mkPywalEnableOption;
@@ -59,7 +59,7 @@ in
     pkg = mkOption {
       type = package;
       default = pkgs.dmenu;
-      description = mdDoc ''
+      description = ''
         Which package to use for the dmenu binaries. You can provide any
         custom derivation of your choice as long as the main binaries
         reside at

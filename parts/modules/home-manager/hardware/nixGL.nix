@@ -50,9 +50,9 @@ let
 in
 {
   options.tensorfiles.hm.hardware.nixGL = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     pkg = mkOption {
       type = package;
@@ -63,14 +63,14 @@ in
     };
 
     programPatches = {
-      enable = mkEnableOption (mdDoc ''
+      enable = mkEnableOption ''
         Enables the nixGL program patches
-      '');
+      '';
 
       kitty =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Enables the kitty executable wrapper
-        '')
+        ''
         // {
           default = true;
         };

@@ -32,7 +32,7 @@ rec {
     *Type*: `Option`
   */
   mkImpermanenceEnableOption =
-    mkAlreadyEnabledOption (mdDoc ''
+    mkAlreadyEnabledOption ''
       Whether to autoappend files/folders to the persistence system.
       For more info on the persistence system refer to the system.persistence
       NixOS module documentation.
@@ -44,7 +44,7 @@ rec {
       2. tensorfiles.system.persistence module is loaded
 
       3. tensorfiles.system.persistence.enable = true;
-    '')
+    ''
     // {
       default = true;
     };
@@ -56,7 +56,7 @@ rec {
     *Type*: `Option`
   */
   mkPywalEnableOption =
-    mkAlreadyEnabledOption (mdDoc ''
+    mkAlreadyEnabledOption ''
       Whether to enable the integration with the pywal colorscheme generator
       program. The integration may range from just some color parsing/loading to
       sometimes full on detailed plugins depending on the context.
@@ -68,7 +68,7 @@ rec {
       2. tensorfiles.programs.pywal module is loaded
 
       3. tensorfiles.programs.pywal.enable = true;
-    '')
+    ''
     // {
       default = true;
     };
@@ -80,7 +80,7 @@ rec {
     *Type*: `Option`
   */
   mkAgenixEnableOption =
-    mkAlreadyEnabledOption (mdDoc ''
+    mkAlreadyEnabledOption ''
       Whether to enable the agenix ecosystem for handling secrets, which includes
 
       a. passwords
@@ -102,7 +102,7 @@ rec {
       2. tensorfiles.security.agenix module is loaded
 
       3. tensorfiles.security.agenix.enable = true;
-    '')
+    ''
     // {
       default = true;
     };
@@ -146,7 +146,7 @@ rec {
         # just initialize the defaults
         "myOtherUser" = { };
       };
-      description = mdDoc ''
+      description = ''
         Multiuser users configuration option submodule.
         Enables doing module level configurations via simple attrsets.
       '';

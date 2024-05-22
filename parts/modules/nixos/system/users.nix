@@ -43,11 +43,11 @@ in
 {
   # TODO move bluetooth dir to hardware
   options.tensorfiles.system.users = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that sets up the basis for the userspace, that is
       declarative management, basis for the home directories and also
       configures home-manager, persistence, agenix if they are enabled.
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;
@@ -61,7 +61,7 @@ in
       isSudoer = mkOption {
         type = bool;
         default = true;
-        description = mdDoc ''
+        description = ''
           Add user to sudoers (ie the `wheel` group)
         '';
       };
@@ -69,7 +69,7 @@ in
       isNixTrusted = mkOption {
         type = bool;
         default = false;
-        description = mdDoc ''
+        description = ''
           Whether the user has the ability to connect to the nix daemon
           and gain additional privileges for working with nix (like adding
           binary cache)
@@ -79,7 +79,7 @@ in
       extraGroups = mkOption {
         type = listOf str;
         default = [ ];
-        description = mdDoc ''
+        description = ''
           Any additional groups which the user should be a part of. This is
           basically just a passthrough for `users.users.<user>.extraGroups`
           for convenience.
@@ -87,14 +87,14 @@ in
       };
 
       agenixPassword = {
-        enable = mkEnableOption (mdDoc ''
+        enable = mkEnableOption ''
           TODO
-        '');
+        '';
 
         passwordSecretsPath = mkOption {
           type = str;
           default = "hosts/${hostName}/users/${_user}/system-password";
-          description = mdDoc ''
+          description = ''
             TODO
           '';
         };
@@ -102,9 +102,9 @@ in
 
       authorizedKeys = {
         enable =
-          mkEnableOption (mdDoc ''
+          mkEnableOption ''
             TODO
-          '')
+          ''
           // {
             default = true;
           };
@@ -112,7 +112,7 @@ in
         keysRaw = mkOption {
           type = listOf str;
           default = [ ];
-          description = mdDoc ''
+          description = ''
             TODO
           '';
         };
@@ -120,7 +120,7 @@ in
         keysSecretsAttrsetKey = mkOption {
           type = str;
           default = "hosts.${hostName}.users.${_user}.authorizedKeys";
-          description = mdDoc ''
+          description = ''
             TODO
           '';
         };

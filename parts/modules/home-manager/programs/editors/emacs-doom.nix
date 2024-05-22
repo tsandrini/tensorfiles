@@ -46,9 +46,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.editors.emacs-doom = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;
@@ -57,7 +57,7 @@ in
     repoUrl = mkOption {
       type = str;
       default = "https://github.com/doomemacs/doomemacs";
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
@@ -66,7 +66,7 @@ in
       type = str;
       # default = "git@github.com:tsandrini/.doom.d.git";
       default = "https://github.com/tsandrini/.doom.d.git";
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
@@ -113,7 +113,7 @@ in
         # :lang beancount
         fava # HACK Momentarily broken on nixos-unstable
         graphviz
-        nodejs_21
+        nodejs
 
         # fonts
         emacs-all-the-icons-fonts
