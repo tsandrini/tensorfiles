@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.file-managers.yazi = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -42,7 +42,7 @@ in
         );
         settings = {
           manager = {
-            # sort_by = _ "alphabetical";
+            sort_by = _ "natural";
             linemode = _ "size";
             show_hidden = _ false;
             show_symlink = _ true;

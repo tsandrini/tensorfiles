@@ -32,9 +32,9 @@ let
 in
 {
   options.tensorfiles.services.networking.networkmanager = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the networkmanager service.
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;

@@ -31,9 +31,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.spicetify = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   imports = with inputs; [ spicetify-nix.homeManagerModule ];

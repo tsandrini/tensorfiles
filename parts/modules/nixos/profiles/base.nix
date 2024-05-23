@@ -24,14 +24,14 @@ let
 in
 {
   options.tensorfiles.profiles.base = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the base system profile.
 
       **Base layer** sets up necessary structures to be able to simply
       just evaluate the configuration, ie. not build it, meaning that this layer
       enables fundamental functionality that other higher level modules rely
       on.
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

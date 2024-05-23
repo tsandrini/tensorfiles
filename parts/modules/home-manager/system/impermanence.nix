@@ -23,14 +23,14 @@ in
 # _ = mkOverrideAtHmModuleLevel;
 {
   options.tensorfiles.hm.system.impermanence = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     persistentRoot = mkOption {
       type = path;
       default = "/persist";
-      description = mdDoc ''
+      description = ''
         Path on the already mounted filesystem for the persistent root, that is,
         a root where we should store the persistent files and against which should
         we link the temporary files against.
@@ -42,7 +42,7 @@ in
     allowOther = mkOption {
       type = bool;
       default = false;
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };

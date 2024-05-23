@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.hm.profiles.minimal = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

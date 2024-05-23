@@ -24,9 +24,9 @@ let
 in
 {
   options.tensorfiles.hm.services.x11.picom = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

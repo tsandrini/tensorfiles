@@ -17,12 +17,18 @@
   config,
   lib,
   pkgs,
+  system,
   ...
 }:
 with builtins;
 with lib;
 let
-  inherit (localFlake.lib) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled mkPywalEnableOption;
+  inherit (localFlake.lib)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    mkPywalEnableOption
+    mkDummyDerivation
+    ;
 
   cfg = config.tensorfiles.hm.programs.editors.neovim;
   _ = mkOverrideAtHmModuleLevel;
@@ -32,9 +38,9 @@ in
 {
   # TODO modularize config, cant be bothered to do it now
   options.tensorfiles.hm.programs.editors.neovim = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the neovim program.
-    '');
+    '';
 
     pywal = {
       enable = mkPywalEnableOption;
@@ -64,7 +70,7 @@ in
           set nofoldenable
 
           set wildmenu
-          set wildmode=full"
+          set wildmode=full
           set wildignorecase
           set clipboard+=unnamedplus
 
@@ -106,7 +112,21 @@ in
         plugins =
           with pkgs.vimPlugins;
           (
-            (optional pywalCheck {
+            [
+              {
+                plugin = mkDummyDerivation "vscode-neovim-setup" system { };
+                # type = "lua";
+                config = ''
+                  if exists('g:vscode')
+                    set noloadplugins
+                    set clipboard^=unnamed,unnamedplus
+
+                    finish
+                  endif
+                '';
+              }
+            ]
+            ++ (optional pywalCheck {
               plugin = pywal-nvim;
               type = "lua";
               config = ''
@@ -146,7 +166,7 @@ in
                 '';
               }
               {
-                plugin = suda-vim;
+                plugin = vim-suda;
                 type = "lua";
                 config = ''
                   vim.g.move_key_modifier = "C"
@@ -164,15 +184,29 @@ in
                 '';
               }
               {
-                plugin = vim-easymotion;
+                plugin = quick-scope;
+                type = "lua";
+                config = '''';
+              }
+              {
+                plugin = hop-nvim;
                 type = "lua";
                 config = ''
-                  vim.g.EasyMotion_do_mapping = false
-                  vim.g.EasyMotion_smartcase = true
+                  require('hop').setup{ keys = 'asdfghjkl' }
 
-                  vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+                  vim.keymap.set("n", ",", "<cmd>HopChar2<CR>", {})
                 '';
               }
+              # {
+              #   plugin = vim-easymotion;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.EasyMotion_do_mapping = false
+              #     vim.g.EasyMotion_smartcase = true
+
+              #     vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+              #   '';
+              # }
               {
                 plugin = lualine-nvim;
                 type = "lua";
@@ -213,65 +247,65 @@ in
               #     };
               #   '';
               # }
-              {
-                plugin = fern-vim;
-                type = "lua";
-                config = ''
-                  vim.g.loaded_netrw = false
-                  vim.g.loaded_netrwPlugin = false
-                  vim.g.loaded_netrwSettings = false
-                  vim.g.loaded_netrwFileHandlers = false
+              # {
+              #   plugin = fern-vim;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.loaded_netrw = false
+              #     vim.g.loaded_netrwPlugin = false
+              #     vim.g.loaded_netrwSettings = false
+              #     vim.g.loaded_netrwFileHandlers = false
 
-                  -- vim.g["fern#renderer"] = "nerdfont" TODO
-                  vim.g["fern#disable_default_mappings"] = true
+              #     -- vim.g["fern#renderer"] = "nerdfont" TODO
+              #     vim.g["fern#disable_default_mappings"] = true
 
-                  vim.api.nvim_set_keymap(
-                    "n",
-                    "m",
-                    ":Fern . -drawer -reveal=% -width=35 <CR><C-w>=",
-                    {noremap=true, silent=true}
-                  )
+              #     vim.api.nvim_set_keymap(
+              #       "n",
+              #       "m",
+              #       ":Fern . -drawer -reveal=% -width=35 <CR><C-w>=",
+              #       {noremap=true, silent=true}
+              #     )
 
-                  vim.api.nvim_set_keymap(
-                    "n",
-                    "<Plug>(fern-close-drawer)",
-                    ":<C-u>FernDo close -drawer -stay<CR>",
-                    {noremap=true, silent=true}
-                  )
+              #     vim.api.nvim_set_keymap(
+              #       "n",
+              #       "<Plug>(fern-close-drawer)",
+              #       ":<C-u>FernDo close -drawer -stay<CR>",
+              #       {noremap=true, silent=true}
+              #     )
 
-                  local function fern_init()
-                    local opts = {silent=true}
-                    vim.api.nvim_set_keymap("n", "<Plug>(fern-action-open)",
-                      "<Plug>(fern-action-open:select)", opts)
+              #     local function fern_init()
+              #       local opts = {silent=true}
+              #       vim.api.nvim_set_keymap("n", "<Plug>(fern-action-open)",
+              #         "<Plug>(fern-action-open:select)", opts)
 
-                    vim.api.nvim_buf_set_keymap(
-                      0,
-                      "n",
-                      "<Plug>(fern-action-custom-open-expand-collapse)",
-                      "fern#smart#leaf('<plug>(fern-action-open)<plug>(fern-close-drawer)', '<plug>(fern-action-expand)', '<plug>(fern-action-collapse)')",
-                      {silent=true, expr=true}
-                    )
-                    vim.api.nvim_buf_set_keymap(0, "n", "q", ":<C-u>quit<CR>", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "n", "<Plug>(fern-action-new-path)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "d", "<Plug>(fern-action-remove)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "m", "<Plug>(fern-action-move)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "r", "<Plug>(fern-action-rename)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "R", "<Plug>(fern-action-reload)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "h", "<Plug>(fern-action-collapse)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
-                    vim.api.nvim_buf_set_keymap(0, "n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
-                  end
+              #       vim.api.nvim_buf_set_keymap(
+              #         0,
+              #         "n",
+              #         "<Plug>(fern-action-custom-open-expand-collapse)",
+              #         "fern#smart#leaf('<plug>(fern-action-open)<plug>(fern-close-drawer)', '<plug>(fern-action-expand)', '<plug>(fern-action-collapse)')",
+              #         {silent=true, expr=true}
+              #       )
+              #       vim.api.nvim_buf_set_keymap(0, "n", "q", ":<C-u>quit<CR>", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "n", "<Plug>(fern-action-new-path)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "d", "<Plug>(fern-action-remove)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "m", "<Plug>(fern-action-move)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "r", "<Plug>(fern-action-rename)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "R", "<Plug>(fern-action-reload)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "<C-h>", "<Plug>(fern-action-hidden-toggle)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "l", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "h", "<Plug>(fern-action-collapse)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "<2-LeftMouse>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+              #       vim.api.nvim_buf_set_keymap(0, "n", "<CR>", "<Plug>(fern-action-custom-open-expand-collapse)", opts)
+              #     end
 
-                  local group = vim.api.nvim_create_augroup("fern_group", {clear=true})
-                  vim.api.nvim_create_autocmd("FileType", {
-                    pattern="fern",
-                    callback=fern_init,
-                    group=group
-                  })
-                '';
-              }
+              #     local group = vim.api.nvim_create_augroup("fern_group", {clear=true})
+              #     vim.api.nvim_create_autocmd("FileType", {
+              #       pattern="fern",
+              #       callback=fern_init,
+              #       group=group
+              #     })
+              #   '';
+              # }
               {
                 plugin = which-key-nvim;
                 type = "lua";

@@ -30,9 +30,9 @@ let
 in
 {
   options.tensorfiles.profiles.graphical-plasma6 = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -121,7 +121,7 @@ in
       ];
 
       services.xserver.enable = _ true;
-      services.xserver.displayManager.sddm.enable = _ true;
+      services.displayManager.sddm.enable = _ true;
       services.desktopManager.plasma6.enable = _ true;
       # services.xserver.displayManager.defaultSession = _ "plasma";
       programs.kdeconnect.enable = _ true;

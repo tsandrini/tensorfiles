@@ -33,15 +33,15 @@ let
 in
 {
   options.tensorfiles.hm.programs.terminals.kitty = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
-    '');
+    '';
 
     nvim-scrollback = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           TODO
-        '')
+        ''
         // {
           default = true;
         };

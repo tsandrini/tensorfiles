@@ -26,11 +26,11 @@ let
 in
 {
   options.tensorfiles.system.impermanence = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the persistence ecosystem.
       Doing so enables other modules to automatically use the persistence instead
       of manually having to set it up yourself.
-    '');
+    '';
 
     agenix = {
       enable = mkAgenixEnableOption;
@@ -39,7 +39,7 @@ in
     disableSudoLectures = mkOption {
       type = bool;
       default = true;
-      description = mdDoc ''
+      description = ''
         Whether to disable the default sudo lectures that would be
         otherwise printed every time on login
       '';
@@ -48,7 +48,7 @@ in
     persistentRoot = mkOption {
       type = path;
       default = "/persist";
-      description = mdDoc ''
+      description = ''
         Path on the already mounted filesystem for the persistent root, that is,
         a root where we should store the persistent files and against which should
         we link the temporary files against.
@@ -60,13 +60,13 @@ in
     allowOther = mkOption {
       type = bool;
       default = false;
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
 
     btrfsWipe = {
-      enable = mkEnableOption (mdDoc ''
+      enable = mkEnableOption ''
         Enable btrfs based root filesystem wiping.
 
         This has the following requirements
@@ -83,12 +83,12 @@ in
 
         You can populate the root partition with any amount of desired btrfs
         subvolumes. The `rootSubvolume` is the only one required.
-      '');
+      '';
 
       rootPartition = mkOption {
         type = path;
         default = "/dev/sda1";
-        description = mdDoc ''
+        description = ''
           The dev path for the main btrfs formatted root partition that is
           mentioned in the btrfsWipe.enable doc.
         '';
@@ -97,7 +97,7 @@ in
       rootSubvolume = mkOption {
         type = str;
         default = "root";
-        description = mdDoc ''
+        description = ''
           The main root btrfs subvolume path that is going to be reset to
           blankRootSnapshot later.
         '';
@@ -106,7 +106,7 @@ in
       blankRootSnapshot = mkOption {
         type = str;
         default = "root-blank";
-        description = mdDoc ''
+        description = ''
           The btrfs snapshot of the main rootSubvolume. You will probably
           need to create this one manually during the installation & formatting
           of the system. One such way is using the following command:
@@ -118,7 +118,7 @@ in
       mountpoint = mkOption {
         type = path;
         default = "/mnt";
-        description = mdDoc ''
+        description = ''
           Temporary mountpoint that should be used for mounting and resetting
           the rootPartition.
 

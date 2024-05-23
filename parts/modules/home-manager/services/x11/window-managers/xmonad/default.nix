@@ -82,9 +82,9 @@ let
 in
 {
   options.tensorfiles.hm.services.x11.window-managers.xmonad = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the xmonad window manager.
-    '');
+    '';
 
     pywal = {
       enable = mkPywalEnableOption;
@@ -92,13 +92,13 @@ in
 
     cbatticon = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Enable the cbatticon battery indicator.
           Doing so install the appropriate derivation and adds the
           management code into the xmonad configuration.
 
           https://github.com/valr/cbatticon
-        '')
+        ''
         // {
           default = true;
         };
@@ -106,7 +106,7 @@ in
       pkg = mkOption {
         type = package;
         default = pkgs.cbatticon;
-        description = mdDoc ''
+        description = ''
           Which package to use for the battery indicator.
           You can provide any custom derivation as long as the main binary
           resides at `$pkg/bin/cbatticon`.
@@ -116,12 +116,12 @@ in
 
     playerctl = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Enable integration with the playerctl toolset. Doing so enables the
           media keys functionality.
 
           https://github.com/altdesktop/playerctl
-        '')
+        ''
         // {
           default = true;
         };
@@ -129,7 +129,7 @@ in
       pkg = mkOption {
         type = package;
         default = pkgs.playerctl;
-        description = mdDoc ''
+        description = ''
           Which package to use for the playerctl utility.
           You can provide any custom derivation as long as the main binary
           resides at `$pkg/bin/playerctl`.
@@ -139,7 +139,7 @@ in
 
     dmenu = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           Enable the dmenu app launcher integration.
           This does **one of** two things, first off
 
@@ -149,7 +149,7 @@ in
           2. If not, it will install `dmenu.pkg` and use that version.
 
           and secondly, it creates the keyboard mappings.
-        '')
+        ''
         // {
           default = true;
         };
@@ -157,7 +157,7 @@ in
       pkg = mkOption {
         type = package;
         default = pkgs.dmenu;
-        description = mdDoc ''
+        description = ''
           Which package to use for the dmenu app launcher.
           You can provide any custom derivation as long as the main binary
           resides at `$pkg/bin/dmenu`, `$pkg/bin/dmenu_run`, ..

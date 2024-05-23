@@ -24,12 +24,12 @@ let
 in
 {
   options.tensorfiles.hm.programs.direnv = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables a HomeManager module that sets up direnv.
 
       References
       - https://github.com/direnv/direnv
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

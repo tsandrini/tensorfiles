@@ -29,11 +29,11 @@ let
 in
 {
   options.tensorfiles.programs.wayland.anyrun = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the anyrun app launcher
 
       https://github.com/Kirottu/anyrun
-    '');
+    '';
 
     # home = {
     #   enable = mkHomeEnableOption;

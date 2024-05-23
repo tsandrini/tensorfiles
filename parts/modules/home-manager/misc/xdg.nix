@@ -49,15 +49,15 @@ let
 in
 {
   options.tensorfiles.hm.misc.xdg = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the xdg toolset.
-    '');
+    '';
 
     defaultApplications = {
       enable =
-        mkEnableOption (mdDoc ''
+        mkEnableOption ''
           TODO
-        '')
+        ''
         // {
           default = true;
         };
@@ -65,7 +65,7 @@ in
       browser = mkOption {
         type = nullOr str;
         default = null;
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
@@ -73,7 +73,7 @@ in
       editor = mkOption {
         type = nullOr str;
         default = null;
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
@@ -81,7 +81,7 @@ in
       terminal = mkOption {
         type = nullOr str;
         default = null;
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };

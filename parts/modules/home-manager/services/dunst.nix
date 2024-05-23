@@ -31,9 +31,9 @@ let
 in
 {
   options.tensorfiles.hm.services.dunst = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     pywal = {
       enable = mkPywalEnableOption;

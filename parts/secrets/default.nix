@@ -75,14 +75,14 @@ in
       in
       {
         options.tensorfiles.security.agenix = with types; {
-          enable = mkEnableOption (mdDoc ''
+          enable = mkEnableOption ''
             Enables NixOS module that sets up & configures the agenix secrets
             backend.
 
             References
             - https://github.com/ryantm/agenix
             - https://nixos.wiki/wiki/Agenix
-          '');
+          '';
         };
 
         imports = with inputs; [ agenix.nixosModules.default ];
@@ -108,14 +108,14 @@ in
       in
       {
         options.tensorfiles.hm.security.agenix = with types; {
-          enable = mkEnableOption (mdDoc ''
+          enable = mkEnableOption ''
             Enable Home Manager module that sets up & configures the agenix
             secrets backend.
 
             References
             - https://github.com/ryantm/agenix
             - https://nixos.wiki/wiki/Agenix
-          '');
+          '';
         };
 
         imports = with inputs; [ agenix.homeManagerModules.default ];

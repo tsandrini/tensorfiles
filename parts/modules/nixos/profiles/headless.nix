@@ -24,13 +24,13 @@ let
 in
 {
   options.tensorfiles.profiles.headless = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles the headless system profile.
 
       **Headless layer** builds on top of the minimal layer and adds other
       server-like functionality like simple shells, basic networking for remote
       access and simple editors.
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

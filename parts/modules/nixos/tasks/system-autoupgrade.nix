@@ -29,11 +29,11 @@ let
 in
 {
   options.tensorfiles.tasks.system-autoupgrade = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Module enabling system wide nixpkgs & host autoupgrade
       Enables NixOS module that configures the task handling periodix nixpkgs
       and host autoupgrades.
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

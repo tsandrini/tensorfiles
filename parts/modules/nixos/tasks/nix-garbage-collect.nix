@@ -24,10 +24,10 @@ let
 in
 {
   options.tensorfiles.tasks.nix-garbage-collect = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures the task handling periodic nix store
       garbage collection.
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

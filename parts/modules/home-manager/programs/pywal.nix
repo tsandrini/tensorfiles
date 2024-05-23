@@ -235,9 +235,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.pywal = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles pywal colorscheme generator.
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;
@@ -246,7 +246,7 @@ in
     pkg = mkOption {
       type = package;
       default = pkgs.pywal;
-      description = mdDoc ''
+      description = ''
         Which package to use for the pywal utilities. You can provide any
         custom derivation or forks with differing internals as long
         as the API and binaries stay the same and reside at the

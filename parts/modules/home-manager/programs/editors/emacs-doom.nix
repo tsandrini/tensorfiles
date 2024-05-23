@@ -46,9 +46,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.editors.emacs-doom = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;
@@ -57,7 +57,7 @@ in
     repoUrl = mkOption {
       type = str;
       default = "https://github.com/doomemacs/doomemacs";
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
@@ -66,7 +66,7 @@ in
       type = str;
       # default = "git@github.com:tsandrini/.doom.d.git";
       default = "https://github.com/tsandrini/.doom.d.git";
-      description = mdDoc ''
+      description = ''
         TODO
       '';
     };
@@ -81,6 +81,7 @@ in
         # 28.2 + native-comp
         emacsPkg
         emacsPackages.ws-butler
+        emacsPackages.vterm
 
         ## Doom dependencies
         git
@@ -112,7 +113,7 @@ in
         # :lang beancount
         fava # HACK Momentarily broken on nixos-unstable
         graphviz
-        nodejs_21
+        nodejs
 
         # fonts
         emacs-all-the-icons-fonts
@@ -152,9 +153,8 @@ in
         ocamlPackages.merlin # An editor-independent tool to ease the development of programs in OCaml
 
         ## :lang rust
-        rust-analyzer # A modular compiler frontend for the Rust language
-        cargo # Downloads your Rust project's dependencies and builds your project
         rustc # A safe, concurrent, practical language (wrapper script)
+        rustup # The Rust toolchain installer
 
         ## :lang sh
         shfmt # A shell parser and formatter

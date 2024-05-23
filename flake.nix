@@ -71,6 +71,7 @@
       url = "github:mikesmithgh/kitty-scrollback.nvim";
       flake = false;
     };
+    nix-alien.url = "github:thiagokokada/nix-alien";
 
     # TODO some serious maintenance sheningans
     shadow-nix = {

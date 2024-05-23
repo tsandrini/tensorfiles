@@ -29,9 +29,9 @@ let
 in
 {
   options.tensorfiles.hm.programs.terminals.alacritty = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       TODO
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [

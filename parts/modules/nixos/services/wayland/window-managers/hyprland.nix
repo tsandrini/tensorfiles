@@ -36,9 +36,9 @@ in
     with types;
     with tensorfiles.options;
     {
-      enable = mkEnableOption (mdDoc ''
+      enable = mkEnableOption ''
         TODO
-      '');
+      '';
 
       home = {
         enable = mkHomeEnableOption;

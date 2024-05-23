@@ -29,10 +29,10 @@ let
 in
 {
   options.tensorfiles.misc.nix = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles defaults regarding nix
       language & nix package manager.
-    '');
+    '';
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -42,7 +42,7 @@ in
         enable = _ true;
         checkConfig = _ true;
         nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
-        package = _ pkgs.nixVersions.unstable;
+        package = _ pkgs.nixVersions.latest;
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
           auto-optimise-store = _ true;

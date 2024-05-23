@@ -24,19 +24,19 @@ let
 in
 {
   options.tensorfiles.services.networking.ssh = with types; {
-    enable = mkEnableOption (mdDoc ''
+    enable = mkEnableOption ''
       Enables NixOS module that configures/handles everything related to ssh,
       that is remote access, messagess, ssh-agents and ssh-keys with the
       openssh backend.
-    '');
+    '';
 
     genHostKey = {
-      enable = mkEnableOption (mdDoc ''
+      enable = mkEnableOption ''
         Enables autogenerating per-host based keys. Apart from certain additional
         checks this works mostly as a passthrough to
         `openssh.authorizedKeys.keys`, for more info refer to the documentation
         of said option.
-      '');
+      '';
 
       hostKey = mkOption {
         type = attrs;
@@ -44,7 +44,7 @@ in
           type = "ed25519";
           path = "/etc/ssh/ssh_host_ed25519_key";
         };
-        description = mdDoc ''
+        description = ''
           TODO
         '';
       };
