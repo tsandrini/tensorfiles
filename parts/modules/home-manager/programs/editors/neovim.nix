@@ -89,6 +89,7 @@ in
           set smartindent
           set shiftround
 
+          set ignorecase
           set smartcase
           set showmatch
 

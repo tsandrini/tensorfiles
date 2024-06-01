@@ -166,7 +166,7 @@
       armcord # Lightweight, alternative desktop client for Discord
       anki # Spaced repetition flashcard program
       libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
-      texlive.combined.scheme-medium # TeX Live environment
+      texlive.combined.scheme-full # TeX Live environment
       zotero # Collect, organize, cite, and share your research sources
       lapack # openblas with just the LAPACK C and FORTRAN ABI
       ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
