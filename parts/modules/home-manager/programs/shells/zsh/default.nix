@@ -175,13 +175,13 @@ in
         syntaxHighlighting.enable = _ true;
         autosuggestion.enable = _ cfg.withAutocompletions;
         history = {
-          extended = _ true;
+          extended = _ false;
           expireDuplicatesFirst = _ true;
           ignoreAllDups = _ true;
           ignoreDups = _ true;
           ignoreSpace = _ true;
-          size = _ 100000;
-          save = _ 100000;
+          size = _ 1000000;
+          save = _ 1000000;
         };
         # historySubstringSearch = {
         #   enable = _ true;
