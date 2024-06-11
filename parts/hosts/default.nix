@@ -79,8 +79,8 @@ in
       mkHost args "spinorbundle" {
         withHomeManager = true;
         extraOverlays = with inputs; [
-          emacs-overlay.overlay
-          neovim-nightly-overlay.overlay
+          neovim-nightly-overlay.overlays.default
+          emacs-overlay.overlays.default
           (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
       }
@@ -90,8 +90,8 @@ in
       mkHost args "jetbundle" {
         withHomeManager = true;
         extraOverlays = with inputs; [
-          emacs-overlay.overlay
-          neovim-nightly-overlay.overlay
+          neovim-nightly-overlay.overlays.default
+          emacs-overlay.overlays.default
           (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
       }

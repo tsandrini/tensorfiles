@@ -95,7 +95,7 @@ mount /dev/disk/by-label/boot /mnt/boot
 ```
 
 _Notenote_: At this stage you should either start an ssh-agent
-(`` eval `ssh-agent`  ``) and add the
+(``eval `ssh-agent` ``) and add the
 appropriate keys (`ssh-add /root/.ssh/id_ed25519`) or in case you don't want
 to use agenix you should patch the config with your desired way of handling
 secrets and default passwords.
