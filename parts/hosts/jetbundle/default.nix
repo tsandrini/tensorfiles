@@ -138,7 +138,7 @@
 
       programs.pywal.enable = true;
       programs.spicetify.enable = true;
-      services.pywalfox-native.enable = true;
+      # services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
     };
 
@@ -182,7 +182,7 @@
       zathura # A highly customizable and functional PDF viewer
 
       inputs.nix-gaming.packages.${system}.osu-lazer-bin
-      inputs.self.packages.${system}.pywalfox-native
+      # inputs.self.packages.${system}.pywalfox-native
     ];
   };
 }
