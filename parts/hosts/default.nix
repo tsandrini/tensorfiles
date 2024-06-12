@@ -79,10 +79,12 @@ in
       mkHost args "spinorbundle" {
         withHomeManager = true;
         extraOverlays = with inputs; [
+          nix-topology.overlays.default
           neovim-nightly-overlay.overlays.default
           emacs-overlay.overlays.default
           (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
+        extraModules = with inputs; [ nix-topology.nixosModules.default ];
       }
     );
     jetbundle = withSystem "x86_64-linux" (
@@ -90,10 +92,12 @@ in
       mkHost args "jetbundle" {
         withHomeManager = true;
         extraOverlays = with inputs; [
+          nix-topology.overlays.default
           neovim-nightly-overlay.overlays.default
           emacs-overlay.overlays.default
           (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
+        extraModules = with inputs; [ nix-topology.nixosModules.default ];
       }
     );
   };
