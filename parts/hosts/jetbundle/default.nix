@@ -140,6 +140,7 @@
       programs.spicetify.enable = true;
       # services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
+      services.activitywatch.enable = true;
     };
 
     # TODO remove
