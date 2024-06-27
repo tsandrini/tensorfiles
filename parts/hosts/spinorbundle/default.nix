@@ -166,8 +166,8 @@
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
 
-      todoist # Todoist CLI Client
-      todoist-electron # The official Todoist electron app
+      # todoist # Todoist CLI Client
+      # todoist-electron # The official Todoist electron app
 
       mpv # General-purpose media player, fork of MPlayer and mplayer2
       zathura # A highly customizable and functional PDF viewer
