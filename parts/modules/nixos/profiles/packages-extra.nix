@@ -44,7 +44,9 @@ in
         with pkgs;
         [
           # --- BASE UTILS ---
+          stdenv.cc.cc # Basic C build toolchains
           binutils # Tools for manipulating binaries (linker, assembler, etc.) (wrapper script)
+          openssl # Cryptographic library that implements the SSL and TLS protocols
           htop # An interactive process viewer
           jq # A lightweight and flexible command-line JSON processor
           killall
