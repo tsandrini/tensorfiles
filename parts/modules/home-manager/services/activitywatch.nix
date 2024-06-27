@@ -44,7 +44,7 @@ in
         watchers = {
           awatcher.package = _ localFlake.packages.${system}.awatcher;
           # aw-watcher-window.package = _ pkgs.aw-watcher-window;
-          aw-watcher-afk.package = _ pkgs.aw-watcher-afk;
+          # aw-watcher-afk.package = _ pkgs.aw-watcher-afk;
         };
       };
 
@@ -54,6 +54,7 @@ in
         };
         Unit = {
           PartOf = [ "graphical-session.target" ];
+          After = [ "activitywatch.service" ];
           Description = _ "Qt Tray Application for ActivityWatch";
         };
         Service = {
