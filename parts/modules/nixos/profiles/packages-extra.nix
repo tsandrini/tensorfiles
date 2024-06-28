@@ -56,7 +56,12 @@ in
           neofetch # A fast, highly customizable system info script
           cmake # Cross-platform, open-source build system generator
           gnumake # A tool to control the generation of non-source files from sources
+
+          # --- BASE VCS UTILS ---
           git # Distributed version control system
+          gitu # TUI Git client inspired by Magit
+          commitizen # Tool to create committing rules for projects, auto bump versions, and generate changelogs
+          cz-cli # Commitizen command line utility
 
           # --- NET UTILS ---
           dig # Domain name server
