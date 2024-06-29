@@ -100,7 +100,7 @@
     };
   };
 
-  programs.steam.enable = true; # just trying it out
+  # programs.steam.enable = true; # just trying it out
 
   networking.networkmanager.enable = true;
   networking.networkmanager.enableStrongSwan = true;
@@ -138,8 +138,9 @@
 
       programs.pywal.enable = true;
       programs.spicetify.enable = true;
-      services.pywalfox-native.enable = true;
+      # services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
+      services.activitywatch.enable = true;
     };
 
     # TODO remove
@@ -175,14 +176,14 @@
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
 
-      todoist # Todoist CLI Client
-      todoist-electron # The official Todoist electron app
+      # todoist # Todoist CLI Client
+      # todoist-electron # The official Todoist electron app
 
       mpv # General-purpose media player, fork of MPlayer and mplayer2
       zathura # A highly customizable and functional PDF viewer
 
-      inputs.nix-gaming.packages.${system}.osu-lazer-bin
-      inputs.self.packages.${system}.pywalfox-native
+      # inputs.nix-gaming.packages.${system}.osu-lazer-bin
+      # inputs.self.packages.${system}.pywalfox-native
     ];
   };
 }

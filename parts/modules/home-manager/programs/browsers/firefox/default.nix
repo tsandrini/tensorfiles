@@ -107,13 +107,13 @@ in
                 # ~ Utils
                 keepassxc-browser # Official browser plugin for the KeePassXC password manager
                 tridactyl # Vim, but in your browser. Replace Firefox’s control mechanism with one modelled on Vim.
-                behave # A monitoring browser extension for pages acting as bad boys
-                header-editor # Manage browser’s requests, include modify the request headers and response headers, redirect requests, cancel requests
+                # header-editor # Manage browser’s requests, include modify the request headers and response headers, redirect requests, cancel requests
                 pywalfox # Dynamic theming of Firefox using your Pywal colors
                 enhancer-for-youtube # Take control of YouTube and boost your user experience!
                 # sidebery # Vertical tabs tree and bookmarks in sidebar with advanced containers configuration, grouping and many other features.
                 sponsorblock # Easily skip YouTube video sponsors
-                user-agent-string-switcher # Spoof websites trying to gather information about your web navigation—like your browser type and operating system—to deliver distinct content you may not want.
+                aw-watcher-web # This extension logs the current tab and your browser activity to ActivityWatch.
+                darkreader # Dark mode for every website. Take care of your eyes, use dark theme for night and daily browsing.
 
                 # DEV related
                 vue-js-devtools # DevTools extension for debugging Vue.js applications.

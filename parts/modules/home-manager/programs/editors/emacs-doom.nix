@@ -206,7 +206,7 @@ in
           ]
         ))
         inputs.self.packages.${system}.my_cookies
-        nodePackages.pyright
+        pyright
 
         ## :lang zig
         zig # General-purpose programming language and toolchain for maintaining robust, optimal, and reusable software

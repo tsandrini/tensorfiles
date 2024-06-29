@@ -89,6 +89,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+    nix-topology.url = "github:oddlama/nix-topology";
 
     nix-gaming.url = "github:fufexan/nix-gaming";
     # Fingreprint sensor

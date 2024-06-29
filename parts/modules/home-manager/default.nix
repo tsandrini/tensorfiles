@@ -78,6 +78,7 @@ in
     # -- security --
 
     # -- services --
+    services_activitywatch = importApply ./services/activitywatch.nix { inherit localFlake; };
     services_dunst = importApply ./services/dunst.nix { inherit localFlake; };
     services_keepassxc = importApply ./services/keepassxc.nix { inherit localFlake; };
     services_pywalfox-native = importApply ./services/pywalfox-native.nix {

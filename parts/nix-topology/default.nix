@@ -1,4 +1,4 @@
-# --- parts/pkgs/default.nix
+# --- parts/hosts/nix-topology/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,29 +13,28 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
-  lib,
   inputs,
-  projectPath,
+  lib,
+  self,
   ...
 }:
+let
+  inherit (inputs.flake-parts.lib) importApply;
+  localFlake = self;
+in
 {
-  perSystem =
-    { pkgs, system, ... }:
-    {
-      packages = {
-        pywalfox-native = pkgs.callPackage ./pywalfox-native.nix { };
-        docs = pkgs.callPackage ./docs {
-          inherit
-            lib
-            inputs
-            system
-            projectPath
-            ;
-        };
-        my_cookies = pkgs.callPackage ./my_cookies.nix { };
-        polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
 
-        awatcher = pkgs.callPackage ./awatcher.nix { };
-      };
-    };
+  flake.topology = lib.genAttrs (import inputs.systems) (
+    system:
+    let
+      pkgs = localFlake.lib.mkNixpkgs inputs.nixpkgs system [ inputs.nix-topology.overlays.default ];
+    in
+    import inputs.nix-topology {
+      inherit pkgs;
+      modules = [
+        (importApply ./topology.nix { inherit localFlake; })
+        { inherit (localFlake) nixosConfigurations; }
+      ];
+    }
+  );
 }

@@ -225,7 +225,10 @@ in
           find = _ "${pkgs.fd}/bin/fd";
           fd = _ "${pkgs.fd}/bin/fd";
         })
-        (mkIf cfg.shellAliases.grepToRipgrep { grep = _ "${pkgs.ripgrep}/bin/rg"; })
+        (mkIf cfg.shellAliases.grepToRipgrep {
+          grep = _ "${pkgs.ripgrep}/bin/rg";
+          list-todos = _ "${pkgs.ripgrep}/bin/rg -g '!{.git,node_modules,result,build,dist,.idea,out,.DS_Store}' --no-follow 'TODO|FIXME' ";
+        })
         { fetch = _ "${pkgs.nitch}/bin/nitch"; }
       ];
     }

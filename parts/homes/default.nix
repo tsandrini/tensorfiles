@@ -60,8 +60,8 @@ in
         args:
         mkHome args "tsandrini@jetbundle" {
           extraOverlays = with inputs; [
-            neovim-nightly-overlay.overlay
-            emacs-overlay.overlay
+            neovim-nightly-overlay.overlays.default
+            emacs-overlay.overlays.default
             (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
           ];
         }
