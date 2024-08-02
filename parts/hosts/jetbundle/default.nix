@@ -68,6 +68,8 @@
 
     security.agenix.enable = true;
     programs.shadow-nix.enable = true;
+    tasks.system-autoupgrade.enable = false;
+
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
     };
@@ -86,9 +88,18 @@
     };
   };
 
+  # Use the `nh` garbage collect to also collect .direnv and XDG profiles
+  # roots instead of the default ones.
+  tensorfiles.tasks.nix-garbage-collect.enable = true;
+  tensorfiles.programs.nh.enable = true;
+  # TODO maybe use github:tsandrini/tensorfiles instead?
+  programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
+
   programs.shadow-client.forceDriver = "iHD";
   programs.zsh.enable = true;
   users.defaultUserShell = pkgs.zsh;
+
+  programs.winbox.enable = true;
 
   services = {
     pipewire = {
