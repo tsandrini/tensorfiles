@@ -220,7 +220,7 @@ in
       ];
 
       services.emacs = {
-        enable = _ true;
+        enable = _ false;
         package = _ emacsPkg;
         startWithUserSession = _ "graphical";
       };
