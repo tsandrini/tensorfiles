@@ -120,7 +120,7 @@ in
           nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
           nixos-shell # Spawns lightweight nixos vms in a shell
           deploy-rs # Multi-profile Nix-flake deploy tool
-          nh # Yet another nix cli helper
+          # nh # Yet another nix cli helper
           disko # Declarative disk partitioning and formatting using nix
           cachix # Command-line client for Nix binary cache hosting https://cachix.org
           devenv # Fast, Declarative, Reproducible, and Composable Developer Environments

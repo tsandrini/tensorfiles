@@ -44,6 +44,7 @@ in
 
     # -- programs --
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
+    programs_nh = importApply ./programs/nh.nix { inherit localFlake; };
 
     # -- security --
 
