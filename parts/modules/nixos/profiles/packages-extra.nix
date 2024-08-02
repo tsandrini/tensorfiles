@@ -113,6 +113,7 @@ in
           nix-tree # Interactively browse a Nix store paths dependencies
           nix-health # Check the health of your Nix setup
           nix-update # Swiss-knife for updating nix packages
+          nix-fast-build # Combine the power of nix-eval-jobs with nix-output-monitor to speed-up your evaluation and building process
           # nix-serve # A utility for sharing a Nix store as a binary cache # NOTE conflict with serve-ng
           nix-serve-ng # A drop-in replacement for nix-serve that's faster and more stable
           nix-prefetch-scripts # Collection of all the nix-prefetch-* scripts which may be used to obtain source hashes
@@ -123,6 +124,7 @@ in
           disko # Declarative disk partitioning and formatting using nix
           cachix # Command-line client for Nix binary cache hosting https://cachix.org
           devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
+
         ]
         ++ [
           inputs.nix-alien.packages.${system}.nix-alien # Run unpatched binaries on Nix/NixOS
