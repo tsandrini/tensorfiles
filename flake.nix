@@ -19,32 +19,22 @@
     # --- BASE DEPENDENCIES ---
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+
+    # --- YOUR DEPENDENCIES ---
     systems.url = "github:nix-systems/default";
-
-    # --- DEV DEPENDENCIES ---
-    devenv.url = "github:cachix/devenv";
-    devenv-root = {
-      url = "file+file:///dev/null";
-      flake = false;
-    };
-    mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
-    nix2container = {
-      url = "github:nlewo/nix2container";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     treefmt-nix.url = "github:numtide/treefmt-nix";
-
-    # --- (NOTE, YOUR) EXTRA DEPENDENCIES ---
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {
       url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nix-topology.url = "github:oddlama/nix-topology";
+    disko = {
+      url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -66,31 +56,25 @@
       url = "github:nix-community/nixpkgs-wayland";
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
     };
-
     kitty-scrollback-nvim = {
       url = "github:mikesmithgh/kitty-scrollback.nvim";
       flake = false;
     };
     nix-alien.url = "github:thiagokokada/nix-alien";
-
     # TODO some serious maintenance sheningans
     shadow-nix = {
       url = "github:Exaltia/shadow-nix";
       flake = false;
     };
-
     spicetify-nix = {
       url = "github:the-argus/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     plasma-manager = {
       url = "github:pjones/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
-    nix-topology.url = "github:oddlama/nix-topology";
-
     nix-gaming.url = "github:fufexan/nix-gaming";
     # Fingreprint sensor
     # nixos-06cb-009a-fingerprint-sensor = {
@@ -119,59 +103,38 @@
     extra-substituters = [
       "https://cache.nixos.org"
       "https://nix-community.cachix.org/"
-      "https://devenv.cachix.org"
       "https://tsandrini.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://nix-gaming.cachix.org"
       # "https://hyprland.cachix.org"
       # "https://anyrun.cachix.org"
+      # "https://devenv.cachix.org"
     ];
     extra-trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
       "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       # "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
+      # "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
     ];
   };
 
   outputs =
     inputs@{ flake-parts, ... }:
     let
-      inherit (inputs) nixpkgs;
-      inherit (lib.tensorfiles) mapModules flatten;
-
-      # You should ideally use relative paths in each individual part from ./parts,
-      # however, if needed you can use the `projectPath` variable that is passed
-      # to every flakeModule to properly anchor your absolute paths.
-      projectPath = ./.;
-
-      # We extend the base <nixpkgs> library with our own custom helpers as well
-      # as override any of the nixpkgs default functions that we'd like
-      # to override. This instance is then passed to every part in ./parts so that
-      # you can use it in your custom modules
-      lib = nixpkgs.lib.extend (
-        self: _super: {
-          tensorfiles = import ./lib {
-            inherit inputs projectPath;
-            pkgs = nixpkgs;
-            lib = self;
-          };
-        }
-      );
-      specialArgs = {
-        inherit lib projectPath;
-      };
+      inherit (inputs.nixpkgs) lib;
+      inherit (import ./flake-parts/_bootstrap.nix { inherit lib; }) loadParts;
     in
-    flake-parts.lib.mkFlake { inherit inputs specialArgs; } {
-      # We recursively traverse all of the flakeModules in ./parts and import only
-      # the final modules, meaning that you can have an arbitrary nested structure
-      # that suffices your needs. For example
+    flake-parts.lib.mkFlake { inherit inputs; } {
+
+      # We recursively traverse all of the flakeModules in ./flake-parts and
+      # import only the final modules, meaning that you can have an arbitrary
+      # nested structure that suffices your needs. For example
       #
-      # - ./parts
+      # - ./flake-parts
       #   - modules/
       #     - nixos/
       #       - myNixosModule1.nix
@@ -182,28 +145,12 @@
       #       - myHomeModule2.nix
       #       - default.nix
       #     - sharedModules.nix
-      #    - pkgs/
-      #      - myPackage1.nix
-      #      - myPackage2.nix
-      #      - default.nix
-      #    - mySimpleModule.nix
-      imports = flatten (mapModules ./parts (x: x));
-
-      # NOTE We use the default `systems` defined by the `nix-systems` flake, if
-      # you need any additional systems, simply add them in the following manner
-      #
-      # `systems = (import inputs.systems) ++ [ "armv7l-linux" ];`
-      systems = import inputs.systems;
-      flake.lib = lib.tensorfiles;
-
-      # NOTE Since the official flakes output schema is unfortunately very
-      # limited you can enable the debug mode if you need to inspect certain
-      # outputs of your flake. Simply
-      # 1. uncomment the following line
-      # 2. hop into a repl from the project root - `nix repl`
-      # 3. load the flake - `:lf .`
-      # After that you can inspect the flake from the root attribute `debug.flake`
-      #
-      # debug = true;
+      #   - pkgs/
+      #     - myPackage1.nix
+      #     - myPackage2.nix
+      #     - default.nix
+      #   - mySimpleModule.nix
+      #   - _not_a_module.nix
+      imports = loadParts ./flake-parts;
     };
 }
