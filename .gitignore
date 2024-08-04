@@ -5,7 +5,6 @@
 age/
 
 # home-manager
-tsandrini
 tsandrini-*-link
 !parts/**/tsandrini
 
