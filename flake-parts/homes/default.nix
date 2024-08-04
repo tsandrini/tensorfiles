@@ -14,10 +14,40 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   lib,
-  # inputs,
-  # config,
+  inputs,
+  withSystem,
+  config,
   ...
 }:
+let
+  mkHome =
+    args: home:
+    {
+      extraSpecialArgs ? { },
+      extraModules ? [ ],
+      extraOverlays ? [ ],
+      ...
+    }:
+    inputs.home-manager.lib.homeManagerConfiguration {
+      inherit (args) pkgs;
+      extraSpecialArgs = {
+        inherit (args) system;
+        inherit inputs home;
+      } // extraSpecialArgs;
+      modules =
+        [
+          {
+            nixpkgs.overlays = extraOverlays;
+            nixpkgs.config.allowUnfree = true;
+          }
+          ./${home}
+        ]
+        ++ extraModules
+        # Disabled by default, therefore load every module and enable via attributes
+        # instead of imports
+        ++ (lib.attrValues config.flake.homeModules);
+    };
+in
 {
   options.flake.homeConfigurations = lib.mkOption {
     type = with lib.types; lazyAttrsOf unspecified;
@@ -25,21 +55,21 @@
   };
 
   config = {
-    # flake.homeConfigurations = {
-    #   "tsandrini@jetbundle" = withSystem "x86_64-linux" (
-    #     args:
-    #     mkHome args "tsandrini@jetbundle" {
-    #       extraOverlays = with inputs; [
-    #         neovim-nightly-overlay.overlays.default
-    #         emacs-overlay.overlays.default
-    #         (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
-    #       ];
-    #     }
-    #   );
-    # };
+    flake.homeConfigurations = {
+      "tsandrini@jetbundle" = withSystem "x86_64-linux" (
+        args:
+        mkHome args "tsandrini@jetbundle" {
+          extraOverlays = with inputs; [
+            neovim-nightly-overlay.overlays.default
+            emacs-overlay.overlays.default
+            (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+          ];
+        }
+      );
+    };
 
-    # flake.checks."x86_64-linux" = {
-    #   "home-tsandrini@jetbundle" = config.flake.homeConfigurations."tsandrini@jetbundle".config.home.path;
-    # };
+    flake.checks."x86_64-linux" = {
+      "home-tsandrini@jetbundle" = config.flake.homeConfigurations."tsandrini@jetbundle".config.home.path;
+    };
   };
 }

@@ -2,6 +2,8 @@
 # Nix/NixOS
 # ---------
 
+age/
+
 # home-manager
 tsandrini
 tsandrini-*-link

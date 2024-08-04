@@ -31,7 +31,7 @@
             treefmt.package = if (treefmt-wrapper != null) then treefmt-wrapper else pkgs.treefmt;
 
             nil.enable = true; # Nix Language server, an incremental analysis assistant for writing in Nix.
-            markdownlint.enable = true; # Markdown lint tool
+            # markdownlint.enable = true; # Markdown lint tool
             # typos.enable = true; # Source code spell checker
 
             actionlint.enable = true; # GitHub workflows linting

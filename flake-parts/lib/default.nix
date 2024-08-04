@@ -15,13 +15,13 @@
 { lib, ... }:
 {
   flake.lib = rec {
-    attrsets = import ./attrsets { inherit lib; };
-    licenses = import ./licenses { };
-    maintainers = import ./maintainers { };
-    modules = import ./modules {
+    attrsets = import ./attrsets.nix { inherit lib; };
+    licenses = import ./licenses.nix { };
+    maintainers = import ./maintainers.nix { };
+    modules = import ./modules.nix {
       inherit lib;
       inherit (attrsets) mapFilterAttrs;
     };
-    options = import ./options { inherit lib; };
+    options = import ./options.nix { inherit lib; };
   };
 }
