@@ -12,42 +12,36 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  lib,
-  inputs,
-  withSystem,
-  config,
-  ...
-}:
-let
-  mkHome =
-    args: home:
-    {
-      extraSpecialArgs ? { },
-      extraModules ? [ ],
-      extraOverlays ? [ ],
-      ...
-    }:
-    inputs.home-manager.lib.homeManagerConfiguration {
-      inherit (args) pkgs;
-      extraSpecialArgs = {
-        inherit (args) system;
-        inherit inputs home;
-      } // extraSpecialArgs;
-      modules =
-        [
-          {
-            nixpkgs.overlays = extraOverlays;
-            nixpkgs.config.allowUnfree = true;
-          }
-          ./${home}
-        ]
-        ++ extraModules
-        # Disabled by default, therefore load every module and enable via attributes
-        # instead of imports
-        ++ (lib.attrValues config.flake.homeModules);
-    };
-in
+{ lib, config, ... }:
+# let
+#   mkHome =
+#     args: home:
+#     {
+#       extraSpecialArgs ? { },
+#       extraModules ? [ ],
+#       extraOverlays ? [ ],
+#       ...
+#     }:
+#     inputs.home-manager.lib.homeManagerConfiguration {
+#       inherit (args) pkgs;
+#       extraSpecialArgs = {
+#         inherit (args) system;
+#         inherit inputs home;
+#       } // extraSpecialArgs;
+#       modules =
+#         [
+#           {
+#             nixpkgs.overlays = extraOverlays;
+#             nixpkgs.config.allowUnfree = true;
+#           }
+#           ./${home}
+#         ]
+#         ++ extraModules
+#         # Disabled by default, therefore load every module and enable via attributes
+#         # instead of imports
+#         ++ (lib.attrValues config.flake.homeModules);
+#     };
+# in
 {
   options.flake.homeConfigurations = lib.mkOption {
     type = with lib.types; lazyAttrsOf unspecified;
@@ -55,22 +49,23 @@ in
   };
 
   config = {
-    flake.homeConfigurations = {
-      "tsandrini@jetbundle" = withSystem "x86_64-linux" (
-        args:
-        mkHome args "tsandrini@jetbundle" {
-          extraOverlays = with inputs; [
-            neovim-nightly-overlay.overlays.default
-            emacs-overlay.overlays.default
-            nur.overlay
-            # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
-          ];
-        }
-      );
-    };
+    # TODO free up computing power since I am not using this atm
+    # flake.homeConfigurations = {
+    #   "tsandrini@jetbundle" = withSystem "x86_64-linux" (
+    #     args:
+    #     mkHome args "tsandrini@jetbundle" {
+    #       extraOverlays = with inputs; [
+    #         neovim-nightly-overlay.overlays.default
+    #         emacs-overlay.overlays.default
+    #         nur.overlay
+    #         # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+    #       ];
+    #     }
+    #   );
+    # };
 
-    flake.checks."x86_64-linux" = {
-      "home-tsandrini@jetbundle" = config.flake.homeConfigurations."tsandrini@jetbundle".config.home.path;
-    };
+    # flake.checks."x86_64-linux" = {
+    #   "home-tsandrini@jetbundle" = config.flake.homeConfigurations."tsandrini@jetbundle".config.home.path;
+    # };
   };
 }
