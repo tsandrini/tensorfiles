@@ -82,9 +82,13 @@ in
           nix-topology.overlays.default
           neovim-nightly-overlay.overlays.default
           emacs-overlay.overlays.default
-          (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+          nur.overlay
+          # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
-        extraModules = with inputs; [ nix-topology.nixosModules.default ];
+        extraModules = with inputs; [
+          nur.nixosModules.nur
+          # nix-topology.nixosModules.default
+        ];
       }
     );
     jetbundle = withSystem "x86_64-linux" (
@@ -95,9 +99,13 @@ in
           nix-topology.overlays.default
           neovim-nightly-overlay.overlays.default
           emacs-overlay.overlays.default
-          (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+          nur.overlay
+          # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
-        extraModules = with inputs; [ nix-topology.nixosModules.default ];
+        extraModules = with inputs; [
+          nur.nixosModules.nur
+          # nix-topology.nixosModules.default
+        ];
       }
     );
   };

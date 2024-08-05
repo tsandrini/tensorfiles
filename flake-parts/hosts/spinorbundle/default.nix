@@ -86,7 +86,7 @@
 
   # Use the `nh` garbage collect to also collect .direnv and XDG profiles
   # roots instead of the default ones.
-  tensorfiles.tasks.nix-garbage-collect.enable = true;
+  tensorfiles.tasks.nix-garbage-collect.enable = false;
   tensorfiles.programs.nh.enable = true;
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
@@ -180,6 +180,7 @@
       # todoist # Todoist CLI Client
       # todoist-electron # The official Todoist electron app
 
+      spotify # Play music from the Spotify music service
       mpv # General-purpose media player, fork of MPlayer and mplayer2
       zathura # A highly customizable and functional PDF viewer
 

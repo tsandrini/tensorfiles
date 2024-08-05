@@ -44,7 +44,8 @@ in
       tensorfiles.hm = {
         profiles.headless.enable = _ true;
 
-        hardware.nixGL.enable = _ true;
+        # TODO nixGL requires --impure
+        # hardware.nixGL.enable = _ true;
 
         programs = {
           newsboat.enable = _ true;

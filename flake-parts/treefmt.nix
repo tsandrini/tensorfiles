@@ -12,54 +12,50 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ config, inputs, ... }:
+{ inputs, ... }:
 {
   imports = with inputs; [ treefmt-nix.flakeModule ];
 
   perSystem =
     { pkgs, ... }:
     {
-      treefmt =
-        let
-          excludes = [
-            "etc/**"
+      treefmt = {
+        # treefmt is a formatting tool that saves you time: it provides
+        # developers with a universal way to trigger all formatters needed for the
+        # project in one place.
+        # For more information refer to
+        #
+        # - https://numtide.github.io/treefmt/
+        # - https://github.com/numtide/treefmt-nix
+        package = pkgs.treefmt;
+        flakeCheck = true;
+        flakeFormatter = true;
+        projectRootFile = "flake.nix";
+
+        settings = {
+          global.excludes = [
+            "etc/**/*"
+            "*.age"
             "*.png"
             "*.woff2"
+            "flake-parts/pkgs/docs/**/*"
           ];
-        in
-        {
-          # treefmt is a formatting tool that saves you time: it provides
-          # developers with a universal way to trigger all formatters needed for the
-          # project in one place.
-          # For more information refer to
-          #
-          # - https://numtide.github.io/treefmt/
-          # - https://github.com/numtide/treefmt-nix
-          package = pkgs.treefmt;
-          flakeCheck = true;
-          flakeFormatter = true;
-          projectRootFile = config.flake-root + "/flake.nix";
-
-          settings.formatter = {
-            deadnix.excludes = excludes;
-            statix.excludes = excludes;
-            # prettier.excludes = excludes;
-            nixfmt-rfc-style.excludes = excludes;
-          };
-
-          programs = {
-            deadnix.enable = true; # Find and remove unused code in .nix source files
-            statix.enable = true; # Lints and suggestions for the nix programming language
-            nixfmt-rfc-style.enable = true; # An opinionated formatter for Nix
-            # NOTE Choose a different formatter if you'd like to
-            # nixfmt.enable = true; # An opinionated formatter for Nix
-            # alejandra.enable = true; # The Uncompromising Nix Code Formatter
-
-            # prettier.enable = true; # Prettier is an opinionated code formatter
-            # mdformat.enable = true; # CommonMark compliant Markdown formatter
-            # yamlfmt.enable = true; # An extensible command line tool or library to format yaml files.
-            # jsonfmt.enable = true; # Formatter for JSON files
-          };
         };
+
+        programs = {
+          deadnix.enable = true; # Find and remove unused code in .nix source files
+          statix.enable = true; # Lints and suggestions for the nix programming language
+          nixfmt.enable = true; # An opinionated formatter for Nix
+          # NOTE Choose a different formatter if you'd like to
+          # nixfmt.enable = true; # An opinionated formatter for Nix
+          # alejandra.enable = true; # The Uncompromising Nix Code Formatter
+
+          actionlint.enable = true; # Static checker for GitHub Actions workflow files
+          prettier.enable = true; # Prettier is an opinionated code formatter
+          mdformat.enable = true; # CommonMark compliant Markdown formatter
+          # yamlfmt.enable = true; # An extensible command line tool or library to format yaml files.
+          # jsonfmt.enable = true; # Formatter for JSON files
+        };
+      };
     };
 }

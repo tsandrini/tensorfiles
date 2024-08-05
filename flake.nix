@@ -37,7 +37,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
     nixGL = {
       url = "github:nix-community/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -47,7 +46,6 @@
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
-
     arkenfox-user-js = {
       url = "github:arkenfox/user.js";
       flake = false;
@@ -63,12 +61,8 @@
     nix-alien.url = "github:thiagokokada/nix-alien";
     # TODO some serious maintenance sheningans
     shadow-nix = {
-      url = "github:Exaltia/shadow-nix";
+      url = "github:tsandrini/shadow-nix";
       flake = false;
-    };
-    spicetify-nix = {
-      url = "github:the-argus/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
     plasma-manager = {
       url = "github:pjones/plasma-manager";
@@ -76,6 +70,10 @@
       inputs.home-manager.follows = "home-manager";
     };
     nix-gaming.url = "github:fufexan/nix-gaming";
+    # spicetify-nix = {
+    #   url = "github:the-argus/spicetify-nix";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     # Fingreprint sensor
     # nixos-06cb-009a-fingerprint-sensor = {
     #   url = "github:ahbnr/nixos-06cb-009a-fingerprint-sensor";

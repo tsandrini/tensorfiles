@@ -10,8 +10,6 @@ on:
 jobs:
   cachix-push:
     runs-on: "ubuntu-latest"
-    env:
-      ALLOW_UNFREE: true
     steps:
       - name: "Checking out repository..."
         uses: actions/checkout@v4
@@ -23,9 +21,7 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@main
         with:
           extra-conf: |
-            experimental-features = nix-command flakes impure-derivations
             accept-flake-config = true
-            allow-import-from-derivation = true
 
       - name: "Settings up cachix binary cache..."
         uses: cachix/cachix-action@v15

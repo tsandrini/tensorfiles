@@ -175,7 +175,7 @@ in
         fsharp # A functional CLI language
 
         ## :lang julia
-        julia
+        julia-bin
 
         ## :lang julia
         lua-language-server # A language server that offers Lua language support

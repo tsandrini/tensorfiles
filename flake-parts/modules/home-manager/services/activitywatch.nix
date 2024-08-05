@@ -17,7 +17,6 @@
   config,
   lib,
   pkgs,
-  system,
   ...
 }:
 with builtins;
@@ -42,18 +41,19 @@ in
         enable = _ true;
         package = _ pkgs.aw-server-rust;
         watchers = {
-          awatcher.package = _ localFlake.packages.${system}.awatcher;
+          awatcher.package = _ pkgs.awatcher;
+          # awatcher.package = _ localFlake.packages.${system}.awatcher;
           # aw-watcher-window.package = _ pkgs.aw-watcher-window;
           # aw-watcher-afk.package = _ pkgs.aw-watcher-afk;
         };
       };
 
+      systemd.user.services.activitywatch-watcher-awatcher = {
+        Unit.After = [ "activitywatch.service" ];
+      };
+
       systemd.user.services.aw-qt = {
-        Install = {
-          WantedBy = [ "wayland-session.target" ];
-        };
         Unit = {
-          PartOf = [ "graphical-session.target" ];
           After = [ "activitywatch.service" ];
           Description = _ "Qt Tray Application for ActivityWatch";
         };

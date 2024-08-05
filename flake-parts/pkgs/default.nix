@@ -28,7 +28,7 @@
         # };
         my_cookies = pkgs.callPackage ./my_cookies.nix { };
         polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
-        awatcher = pkgs.callPackage ./awatcher.nix { };
+        # awatcher = pkgs.callPackage ./awatcher.nix { };
       };
     };
 }

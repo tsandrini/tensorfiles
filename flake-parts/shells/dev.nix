@@ -22,9 +22,10 @@
   nixfmt-rfc-style,
   commitizen,
   cz-cli,
-  fh,
+  # fh, # TODO error[E0425]: cannot find function `parse` in module `crate::ffi`
   gh,
   nh,
+  nix-fast-build,
   disko,
   rc2nix,
   cachix,
@@ -63,7 +64,8 @@ mkShell {
       # -- GIT RELATED UTILS --
       commitizen # Tool to create committing rules for projects, auto bump versions, and generate changelogs
       cz-cli # The commitizen command line utility
-      fh # The official FlakeHub CLI
+      # TODO error[E0425]: cannot find function `parse` in module `crate::ffi`
+      # fh # The official FlakeHub CLI
       gh # GitHub CLI tool
       # gh-dash # Github Cli extension to display a dashboard with pull requests and issues
 
@@ -77,6 +79,7 @@ mkShell {
       disko # Declarative disk partitioning and formatting using nix
       rc2nix # KDE: Convert rc files to nix expressions
       cachix # Command-line client for Nix binary cache hosting https://cachix.org
+      nix-fast-build # Combine the power of nix-eval-jobs with nix-output-monitor to speed-up your evaluation and building process
     ];
 
   shellHook = ''

@@ -109,7 +109,8 @@ in
 
           # -- NIX UTILS --
           nix-index # A files database for nixpkgs
-          nix-du # A tool to determine which gc-roots take space in your nix store
+          # TODO: https://github.com/NixOS/nixpkgs/issues/331748
+          # nix-du # A tool to determine which gc-roots take space in your nix store
           nix-tree # Interactively browse a Nix store paths dependencies
           nix-health # Check the health of your Nix setup
           nix-update # Swiss-knife for updating nix packages

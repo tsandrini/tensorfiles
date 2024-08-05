@@ -1,9 +1,9 @@
 # tensorfiles
 
-[![flake check](https://github.com/tsandrini/tensorfiles/actions/workflows/check-on-merge.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/check-on-merge.yml)
-[![FlakeHub](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub.yml)
-[![update-flake-lock](https://github.com/tsandrini/tensorfiles/actions/workflows/update-flake-lock.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/update-flake-lock.yml)
-[![Deploy static content to Pages](https://github.com/tsandrini/tensorfiles/actions/workflows/pages.yml/badge.svg)](https://github.com/tsandrini/tensorfiles/actions/workflows/pages.yml)
+[![flake check](https://github.com/tsandrini/tensorfiles/actions/workflows/flake-check.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/flake-check.yml)
+[![FlakeHub](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub-publish.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/flakehub-publish.yml)
+[![cachix](https://github.com/tsandrini/tensorfiles/actions/workflows/cachix-push.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/cachix-push.yml)
+[![flake.lock update](https://github.com/tsandrini/tensorfiles/actions/workflows/update-flake-lock.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/update-flake-lock.yml)
 
 ## Table of Contents
 
@@ -27,13 +27,26 @@ laws of computing (**how to build my fancy flashy terminals**) ☁️
 ![img](parts/pkgs/docs/docs/assets/images/showcase_3.png)
 ![img](parts/pkgs/docs/docs/assets/images/showcase_1.png)
 
-For more info refer to the [documentation](https://tsandrini.github.io/tensorfiles/).
+Some of the machines/packages present in this repository are also prebuilt
+in the following binary cache
+
+``` nix
+  nixConfig = {
+    extra-substituters = [
+      "https://tsandrini.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
+    ];
+  };
+```
+
 The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/tensorfiles/).
 
 ## 2. Design choices ⚙️
 
-- This project follow the following template
-  [https://github.com/tsandrini/practical-flakes-template](https://github.com/tsandrini/practical-flakes-template)
+- This projects is generated via and uses
+  https://github.com/tsandrini/flake-parts-builder
   which makes it super easy to share modularity between different projects.
 - Modules are disabled by default. Why you might ask? 🤓 ... Setting
   `myModule.enable = true;` can be done from multiple places, moreover we can
@@ -123,9 +136,7 @@ mount -o remount,size=15G /tmp
 
 ## 6. Impurities 💩
 
-- some of the packages in [NUR](https://github.com/nix-community/NUR) require
-  running `--impure`
-- devenv requires `--impure` flag for commands
+- Currently **none**! 🚀🚀
 
 ## 7. References 📚
 

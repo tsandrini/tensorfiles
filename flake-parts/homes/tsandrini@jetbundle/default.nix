@@ -17,13 +17,14 @@
   tensorfiles.hm = {
     profiles.graphical-xmonad.enable = true;
     # enable patches since we arent on NixOS
-    hardware.nixGL.programPatches.enable = true;
-    hardware.nixGL.enable = true;
+    # TODO nixGL requires impure
+    # hardware.nixGL.programPatches.enable = true;
+    # hardware.nixGL.enable = true;
 
     # security.agenix.enable = true;
     programs.pywal.enable = true;
     programs.shadow-nix.enable = true;
-    programs.spicetify.enable = true;
+    # programs.spicetify.enable = true;
     services.pywalfox-native.enable = true;
     services.keepassxc.enable = true;
   };
@@ -56,9 +57,10 @@
     slack # Desktop client for Slack
     signal-desktop # Private, simple, and secure messenger
 
-    todoist # Todoist CLI Client
-    todoist-electron # The official Todoist electron app
+    # todoist # Todoist CLI Client
+    # todoist-electron # The official Todoist electron app
 
+    spotify # Play music from the Spotify music service
     mpv # General-purpose media player, fork of MPlayer and mplayer2
     zathura # A highly customizable and functional PDF viewer
 
@@ -99,7 +101,7 @@
 
     # -- NIX UTILS --
     nix-index # A files database for nixpkgs
-    nix-du # A tool to determine which gc-roots take space in your nix store
+    # nix-du # A tool to determine which gc-roots take space in your nix store
     nix-tree # Interactively browse a Nix store paths dependencies
     nix-health # Check the health of your Nix setup
     nix-update # Swiss-knife for updating nix packages

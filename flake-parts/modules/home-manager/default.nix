@@ -31,7 +31,8 @@ in
 
   config.flake.homeModules = {
     # -- hardware --
-    hardware_nixGL = importApply ./hardware/nixGL.nix { inherit localFlake inputs; };
+    # TODO nixGL requires --impure
+    # hardware_nixGL = importApply ./hardware/nixGL.nix { inherit localFlake inputs; };
 
     # -- misc --
     misc_gtk = importApply ./misc/gtk.nix { inherit localFlake; };
@@ -62,7 +63,7 @@ in
     programs_pywal = importApply ./programs/pywal.nix { inherit localFlake; };
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
     programs_shells_zsh = importApply ./programs/shells/zsh { inherit localFlake; };
-    programs_spicetify = importApply ./programs/spicetify.nix { inherit localFlake inputs; };
+    # programs_spicetify = importApply ./programs/spicetify.nix { inherit localFlake inputs; };
     programs_ssh = importApply ./programs/ssh.nix {
       inherit (config.agenix) secretsPath pubkeys;
       inherit localFlake;

@@ -14,8 +14,6 @@ on:
 jobs:
   flake-check:
     runs-on: "ubuntu-latest"
-    env:
-      ALLOW_UNFREE: true
     steps:
       - name: "Checking out repository..."
         uses: actions/checkout@v4
@@ -24,9 +22,7 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
-            experimental-features = nix-command flakes impure-derivations
             accept-flake-config = true
-            allow-import-from-derivation = true
 
       - name: "Setting up magic-nix-cache..."
         uses: DeterminateSystems/magic-nix-cache-action@main

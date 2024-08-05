@@ -125,7 +125,7 @@
     cpu.intel.updateMicrocode = true;
     opentabletdriver.enable = true;
 
-    opengl = {
+    graphics = {
       enable = true;
       extraPackages = [
         #intel-media-driver
