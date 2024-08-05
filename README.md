@@ -24,13 +24,13 @@
 chosen coordinate system (**they work on every machine**), fundamental
 laws of computing (**how to build my fancy flashy terminals**) ☁️
 
-![img](parts/pkgs/docs/docs/assets/images/showcase_3.png)
-![img](parts/pkgs/docs/docs/assets/images/showcase_1.png)
+![img](flake-parts/pkgs/docs/docs/assets/images/showcase_3.png)
+![img](flake-parts/pkgs/docs/docs/assets/images/showcase_1.png)
 
 Some of the machines/packages present in this repository are also prebuilt
 in the following binary cache
 
-``` nix
+```nix
   nixConfig = {
     extra-substituters = [
       "https://tsandrini.cachix.org"
@@ -78,7 +78,7 @@ modules and their appropriate profiles.
    - TODOs: [org-agenda](https://orgmode.org/manual/Agenda-Views.html)
    - visualization: [org-roam-ui](https://github.com/org-roam/org-roam-ui)
    - anki connection: [org-anki-editor](https://github.com/louietan/anki-editor)
-     ![img](parts/pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
+     ![img](flake-parts/pkgs/docs/docs/assets/images/showcase_org_roam_ui.png)
 1. [zotero](https://www.zotero.org/): This is my backend for all of my
    bibliography as well as the individual `.pdf` files. As of now I keep them up
    to date between machines using [syncthing](https://syncthing.net/), but
