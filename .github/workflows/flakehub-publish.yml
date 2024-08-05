@@ -1,0 +1,34 @@
+# --- Publish flake to FlakeHub
+name: FlakeHub
+
+on:
+  workflow_dispatch: # allows manual triggering from the Actions UI
+  push:
+    branches:
+      - main
+
+jobs:
+  flakehub-publish:
+    runs-on: "ubuntu-latest"
+    permissions:
+      id-token: "write"
+      contents: "read"
+    steps:
+      - name: "Checking out repository..."
+        uses: actions/checkout@v4
+
+      - name: "Installing and configuring the nix package manager..."
+        uses: DeterminateSystems/nix-installer-action@main
+        with:
+          extra-conf: |
+            accept-flake-config = true
+
+      - name: "Setting up magic-nix-cache..."
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: "Publishing flake to FlakeHub..."
+        uses: DeterminateSystems/flakehub-push@main
+        with:
+          name: "tsandrini/tensorfiles"
+          rolling: true
+          visibility: "public"

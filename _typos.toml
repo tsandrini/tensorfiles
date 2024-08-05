@@ -1,5 +1,0 @@
-[default]
-extend-ignore-identifiers-re = [ "ags", "nitch", "edn", "fo", "lazer" ]
-
-[files]
-extend-exclude = ["etc"]
