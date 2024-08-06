@@ -143,7 +143,7 @@
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
-      programs.spicetify.enable = true;
+      # programs.spicetify.enable = true;
       # services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
       services.activitywatch.enable = true;
