@@ -34,7 +34,13 @@ jobs:
           nix profile install nixpkgs#nix-fast-build # parallel nix builder
 
       - name: "Running `nix flake check`..."
-        run: nix-fast-build --skip-cached --no-nom
+        run: nix-fast-build --skip-cached --no-nom --flake ".#checks.$(nix eval --raw --impure --expr builtins.currentSystem)"
+
+      - name: "Running `nix build ...`..."
+        run: nix-fast-build --skip-cached --no-nom --flake ".#packages.$(nix eval --raw --impure --expr builtins.currentSystem)"
+
+      - name: "Running `nix develop...`..."
+        run: nix-fast-build --skip-cached --no-nom --flake ".#devShells.$(nix eval --raw --impure --expr builtins.currentSystem)"
 
       - name: "Checking flake inputs for stale & insecure nixpkgs versions..."
         uses: DeterminateSystems/flake-checker-action@main
