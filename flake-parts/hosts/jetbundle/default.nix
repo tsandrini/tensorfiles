@@ -149,11 +149,6 @@
       services.activitywatch.enable = true;
     };
 
-    # TODO remove
-    manual.html.enable = false;
-    manual.json.enable = false;
-    manual.manpages.enable = false;
-
     services.syncthing = {
       enable = true;
       tray.enable = true;
