@@ -242,6 +242,7 @@ in
               user_pref("browser.startup.page", 3);
               user_pref("privacy.clearOnShutdown.history", false);
               user_pref("privacy.clearOnShutdown.downloads", false);
+              user_pref("privacy.sanitize.sanitizeOnShutdown", false);
 
               // TODO: think off a better way to declaratively manage
               // cookie exepctions
