@@ -143,7 +143,7 @@
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
-      programs.spicetify.enable = true;
+      # programs.spicetify.enable = true;
       # services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
       services.activitywatch.enable = true;
@@ -165,7 +165,6 @@
     home.packages = with pkgs; [
       thunderbird # A full-featured e-mail client
       beeper # Universal chat app.
-      armcord # Lightweight, alternative desktop client for Discord
       anki # Spaced repetition flashcard program
       libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
       texlive.combined.scheme-full # TeX Live environment
@@ -173,6 +172,7 @@
       lapack # openblas with just the LAPACK C and FORTRAN ABI
       ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
       zoom-us # Player for Z-Code, TADS and HUGO stories or games
+      vesktop # Alternate client for Discord with Vencord built-in
 
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
