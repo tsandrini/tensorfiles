@@ -11,7 +11,6 @@ updates:
       interval: "weekly"
     labels:
       - dependencies
-
 # NOTE: For additional ecosystems refer to the documentation
 # package-ecosystem: "gitsubmodule"
 #   directory: "/"
