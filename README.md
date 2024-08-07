@@ -46,7 +46,7 @@ The project is also hosted on [FlakeHub](https://flakehub.com/flake/tsandrini/te
 ## 2. Design choices ⚙️
 
 - This projects is generated via and uses
-  https://github.com/tsandrini/flake-parts-builder
+  [flake-parts-builder](https://github.com/tsandrini/flake-parts-builder)
   which makes it super easy to share modularity between different projects.
 - Modules are disabled by default. Why you might ask? 🤓 ... Setting
   `myModule.enable = true;` can be done from multiple places, moreover we can
