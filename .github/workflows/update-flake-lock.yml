@@ -1,28 +1,23 @@
 # --- Periodically update flake inputs in flake.lock
 name: update-flake-lock
-
 on:
   workflow_dispatch: # allows manual triggering from the Actions UI
   schedule:
     - cron: "0 0 * * 0" # runs weekly on Sunday at 00:00
-
 jobs:
   update-flake-lock:
     runs-on: ubuntu-latest
     steps:
       - name: "Checking out repository..."
         uses: actions/checkout@v4
-
       - name: "Installing and configuring the nix package manager..."
         uses: DeterminateSystems/nix-installer-action@main
         with:
           extra-conf: |
             accept-flake-config = true
             allow-import-from-derivation = true
-
       - name: "Setting up magic-nix-cache..."
         uses: DeterminateSystems/magic-nix-cache-action@main
-
       - name: "Updating flake.lock..."
         uses: DeterminateSystems/update-flake-lock@main
         with:

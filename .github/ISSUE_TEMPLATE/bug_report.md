@@ -1,6 +1,10 @@
 ---
-
-## name: Bug report about: Create a report to help us improve title: "" labels: bug assignees: ""
+name: 🪲 Bug Report
+about: Create a bug report to help us resolve the bug
+title: "🪲[BUG]: "
+labels: "bug"
+assignees: ""
+---
 
 ## Describe the bug
 
@@ -29,8 +33,8 @@ Add any other context about the problem here.
 ## Notify maintainers
 
 <!--
-Please @ people who are in the `meta.maintainers` list of the offending package or module.
-If in doubt, check `git blame` for whoever last touched something.
+Please @ people who are in the `meta.maintainers` list of the offending package
+or module. If in doubt, check `git blame` for whoever last touched something.
 -->
 
 ## Metadata
