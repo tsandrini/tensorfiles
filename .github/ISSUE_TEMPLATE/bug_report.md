@@ -1,4 +1,4 @@
----
+______________________________________________________________________
 
 ## name: Bug report about: Create a report to help us improve title: "" labels: bug assignees: ""
 
@@ -42,6 +42,6 @@ Please run `nix-shell -p nix-info --run "nix-info -m"` and paste the result.
 output here
 ```
 
----
+______________________________________________________________________
 
 Add a :+1: \[reaction\] to \[issues you find important\].

@@ -12,17 +12,17 @@ updates:
     labels:
       - dependencies
 
-  # NOTE: For additional ecosystems refer to the documentation
-  # package-ecosystem: "gitsubmodule"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #   labels:
-  #     - dependencies
+# NOTE: For additional ecosystems refer to the documentation
+# package-ecosystem: "gitsubmodule"
+#   directory: "/"
+#   schedule:
+#     interval: "weekly"
+#   labels:
+#     - dependencies
 
-  # - package-ecosystem: "docker"
-  #   directory: "/"
-  #   schedule:
-  #     interval: "weekly"
-  #   labels:
-  #     - dependencies
+# - package-ecosystem: "docker"
+#   directory: "/"
+#   schedule:
+#     interval: "weekly"
+#   labels:
+#     - dependencies
