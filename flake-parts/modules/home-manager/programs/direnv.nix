@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.direnv;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.programs.direnv = with types; {
+  options.tensorfiles.hm.programs.direnv = {
     enable = mkEnableOption ''
       Enables a HomeManager module that sets up direnv.
 

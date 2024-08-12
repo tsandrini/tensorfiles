@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.minimal;
   _ = mkOverrideAtHmProfileLevel;
 in
 {
-  options.tensorfiles.hm.profiles.minimal = with types; {
+  options.tensorfiles.hm.profiles.minimal = {
     enable = mkEnableOption ''
       TODO
     '';

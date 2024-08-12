@@ -20,9 +20,13 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    optional
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules)
     mkOverrideAtHmModuleLevel
     isModuleLoadedAndEnabled
@@ -37,7 +41,7 @@ let
 in
 {
   # TODO modularize config, cant be bothered to do it now
-  options.tensorfiles.hm.programs.editors.neovim = with types; {
+  options.tensorfiles.hm.programs.editors.neovim = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the neovim program.
     '';

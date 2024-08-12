@@ -20,9 +20,15 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkOverride
+    types
+    mkEnableOption
+    mkOption
+    ;
   inherit (localFlake.lib.modules) isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.hardware.nixGL;
@@ -49,13 +55,13 @@ let
     && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.terminals.kitty");
 in
 {
-  options.tensorfiles.hm.hardware.nixGL = with types; {
+  options.tensorfiles.hm.hardware.nixGL = {
     enable = mkEnableOption ''
       TODO
     '';
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       inherit (inputs.nixGL.packages.${system}) default;
       description = ''
         NixGL binary that should be used for wrapping other graphical executables.

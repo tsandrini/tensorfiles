@@ -19,16 +19,15 @@
   hostName,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.tasks.system-autoupgrade;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.tasks.system-autoupgrade = with types; {
+  options.tensorfiles.tasks.system-autoupgrade = {
     enable = mkEnableOption ''
       Module enabling system wide nixpkgs & host autoupgrade
       Enables NixOS module that configures the task handling periodix nixpkgs

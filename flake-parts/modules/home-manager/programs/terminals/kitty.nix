@@ -19,9 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.terminals.kitty;
@@ -32,7 +38,7 @@ let
     && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.neovim");
 in
 {
-  options.tensorfiles.hm.programs.terminals.kitty = with types; {
+  options.tensorfiles.hm.programs.terminals.kitty = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
     '';
@@ -48,7 +54,7 @@ in
     };
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       default = pkgs.kitty;
       description = ''
         TODO

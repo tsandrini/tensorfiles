@@ -14,9 +14,14 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    types
+    mkOption
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.misc.xdg;
@@ -48,7 +53,7 @@ let
       );
 in
 {
-  options.tensorfiles.hm.misc.xdg = with types; {
+  options.tensorfiles.hm.misc.xdg = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the xdg toolset.
     '';
@@ -63,7 +68,7 @@ in
         };
 
       browser = mkOption {
-        type = nullOr str;
+        type = types.nullOr types.str;
         default = null;
         description = ''
           TODO
@@ -71,7 +76,7 @@ in
       };
 
       editor = mkOption {
-        type = nullOr str;
+        type = types.nullOr types.str;
         default = null;
         description = ''
           TODO
@@ -79,7 +84,7 @@ in
       };
 
       terminal = mkOption {
-        type = nullOr str;
+        type = types.nullOr types.str;
         default = null;
         description = ''
           TODO

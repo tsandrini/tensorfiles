@@ -20,12 +20,13 @@
   ...
 }:
 let
+  inherit (lib) mkOption types;
   inherit (inputs.flake-parts.lib) importApply;
   localFlake = self;
 in
 {
-  options.flake.homeModules = lib.mkOption {
-    type = with lib.types; lazyAttrsOf unspecified;
+  options.flake.homeModules = mkOption {
+    type = types.lazyAttrsOf types.unspecified;
     default = { };
   };
 

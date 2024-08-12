@@ -19,9 +19,14 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.services.keepassxc;
@@ -30,13 +35,13 @@ in
 {
   # TODO maybe use toINIWithGlobalSection generator? however the ini config file
   # also contains some initial keys? I should investigate this more
-  options.tensorfiles.hm.services.keepassxc = with types; {
+  options.tensorfiles.hm.services.keepassxc = {
     enable = mkEnableOption ''
       TODO
     '';
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       default = pkgs.keepassxc;
       description = ''
         The package to use for keepassxc.

@@ -19,9 +19,8 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.spicetify;
@@ -30,7 +29,7 @@ let
   spicePkgs = inputs.spicetify-nix.packages.${system}.default;
 in
 {
-  options.tensorfiles.hm.programs.spicetify = with types; {
+  options.tensorfiles.hm.programs.spicetify = {
     enable = mkEnableOption ''
       TODO
     '';

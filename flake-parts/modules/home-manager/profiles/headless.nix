@@ -14,9 +14,14 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
@@ -26,10 +31,10 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 in
 {
-  options.tensorfiles.hm.profiles.headless = with types; {
+  options.tensorfiles.hm.profiles.headless = {
     enable = mkEnableOption ''
       TODO
     '';

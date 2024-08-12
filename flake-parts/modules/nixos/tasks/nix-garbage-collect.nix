@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.tasks.nix-garbage-collect;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.tasks.nix-garbage-collect = with types; {
+  options.tensorfiles.tasks.nix-garbage-collect = {
     enable = mkEnableOption ''
       Enables NixOS module that configures the task handling periodic nix store
       garbage collection.

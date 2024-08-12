@@ -20,9 +20,16 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    getExe
+    mkEnableOption
+    mkOption
+    types
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
@@ -32,7 +39,7 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 
   emacsPkg =
     with pkgs;
@@ -42,7 +49,7 @@ let
     ]));
 in
 {
-  options.tensorfiles.hm.programs.editors.emacs-doom = with types; {
+  options.tensorfiles.hm.programs.editors.emacs-doom = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -52,7 +59,7 @@ in
     };
 
     repoUrl = mkOption {
-      type = str;
+      type = types.str;
       default = "https://github.com/doomemacs/doomemacs";
       description = ''
         TODO
@@ -60,7 +67,7 @@ in
     };
 
     configRepoUrl = mkOption {
-      type = str;
+      type = types.str;
       # default = "git@github.com:tsandrini/.doom.d.git";
       default = "https://github.com/tsandrini/.doom.d.git";
       description = ''

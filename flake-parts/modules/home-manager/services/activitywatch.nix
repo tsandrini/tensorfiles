@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.services.activitywatch;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.services.activitywatch = with types; {
+  options.tensorfiles.hm.services.activitywatch = {
     enable = mkEnableOption ''
       TODO
     '';

@@ -19,9 +19,8 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
 
   # pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
   #   ${pywalfox-native}/bin/pywalfox start
@@ -30,7 +29,7 @@ let
   cfg = config.tensorfiles.hm.services.pywalfox-native;
 in
 {
-  options.tensorfiles.hm.services.pywalfox-native = with types; {
+  options.tensorfiles.hm.services.pywalfox-native = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
     '';

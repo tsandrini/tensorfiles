@@ -20,16 +20,15 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.packages-extra;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.packages-extra = with types; {
+  options.tensorfiles.profiles.packages-extra = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the packages-extra system profile.
 

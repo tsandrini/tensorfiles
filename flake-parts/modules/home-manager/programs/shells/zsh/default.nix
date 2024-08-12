@@ -19,9 +19,17 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    optional
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkPywalEnableOption mkImpermanenceEnableOption;
 
@@ -31,10 +39,10 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 in
 {
-  options.tensorfiles.hm.programs.shells.zsh = with types; {
+  options.tensorfiles.hm.programs.shells.zsh = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the zsh shell.
     '';
@@ -48,7 +56,7 @@ in
     };
 
     withAutocompletions = mkOption {
-      type = bool;
+      type = types.bool;
       default = true;
       description = ''
         Whether to enable autosuggestions/autocompletion related code
@@ -66,7 +74,7 @@ in
         };
 
       cfgSrc = mkOption {
-        type = path;
+        type = types.path;
         default = ./.;
         description = ''
           Path (or ideally, path inside a derivation) for the p10k.zsh
@@ -79,7 +87,7 @@ in
       };
 
       cfgFile = mkOption {
-        type = str;
+        type = types.str;
         default = "p10k.zsh";
         description = ''
           Potential override of the p10k.zsh config filename.
@@ -97,7 +105,7 @@ in
         };
 
       plugins = mkOption {
-        type = listOf str;
+        type = types.listOf types.str;
         default = [
           "git"
           "git-flow"
@@ -110,7 +118,7 @@ in
       };
 
       withFzf = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Whether to enable the fzf plugin
@@ -120,7 +128,7 @@ in
 
     shellAliases = {
       lsToEza = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Enable predefined shell aliases
@@ -128,7 +136,7 @@ in
       };
 
       catToBat = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Remap the cat related commands to its reworked edition bat.
@@ -136,7 +144,7 @@ in
       };
 
       findToFd = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Remap the find related commands to its reworked edition fd.
@@ -144,7 +152,7 @@ in
       };
 
       grepToRipgrep = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Remap the find related commands to its reworked edition fd.

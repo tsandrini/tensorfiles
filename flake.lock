@@ -39,6 +39,22 @@
         "type": "github"
       }
     },
+    "betterfox": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1721657974,
+        "narHash": "sha256-i8cCSjPV/nuNFEgjhuLJUbdpT6flGxTacaQu78SXZis=",
+        "owner": "yokoffing",
+        "repo": "Betterfox",
+        "rev": "29f081696200afc3af6a43f300a8000af18fa86e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yokoffing",
+        "repo": "Betterfox",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -1204,6 +1220,7 @@
       "inputs": {
         "agenix": "agenix",
         "arkenfox-user-js": "arkenfox-user-js",
+        "betterfox": "betterfox",
         "disko": "disko",
         "emacs-overlay": "emacs-overlay",
         "flake-parts": "flake-parts",

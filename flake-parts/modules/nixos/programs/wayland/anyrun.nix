@@ -19,16 +19,24 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    genAttrs
+    attrNames
+    mkBefore
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.programs.wayland.anyrun;
   _ = mkOverrideAtModuleLevel;
+
+  getUserTerminal = { cfg }: cfg.home.sessionVariables.terminal;
 in
 {
-  options.tensorfiles.programs.wayland.anyrun = with types; {
+  options.tensorfiles.programs.wayland.anyrun = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the anyrun app launcher
 

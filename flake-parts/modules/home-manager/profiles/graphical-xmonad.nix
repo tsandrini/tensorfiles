@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.graphical-xmonad;
   _ = mkOverrideAtHmProfileLevel;
 in
 {
-  options.tensorfiles.hm.profiles.graphical-xmonad = with types; {
+  options.tensorfiles.hm.profiles.graphical-xmonad = {
     enable = mkEnableOption ''
       TODO
     '';

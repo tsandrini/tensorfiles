@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-startx-home-manager;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.graphical-startx-home-manager = with types; {
+  options.tensorfiles.profiles.graphical-startx-home-manager = {
     enable = mkEnableOption ''
       TODO
     '';

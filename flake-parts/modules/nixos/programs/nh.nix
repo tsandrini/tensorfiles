@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.programs.nh;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.programs.nh = with types; {
+  options.tensorfiles.programs.nh = {
     enable = mkEnableOption ''
       TODO
     '';

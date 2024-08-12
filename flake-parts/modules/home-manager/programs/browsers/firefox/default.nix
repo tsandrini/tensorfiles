@@ -19,9 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    types
+    optional
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
@@ -33,16 +39,36 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 in
 {
-  options.tensorfiles.hm.programs.browsers.firefox = with types; {
+  options.tensorfiles.hm.programs.browsers.firefox = {
     enable = mkEnableOption ''
       TODO
     '';
 
     impermanence = {
       enable = mkImpermanenceEnableOption;
+    };
+
+    userjs = {
+      type = types.nullOr (
+        types.enum [
+          "arkenfox"
+          "fastfox"
+          "securefox"
+          "peskyfox"
+          "smoothfox"
+        ]
+      );
+      default = null;
+      description = ''
+        The user.js to use. If set to `null`, the default user.js will be used.
+        Available values:
+          - `arkenfox`
+          - `betterfox`
+      '';
+
     };
   };
 

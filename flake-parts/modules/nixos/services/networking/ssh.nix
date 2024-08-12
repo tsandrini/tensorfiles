@@ -14,16 +14,22 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.services.networking.ssh;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.services.networking.ssh = with types; {
+  options.tensorfiles.services.networking.ssh = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles everything related to ssh,
       that is remote access, messagess, ssh-agents and ssh-keys with the
@@ -39,7 +45,7 @@ in
       '';
 
       hostKey = mkOption {
-        type = attrs;
+        type = types.attrs;
         default = {
           type = "ed25519";
           path = "/etc/ssh/ssh_host_ed25519_key";

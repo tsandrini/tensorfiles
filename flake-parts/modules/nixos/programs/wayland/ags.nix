@@ -14,16 +14,21 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake, inputs }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    genAttrs
+    attrNames
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.programs.wayland.ags;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.programs.wayland.ags = with types; {
+  options.tensorfiles.programs.wayland.ags = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the ags.nix app launcher
 

@@ -23,9 +23,20 @@
   hostName,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    genAttrs
+    attrNames
+    optional
+    filter
+    mkEnableOption
+    mkOption
+    types
+    splitString
+    ;
+  inherit (lib.attrsets) attrByPath;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options)
     mkImpermanenceEnableOption
@@ -41,7 +52,7 @@ let
 in
 {
   # TODO move bluetooth dir to hardware
-  options.tensorfiles.system.users = with types; {
+  options.tensorfiles.system.users = {
     enable = mkEnableOption ''
       Enables NixOS module that sets up the basis for the userspace, that is
       declarative management, basis for the home directories and also
@@ -58,7 +69,7 @@ in
 
     usersSettings = mkUsersSettingsOption (_user: {
       isSudoer = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Add user to sudoers (ie the `wheel` group)
@@ -66,7 +77,7 @@ in
       };
 
       isNixTrusted = mkOption {
-        type = bool;
+        type = types.bool;
         default = false;
         description = ''
           Whether the user has the ability to connect to the nix daemon
@@ -76,7 +87,7 @@ in
       };
 
       extraGroups = mkOption {
-        type = listOf str;
+        type = types.listOf types.str;
         default = [ ];
         description = ''
           Any additional groups which the user should be a part of. This is
@@ -91,7 +102,7 @@ in
         '';
 
         passwordSecretsPath = mkOption {
-          type = str;
+          type = types.str;
           default = "hosts/${hostName}/users/${_user}/system-password";
           description = ''
             TODO
@@ -109,7 +120,7 @@ in
           };
 
         keysRaw = mkOption {
-          type = listOf str;
+          type = types.listOf types.str;
           default = [ ];
           description = ''
             TODO
@@ -117,7 +128,7 @@ in
         };
 
         keysSecretsAttrsetKey = mkOption {
-          type = str;
+          type = types.str;
           default = "hosts.${hostName}.users.${_user}.authorizedKeys";
           description = ''
             TODO
@@ -151,9 +162,7 @@ in
 
           openssh.authorizedKeys.keys =
             with userCfg.authorizedKeys;
-            (mkIf enable (
-              keysRaw ++ (attrsets.attrByPath (splitString "." keysSecretsAttrsetKey) [ ] pubkeys)
-            ));
+            (mkIf enable (keysRaw ++ (attrByPath (splitString "." keysSecretsAttrsetKey) [ ] pubkeys)));
         }
       );
     }

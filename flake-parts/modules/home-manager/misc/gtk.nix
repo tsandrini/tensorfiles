@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.misc.gtk;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.misc.gtk = with types; {
+  options.tensorfiles.hm.misc.gtk = {
     enable = mkEnableOption ''
       TODO
     '';

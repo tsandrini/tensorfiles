@@ -19,9 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkOverride
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkPywalEnableOption;
 
@@ -82,7 +88,7 @@ let
   '';
 in
 {
-  options.tensorfiles.hm.services.x11.window-managers.xmonad = with types; {
+  options.tensorfiles.hm.services.x11.window-managers.xmonad = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the xmonad window manager.
     '';
@@ -105,7 +111,7 @@ in
         };
 
       pkg = mkOption {
-        type = package;
+        type = types.package;
         default = pkgs.cbatticon;
         description = ''
           Which package to use for the battery indicator.
@@ -128,7 +134,7 @@ in
         };
 
       pkg = mkOption {
-        type = package;
+        type = types.package;
         default = pkgs.playerctl;
         description = ''
           Which package to use for the playerctl utility.
@@ -156,7 +162,7 @@ in
         };
 
       pkg = mkOption {
-        type = package;
+        type = types.package;
         default = pkgs.dmenu;
         description = ''
           Which package to use for the dmenu app launcher.

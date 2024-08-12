@@ -19,16 +19,15 @@
   lib,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.graphical-plasma;
   _ = mkOverrideAtHmProfileLevel;
 in
 {
-  options.tensorfiles.hm.profiles.graphical-plasma = with types; {
+  options.tensorfiles.hm.profiles.graphical-plasma = {
     enable = mkEnableOption ''
       TODO
     '';

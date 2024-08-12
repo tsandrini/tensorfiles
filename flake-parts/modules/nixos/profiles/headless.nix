@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.headless;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.headless = with types; {
+  options.tensorfiles.profiles.headless = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the headless system profile.
 
