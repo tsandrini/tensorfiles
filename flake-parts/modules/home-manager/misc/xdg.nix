@@ -51,6 +51,12 @@ let
         else
           null
       );
+
+  defaultEmail =
+    if cfg.defaultApplications.email != null then
+      cfg.defaultApplications.email
+    else
+      (if config.home.sessionVariables.EMAIL != null then config.home.sessionVariables.EMAIL else null);
 in
 {
   options.tensorfiles.hm.misc.xdg = {
@@ -84,6 +90,14 @@ in
       };
 
       terminal = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        description = ''
+          TODO
+        '';
+      };
+
+      email = mkOption {
         type = types.nullOr types.str;
         default = null;
         description = ''
@@ -138,6 +152,10 @@ in
           "mimetype" = mkIf (defaultTerminal != null) (_ "${defaultTerminal}.desktop");
           "application/x-terminal-emulator" = mkIf (defaultTerminal != null) (_ "${defaultTerminal}.desktop");
           "x-terminal-emulator" = mkIf (defaultTerminal != null) (_ "${defaultTerminal}.desktop");
+          # EMAIL
+          "x-scheme-handler/mailto" = mkIf (defaultEmail != null) (_ "${defaultEmail}.desktop");
+          "x-scheme-handler/mid" = mkIf (defaultEmail != null) (_ "${defaultEmail}.desktop");
+          "message/rfc822" = mkIf (defaultEmail != null) (_ "${defaultEmail}.desktop");
         };
       };
     })
