@@ -24,6 +24,7 @@ let
     mkIf
     mkMerge
     mkEnableOption
+    mkOption
     types
     optional
     ;
@@ -40,6 +41,15 @@ let
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
   pathToRelative = removePrefix "${config.home.homeDirectory}/";
+
+  userjsEnabled = cfg.userjs.arkenfox.enable || cfg.userjs.betterfox.enable;
+  userjs =
+    if cfg.userjs.arkenfox.enable then
+      cfg.userjs.arkenfox
+    else if cfg.userjs.betterfox.enable then
+      cfg.userjs.betterfox
+    else
+      { };
 in
 {
   options.tensorfiles.hm.programs.browsers.firefox = {
@@ -52,33 +62,139 @@ in
     };
 
     userjs = {
-      type = types.nullOr (
-        types.enum [
-          "arkenfox"
-          "fastfox"
-          "securefox"
-          "peskyfox"
-          "smoothfox"
-        ]
-      );
-      default = null;
-      description = ''
-        The user.js to use. If set to `null`, the default user.js will be used.
-        Available values:
-          - `arkenfox`
-          - `betterfox`
-      '';
+      arkenfox = {
+        enable = mkEnableOption ''
+          Enable arkenfox user.js configuration.
+        '';
 
+        src = mkOption {
+          type = types.path;
+          default = "${inputs.arkenfox-user-js}/user.js";
+          description = ''
+            The path to the arkenfox user.js configuration.
+          '';
+        };
+
+        extraConfig = mkOption {
+          type = types.lines;
+          default = ''
+            user_pref("extensions.autoDisableScopes", 0);
+
+            // 2811: sanitize everything but keep history & downloads and
+            // also enable session restore
+            user_pref("browser.startup.page", 3);
+            user_pref("privacy.clearOnShutdown.history", false);
+            user_pref("privacy.clearOnShutdown.downloads", false);
+            user_pref("privacy.sanitize.sanitizeOnShutdown", false);
+
+            // TODO: think off a better way to declaratively manage
+            // cookie exepctions
+            user_pref("privacy.clearOnShutdown.cookies", false);
+            user_pref("privacy.clearOnShutdown.cache", false);
+            user_pref("privacy.clearOnShutdown.sessions", false);
+
+            // 4504: TODO figure out some alternative since I cannot stand
+            // how it works by default but I'd like to have it
+            // enabled at some point
+            user_pref("privacy.resistFingerprinting.letterboxing", false);
+
+            // 4510: I cannot f*ing stand light theme
+            user_pref("browser.display.use_system_colors", false);
+            user_pref("browser.theme.content-theme", 0);
+            user_pref("browser.theme.toolbar-theme", 0);
+            // tell websites to prefer dark colorscheme
+            user_pref("layout.css.prefers-color-scheme.content-override", 0);
+          '';
+          description = ''
+            Default extra configuration (overrides) for the arkenfox user.js.
+          '';
+        };
+      };
+
+      betterfox = {
+        enable = mkEnableOption ''
+          Enable betterfox user.js configuration.
+        '';
+
+        src = mkOption {
+          type = types.path;
+          default = "${inputs.betterfox}/user.js";
+          description = ''
+            The path to the betterfox user.js configuration.
+          '';
+        };
+
+        extraConfig = mkOption {
+          type = types.lines;
+          default = ''
+            // PREF: disable login manager
+            user_pref("signon.rememberSignons", false);
+
+            // PREF: disable address and credit card manager
+            user_pref("extensions.formautofill.addresses.enabled", false);
+            user_pref("extensions.formautofill.creditCards.enabled", false);
+
+            // PREF: do not allow embedded tweets, Instagram, Reddit, and Tiktok posts
+            user_pref("urlclassifier.trackingSkipURLs", "");
+            user_pref("urlclassifier.features.socialtracking.skipURLs", "");
+
+            // PREF: require safe SSL negotiation
+            // [ERROR] SSL_ERROR_UNSAFE_NEGOTIATION
+            user_pref("security.ssl.require_safe_negotiation", true);
+
+            // PREF: disable telemetry of what default browser you use [WINDOWS]
+            user_pref("default-browser-agent.enabled", false);
+
+            // PREF: enforce certificate pinning
+            // [ERROR] MOZILLA_PKIX_ERROR_KEY_PINNING_FAILURE
+            // 1 = allow user MiTM (such as your antivirus) (default)
+            // 2 = strict
+            user_pref("security.cert_pinning.enforcement_level", 2);
+
+            // PREF: enable HTTPS-Only Mode
+            // Warn me before loading sites that don't support HTTPS
+            // in both Normal and Private Browsing windows.
+            user_pref("dom.security.https_only_mode", true);
+            user_pref("dom.security.https_only_mode_error_page_user_suggestions", true);
+
+            /****************************************************************************************
+            * OPTION: INSTANT SCROLLING (SIMPLE ADJUSTMENT)                                       *
+            ****************************************************************************************/
+            // recommended for 60hz+ displays
+            user_pref("apz.overscroll.enabled", true); // DEFAULT NON-LINUX
+            user_pref("general.smoothScroll", true); // DEFAULT
+            user_pref("mousewheel.default.delta_multiplier_y", 275); // 250-400; adjust this number to your liking
+            // Firefox Nightly only:
+            // [1] https://bugzilla.mozilla.org/show_bug.cgi?id=1846935
+            user_pref("general.smoothScroll.msdPhysics.enabled", false); // [FF122+ Nightly]
+          '';
+          description = ''
+            Default extra configuration (overrides) for the betterfox user.js.
+          '';
+        };
+      };
     };
   };
 
   config = mkIf cfg.enable (mkMerge [
+
+    # |----------------------------------------------------------------------| #
+    {
+      assertions = [
+        {
+          assertion =
+            (cfg.userjs.arkenfox.enable && !cfg.userjs.betterfox.enable)
+            || (!cfg.userjs.arkenfox.enable && cfg.userjs.betterfox.enable);
+          message = "Only one user.js backend can be enabled at a time.";
+        }
+      ];
+    }
     # |----------------------------------------------------------------------| #
     {
       programs.firefox = {
         enable = _ true;
         package = pkgs.firefox.override {
-          # trace: warning: The cfg.enableTridactylNative argument for
+          # trace: warning: The cfg.enableTridactylNative argument
           # `firefox.override` is deprecated, please add `pkgs.tridactyl-native`
           # to `nativeMessagingHosts.packages` instead
           nativeMessagingHosts =
@@ -253,44 +369,13 @@ in
             "services.sync.engine.addons" = _ false;
             "services.sync.declinedEngines" = _ "passwords,creditcards,addons,prefs,bookmarks";
           };
-
-          # Download areknfox-user-js and append overrides (order matters)
-          #
-          # Note: I try to keep general purpose config in the settings
-          # attrset listed above
-          extraConfig =
-            (builtins.readFile "${inputs.arkenfox-user-js}/user.js")
-            + ''
-              user_pref("extensions.autoDisableScopes", 0);
-
-              // 2811: sanitize everything but keep history & downloads and
-              // also enable session restore
-              user_pref("browser.startup.page", 3);
-              user_pref("privacy.clearOnShutdown.history", false);
-              user_pref("privacy.clearOnShutdown.downloads", false);
-              user_pref("privacy.sanitize.sanitizeOnShutdown", false);
-
-              // TODO: think off a better way to declaratively manage
-              // cookie exepctions
-              user_pref("privacy.clearOnShutdown.cookies", false);
-              user_pref("privacy.clearOnShutdown.cache", false);
-              user_pref("privacy.clearOnShutdown.sessions", false);
-
-              // 4504: TODO figure out some alternative since I cannot stand
-              // how it works by default but I'd like to have it
-              // enabled at some point
-              user_pref("privacy.resistFingerprinting.letterboxing", false);
-
-              // 4510: I cannot f*ing stand light theme
-              user_pref("browser.display.use_system_colors", false);
-              user_pref("browser.theme.content-theme", 0);
-              user_pref("browser.theme.toolbar-theme", 0);
-              // tell websites to prefer dark colorscheme
-              user_pref("layout.css.prefers-color-scheme.content-override", 0);
-            '';
         };
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf userjsEnabled {
+      programs.firefox.profiles.default.extraConfig = (builtins.readFile userjs.src) + userjs.extraConfig;
+    })
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
