@@ -57,6 +57,7 @@ in
               ""
           }
 
+          config.default_cursor_style = 'BlinkingBar'
           config.enable_scroll_bar = true
           config.font_size = 11
           config.use_fancy_tab_bar = false
@@ -83,6 +84,7 @@ in
           end)
 
           wezterm.on("modal.exit", function(name, window, pane)
+            window:set_right_status("NOT IN A MODE")
             modal.reset_window_title(pane)
           end)
 
