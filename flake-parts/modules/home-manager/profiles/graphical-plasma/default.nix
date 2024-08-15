@@ -53,7 +53,7 @@ in
           browsers.firefox.enable = _ true;
           browsers.firefox.userjs.betterfox.enable = _ true;
           editors.emacs-doom.enable = _ true;
-          #thunderbird.enable = _ true;
+          thunderbird.enable = _ true;
         };
 
         services = {
@@ -79,6 +79,7 @@ in
         BROWSER = _ "firefox";
         TERMINAL = _ "kitty";
         IDE = _ "code";
+        EMAIL = _ "thunderbird";
       };
 
       fonts.fontconfig.enable = _ true;

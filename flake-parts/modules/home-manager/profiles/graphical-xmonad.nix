@@ -48,6 +48,7 @@ in
           terminals.kitty.enable = _ true;
           browsers.firefox.enable = _ true;
           editors.emacs-doom.enable = _ true;
+          thunderbird.enable = _ true;
         };
 
         services = {
@@ -67,6 +68,7 @@ in
         BROWSER = "firefox";
         TERMINAL = "kitty";
         IDE = "emacs";
+        EMAIL = _ "thunderbird";
       };
 
       home.packages = with pkgs; [
