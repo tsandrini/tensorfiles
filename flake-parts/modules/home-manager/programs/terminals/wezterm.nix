@@ -17,15 +17,22 @@
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.options) mkPywalEnableOption;
 
   cfg = config.tensorfiles.hm.programs.terminals.wezterm;
   _ = mkOverrideAtHmModuleLevel;
+
+  pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
 in
 {
   options.tensorfiles.hm.programs.terminals.wezterm = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    pywal = {
+      enable = mkPywalEnableOption;
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -40,9 +47,16 @@ in
           local config = wezterm.config_builder()
           local modal = wezterm.plugin.require("https://github.com/MLFlexer/modal.wezterm")
 
-          wezterm.add_to_config_reload_watch_list("~/.cache/wal")
+          ${
+            if pywalCheck then
+              ''
+                wezterm.add_to_config_reload_watch_list("~/.cache/wal")
+                config.color_scheme_dirs = {"~/.cache/wal"}
+              ''
+            else
+              ""
+          }
 
-          config.color_scheme_dirs = {"~/.cache/wal"}
           config.enable_scroll_bar = true
           config.font_size = 11
           config.use_fancy_tab_bar = false
