@@ -41,7 +41,6 @@
       url = "github:nix-community/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     impermanence.url = "github:nix-community/impermanence";
@@ -58,10 +57,6 @@
       url = "github:nix-community/nixpkgs-wayland";
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
     };
-    kitty-scrollback-nvim = {
-      url = "github:mikesmithgh/kitty-scrollback.nvim";
-      flake = false;
-    };
     nix-alien.url = "github:thiagokokada/nix-alien";
     # TODO some serious maintenance sheningans
     shadow-nix = {
@@ -74,6 +69,11 @@
       inputs.home-manager.follows = "home-manager";
     };
     nix-gaming.url = "github:fufexan/nix-gaming";
+    # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    # kitty-scrollback-nvim = {
+    #   url = "github:mikesmithgh/kitty-scrollback.nvim";
+    #   flake = false;
+    # };
     # spicetify-nix = {
     #   url = "github:the-argus/spicetify-nix";
     #   inputs.nixpkgs.follows = "nixpkgs";

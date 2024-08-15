@@ -80,9 +80,9 @@ in
         withHomeManager = true;
         extraOverlays = with inputs; [
           nix-topology.overlays.default
-          neovim-nightly-overlay.overlays.default
           emacs-overlay.overlays.default
           nur.overlay
+          # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
         extraModules = with inputs; [
@@ -97,9 +97,9 @@ in
         withHomeManager = true;
         extraOverlays = with inputs; [
           nix-topology.overlays.default
-          neovim-nightly-overlay.overlays.default
           emacs-overlay.overlays.default
           nur.overlay
+          # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
         extraModules = with inputs; [

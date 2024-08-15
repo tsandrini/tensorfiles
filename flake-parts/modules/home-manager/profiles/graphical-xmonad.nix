@@ -45,7 +45,8 @@ in
           newsboat.enable = _ true;
           dmenu.enable = _ true;
           pywal.enable = _ true;
-          terminals.kitty.enable = _ true;
+          # terminals.kitty.enable = _ true;
+          terminals.wezterm.enable = _ true;
           browsers.firefox.enable = _ true;
           editors.emacs-doom.enable = _ true;
           thunderbird.enable = _ true;
@@ -65,9 +66,9 @@ in
 
       home.sessionVariables = {
         # Default programs
-        BROWSER = "firefox";
-        TERMINAL = "kitty";
-        IDE = "emacs";
+        BROWSER = _ "firefox";
+        TERMINAL = _ "wezterm";
+        IDE = _ "emacs";
         EMAIL = _ "thunderbird";
       };
 
