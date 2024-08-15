@@ -13,7 +13,12 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
@@ -31,11 +36,21 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # TODO setup systemd service
+      home.packages = with pkgs; [ birdtray ];
+
       programs.thunderbird = {
         enable = _ true;
-        # profiles.default = {
-        #   isDefault = _ true;
-        # };
+        profiles.default = {
+          isDefault = _ true;
+          withExternalGnupg = _ true;
+          settings = {
+            "datareporting.healthreport.uploadEnabled" = _ false;
+            "calendar.timezone.useSystemTimezone" = _ true;
+            "privacy.donottrackheader.enabled" = _ true;
+            "pdfjs.enabledCache.state" = _ true;
+          };
+        };
       };
     }
     # |----------------------------------------------------------------------| #
