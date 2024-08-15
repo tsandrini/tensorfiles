@@ -153,6 +153,7 @@ in
               undotree
               lexima-vim
               vim-vsnip-integ
+              transparent-nvim
               friendly-snippets
               {
                 plugin = indentLine;
@@ -192,13 +193,6 @@ in
                   }
                 '';
               }
-              # NOTE slows things down too much and I am also mostly using
-              # only hop.nvim
-              # {
-              #   plugin = quick-scope;
-              #   type = "lua";
-              #   config = '''';
-              # }
               {
                 plugin = hop-nvim;
                 type = "lua";
@@ -208,16 +202,6 @@ in
                   vim.keymap.set("n", ",", "<cmd>HopChar2<CR>", {})
                 '';
               }
-              # {
-              #   plugin = vim-easymotion;
-              #   type = "lua";
-              #   config = ''
-              #     vim.g.EasyMotion_do_mapping = false
-              #     vim.g.EasyMotion_smartcase = true
-
-              #     vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
-              #   '';
-              # }
               {
                 plugin = lualine-nvim;
                 type = "lua";
@@ -238,26 +222,6 @@ in
                   }
                 '';
               }
-              # {
-              #   plugin = nvim-treesitter.withAllGrammars;
-              #   type = "lua";
-              #   config = ''
-              #     require('nvim-treesitter.configs').setup{
-              #       sync_install = false,
-              #       auto_install = false,
-              #       highlight = {
-              #         enable = true,
-              #         disable = { "latex" }
-              #       },
-              #       incremental_selection = {
-              #         enable = true
-              #       },
-              #       indent = {
-              #         enable = true
-              #       }
-              #     };
-              #   '';
-              # }
               {
                 plugin = vim-fern;
                 type = "lua";
@@ -378,11 +342,48 @@ in
                   }, { prefix = "<leader>" })
                 '';
               }
+              # {
+              #   plugin = vim-easymotion;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.EasyMotion_do_mapping = false
+              #     vim.g.EasyMotion_smartcase = true
+
+              #     vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+              #   '';
+              # }
+              # NOTE slows things down too much and I am also mostly using
+              # only hop.nvim
+              # {
+              #   plugin = quick-scope;
+              #   type = "lua";
+              #   config = '''';
+              # }
               # (pkgs.vimUtils.buildVimPlugin {
               #   pname = "kitty-scrollback.nvim";
               #   version = inputs.kitty-scrollback-nvim.rev;
               #   src = inputs.kitty-scrollback-nvim;
               # })
+              # {
+              #   plugin = nvim-treesitter.withAllGrammars;
+              #   type = "lua";
+              #   config = ''
+              #     require('nvim-treesitter.configs').setup{
+              #       sync_install = false,
+              #       auto_install = false,
+              #       highlight = {
+              #         enable = true,
+              #         disable = { "latex" }
+              #       },
+              #       incremental_selection = {
+              #         enable = true
+              #       },
+              #       indent = {
+              #         enable = true
+              #       }
+              #     };
+              #   '';
+              # }
             ]
           );
       };
