@@ -143,6 +143,7 @@ in
               '';
             })
             ++ [
+              mini-nvim
               vim-repeat
               # nnn-vim
               vim-fugitive
@@ -285,61 +286,56 @@ in
                 plugin = which-key-nvim;
                 type = "lua";
                 config = ''
-                  vim.api.nvim_set_option("timeoutlen", 500)
+                  -- vim.api.nvim_set_option("timeoutlen", 500)
 
-                  require('which-key').register({
-                    {
-                      name = "+general",
-                      ["<leader>"] = { ":Telescope find_files<CR>", "find-files" },
-                      ["/"] = { ":Telescope live_grep<CR>", "telescope-grep" },
-                      r = { ":noh<CR>", "highlights-remove" },
-                      h = { "<C-w>h", "window-left" },
-                      j = { "<C-w>j", "window-below" },
-                      k = { "<C-w>k", "window-above" },
-                      l = { "<C-w>l", "window-right" },
-                      s = { "<C-w>s", "window-split-below" },
-                      v = { "<C-w>v", "window-split-right" },
-                      q = { ":q<CR>", "file-quit" },
-                      Q = { ":qall<CR>", "file-quit-all" },
-                      w = { ":w<CR>", "file-save" },
-                      n = { ":tabnew<CR>", "tab-new" },
-                      u = { ":UndotreeToggle<CR>", "undotree-toggle" },
-                      t = { ":terminal<CR>", "terminal-open" },
-                      --- f = { ":NnnPicker %:p:h<CR>", "nnn-open" }
-                    },
-                    g = {
-                      name = "+git",
-                      s = { ":Git<CR>", "git-status" },
-                      b = { ":Git blame<CR>", "git-blame" },
-                      d = { ":Gdiff<CR>", "git-diff" },
-                      p = { ":Git push<CR>", "git-push" },
-                      l = { ":Git pull<CR>", "git-pull" },
-                      f = { ":Git fetch<CR>", "git-pull" },
-                      a = { ":Git add *<CR>", "git-add-all" },
-                      c = { ":Git commit --verbose<CR>", "git-commit-verbose" },
-                      e = { ":GitMessenger<CR>", "git-messenger" }
-                    },
-                    p = {
-                      name = "+telescope",
-                      f = { ":Telescope find_files<CR>", "telescope-files" },
-                      g = { ":GFiles<CR>", "telescope-git-files" },
-                      b = { ":Telescope buffers<CR>", "telescope-buffers" },
-                      l = { ":Colors<CR>", "telescope-colors" },
-                      r = { ":Telescope live_grep<CR>", "telescope-grep" },
-                      g = { ":Telescope git_commits<CR>", "telescope-commits" },
-                      s = { ":Snippets<CR>", "telescope-snippets" },
-                      m = { ":Telescope commands<CR>", "telescope-commands" },
-                      h = { ":Telescope man_pages<CR>", "telescope-man-pages" },
-                      -- t = { ":Telescope treesitter<CR>", "telescope-treesitter" }
-                    },
-                    b = {
-                      name = "+bufexplorer",
-                      i = "bufexplorer-open",
-                      t = "bufexplorer-toggle",
-                      s = "bufexplorer-horizontal-split",
-                      v = "bufexplorer-vertical-split"
-                    }
-                  }, { prefix = "<leader>" })
+                  require("which-key").setup{
+                    preset = "modern",
+                    delay = 100
+                  }
+
+                  require("which-key").add({
+                    { "<leader>", group = "+general" },
+                    { "<leader>/", ":Telescope live_grep<CR>", desc = "Telescope grep" },
+                    { "<leader><leader>", ":Telescope find_files<CR>", desc = "Find files" },
+                    { "<leader>Q", ":qall<CR>", desc = "Quit all files" },
+                    { "<leader>b", group = "+bufexplorer" },
+                    { "<leader>bi", "<cmd>BufExplorer<CR>", desc = "Open BufExplorer" },
+                    { "<leader>bs", "<cmd>BufExplorerHorizontalSplit<CR>", desc = "BufExplorer horizontal split" },
+                    { "<leader>bt", "<cmd>ToggleBufExplorer<CR>", desc = "Toggle BufExplorer" },
+                    { "<leader>bv", "<cmd>BufExplorerVerticalSplit<CR>", desc = "BufExplorer vertical split" },
+                    { "<leader>g", group = "+git" },
+                    { "<leader>ga", ":Git add *<CR>", desc = "Git add all" },
+                    { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },
+                    { "<leader>gc", ":Git commit --verbose<CR>", desc = "Git commit (verbose)" },
+                    { "<leader>gd", ":Gdiff<CR>", desc = "Git diff" },
+                    { "<leader>ge", ":GitMessenger<CR>", desc = "Git messenger" },
+                    { "<leader>gf", ":Git fetch<CR>", desc = "Git fetch" },
+                    { "<leader>gl", ":Git pull<CR>", desc = "Git pull" },
+                    { "<leader>gp", ":Git push<CR>", desc = "Git push" },
+                    { "<leader>gs", ":Git<CR>", desc = "Git status" },
+                    { "<leader>h", "<C-w>h", desc = "Window left" },
+                    { "<leader>j", "<C-w>j", desc = "Window below" },
+                    { "<leader>k", "<C-w>k", desc = "Window above" },
+                    { "<leader>l", "<C-w>l", desc = "Window right" },
+                    { "<leader>n", ":tabnew<CR>", desc = "New tab" },
+                    { "<leader>p", group = "+telescope" },
+                    { "<leader>pb", ":Telescope buffers<CR>", desc = "Buffers" },
+                    { "<leader>pc", ":Telescope git_commits<CR>", desc = "Git commits" },
+                    { "<leader>pf", ":Telescope find_files<CR>", desc = "Find files" },
+                    { "<leader>pg", ":Telescope git_files<CR>", desc = "Git files" },
+                    { "<leader>ph", ":Telescope man_pages<CR>", desc = "Man pages" },
+                    { "<leader>pl", ":Telescope colorscheme<CR>", desc = "Colorschemes" },
+                    { "<leader>pm", ":Telescope commands<CR>", desc = "Commands" },
+                    { "<leader>pr", ":Telescope live_grep<CR>", desc = "Live grep" },
+                    { "<leader>ps", ":Telescope snippets<CR>", desc = "Snippets" },
+                    { "<leader>q", ":q<CR>", desc = "Quit file" },
+                    { "<leader>r", ":noh<CR>", desc = "Remove highlights" },
+                    { "<leader>s", "<C-w>s", desc = "Split window below" },
+                    { "<leader>t", ":terminal<CR>", desc = "Open terminal" },
+                    { "<leader>u", ":UndotreeToggle<CR>", desc = "Toggle Undotree" },
+                    { "<leader>v", "<C-w>v", desc = "Split window right" },
+                    { "<leader>w", ":w<CR>", desc = "Save file" }
+                  })
                 '';
               }
               # {
