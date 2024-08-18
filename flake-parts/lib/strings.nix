@@ -1,4 +1,4 @@
-# --- flake-parts/lib/default.nix
+# --- flake-parts/lib/strings.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,17 +12,20 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ lib, ... }:
+{ lib }:
 {
-  flake.lib = rec {
-    attrsets = import ./attrsets.nix { inherit lib; };
-    licenses = import ./licenses.nix { };
-    maintainers = import ./maintainers.nix { };
-    modules = import ./modules.nix {
-      inherit lib;
-      inherit (attrsets) mapFilterAttrs;
-    };
-    options = import ./options.nix { inherit lib; };
-    strings = import ./strings.nix { inherit lib; };
-  };
+  sanitizeEmailForNixStorePath =
+    email:
+    let
+      lower = lib.strings.toLower email;
+      replaceAt = lib.strings.replaceStrings [ "@" ] [ "-at-" ];
+      replaceDot = lib.strings.replaceStrings [ "." ] [ "-dot-" ];
+      removeInvalid =
+        str:
+        lib.strings.concatStrings (
+          lib.lists.filter (c: lib.strings.match "[a-z0-9_-]" c != null) (lib.strings.stringToCharacters str)
+        );
+    in
+    removeInvalid (replaceDot (replaceAt lower));
+
 }

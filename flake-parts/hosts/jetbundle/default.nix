@@ -140,6 +140,7 @@
     tensorfiles.hm = {
 
       profiles.graphical-plasma.enable = true;
+      profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
 
       programs.pywal.enable = true;

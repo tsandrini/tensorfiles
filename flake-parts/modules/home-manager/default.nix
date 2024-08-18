@@ -40,6 +40,10 @@ in
     misc_xdg = importApply ./misc/xdg.nix { inherit localFlake; };
 
     # -- profiles --
+    profiles_accounts_tsandrini = importApply ./profiles/accounts/tsandrini.nix {
+      inherit localFlake;
+      inherit (config.agenix) secretsPath;
+    };
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake inputs; };
     profiles_graphical-xmonad = importApply ./profiles/graphical-xmonad.nix { inherit localFlake; };

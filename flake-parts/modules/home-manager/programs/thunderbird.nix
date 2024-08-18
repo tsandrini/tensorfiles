@@ -37,7 +37,9 @@ in
     # |----------------------------------------------------------------------| #
     {
       # TODO setup systemd service
-      home.packages = with pkgs; [ birdtray ];
+      # TODO birdtray doesn't work on wayland, see
+      # https://github.com/gyunaev/birdtray/issues/597
+      # home.packages = with pkgs; [ birdtray ];
 
       programs.thunderbird = {
         enable = _ true;
@@ -49,6 +51,8 @@ in
             "calendar.timezone.useSystemTimezone" = _ true;
             "privacy.donottrackheader.enabled" = _ true;
             "pdfjs.enabledCache.state" = _ true;
+            "mailnews.default_sort_order" = _ 2; # descending
+            "mailnews.default_sort_type" = _ 18; # by date
           };
         };
       };

@@ -24,6 +24,8 @@ in
   # ----------
   # | COMMON |
   # ----------
+  # "common/accounts/tomas-dot-sandrini-at-seznam-dot-cz.age".publicKeys = [ tsandrini ];
+  # "common/accounts/wareczech-at-gmail-dot-com.age".publicKeys = [ tsandrini ];
 
   # ---------
   # | HOSTS |

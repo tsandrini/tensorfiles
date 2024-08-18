@@ -122,7 +122,7 @@ in
       age.secrets."${cfg.sshKey.privateKeySecretsPath}" = {
         file = _ (secretsPath + "/${cfg.sshKey.privateKeySecretsPath}.age");
         mode = _ "700";
-        owner = _ config.home.username;
+        # owner = _ config.home.username; # NOTE not available in HM module
       };
 
       home.file = with cfg.sshKey; {
