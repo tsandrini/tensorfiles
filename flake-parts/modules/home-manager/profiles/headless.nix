@@ -66,13 +66,14 @@ in
 
       home.sessionVariables = {
         # Default programs
-        EDITOR = "nvim";
+        EDITOR = "nvim"; # TODO
         VISUAL = "nvim";
+        # Default programs
         # Directory structure
-        DOWNLOADS_DIR = config.home.homeDirectory + "/Downloads";
-        ORG_DIR = config.home.homeDirectory + "/OrgBundle";
-        PROJECTS_DIR = config.home.homeDirectory + "/ProjectBundle";
-        MISC_DATA_DIR = config.home.homeDirectory + "/FiberBundle";
+        DOWNLOADS_DIR = _ (config.home.homeDirectory + "/Downloads");
+        ORG_DIR = _ (config.home.homeDirectory + "/OrgBundle");
+        PROJECTS_DIR = _ (config.home.homeDirectory + "/ProjectBundle");
+        MISC_DATA_DIR = _ (config.home.homeDirectory + "/FiberBundle");
         # Fallbacks
         # DEFAULT_USERNAME = "tsandrini";
         # DEFAULT_MAIL = "tomas.sandrini@seznam.cz";

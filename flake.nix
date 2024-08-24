@@ -43,6 +43,7 @@
     };
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    deploy-rs.url = "github:serokell/deploy-rs";
     impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
     arkenfox-user-js = {
@@ -69,6 +70,11 @@
       inputs.home-manager.follows = "home-manager";
     };
     nix-gaming.url = "github:fufexan/nix-gaming";
+    nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
+    vpsadminos = {
+      url = "github:vpsfreecz/vpsadminos";
+      flake = false;
+    };
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {
     #   url = "github:mikesmithgh/kitty-scrollback.nvim";

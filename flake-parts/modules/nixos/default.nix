@@ -56,6 +56,10 @@ in
     services_x11_desktop-managers_startx-home-manager =
       importApply ./services/x11/desktop-managers/startx-home-manager.nix
         { inherit localFlake; };
+    services_mailserver = importApply ./services/mailserver.nix {
+      inherit localFlake inputs;
+      inherit (config.agenix) secretsPath;
+    };
 
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix { inherit localFlake inputs; };

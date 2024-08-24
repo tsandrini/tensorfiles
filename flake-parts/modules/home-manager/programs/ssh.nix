@@ -30,6 +30,7 @@ let
     mkEnableOption
     mkOption
     types
+    attrByPath
     ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
@@ -121,7 +122,7 @@ in
     (mkIf sshKeyCheck {
       age.secrets."${cfg.sshKey.privateKeySecretsPath}" = {
         file = _ (secretsPath + "/${cfg.sshKey.privateKeySecretsPath}.age");
-        mode = _ "700";
+        # mode = _ "600";
         # owner = _ config.home.username; # NOTE not available in HM module
       };
 
@@ -136,7 +137,7 @@ in
               if publicKeyRaw != null then
                 publicKeyRaw
               else
-                (attrsets.attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
+                (attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
                   splitString "." publicKeySecretsAttrsetKey
                 )) "" pubkeys);
           in

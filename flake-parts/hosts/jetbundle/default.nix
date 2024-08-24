@@ -12,7 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, inputs, ... }:
+{ inputs }:
+{ pkgs, ... }:
 {
   # -----------------
   # | SPECIFICATION |
@@ -65,6 +66,11 @@
     programs.shadow-nix.enable = true;
     tasks.system-autoupgrade.enable = false;
 
+    # Use the `nh` garbage collect to also collect .direnv and XDG profiles
+    # roots instead of the default ones.
+    tasks.nix-garbage-collect.enable = false;
+    programs.nh.enable = true;
+
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
     };
@@ -83,10 +89,6 @@
     };
   };
 
-  # Use the `nh` garbage collect to also collect .direnv and XDG profiles
-  # roots instead of the default ones.
-  tensorfiles.tasks.nix-garbage-collect.enable = false;
-  tensorfiles.programs.nh.enable = true;
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
@@ -107,8 +109,6 @@
   };
 
   # programs.steam.enable = true; # just trying it out
-
-  networking.networkmanager.enable = true;
   networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {

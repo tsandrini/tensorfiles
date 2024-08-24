@@ -18,8 +18,7 @@ let
   inherit (lib)
     mkIf
     mkMerge
-    types
-    mkOption
+    mkOverride
     mkEnableOption
     ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
@@ -28,35 +27,13 @@ let
   _ = mkOverrideAtHmModuleLevel;
 
   defaultBrowser =
-    if cfg.defaultApplications.browser != null then
-      cfg.defaultApplications.browser
-    else
-      (
-        if config.home.sessionVariables.BROWSER != null then config.home.sessionVariables.BROWSER else null
-      );
-
+    if config.home.sessionVariables.BROWSER != "" then config.home.sessionVariables.BROWSER else null;
   defaultEditor =
-    if cfg.defaultApplications.editor != null then
-      cfg.defaultApplications.editor
-    else
-      (if config.home.sessionVariables.EDITOR != null then config.home.sessionVariables.EDITOR else null);
-
+    if config.home.sessionVariables.EDITOR != "" then config.home.sessionVariables.EDITOR else null;
   defaultTerminal =
-    if cfg.defaultApplications.terminal != null then
-      cfg.defaultApplications.terminal
-    else
-      (
-        if config.home.sessionVariables.TERMINAL != null then
-          config.home.sessionVariables.TERMINAL
-        else
-          null
-      );
-
+    if config.home.sessionVariables.TERMINAL != "" then config.home.sessionVariables.TERMINAL else null;
   defaultEmail =
-    if cfg.defaultApplications.email != null then
-      cfg.defaultApplications.email
-    else
-      (if config.home.sessionVariables.EMAIL != null then config.home.sessionVariables.EMAIL else null);
+    if config.home.sessionVariables.EMAIL != "" then config.home.sessionVariables.EMAIL else null;
 in
 {
   options.tensorfiles.hm.misc.xdg = {
@@ -72,38 +49,6 @@ in
         // {
           default = true;
         };
-
-      browser = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
-
-      editor = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
-
-      terminal = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
-
-      email = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
     };
   };
 
@@ -115,6 +60,30 @@ in
         mime.enable = _ true;
         mimeApps.enable = _ true;
       };
+
+      home.sessionVariables =
+        let
+          # NOTE the lowest possible priority just to make sure the keys
+          # in the sessionVariables exist
+          _ = mkOverride 5000;
+        in
+        {
+          EDITOR = _ "";
+          VISUAL = _ "";
+
+          BROWSER = _ "";
+          TERMINAL = _ "";
+          IDE = _ "";
+          EMAIL = _ "";
+
+          DOWNLOADS_DIR = _ "";
+          ORG_DIR = _ "";
+          PROJECTS_DIR = _ "";
+          MISC_DATA_DIR = _ "";
+
+          DEFAULT_USERNAME = _ config.home.username;
+          DEFAULT_MAIL = _ "";
+        };
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.defaultApplications.enable {

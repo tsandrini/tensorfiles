@@ -67,75 +67,81 @@ in
       enable = mkAgenixEnableOption;
     };
 
-    usersSettings = mkUsersSettingsOption (_user: {
-      isSudoer = mkOption {
-        type = types.bool;
-        default = true;
-        description = ''
-          Add user to sudoers (ie the `wheel` group)
-        '';
-      };
-
-      isNixTrusted = mkOption {
-        type = types.bool;
-        default = false;
-        description = ''
-          Whether the user has the ability to connect to the nix daemon
-          and gain additional privileges for working with nix (like adding
-          binary cache)
-        '';
-      };
-
-      extraGroups = mkOption {
-        type = types.listOf types.str;
-        default = [ ];
-        description = ''
-          Any additional groups which the user should be a part of. This is
-          basically just a passthrough for `users.users.<user>.extraGroups`
-          for convenience.
-        '';
-      };
-
-      agenixPassword = {
-        enable = mkEnableOption ''
-          TODO
-        '';
-
-        passwordSecretsPath = mkOption {
-          type = types.str;
-          default = "hosts/${hostName}/users/${_user}/system-password";
+    usersSettings =
+      mkUsersSettingsOption (_user: {
+        isSudoer = mkOption {
+          type = types.bool;
+          default = true;
           description = ''
-            TODO
+            Add user to sudoers (ie the `wheel` group)
           '';
         };
-      };
 
-      authorizedKeys = {
-        enable =
-          mkEnableOption ''
-            TODO
-          ''
-          // {
-            default = true;
-          };
+        isNixTrusted = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            Whether the user has the ability to connect to the nix daemon
+            and gain additional privileges for working with nix (like adding
+            binary cache)
+          '';
+        };
 
-        keysRaw = mkOption {
+        extraGroups = mkOption {
           type = types.listOf types.str;
           default = [ ];
           description = ''
-            TODO
+            Any additional groups which the user should be a part of. This is
+            basically just a passthrough for `users.users.<user>.extraGroups`
+            for convenience.
           '';
         };
 
-        keysSecretsAttrsetKey = mkOption {
-          type = types.str;
-          default = "hosts.${hostName}.users.${_user}.authorizedKeys";
-          description = ''
+        agenixPassword = {
+          enable = mkEnableOption ''
             TODO
           '';
+
+          passwordSecretsPath = mkOption {
+            type = types.str;
+            default = "hosts/${hostName}/users/${_user}/system-password";
+            description = ''
+              TODO
+            '';
+          };
+        };
+
+        authorizedKeys = {
+          enable =
+            mkEnableOption ''
+              TODO
+            ''
+            // {
+              default = true;
+            };
+
+          keysRaw = mkOption {
+            type = types.listOf types.str;
+            default = [ ];
+            description = ''
+              TODO
+            '';
+          };
+
+          keysSecretsAttrsetKey = mkOption {
+            type = types.str;
+            default = "hosts.${hostName}.users.${_user}.authorizedKeys";
+            description = ''
+              TODO
+            '';
+          };
+        };
+      })
+      // {
+        default = {
+          "root" = { };
         };
       };
-    });
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -177,8 +183,8 @@ in
         {
           "${passwordSecretsPath}" = mkIf enable {
             file = _ (secretsPath + "/${passwordSecretsPath}.age");
-            mode = _ "700";
             owner = _ _user;
+            # mode = _ "600";
           };
         }
       );

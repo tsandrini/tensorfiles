@@ -15,11 +15,10 @@
 let
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
-  # hosts = [jetbundle spinorbundle];
+  remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
 in
-# users = [tsandrini];
 {
   # ----------
   # | COMMON |
@@ -31,13 +30,37 @@ in
   # | HOSTS |
   # ---------
 
-  # I. #spinorbundle
+  # jetbundle
+  "hosts/jetbundle/users/root/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
+  "hosts/jetbundle/users/tsandrini/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
+
+  # remotebundle
+  "hosts/remotebundle/users/root/system-password.age".publicKeys = [ remotebundle ] ++ [ tsandrini ];
+  "hosts/remotebundle/users/tsandrini/system-password.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/t-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/business-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/security-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/shopping-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/newsletters-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+
+  # spinorbundle
   "hosts/spinorbundle/users/root/system-password.age".publicKeys = [ spinorbundle ] ++ [ tsandrini ];
   "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys = [
     spinorbundle
   ] ++ [ tsandrini ];
-
-  # II. #jetbundle
-  "hosts/jetbundle/users/root/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
-  "hosts/jetbundle/users/tsandrini/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
 }

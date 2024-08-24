@@ -38,8 +38,6 @@ in
       tensorfiles = {
         profiles.minimal.enable = _ true;
 
-        security.agenix.enable = _ true;
-
         services.networking.networkmanager.enable = _ true;
         services.networking.ssh.enable = _ true;
 
@@ -50,6 +48,8 @@ in
           };
         };
       };
+
+      services.fail2ban.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

@@ -20,6 +20,8 @@
   ...
 }:
 let
+  inherit (inputs.flake-parts.lib) importApply;
+
   mkHost =
     args: hostName:
     {
@@ -27,6 +29,9 @@ let
       extraModules ? [ ],
       extraOverlays ? [ ],
       withHomeManager ? false,
+      hostImportArgs ? {
+        inherit inputs;
+      },
       ...
     }:
     let
@@ -48,7 +53,7 @@ let
             nixpkgs.config.allowUnfree = true;
             networking.hostName = hostName;
           }
-          ./${hostName}
+          (importApply ./${hostName} hostImportArgs)
         ]
         ++ extraModules
         # Disabled by default, therefore load every module and enable via attributes
@@ -74,23 +79,6 @@ let
 in
 {
   flake.nixosConfigurations = {
-    spinorbundle = withSystem "x86_64-linux" (
-      args:
-      mkHost args "spinorbundle" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [
-          nix-topology.overlays.default
-          emacs-overlay.overlays.default
-          nur.overlay
-          # neovim-nightly-overlay.overlays.default
-          # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
-        ];
-        extraModules = with inputs; [
-          nur.nixosModules.nur
-          # nix-topology.nixosModules.default
-        ];
-      }
-    );
     jetbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "jetbundle" {
@@ -104,7 +92,39 @@ in
         ];
         extraModules = with inputs; [
           nur.nixosModules.nur
-          # nix-topology.nixosModules.default
+          nix-topology.nixosModules.default
+        ];
+      }
+    );
+    remotebundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "remotebundle" {
+        withHomeManager = true;
+        extraOverlays = with inputs; [
+          nix-topology.overlays.default
+          # nur.overlay
+          # neovim-nightly-overlay.overlays.default
+        ];
+        extraModules = with inputs; [
+          nix-topology.nixosModules.default
+          # nur.nixosModules.nur
+        ];
+      }
+    );
+    spinorbundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "spinorbundle" {
+        withHomeManager = true;
+        extraOverlays = with inputs; [
+          nix-topology.overlays.default
+          emacs-overlay.overlays.default
+          nur.overlay
+          # neovim-nightly-overlay.overlays.default
+          # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+        ];
+        extraModules = with inputs; [
+          nur.nixosModules.nur
+          nix-topology.nixosModules.default
         ];
       }
     );

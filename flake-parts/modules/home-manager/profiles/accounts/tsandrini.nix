@@ -68,6 +68,11 @@ in
           default = {
             "tomas.sandrini@seznam.cz" = { };
             "WareCzech@gmail.com" = { };
+            "t@tsandrini.sh" = { };
+            "business@tsandrini.sh" = { };
+            "security@tsandrini.sh" = { };
+            "shopping@tsandrini.sh" = { };
+            "newsletters@tsandrini.sh" = { };
           };
         };
     };
@@ -88,7 +93,7 @@ in
             userName = _ "tomas.sandrini"; # TODO https://github.com/nix-community/home-manager/issues/3712
             imap.host = _ "imap.seznam.cz";
             imap.port = _ 993;
-            primary = _ true;
+            primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "smtp.seznam.cz";
             smtp.port = _ 465;
@@ -131,6 +136,141 @@ in
         };
     })
     # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."t@tsandrini.sh".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."t@tsandrini.sh";
+        in
+        {
+          "t@tsandrini.sh" = {
+            address = _ "t@tsandrini.sh";
+            userName = _ "t@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.tsandrini.sh";
+            imap.port = _ 993;
+            primary = _ true;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "mail.tsandrini.sh";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."business@tsandrini.sh".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."business@tsandrini.sh";
+        in
+        {
+          "business@tsandrini.sh" = {
+            address = _ "business@tsandrini.sh";
+            userName = _ "business@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.tsandrini.sh";
+            imap.port = _ 993;
+            primary = _ false;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "mail.tsandrini.sh";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."security@tsandrini.sh".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."security@tsandrini.sh";
+        in
+        {
+          "security@tsandrini.sh" = {
+            address = _ "security@tsandrini.sh";
+            userName = _ "security@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.tsandrini.sh";
+            imap.port = _ 993;
+            primary = _ false;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "mail.tsandrini.sh";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."shopping@tsandrini.sh".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."shopping@tsandrini.sh";
+        in
+        {
+          "shopping@tsandrini.sh" = {
+            address = _ "shopping@tsandrini.sh";
+            userName = _ "shopping@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.tsandrini.sh";
+            imap.port = _ 993;
+            primary = _ false;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "mail.tsandrini.sh";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."newsletters@tsandrini.sh".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."newsletters@tsandrini.sh";
+        in
+        {
+          "newsletters@tsandrini.sh" = {
+            address = _ "newsletters@tsandrini.sh";
+            userName = _ "newsletters@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.tsandrini.sh";
+            imap.port = _ 993;
+            primary = _ false;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "mail.tsandrini.sh";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
     (mkIf (cfg.email.enable && agenixCheck) {
       age.secrets = mapToAttrsAndMerge (attrNames cfg.email.accounts) (
         _account:
@@ -141,7 +281,7 @@ in
         {
           "${passwordSecretsPath}" = mkIf enable {
             file = _ (secretsPath + "/${passwordSecretsPath}.age");
-            mode = _ "700";
+            # mode = _ "600";
             # owner = _ config.home.username; # NOTE not available in HM module
           };
         }
