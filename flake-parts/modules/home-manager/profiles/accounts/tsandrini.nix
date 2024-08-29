@@ -90,13 +90,13 @@ in
         {
           "tomas.sandrini@seznam.cz" = {
             address = _ "tomas.sandrini@seznam.cz";
-            userName = _ "tomas.sandrini"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            userName = _ "tomas.sandrini@seznam.cz"; # TODO https://github.com/nix-community/home-manager/issues/3712
             imap.host = _ "imap.seznam.cz";
             imap.port = _ 993;
             primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "smtp.seznam.cz";
-            smtp.port = _ 465;
+            smtp.port = _ 587;
             smtp.tls.useStartTls = _ true;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
