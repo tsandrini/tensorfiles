@@ -77,7 +77,9 @@ in
       inherit localFlake;
     };
     programs_terminals_kitty = importApply ./programs/terminals/kitty.nix { inherit localFlake; };
-    programs_terminals_wezterm = importApply ./programs/terminals/wezterm.nix { inherit localFlake; };
+    programs_terminals_wezterm = importApply ./programs/terminals/wezterm.nix {
+      inherit localFlake inputs;
+    };
     programs_thunderbird = importApply ./programs/thunderbird.nix { inherit localFlake; };
 
     # -- security --

@@ -93,6 +93,7 @@ in
           xz # A general-purpose data compression software, successor of LZMA
           zip # Compressor/archiver for creating and modifying zipfiles
           zstd # Zstandard real-time compression algorithm
+          lha # LHa is an archiver and compressor using the LZSS and Huffman encoding compression algorithms
 
           # -- MISC --
           sqlite # A self-contained, serverless, zero-configuration, transactional SQL database engine
@@ -102,6 +103,8 @@ in
           adminer # Database management in a single PHP file
 
           # -- PACKAGING UTILS --
+          rpm # RPM Package Manager
+          dpkg # Debian package manager
           # nix-ld # Run unpatched dynamic binaries on NixOS
           appimage-run # Run unpatched AppImages on NixOS
           libappimage # Implements functionality for dealing with AppImage files

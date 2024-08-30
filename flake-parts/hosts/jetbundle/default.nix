@@ -165,7 +165,7 @@
 
     home.packages = with pkgs; [
       thunderbird # A full-featured e-mail client
-      beeper # Universal chat app.
+      # beeper # Universal chat app.
       anki # Spaced repetition flashcard program
       libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
       texlive.combined.scheme-full # TeX Live environment
@@ -174,6 +174,7 @@
       ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
       zoom-us # Player for Z-Code, TADS and HUGO stories or games
       vesktop # Alternate client for Discord with Vencord built-in
+      gnucash # Free software for double entry accounting
 
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger

@@ -93,6 +93,8 @@ in
         extraModules = with inputs; [
           nur.nixosModules.nur
           nix-topology.nixosModules.default
+          # TODO remove when available https://github.com/NixOS/nixpkgs/pull/334638
+          { nixpkgs.config.permittedInsecurePackages = [ "olm-3.2.16" ]; }
         ];
       }
     );
@@ -108,6 +110,8 @@ in
         extraModules = with inputs; [
           nix-topology.nixosModules.default
           # nur.nixosModules.nur
+          # TODO remove when available https://github.com/NixOS/nixpkgs/pull/334638
+          { nixpkgs.config.permittedInsecurePackages = [ "olm-3.2.16" ]; }
         ];
       }
     );
@@ -125,6 +129,8 @@ in
         extraModules = with inputs; [
           nur.nixosModules.nur
           nix-topology.nixosModules.default
+          # TODO remove when available https://github.com/NixOS/nixpkgs/pull/334638
+          { nixpkgs.config.permittedInsecurePackages = [ "olm-3.2.16" ]; }
         ];
       }
     );
