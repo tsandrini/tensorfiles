@@ -52,8 +52,9 @@ in
       programs.wezterm = {
         enable = _ true;
         package = _ nixpkgs-wezterm.wezterm;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+        # NOTE enabled by default so probably unnecessary
+        # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
         extraConfig = ''
           local wezterm = require 'wezterm'
           local config = wezterm.config_builder()

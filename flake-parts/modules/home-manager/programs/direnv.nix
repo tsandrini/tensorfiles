@@ -16,7 +16,7 @@
 { config, lib, ... }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.direnv;
   _ = mkOverrideAtHmModuleLevel;
@@ -36,12 +36,13 @@ in
     {
       programs.direnv = {
         enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (
-          isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
-        );
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+        # NOTE enabled by default so probably unnecessary
+        # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        # enableNushellIntegration = _ (
+        #   isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
+        # );
+        # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
         nix-direnv.enable = _ true;
       };
     }

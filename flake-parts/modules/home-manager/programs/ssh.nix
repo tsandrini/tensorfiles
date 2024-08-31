@@ -102,12 +102,13 @@ in
 
       programs.keychain = {
         enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (
-          isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
-        );
+        # NOTE enabled by default so probably unnecessary
+        # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+        # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        # enableNushellIntegration = _ (
+        #   isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
+        # );
         agents = [ "ssh" ];
         extraFlags = [
           "--nogui"

@@ -51,7 +51,7 @@ in
         profiles.minimal.enable = _ true;
 
         programs = {
-          shells.zsh.enable = _ true;
+          shells.fish.enable = _ true;
           editors.neovim.enable = _ true;
           file-managers.yazi.enable = _ true;
 

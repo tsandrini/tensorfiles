@@ -68,6 +68,7 @@ in
     programs_pywal = importApply ./programs/pywal.nix { inherit localFlake; };
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
     programs_shells_zsh = importApply ./programs/shells/zsh { inherit localFlake; };
+    programs_shells_fish = importApply ./programs/shells/fish.nix { inherit localFlake; };
     # programs_spicetify = importApply ./programs/spicetify.nix { inherit localFlake inputs; };
     programs_ssh = importApply ./programs/ssh.nix {
       inherit (config.agenix) secretsPath pubkeys;

@@ -22,6 +22,7 @@
 let
   inherit (lib)
     mkIf
+    getExe
     mkMerge
     optional
     mkBefore
@@ -171,8 +172,7 @@ in
         ++ (optional lsToEza eza)
         ++ (optional catToBat bat)
         ++ (optional findToFd fd)
-        ++ (optional grepToRipgrep ripgrep)
-        ++ (optional cfg.oh-my-zsh.withFzf fzf);
+        ++ (optional grepToRipgrep ripgrep);
 
       programs.zsh = {
         enable = _ true;
@@ -215,25 +215,28 @@ in
       };
 
       home.shellAliases = mkMerge [
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        {
+          fetch = _ "${getExe pkgs.nitch}";
+          g = _ "${getExe config.programs.git.package}";
+        }
         (mkIf cfg.shellAliases.lsToEza {
-          ls = _ "${pkgs.eza}/bin/eza";
-          ll = _ "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
-          tree = _ "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified -T";
+          ls = _ "${getExe pkgs.eza}";
+          ll = _ "${getExe pkgs.eza} -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
+          tree = _ "${getExe pkgs.eza} -F --hyperlink --icons --group-directories-first -la --git --header --created --modified -T";
         })
         (mkIf cfg.shellAliases.catToBat {
-          cat = _ "${pkgs.bat}/bin/bat -p --wrap=never --paging=never";
-          less = _ "${pkgs.bat}/bin/bat --paging=always";
+          cat = _ "${getExe pkgs.bat} -p --wrap=never --paging=never";
+          less = _ "${getExe pkgs.bat} --paging=always";
         })
         (mkIf cfg.shellAliases.findToFd {
-          find = _ "${pkgs.fd}/bin/fd";
-          fd = _ "${pkgs.fd}/bin/fd";
+          find = _ "${getExe pkgs.fd}";
+          fd = _ "${getExe pkgs.fd}";
         })
         (mkIf cfg.shellAliases.grepToRipgrep {
-          grep = _ "${pkgs.ripgrep}/bin/rg";
-          list-todos = _ "${pkgs.ripgrep}/bin/rg -g '!{.git,node_modules,result,build,dist,.idea,out,.DS_Store}' --no-follow 'TODO|FIXME' ";
+          grep = _ "${getExe pkgs.ripgrep}";
+          list-todos = _ "${getExe pkgs.ripgrep} -g '!{.git,node_modules,result,build,dist,.idea,out,.DS_Store}' --no-follow 'TODO|FIXME' ";
         })
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        { fetch = _ "${getExe pkgs.nitch}"; }
       ];
     }
     # |----------------------------------------------------------------------| #
@@ -244,6 +247,12 @@ in
         # ( ) # Hide shell job control messages.
         (cat ${config.xdg.cacheHome}/wal/sequences &)
       '';
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.oh-my-zsh.withFzf {
+      programs.fzf = {
+        enable = _ true;
+      };
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.shellAliases.catToBat {
