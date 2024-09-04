@@ -29,8 +29,8 @@ let
     ;
   inherit (localFlake.lib.modules)
     mkOverrideAtHmModuleLevel
-    isModuleLoadedAndEnabled
     mkDummyDerivation
+    isModuleLoadedAndEnabled
     ;
   inherit (localFlake.lib.options) mkPywalEnableOption;
 
@@ -49,6 +49,18 @@ in
     pywal = {
       enable = mkPywalEnableOption;
     };
+
+    vscode = {
+      enable = mkEnableOption ''
+        Adds support for the vscode-neovim plugin.
+      '';
+    };
+
+    lsp = {
+      enable = mkEnableOption ''
+        Enables LSP support for neovim.
+      '';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -65,73 +77,81 @@ in
         # since it's been removed. Python2 support has been removed from neovim
         # withPython3 = _ true;
         withNodeJs = _ true;
-        extraConfig = ''
-          set number
-          set relativenumber
-
-          set formatoptions+=l
-          set rulerformat=%l:%c
-          set nofoldenable
-
-          set wildmenu
-          set wildmode=full
-          set wildignorecase
-          set clipboard+=unnamedplus
-
-          set tabstop=8
-          set softtabstop=0
-          set expandtab
-          set shiftwidth=4
-          set smarttab
-
-          set scrolloff=5
-
-          set list
-          set listchars=tab:»·,trail:•,extends:#,nbsp:.
-
-          filetype indent on
-          set smartindent
-          set shiftround
-
-          set ignorecase
-          set smartcase
-          set showmatch
-
-          autocmd BufWritePre * :%s/\\s\\+$//e
-
-          let mapleader="\<Space>"
-          let maplocalleader="\<space>"
-
-          ino jk <esc>
-          ino kj <esc>
-          cno jk <c-c>
-          cno kj <c-c>
-          tno jk <c-\><c-n>
-          tno kj <c-\><c-n>
-          vno jk <esc>
-          vno kj <esc>
-
-          nnoremap J :tabprevious<CR>
-          nnoremap K :tabnext<CR>
-        '';
         plugins =
           with pkgs.vimPlugins;
           (
+            # NOTE programs.neovim.extraConfig uses vimscript, which is why
+            # we setup the configuration using plugins where we can specify
+            # lua instead
             [
               {
                 plugin = mkDummyDerivation {
                   inherit (pkgs) stdenv;
-                  name = "vscode-neovim-setup";
+                  name = "neovim-base-config";
                   meta.system = system;
                 };
-                # type = "lua";
+                type = "lua";
                 config = ''
-                  if exists('g:vscode')
-                    set noloadplugins
-                    set clipboard^=unnamed,unnamedplus
+                  -- Set options
+                  vim.opt.number = true
+                  vim.opt.relativenumber = true
 
-                    finish
-                  endif
+                  vim.opt.formatoptions:append('l')
+                  vim.opt.rulerformat = '%l:%c'
+                  vim.opt.foldenable = false
+
+                  vim.opt.wildmenu = true
+                  vim.opt.wildmode = 'full'
+                  vim.opt.wildignorecase = true
+                  vim.opt.clipboard:append('unnamedplus')
+
+                  vim.opt.tabstop = 8
+                  vim.opt.softtabstop = 0
+                  vim.opt.expandtab = true
+                  vim.opt.shiftwidth = 4
+                  vim.opt.smarttab = true
+
+                  vim.opt.scrolloff = 5
+
+                  vim.opt.list = true
+                  vim.opt.listchars = {tab = '»·', trail = '•', extends = '#', nbsp = '.'}
+
+                  vim.cmd('filetype indent on')
+                  vim.opt.smartindent = true
+                  vim.opt.shiftround = true
+
+                  vim.opt.ignorecase = true
+                  vim.opt.smartcase = true
+                  vim.opt.showmatch = true
+
+                  -- Auto-remove trailing whitespace
+                  vim.api.nvim_create_autocmd('BufWritePre', {
+                      pattern = '*',
+                      command = [[%s/\s\+$//e]]
+                  })
+
+                  -- Set leaders
+                  vim.g.mapleader = ' '
+                  vim.g.maplocalleader = ' '
+
+                  -- Key mappings
+                  local function map(mode, lhs, rhs, opts)
+                      local options = {noremap = true, silent = true}
+                      if opts then options = vim.tbl_extend('force', options, opts) end
+                      vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+                  end
+
+                  map('i', 'jk', '<Esc>')
+                  map('i', 'kj', '<Esc>')
+                  map('c', 'jk', '<C-c>')
+                  map('c', 'kj', '<C-c>')
+                  map('t', 'jk', '<C-\\><C-n>')
+                  map('t', 'kj', '<C-\\><C-n>')
+                  -- map('v', 'jk', '<Esc>')
+                  -- map('v', 'kj', '<Esc>')
+
+                  map('n', 'J', ':tabprevious<CR>')
+                  map('n', 'K', ':tabnext<CR>')
                 '';
               }
             ]
@@ -144,6 +164,7 @@ in
             })
             ++ [
               mini-nvim
+              transparent-nvim
               vim-repeat
               # nnn-vim
               vim-fugitive
@@ -152,23 +173,64 @@ in
               nvim-web-devicons
               bufexplorer
               undotree
-              lexima-vim
-              vim-vsnip-integ
-              transparent-nvim
-              friendly-snippets
               {
-                plugin = indentLine;
+                plugin = dressing-nvim;
                 type = "lua";
                 config = ''
-                  vim.g.indentLine_char = '┆'
-                  vim.g.indentLine_color_term = 239
+                  require('dressing').setup{}
+                '';
+              }
+              # lexima-vim # use nvim-autopairs instead
+              {
+                plugin = nvim-autopairs;
+                type = "lua";
+                config = ''
+                  require('nvim-autopairs').setup{}
                 '';
               }
               {
-                plugin = vim-vsnip;
+                plugin = trouble-nvim;
                 type = "lua";
-                config = "";
+                config = ''
+                  require('trouble').setup{}
+                '';
               }
+              {
+                plugin = comment-nvim;
+                type = "lua";
+                config = ''
+                  require('Comment').setup{}
+                '';
+              }
+              {
+                plugin = todo-comments-nvim;
+                type = "lua";
+                config = ''
+                  require('todo-comments').setup{}
+                '';
+              }
+              # vim-vsnip-integ
+              # friendly-snippets
+              {
+                plugin = indent-blankline-nvim;
+                type = "lua";
+                config = ''
+                  require('ibl').setup{}
+                '';
+              }
+              # {
+              #   plugin = indentLine;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.indentLine_char = '┆'
+              #     vim.g.indentLine_color_term = 239
+              #   '';
+              # }
+              # {
+              #   plugin = vim-vsnip;
+              #   type = "lua";
+              #   config = "";
+              # }
               {
                 plugin = vim-move;
                 type = "lua";
@@ -179,9 +241,7 @@ in
               {
                 plugin = vim-suda;
                 type = "lua";
-                config = ''
-                  vim.g.move_key_modifier = "C"
-                '';
+                config = '''';
               }
               {
                 plugin = telescope-nvim;
@@ -360,30 +420,135 @@ in
               #   version = inputs.kitty-scrollback-nvim.rev;
               #   src = inputs.kitty-scrollback-nvim;
               # })
-              # {
-              #   plugin = nvim-treesitter.withAllGrammars;
-              #   type = "lua";
-              #   config = ''
-              #     require('nvim-treesitter.configs').setup{
-              #       sync_install = false,
-              #       auto_install = false,
-              #       highlight = {
-              #         enable = true,
-              #         disable = { "latex" }
-              #       },
-              #       incremental_selection = {
-              #         enable = true
-              #       },
-              #       indent = {
-              #         enable = true
-              #       }
-              #     };
-              #   '';
-              # }
             ]
           );
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.vscode.enable {
+      programs.neovim.plugins = [
+        {
+
+          plugin = pkgs.vimPlugins.vscode-neovim;
+          type = "lua";
+          config = ''
+            if exists('g:vscode')
+              set noloadplugins
+              set clipboard^=unnamed,unnamedplus
+
+              finish
+            endif
+          '';
+        }
+      ];
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.lsp.enable {
+      programs.neovim = {
+        # TODO
+        extraPackages = with pkgs; [ ];
+
+        plugins = with pkgs.vimPlugins; [
+          {
+            plugin = fidget-nvim;
+            type = "lua";
+            config = ''
+              require('fidget').setup{}
+            '';
+          }
+          {
+            plugin = nvim-lspconfig;
+            type = "lua";
+            config = ''
+              local lspconfig = require('lspconfig')
+
+              lspconfig.pyright.setup{}
+              lspconfig.nil_ls.setup{}
+              lspconfig.biome.setup{}
+              lspconfig.clangd.setup{}
+              lspconfig.cmake.setup{}
+              lspconfig.tsserver.setup{}
+              lspconfig.css_variables.setup{}
+              lspconfig.dockerls.setup{}
+              lspconfig.fish_lsp.setup{}
+              lspconfig.giltab_ci.setup{}
+              lspconfig.html.setup{}
+              lspconfig.julials.setup{}
+              lspconfig.lua_ls.setup{}
+              lspconfig.ols.setup{}
+              lspconfig.sqlls.setup{}
+              lspconfig.docker_compose_language_service.setup{}
+              lspconfig.vimls.setup{}
+              lspconfig.yamlls.setup{}
+              lspconfig.rust_analyzer.setup{}
+            '';
+          }
+          {
+            plugin = nvim-treesitter.withAllGrammars;
+            type = "lua";
+            config = ''
+              require('nvim-treesitter.configs').setup{
+                sync_install = false,
+                auto_install = false,
+                highlight = {
+                  enable = true,
+                  disable = { "latex" }
+                },
+                incremental_selection = {
+                  enable = true
+                },
+                indent = {
+                  enable = true
+                }
+              };
+            '';
+          }
+          {
+            plugin = copilot-lua;
+            type = "lua";
+            config = ''
+              require('copilot').setup{
+                suggestion = {
+                  auto_trigger = true
+                }
+              }
+            '';
+          }
+          {
+            plugin = render-markdown;
+            type = "lua";
+            config = ''
+              require('render-markdown').setup{}
+            '';
+          }
+          {
+            plugin = formatter-nvim;
+            type = "lua";
+            config = ''
+              require('formatter')
+
+              local augroup = vim.api.nvim_create_augroup
+              local autocmd = vim.api.nvim_create_autocmd
+              augroup("__formatter__", { clear = true })
+              autocmd("BufWritePost", {
+              	group = "__formatter__",
+              	command = ":FormatWrite",
+              })
+
+              require("which-key").add({
+                { "<leader>f", ":Format<CR>", desc = "Format file" },
+              })
+            '';
+          }
+          {
+            plugin = nvim-lint;
+            type = "lua";
+            config = '''';
+          }
+        ];
+      };
+
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

@@ -34,6 +34,10 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-topology.url = "github:oddlama/nix-topology";
     disko = {
       url = "github:nix-community/disko";

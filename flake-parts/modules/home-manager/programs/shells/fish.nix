@@ -47,7 +47,7 @@ in
     };
 
     nixpkgsPlugins = mkOption {
-      type = types.listOf types.string;
+      type = types.listOf types.str;
       default = [
         "done"
         "grc"

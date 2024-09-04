@@ -1,4 +1,4 @@
-# --- flake-parts/lib/maintainers.nix
+# --- flake-parts/nixvim/vanilla-config/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,12 +12,13 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-_: {
-  # tsandrini, owner of this repo
-  tsandrini = {
-    email = "t@tsandrini.sh";
-    name = "Tomáš Sandrini";
-    github = "tsandrini";
-    githubId = 21975189;
+_:
+{ ... }:
+{
+  imports = [ ];
+
+  performance = {
+    combinePlugins.enable = true;
+    byteCompileLua.enable = true;
   };
 }

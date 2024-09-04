@@ -53,7 +53,10 @@ in
           terminals.wezterm.enable = _ true;
           browsers.firefox.enable = _ true;
           browsers.firefox.userjs.betterfox.enable = _ true;
+
           editors.emacs-doom.enable = _ true;
+          editors.neovim.lsp.enable = _ true;
+
           thunderbird.enable = _ true;
         };
 
