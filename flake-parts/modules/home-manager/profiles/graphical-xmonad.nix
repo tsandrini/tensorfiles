@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.graphical-xmonad;
   _ = mkOverrideAtHmProfileLevel;
 in
 {
-  options.tensorfiles.hm.profiles.graphical-xmonad = with types; {
+  options.tensorfiles.hm.profiles.graphical-xmonad = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -46,9 +45,11 @@ in
           newsboat.enable = _ true;
           dmenu.enable = _ true;
           pywal.enable = _ true;
-          terminals.kitty.enable = _ true;
+          # terminals.kitty.enable = _ true;
+          terminals.wezterm.enable = _ true;
           browsers.firefox.enable = _ true;
           editors.emacs-doom.enable = _ true;
+          thunderbird.enable = _ true;
         };
 
         services = {
@@ -65,9 +66,10 @@ in
 
       home.sessionVariables = {
         # Default programs
-        BROWSER = "firefox";
-        TERMINAL = "kitty";
-        IDE = "emacs";
+        BROWSER = _ "firefox";
+        TERMINAL = _ "wezterm";
+        IDE = _ "emacs";
+        EMAIL = _ "thunderbird";
       };
 
       home.packages = with pkgs; [

@@ -19,16 +19,21 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    genAttrs
+    attrNames
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.programs.wayland.waybar;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.programs.wayland.waybar = with types; {
+  options.tensorfiles.programs.wayland.waybar = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the waybar wayland bar.
     '';

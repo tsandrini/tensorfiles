@@ -12,7 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ pkgs, inputs, ... }:
+{ inputs }:
+{ pkgs, ... }:
 {
   # -----------------
   # | SPECIFICATION |
@@ -65,6 +66,11 @@
     programs.shadow-nix.enable = true;
     tasks.system-autoupgrade.enable = false;
 
+    # Use the `nh` garbage collect to also collect .direnv and XDG profiles
+    # roots instead of the default ones.
+    tasks.nix-garbage-collect.enable = false;
+    programs.nh.enable = true;
+
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
     };
@@ -83,16 +89,22 @@
     };
   };
 
-  # Use the `nh` garbage collect to also collect .direnv and XDG profiles
-  # roots instead of the default ones.
-  tensorfiles.tasks.nix-garbage-collect.enable = false;
-  tensorfiles.programs.nh.enable = true;
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
   programs.shadow-client.forceDriver = "iHD";
-  programs.zsh.enable = true;
-  users.defaultUserShell = pkgs.zsh;
+  programs.fish.enable = true;
+  users.defaultUserShell = pkgs.bash;
+
+  programs.bash = {
+    interactiveShellInit = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+      then
+        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+      fi
+    '';
+  };
 
   programs.winbox.enable = true;
 
@@ -107,8 +119,6 @@
   };
 
   # programs.steam.enable = true; # just trying it out
-
-  networking.networkmanager.enable = true;
   networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {
@@ -140,6 +150,7 @@
     tensorfiles.hm = {
 
       profiles.graphical-plasma.enable = true;
+      profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
@@ -164,7 +175,7 @@
 
     home.packages = with pkgs; [
       thunderbird # A full-featured e-mail client
-      beeper # Universal chat app.
+      # beeper # Universal chat app.
       anki # Spaced repetition flashcard program
       libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
       texlive.combined.scheme-full # TeX Live environment
@@ -173,6 +184,7 @@
       ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
       zoom-us # Player for Z-Code, TADS and HUGO stories or games
       vesktop # Alternate client for Discord with Vencord built-in
+      gnucash # Free software for double entry accounting
 
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger

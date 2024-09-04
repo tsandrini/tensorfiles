@@ -14,21 +14,28 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake, inputs }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    hasAttr
+    mkEnableOption
+    mkOption
+    types
+    ;
   # inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
   cfg = config.tensorfiles.hm.system.impermanence;
+
 in
 # _ = mkOverrideAtHmModuleLevel;
 {
-  options.tensorfiles.hm.system.impermanence = with types; {
+  options.tensorfiles.hm.system.impermanence = {
     enable = mkEnableOption ''
       TODO
     '';
 
     persistentRoot = mkOption {
-      type = path;
+      type = types.path;
       default = "/persist";
       description = ''
         Path on the already mounted filesystem for the persistent root, that is,
@@ -40,7 +47,7 @@ in
     };
 
     allowOther = mkOption {
-      type = bool;
+      type = types.bool;
       default = false;
       description = ''
         TODO

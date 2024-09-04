@@ -19,9 +19,18 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    getExe
+    mkMerge
+    optional
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkPywalEnableOption mkImpermanenceEnableOption;
 
@@ -31,10 +40,10 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 in
 {
-  options.tensorfiles.hm.programs.shells.zsh = with types; {
+  options.tensorfiles.hm.programs.shells.zsh = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the zsh shell.
     '';
@@ -48,7 +57,7 @@ in
     };
 
     withAutocompletions = mkOption {
-      type = bool;
+      type = types.bool;
       default = true;
       description = ''
         Whether to enable autosuggestions/autocompletion related code
@@ -66,7 +75,7 @@ in
         };
 
       cfgSrc = mkOption {
-        type = path;
+        type = types.path;
         default = ./.;
         description = ''
           Path (or ideally, path inside a derivation) for the p10k.zsh
@@ -79,7 +88,7 @@ in
       };
 
       cfgFile = mkOption {
-        type = str;
+        type = types.str;
         default = "p10k.zsh";
         description = ''
           Potential override of the p10k.zsh config filename.
@@ -97,7 +106,7 @@ in
         };
 
       plugins = mkOption {
-        type = listOf str;
+        type = types.listOf types.str;
         default = [
           "git"
           "git-flow"
@@ -110,7 +119,7 @@ in
       };
 
       withFzf = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Whether to enable the fzf plugin
@@ -120,7 +129,7 @@ in
 
     shellAliases = {
       lsToEza = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Enable predefined shell aliases
@@ -128,7 +137,7 @@ in
       };
 
       catToBat = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Remap the cat related commands to its reworked edition bat.
@@ -136,7 +145,7 @@ in
       };
 
       findToFd = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Remap the find related commands to its reworked edition fd.
@@ -144,7 +153,7 @@ in
       };
 
       grepToRipgrep = mkOption {
-        type = bool;
+        type = types.bool;
         default = true;
         description = ''
           Remap the find related commands to its reworked edition fd.
@@ -163,8 +172,7 @@ in
         ++ (optional lsToEza eza)
         ++ (optional catToBat bat)
         ++ (optional findToFd fd)
-        ++ (optional grepToRipgrep ripgrep)
-        ++ (optional cfg.oh-my-zsh.withFzf fzf);
+        ++ (optional grepToRipgrep ripgrep);
 
       programs.zsh = {
         enable = _ true;
@@ -207,25 +215,28 @@ in
       };
 
       home.shellAliases = mkMerge [
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        {
+          fetch = _ "${getExe pkgs.nitch}";
+          g = _ "${getExe config.programs.git.package}";
+        }
         (mkIf cfg.shellAliases.lsToEza {
-          ls = _ "${pkgs.eza}/bin/eza";
-          ll = _ "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
-          tree = _ "${pkgs.eza}/bin/eza -F --hyperlink --icons --group-directories-first -la --git --header --created --modified -T";
+          ls = _ "${getExe pkgs.eza}";
+          ll = _ "${getExe pkgs.eza} -F --hyperlink --icons --group-directories-first -la --git --header --created --modified";
+          tree = _ "${getExe pkgs.eza} -F --hyperlink --icons --group-directories-first -la --git --header --created --modified -T";
         })
         (mkIf cfg.shellAliases.catToBat {
-          cat = _ "${pkgs.bat}/bin/bat -p --wrap=never --paging=never";
-          less = _ "${pkgs.bat}/bin/bat --paging=always";
+          cat = _ "${getExe pkgs.bat} -p --wrap=never --paging=never";
+          less = _ "${getExe pkgs.bat} --paging=always";
         })
         (mkIf cfg.shellAliases.findToFd {
-          find = _ "${pkgs.fd}/bin/fd";
-          fd = _ "${pkgs.fd}/bin/fd";
+          find = _ "${getExe pkgs.fd}";
+          fd = _ "${getExe pkgs.fd}";
         })
         (mkIf cfg.shellAliases.grepToRipgrep {
-          grep = _ "${pkgs.ripgrep}/bin/rg";
-          list-todos = _ "${pkgs.ripgrep}/bin/rg -g '!{.git,node_modules,result,build,dist,.idea,out,.DS_Store}' --no-follow 'TODO|FIXME' ";
+          grep = _ "${getExe pkgs.ripgrep}";
+          list-todos = _ "${getExe pkgs.ripgrep} -g '!{.git,node_modules,result,build,dist,.idea,out,.DS_Store}' --no-follow 'TODO|FIXME' ";
         })
-        { fetch = _ "${pkgs.nitch}/bin/nitch"; }
+        { fetch = _ "${getExe pkgs.nitch}"; }
       ];
     }
     # |----------------------------------------------------------------------| #
@@ -236,6 +247,12 @@ in
         # ( ) # Hide shell job control messages.
         (cat ${config.xdg.cacheHome}/wal/sequences &)
       '';
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.oh-my-zsh.withFzf {
+      programs.fzf = {
+        enable = _ true;
+      };
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.shellAliases.catToBat {

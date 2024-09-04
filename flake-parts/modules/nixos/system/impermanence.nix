@@ -14,9 +14,16 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake, inputs }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    hasAttr
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkAgenixEnableOption;
 
@@ -26,7 +33,7 @@ let
   agenixCheck = (isModuleLoadedAndEnabled config "tensorfiles.security.agenix") && cfg.agenix.enable;
 in
 {
-  options.tensorfiles.system.impermanence = with types; {
+  options.tensorfiles.system.impermanence = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the persistence ecosystem.
       Doing so enables other modules to automatically use the persistence instead
@@ -38,7 +45,7 @@ in
     };
 
     disableSudoLectures = mkOption {
-      type = bool;
+      type = types.bool;
       default = true;
       description = ''
         Whether to disable the default sudo lectures that would be
@@ -47,7 +54,7 @@ in
     };
 
     persistentRoot = mkOption {
-      type = path;
+      type = types.path;
       default = "/persist";
       description = ''
         Path on the already mounted filesystem for the persistent root, that is,
@@ -59,7 +66,7 @@ in
     };
 
     allowOther = mkOption {
-      type = bool;
+      type = types.bool;
       default = false;
       description = ''
         TODO
@@ -87,7 +94,7 @@ in
       '';
 
       rootPartition = mkOption {
-        type = path;
+        type = types.path;
         default = "/dev/sda1";
         description = ''
           The dev path for the main btrfs formatted root partition that is
@@ -96,7 +103,7 @@ in
       };
 
       rootSubvolume = mkOption {
-        type = str;
+        type = types.str;
         default = "root";
         description = ''
           The main root btrfs subvolume path that is going to be reset to
@@ -105,7 +112,7 @@ in
       };
 
       blankRootSnapshot = mkOption {
-        type = str;
+        type = types.str;
         default = "root-blank";
         description = ''
           The btrfs snapshot of the main rootSubvolume. You will probably
@@ -117,7 +124,7 @@ in
       };
 
       mountpoint = mkOption {
-        type = path;
+        type = types.path;
         default = "/mnt";
         description = ''
           Temporary mountpoint that should be used for mounting and resetting

@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.services.x11.desktop-managers.startx-home-manager;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.services.x11.desktop-managers.startx-home-manager = with types; {
+  options.tensorfiles.services.x11.desktop-managers.startx-home-manager = {
     enable = mkEnableOption ''
       Enable NixOS module that sets up the simple startx X11 displayManager with
       home-manager as the default session. This can be useful in cases where you

@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
-  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.direnv;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.programs.direnv = with types; {
+  options.tensorfiles.hm.programs.direnv = {
     enable = mkEnableOption ''
       Enables a HomeManager module that sets up direnv.
 
@@ -37,12 +36,13 @@ in
     {
       programs.direnv = {
         enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (
-          isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
-        );
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+        # NOTE enabled by default so probably unnecessary
+        # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        # enableNushellIntegration = _ (
+        #   isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
+        # );
+        # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
         nix-direnv.enable = _ true;
       };
     }

@@ -19,9 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    isBool
+    isString
+    mkEnableOption
+    ;
+  inherit (lib.generators) toINI;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkPywalEnableOption;
 
@@ -31,7 +37,7 @@ let
   pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
 in
 {
-  options.tensorfiles.hm.services.dunst = with types; {
+  options.tensorfiles.hm.services.dunst = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -66,7 +72,7 @@ in
             # taken from
             # https://github.com/nix-community/home-manager/blob/master/modules/services/dunst.nix
             yesNo = value: if value then "yes" else "no";
-            toDunstIni = generators.toINI {
+            toDunstIni = toINI {
               mkKeyValue =
                 key: value:
                 let

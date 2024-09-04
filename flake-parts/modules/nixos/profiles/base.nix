@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.base;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.base = with types; {
+  options.tensorfiles.profiles.base = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the base system profile.
 

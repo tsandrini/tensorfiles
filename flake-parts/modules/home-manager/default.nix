@@ -20,12 +20,13 @@
   ...
 }:
 let
+  inherit (lib) mkOption types;
   inherit (inputs.flake-parts.lib) importApply;
   localFlake = self;
 in
 {
-  options.flake.homeModules = lib.mkOption {
-    type = with lib.types; lazyAttrsOf unspecified;
+  options.flake.homeModules = mkOption {
+    type = types.lazyAttrsOf types.unspecified;
     default = { };
   };
 
@@ -39,6 +40,10 @@ in
     misc_xdg = importApply ./misc/xdg.nix { inherit localFlake; };
 
     # -- profiles --
+    profiles_accounts_tsandrini = importApply ./profiles/accounts/tsandrini.nix {
+      inherit localFlake;
+      inherit (config.agenix) secretsPath;
+    };
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake inputs; };
     profiles_graphical-xmonad = importApply ./profiles/graphical-xmonad.nix { inherit localFlake; };
@@ -54,7 +59,7 @@ in
     programs_editors_emacs-doom = importApply ./programs/editors/emacs-doom.nix {
       inherit localFlake inputs;
     };
-    programs_editors_neovim = importApply ./programs/editors/neovim.nix { inherit localFlake inputs; };
+    programs_editors_neovim = importApply ./programs/editors/neovim.nix { inherit localFlake; };
     programs_file-managers_lf = importApply ./programs/file-managers/lf { inherit localFlake; };
     programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix { inherit localFlake; };
     programs_git = importApply ./programs/git.nix { inherit localFlake; };
@@ -63,6 +68,7 @@ in
     programs_pywal = importApply ./programs/pywal.nix { inherit localFlake; };
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
     programs_shells_zsh = importApply ./programs/shells/zsh { inherit localFlake; };
+    programs_shells_fish = importApply ./programs/shells/fish.nix { inherit localFlake; };
     # programs_spicetify = importApply ./programs/spicetify.nix { inherit localFlake inputs; };
     programs_ssh = importApply ./programs/ssh.nix {
       inherit (config.agenix) secretsPath pubkeys;
@@ -71,7 +77,8 @@ in
     programs_terminals_alacritty = importApply ./programs/terminals/alacritty.nix {
       inherit localFlake;
     };
-    programs_terminals_kitty = importApply ./programs/terminals/kitty.nix {
+    programs_terminals_kitty = importApply ./programs/terminals/kitty.nix { inherit localFlake; };
+    programs_terminals_wezterm = importApply ./programs/terminals/wezterm.nix {
       inherit localFlake inputs;
     };
     programs_thunderbird = importApply ./programs/thunderbird.nix { inherit localFlake; };

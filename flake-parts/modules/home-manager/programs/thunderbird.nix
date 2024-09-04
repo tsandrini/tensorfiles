@@ -14,16 +14,15 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.thunderbird;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.programs.thunderbird = with types; {
+  options.tensorfiles.hm.programs.thunderbird = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -32,11 +31,25 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # TODO setup systemd service
+      # TODO birdtray doesn't work on wayland, see
+      # https://github.com/gyunaev/birdtray/issues/597
+      # home.packages = with pkgs; [ birdtray ];
+
       programs.thunderbird = {
         enable = _ true;
-        # profiles.default = {
-        #   isDefault = _ true;
-        # };
+        profiles.default = {
+          isDefault = _ true;
+          withExternalGnupg = _ true;
+          settings = {
+            "datareporting.healthreport.uploadEnabled" = _ false;
+            "calendar.timezone.useSystemTimezone" = _ true;
+            "privacy.donottrackheader.enabled" = _ true;
+            "pdfjs.enabledCache.state" = _ true;
+            "mailnews.default_sort_order" = _ 2; # descending
+            "mailnews.default_sort_type" = _ 18; # by date
+          };
+        };
       };
     }
     # |----------------------------------------------------------------------| #

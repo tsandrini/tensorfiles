@@ -15,7 +15,7 @@
 _: {
   # tsandrini, owner of this repo
   tsandrini = {
-    email = "tomas.sandrini@seznam.cz";
+    email = "t@tsandrini.sh";
     name = "Tomáš Sandrini";
     github = "tsandrini";
     githubId = 21975189;

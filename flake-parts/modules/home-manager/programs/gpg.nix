@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
-  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
+  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.gpg;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.programs.gpg = with types; {
+  options.tensorfiles.hm.programs.gpg = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -44,9 +43,10 @@ in
       services.gpg-agent = {
         enable = _ true;
         pinentryPackage = _ pkgs.pinentry-qt;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+        # NOTE true by default so probably unnecessary
+        # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
       };
 
       programs.git.signing = {

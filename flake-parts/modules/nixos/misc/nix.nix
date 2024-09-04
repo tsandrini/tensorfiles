@@ -19,16 +19,20 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
 
   cfg = config.tensorfiles.misc.nix;
   _ = mkOverrideAtModuleLevel;
 in
 {
-  options.tensorfiles.misc.nix = with types; {
+  options.tensorfiles.misc.nix = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles defaults regarding nix
       language & nix package manager.

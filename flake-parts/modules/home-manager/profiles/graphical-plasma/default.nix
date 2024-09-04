@@ -19,16 +19,15 @@
   lib,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.graphical-plasma;
   _ = mkOverrideAtHmProfileLevel;
 in
 {
-  options.tensorfiles.hm.profiles.graphical-plasma = with types; {
+  options.tensorfiles.hm.profiles.graphical-plasma = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -50,10 +49,15 @@ in
         programs = {
           newsboat.enable = _ true;
           pywal.enable = _ true;
-          terminals.kitty.enable = _ true;
+          # terminals.kitty.enable = _ true;
+          terminals.wezterm.enable = _ true;
           browsers.firefox.enable = _ true;
+          browsers.firefox.userjs.betterfox.enable = _ true;
+
           editors.emacs-doom.enable = _ true;
-          #thunderbird.enable = _ true;
+          editors.neovim.lsp.enable = _ true;
+
+          thunderbird.enable = _ true;
         };
 
         services = {
@@ -77,8 +81,9 @@ in
       home.sessionVariables = {
         # Default programs
         BROWSER = _ "firefox";
-        TERMINAL = _ "kitty";
-        IDE = _ "code";
+        TERMINAL = _ "wezterm";
+        IDE = _ "emacs";
+        EMAIL = _ "thunderbird";
       };
 
       fonts.fontconfig.enable = _ true;

@@ -20,16 +20,15 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-plasma5;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.graphical-plasma5 = with types; {
+  options.tensorfiles.profiles.graphical-plasma5 = {
     enable = mkEnableOption ''
       TODO
     '';

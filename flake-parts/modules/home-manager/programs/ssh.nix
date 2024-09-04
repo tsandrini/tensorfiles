@@ -23,9 +23,15 @@
   hostName,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    mkOption
+    types
+    attrByPath
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.ssh;
@@ -35,7 +41,7 @@ let
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.sshKey.enable;
 in
 {
-  options.tensorfiles.hm.programs.ssh = with types; {
+  options.tensorfiles.hm.programs.ssh = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -46,7 +52,7 @@ in
       '';
 
       privateKeySecretsPath = mkOption {
-        type = str;
+        type = types.str;
         default = "hosts/${hostName}/users/$user/private_key";
         description = ''
           TODO
@@ -54,7 +60,7 @@ in
       };
 
       privateKeyHomePath = mkOption {
-        type = str;
+        type = types.str;
         default = ".ssh/id_ed25519";
         description = ''
           TODO
@@ -62,7 +68,7 @@ in
       };
 
       publicKeyHomePath = mkOption {
-        type = str;
+        type = types.str;
         default = ".ssh/id_ed25519.pub";
         description = ''
           TODO
@@ -70,7 +76,7 @@ in
       };
 
       publicKeyRaw = mkOption {
-        type = nullOr str;
+        type = types.nullOr types.str;
         default = null;
         description = ''
           TODO
@@ -78,7 +84,7 @@ in
       };
 
       publicKeySecretsAttrsetKey = mkOption {
-        type = str;
+        type = types.str;
         default = "hosts.${hostName}.users.$user.sshKey";
         description = ''
           TODO
@@ -96,12 +102,13 @@ in
 
       programs.keychain = {
         enable = _ true;
-        enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
-        enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
-        enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
-        enableNushellIntegration = _ (
-          isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
-        );
+        # NOTE enabled by default so probably unnecessary
+        # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
+        # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");
+        # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");
+        # enableNushellIntegration = _ (
+        #   isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
+        # );
         agents = [ "ssh" ];
         extraFlags = [
           "--nogui"
@@ -116,8 +123,8 @@ in
     (mkIf sshKeyCheck {
       age.secrets."${cfg.sshKey.privateKeySecretsPath}" = {
         file = _ (secretsPath + "/${cfg.sshKey.privateKeySecretsPath}.age");
-        mode = _ "700";
-        owner = _ config.home.username;
+        # mode = _ "600";
+        # owner = _ config.home.username; # NOTE not available in HM module
       };
 
       home.file = with cfg.sshKey; {
@@ -131,7 +138,7 @@ in
               if publicKeyRaw != null then
                 publicKeyRaw
               else
-                (attrsets.attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
+                (attrByPath (replaceStrings [ "$user" ] [ config.home.username ] (
                   splitString "." publicKeySecretsAttrsetKey
                 )) "" pubkeys);
           in

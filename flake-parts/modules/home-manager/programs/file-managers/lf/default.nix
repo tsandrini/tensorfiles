@@ -19,9 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.file-managers.lf;
@@ -234,7 +240,7 @@ let
     );
 in
 {
-  options.tensorfiles.hm.programs.file-managers.lf = with types; {
+  options.tensorfiles.hm.programs.file-managers.lf = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the lf file manager.
 
@@ -242,7 +248,7 @@ in
     '';
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       default = pkgs.lf;
       description = ''
         Which package to use for the lf binaries. You can provide any
@@ -253,7 +259,7 @@ in
     };
 
     withIcons = mkOption {
-      type = bool;
+      type = types.bool;
       default = true;
       description = ''
         Enable the preview icons defined at ./icons for the lf file manager
@@ -275,7 +281,7 @@ in
         };
 
       backend = mkOption {
-        type = enum [
+        type = types.enum [
           "ueberzug"
           "kitty"
         ];

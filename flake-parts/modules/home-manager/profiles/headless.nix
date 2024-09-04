@@ -14,9 +14,14 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
@@ -26,10 +31,10 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 in
 {
-  options.tensorfiles.hm.profiles.headless = with types; {
+  options.tensorfiles.hm.profiles.headless = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -46,7 +51,7 @@ in
         profiles.minimal.enable = _ true;
 
         programs = {
-          shells.zsh.enable = _ true;
+          shells.fish.enable = _ true;
           editors.neovim.enable = _ true;
           file-managers.yazi.enable = _ true;
 
@@ -61,13 +66,14 @@ in
 
       home.sessionVariables = {
         # Default programs
-        EDITOR = "nvim";
+        EDITOR = "nvim"; # TODO
         VISUAL = "nvim";
+        # Default programs
         # Directory structure
-        DOWNLOADS_DIR = config.home.homeDirectory + "/Downloads";
-        ORG_DIR = config.home.homeDirectory + "/OrgBundle";
-        PROJECTS_DIR = config.home.homeDirectory + "/ProjectBundle";
-        MISC_DATA_DIR = config.home.homeDirectory + "/FiberBundle";
+        DOWNLOADS_DIR = _ (config.home.homeDirectory + "/Downloads");
+        ORG_DIR = _ (config.home.homeDirectory + "/OrgBundle");
+        PROJECTS_DIR = _ (config.home.homeDirectory + "/ProjectBundle");
+        MISC_DATA_DIR = _ (config.home.homeDirectory + "/FiberBundle");
         # Fallbacks
         # DEFAULT_USERNAME = "tsandrini";
         # DEFAULT_MAIL = "tomas.sandrini@seznam.cz";

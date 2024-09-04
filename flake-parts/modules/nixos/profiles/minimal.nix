@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.minimal;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.minimal = with types; {
+  options.tensorfiles.profiles.minimal = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the minimal system profile.
 

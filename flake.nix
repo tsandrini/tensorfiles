@@ -18,6 +18,8 @@
   inputs = {
     # --- BASE DEPENDENCIES ---
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # TODO wezterm rendering bug https://github.com/NixOS/nixpkgs/issues/336069
+    nixpkgs-wezterm.url = "github:nixos/nixpkgs?rev=d04953086551086b44b6f3c6b7eeb26294f207da";
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     # --- YOUR DEPENDENCIES ---
@@ -32,6 +34,10 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-topology.url = "github:oddlama/nix-topology";
     disko = {
       url = "github:nix-community/disko";
@@ -41,22 +47,22 @@
       url = "github:nix-community/nixGL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     emacs-overlay.url = "github:nix-community/emacs-overlay";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+    deploy-rs.url = "github:serokell/deploy-rs";
     impermanence.url = "github:nix-community/impermanence";
     nur.url = "github:nix-community/NUR";
     arkenfox-user-js = {
       url = "github:arkenfox/user.js";
       flake = false;
     };
+    betterfox = {
+      url = "github:yokoffing/Betterfox";
+      flake = false;
+    };
     nixpkgs-wayland = {
       url = "github:nix-community/nixpkgs-wayland";
       # nixpkgs-wayland.inputs.nixpkgs.follows = "nixpkgs";
-    };
-    kitty-scrollback-nvim = {
-      url = "github:mikesmithgh/kitty-scrollback.nvim";
-      flake = false;
     };
     nix-alien.url = "github:thiagokokada/nix-alien";
     # TODO some serious maintenance sheningans
@@ -70,6 +76,16 @@
       inputs.home-manager.follows = "home-manager";
     };
     nix-gaming.url = "github:fufexan/nix-gaming";
+    nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
+    vpsadminos = {
+      url = "github:vpsfreecz/vpsadminos";
+      flake = false;
+    };
+    # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    # kitty-scrollback-nvim = {
+    #   url = "github:mikesmithgh/kitty-scrollback.nvim";
+    #   flake = false;
+    # };
     # spicetify-nix = {
     #   url = "github:the-argus/spicetify-nix";
     #   inputs.nixpkgs.follows = "nixpkgs";

@@ -14,9 +14,8 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
@@ -28,7 +27,7 @@ let
   impermanence = if impermanenceCheck then config.tensorfiles.system.impermanence else { };
 in
 {
-  options.tensorfiles.services.networking.networkmanager = with types; {
+  options.tensorfiles.services.networking.networkmanager = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the networkmanager service.
     '';

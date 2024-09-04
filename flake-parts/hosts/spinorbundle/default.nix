@@ -12,12 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{
-  pkgs,
-  inputs,
-  system,
-  ...
-}:
+{ inputs }:
+{ pkgs, system, ... }:
 {
   # -----------------
   # | SPECIFICATION |
@@ -92,8 +88,18 @@
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
   programs.shadow-client.forceDriver = "iHD";
-  programs.zsh.enable = true;
-  users.defaultUserShell = pkgs.zsh;
+  programs.fish.enable = true;
+  users.defaultUserShell = pkgs.bash;
+
+  programs.bash = {
+    interactiveShellInit = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+      then
+        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+      fi
+    '';
+  };
 
   programs.winbox.enable = true;
 
@@ -146,7 +152,7 @@
       # programs.spicetify.enable = true;
       # services.pywalfox-native.enable = true;
       services.keepassxc.enable = true;
-      services.activitywatch.enable = true;
+      # services.activitywatch.enable = true;
     };
 
     services.syncthing = {
@@ -164,7 +170,7 @@
 
     home.packages = with pkgs; [
       thunderbird # A full-featured e-mail client
-      beeper # Universal chat app.
+      # beeper # Universal chat app.
       anki # Spaced repetition flashcard program
       libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
       texlive.combined.scheme-full # TeX Live environment

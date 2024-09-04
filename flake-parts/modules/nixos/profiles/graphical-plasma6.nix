@@ -20,16 +20,15 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-plasma6;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.graphical-plasma6 = with types; {
+  options.tensorfiles.profiles.graphical-plasma6 = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -48,11 +47,13 @@ in
         notify-desktop # Little application that lets you send desktop notifications with one command
         wl-clipboard # Command-line copy/paste utilities for Wayland
         maim # A command-line screenshot utility
+        xxdiff # Graphical file and directories comparator and merge tool
 
         wireshark # Powerful network protocol analyzer
         pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
         mqttui # Terminal client for MQTT
         mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
+        mqtt-explorer # An all-round MQTT client that provides a structured topic overview
 
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
@@ -82,6 +83,7 @@ in
         kdePackages.plasma-browser-integration
         kdePackages.kaddressbook # KDE contact manager
         kdePackages.merkuro # A calendar application using Akonadi to sync with external services
+        kdePackages.kompare # Graphical File Differences Tool
 
         kdePackages.kmail # Mail client
         kdePackages.kmailtransport
@@ -105,7 +107,8 @@ in
         kdePackages.kcolorpicker # Qt based Color Picker with popup menu
         kdePackages.kcolorchooser
         kdePackages.kolourpaint # Paint program
-        kdePackages.knotes # Popup notes
+        # NOTE KNotes is unmaintained upstream,
+        # kdePackages.knotes # Popup notes
         kdePackages.kalarm # Personal alarm scheduler
         # kdePackages.kamoso # A simple and friendly program to use your camera
         kdePackages.kruler # Screen ruler
@@ -113,7 +116,7 @@ in
         okteta # A hex editor
         kdePackages.elisa # A simple media player for KDE
         kdePackages.kmag # A small Linux utility to magnify a part of the screen
-        kdePackages.itinerary
+        # kdePackages.itinerary
 
         #kdePackages.bismuth # A dynamic tiling extension for KWin
         # kdePackages.polonium # Auto-tiler that uses KWin 5.27+ tiling functionality

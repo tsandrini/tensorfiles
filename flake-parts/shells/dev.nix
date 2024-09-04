@@ -26,6 +26,7 @@
   gh,
   nh,
   nix-fast-build,
+  deploy-rs,
   disko,
   rc2nix,
   cachix,
@@ -80,6 +81,7 @@ mkShell {
       rc2nix # KDE: Convert rc files to nix expressions
       cachix # Command-line client for Nix binary cache hosting https://cachix.org
       nix-fast-build # Combine the power of nix-eval-jobs with nix-output-monitor to speed-up your evaluation and building process
+      deploy-rs # Multi-profile Nix-flake deploy tool
     ];
 
   shellHook = ''

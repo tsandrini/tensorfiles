@@ -29,6 +29,22 @@ rec {
 
     *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
   */
+  mkOverrideAtNixvimModuleLevel = mkOverride 900;
+
+  /*
+    mkOverride function with a preset priority set for all of the
+    home-manager profile modules.
+
+    *Type*: `mkOverrideAtNixvimProfileLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
+  */
+  mkOverrideAtNixvimProfileLevel = mkOverride 800;
+
+  /*
+    mkOverride function with a preset priority set for all of the
+    home-manager modules.
+
+    *Type*: `mkOverrideAtModuleLevel :: AttrSet a -> { _type :: String; priority :: Int; content :: AttrSet a; }`
+  */
   mkOverrideAtHmModuleLevel = mkOverride 700;
 
   /*

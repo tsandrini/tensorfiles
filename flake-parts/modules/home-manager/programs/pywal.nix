@@ -19,9 +19,16 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
+  inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules) isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
@@ -30,7 +37,7 @@ let
   impermanenceCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
   impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
-  pathToRelative = strings.removePrefix "${config.home.homeDirectory}/";
+  pathToRelative = removePrefix "${config.home.homeDirectory}/";
 
   plasmaCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.profiles.graphical-plasma";
   kdewallpaperset = pkgs.writeShellScriptBin "kdewallpaperset" ''
@@ -235,7 +242,7 @@ let
   '';
 in
 {
-  options.tensorfiles.hm.programs.pywal = with types; {
+  options.tensorfiles.hm.programs.pywal = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles pywal colorscheme generator.
     '';
@@ -245,7 +252,7 @@ in
     };
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       default = pkgs.pywal;
       description = ''
         Which package to use for the pywal utilities. You can provide any

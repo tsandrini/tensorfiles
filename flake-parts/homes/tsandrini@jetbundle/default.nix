@@ -44,7 +44,7 @@
 
   home.packages = with pkgs; [
     thunderbird # A full-featured e-mail client
-    beeper # Universal chat app.
+    # beeper # Universal chat app.
     armcord # Lightweight, alternative desktop client for Discord
     anki # Spaced repetition flashcard program
     libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org

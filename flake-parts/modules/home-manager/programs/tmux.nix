@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.tmux;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.programs.tmux = with types; {
+  options.tensorfiles.hm.programs.tmux = {
     enable = mkEnableOption ''
       TODO
     '';

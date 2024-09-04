@@ -19,9 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.programs.newsboat;
@@ -57,7 +63,7 @@ let
   );
 in
 {
-  options.tensorfiles.hm.programs.newsboat = with types; {
+  options.tensorfiles.hm.programs.newsboat = {
     enable = mkEnableOption ''
       TODO
     '';

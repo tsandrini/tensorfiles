@@ -144,4 +144,32 @@ with builtins;
         Enables doing module level configurations via simple attrsets.
       '';
     };
+
+  mkSubmodulesOption =
+    # (String -> AttrSet a) Function that, given a submodule name, yields all of the submodule related options for that given submodule
+    generatorFunction:
+    mkOption {
+      type = attrsOf (
+        submodule (
+          { name, ... }:
+          {
+            options = generatorFunction name;
+          }
+        )
+      );
+      default = { };
+      example = {
+        "mySubmoduleKey" = {
+          myOption = false;
+          otherOption.name = "test1";
+        };
+        # just initialize the defaults
+        "myOtherSubmoduleKey" = { };
+      };
+      description = ''
+        Submodules configuration option submodule.
+        Enables doing module level configurations via simple attrsets.
+      '';
+    };
+
 }

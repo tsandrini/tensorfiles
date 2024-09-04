@@ -12,16 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   config,
   lib,
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.terminals.kitty;
@@ -32,7 +38,7 @@ let
     && (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.editors.neovim");
 in
 {
-  options.tensorfiles.hm.programs.terminals.kitty = with types; {
+  options.tensorfiles.hm.programs.terminals.kitty = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
     '';
@@ -40,7 +46,8 @@ in
     nvim-scrollback = {
       enable =
         mkEnableOption ''
-          TODO
+          Enables NixOS module that configures/handles terminals.kitty neovim integration.
+          Requires nightly build of neovim unfortunately.
         ''
         // {
           default = true;
@@ -48,7 +55,7 @@ in
     };
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       default = pkgs.kitty;
       description = ''
         TODO
@@ -75,10 +82,10 @@ in
         };
         extraConfig = mkBefore ''
           ${
-            if nvimScrollbackCheck then
+            if nvimScrollbackCheck then # TODO ADD kitty-scrollback.nvim input if enabling
               ''
                 listen_on unix:/tmp/kitty
-                action_alias kitty_scrollback_nvim kitten ${inputs.kitty-scrollback-nvim}/python/kitty_scrollback_nvim.py --no-nvim-args
+                action_alias kitty_scrollback_nvim kitten ''${inputs.kitty-scrollback-nvim}/python/kitty_scrollback_nvim.py --no-nvim-args
                 map ctrl+space kitty_scrollback_nvim
                 mouse_map kitty_mod+right press ungrabbed combine : mouse_select_command_output : kitty_scrollback_nvim --config ksb_builtin_last_visited_cmd_output
               ''

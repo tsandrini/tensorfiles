@@ -14,41 +14,29 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
 { config, lib, ... }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkOverride
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.misc.xdg;
   _ = mkOverrideAtHmModuleLevel;
 
   defaultBrowser =
-    if cfg.defaultApplications.browser != null then
-      cfg.defaultApplications.browser
-    else
-      (
-        if config.home.sessionVariables.BROWSER != null then config.home.sessionVariables.BROWSER else null
-      );
-
+    if config.home.sessionVariables.BROWSER != "" then config.home.sessionVariables.BROWSER else null;
   defaultEditor =
-    if cfg.defaultApplications.editor != null then
-      cfg.defaultApplications.editor
-    else
-      (if config.home.sessionVariables.EDITOR != null then config.home.sessionVariables.EDITOR else null);
-
+    if config.home.sessionVariables.EDITOR != "" then config.home.sessionVariables.EDITOR else null;
   defaultTerminal =
-    if cfg.defaultApplications.terminal != null then
-      cfg.defaultApplications.terminal
-    else
-      (
-        if config.home.sessionVariables.TERMINAL != null then
-          config.home.sessionVariables.TERMINAL
-        else
-          null
-      );
+    if config.home.sessionVariables.TERMINAL != "" then config.home.sessionVariables.TERMINAL else null;
+  defaultEmail =
+    if config.home.sessionVariables.EMAIL != "" then config.home.sessionVariables.EMAIL else null;
 in
 {
-  options.tensorfiles.hm.misc.xdg = with types; {
+  options.tensorfiles.hm.misc.xdg = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the xdg toolset.
     '';
@@ -61,30 +49,6 @@ in
         // {
           default = true;
         };
-
-      browser = mkOption {
-        type = nullOr str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
-
-      editor = mkOption {
-        type = nullOr str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
-
-      terminal = mkOption {
-        type = nullOr str;
-        default = null;
-        description = ''
-          TODO
-        '';
-      };
     };
   };
 
@@ -96,6 +60,30 @@ in
         mime.enable = _ true;
         mimeApps.enable = _ true;
       };
+
+      home.sessionVariables =
+        let
+          # NOTE the lowest possible priority just to make sure the keys
+          # in the sessionVariables exist
+          _ = mkOverride 5000;
+        in
+        {
+          EDITOR = _ "";
+          VISUAL = _ "";
+
+          BROWSER = _ "";
+          TERMINAL = _ "";
+          IDE = _ "";
+          EMAIL = _ "";
+
+          DOWNLOADS_DIR = _ "";
+          ORG_DIR = _ "";
+          PROJECTS_DIR = _ "";
+          MISC_DATA_DIR = _ "";
+
+          DEFAULT_USERNAME = _ config.home.username;
+          DEFAULT_MAIL = _ "";
+        };
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.defaultApplications.enable {
@@ -133,6 +121,10 @@ in
           "mimetype" = mkIf (defaultTerminal != null) (_ "${defaultTerminal}.desktop");
           "application/x-terminal-emulator" = mkIf (defaultTerminal != null) (_ "${defaultTerminal}.desktop");
           "x-terminal-emulator" = mkIf (defaultTerminal != null) (_ "${defaultTerminal}.desktop");
+          # EMAIL
+          "x-scheme-handler/mailto" = mkIf (defaultEmail != null) (_ "${defaultEmail}.desktop");
+          "x-scheme-handler/mid" = mkIf (defaultEmail != null) (_ "${defaultEmail}.desktop");
+          "message/rfc822" = mkIf (defaultEmail != null) (_ "${defaultEmail}.desktop");
         };
       };
     })

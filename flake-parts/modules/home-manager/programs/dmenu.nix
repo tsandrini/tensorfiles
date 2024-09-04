@@ -19,9 +19,14 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    mkOption
+    types
+    ;
   inherit (localFlake.lib.modules) isModuleLoadedAndEnabled;
   inherit (localFlake.lib.options) mkPywalEnableOption;
 
@@ -48,7 +53,7 @@ let
     };
 in
 {
-  options.tensorfiles.hm.programs.dmenu = with types; {
+  options.tensorfiles.hm.programs.dmenu = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -58,7 +63,7 @@ in
     };
 
     pkg = mkOption {
-      type = package;
+      type = types.package;
       default = pkgs.dmenu;
       description = ''
         Which package to use for the dmenu binaries. You can provide any

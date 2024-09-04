@@ -20,7 +20,7 @@ in
 {
   common = { };
   hosts = {
-    spinorbundle = {
+    jetbundle = {
       users = {
         root = {
           sshKey = null;
@@ -32,7 +32,19 @@ in
         };
       };
     };
-    jetbundle = {
+    remotebundle = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [ tsandrini ]; # TODO only temporary
+        };
+        tsandrini = {
+          sshKey = null;
+          authorizedKeys = [ tsandrini ];
+        };
+      };
+    };
+    spinorbundle = {
       users = {
         root = {
           sshKey = null;

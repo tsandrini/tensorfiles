@@ -19,16 +19,15 @@
   pkgs,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
 
   cfg = config.tensorfiles.hm.services.activitywatch;
   _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.hm.services.activitywatch = with types; {
+  options.tensorfiles.hm.services.activitywatch = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -48,19 +47,31 @@ in
         };
       };
 
-      systemd.user.services.activitywatch-watcher-awatcher = {
-        Unit.After = [ "activitywatch.service" ];
-      };
-
-      systemd.user.services.aw-qt = {
-        Unit = {
-          After = [ "activitywatch.service" ];
-          Description = _ "Qt Tray Application for ActivityWatch";
+      systemd.user.services = {
+        activitywatch-watcher-awatcher = {
+          Unit = {
+            After = [ "activitywatch.service" ];
+            Requires = [ "activitywatch.service" ];
+          };
+          Service = {
+            ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
+          };
         };
-        Service = {
-          ExecStart = _ "${pkgs.aw-qt}/bin/aw-qt";
-          RestartSec = _ 5;
-          Restart = _ "unless-stopped";
+
+        aw-qt = {
+          Unit = {
+            After = [ "activitywatch.service" ];
+            Requires = [ "activitywatch.service" ];
+            Description = "Qt Tray Application for ActivityWatch";
+          };
+          Service = {
+            ExecStart = "${pkgs.aw-qt}/bin/aw-qt";
+            Restart = "on-failure";
+            RestartSec = 5;
+          };
+          Install = {
+            WantedBy = [ "graphical-session.target" ];
+          };
         };
       };
     }

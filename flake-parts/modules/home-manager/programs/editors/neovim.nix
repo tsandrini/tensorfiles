@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   config,
   lib,
@@ -20,13 +20,17 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    optional
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules)
     mkOverrideAtHmModuleLevel
-    isModuleLoadedAndEnabled
     mkDummyDerivation
+    isModuleLoadedAndEnabled
     ;
   inherit (localFlake.lib.options) mkPywalEnableOption;
 
@@ -37,13 +41,25 @@ let
 in
 {
   # TODO modularize config, cant be bothered to do it now
-  options.tensorfiles.hm.programs.editors.neovim = with types; {
+  options.tensorfiles.hm.programs.editors.neovim = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles the neovim program.
     '';
 
     pywal = {
       enable = mkPywalEnableOption;
+    };
+
+    vscode = {
+      enable = mkEnableOption ''
+        Adds support for the vscode-neovim plugin.
+      '';
+    };
+
+    lsp = {
+      enable = mkEnableOption ''
+        Enables LSP support for neovim.
+      '';
     };
   };
 
@@ -61,73 +77,81 @@ in
         # since it's been removed. Python2 support has been removed from neovim
         # withPython3 = _ true;
         withNodeJs = _ true;
-        extraConfig = ''
-          set number
-          set relativenumber
-
-          set formatoptions+=l
-          set rulerformat=%l:%c
-          set nofoldenable
-
-          set wildmenu
-          set wildmode=full
-          set wildignorecase
-          set clipboard+=unnamedplus
-
-          set tabstop=8
-          set softtabstop=0
-          set expandtab
-          set shiftwidth=4
-          set smarttab
-
-          set scrolloff=5
-
-          set list
-          set listchars=tab:»·,trail:•,extends:#,nbsp:.
-
-          filetype indent on
-          set smartindent
-          set shiftround
-
-          set ignorecase
-          set smartcase
-          set showmatch
-
-          autocmd BufWritePre * :%s/\\s\\+$//e
-
-          let mapleader="\<Space>"
-          let maplocalleader="\<space>"
-
-          ino jk <esc>
-          ino kj <esc>
-          cno jk <c-c>
-          cno kj <c-c>
-          tno jk <c-\><c-n>
-          tno kj <c-\><c-n>
-          vno jk <esc>
-          vno kj <esc>
-
-          nnoremap J :tabprevious<CR>
-          nnoremap K :tabnext<CR>
-        '';
         plugins =
           with pkgs.vimPlugins;
           (
+            # NOTE programs.neovim.extraConfig uses vimscript, which is why
+            # we setup the configuration using plugins where we can specify
+            # lua instead
             [
               {
                 plugin = mkDummyDerivation {
                   inherit (pkgs) stdenv;
-                  name = "vscode-neovim-setup";
+                  name = "neovim-base-config";
                   meta.system = system;
                 };
-                # type = "lua";
+                type = "lua";
                 config = ''
-                  if exists('g:vscode')
-                    set noloadplugins
-                    set clipboard^=unnamed,unnamedplus
+                  -- Set options
+                  vim.opt.number = true
+                  vim.opt.relativenumber = true
 
-                    finish
-                  endif
+                  vim.opt.formatoptions:append('l')
+                  vim.opt.rulerformat = '%l:%c'
+                  vim.opt.foldenable = false
+
+                  vim.opt.wildmenu = true
+                  vim.opt.wildmode = 'full'
+                  vim.opt.wildignorecase = true
+                  vim.opt.clipboard:append('unnamedplus')
+
+                  vim.opt.tabstop = 8
+                  vim.opt.softtabstop = 0
+                  vim.opt.expandtab = true
+                  vim.opt.shiftwidth = 4
+                  vim.opt.smarttab = true
+
+                  vim.opt.scrolloff = 5
+
+                  vim.opt.list = true
+                  vim.opt.listchars = {tab = '»·', trail = '•', extends = '#', nbsp = '.'}
+
+                  vim.cmd('filetype indent on')
+                  vim.opt.smartindent = true
+                  vim.opt.shiftround = true
+
+                  vim.opt.ignorecase = true
+                  vim.opt.smartcase = true
+                  vim.opt.showmatch = true
+
+                  -- Auto-remove trailing whitespace
+                  vim.api.nvim_create_autocmd('BufWritePre', {
+                      pattern = '*',
+                      command = [[%s/\s\+$//e]]
+                  })
+
+                  -- Set leaders
+                  vim.g.mapleader = ' '
+                  vim.g.maplocalleader = ' '
+
+                  -- Key mappings
+                  local function map(mode, lhs, rhs, opts)
+                      local options = {noremap = true, silent = true}
+                      if opts then options = vim.tbl_extend('force', options, opts) end
+                      vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+                  end
+
+                  map('i', 'jk', '<Esc>')
+                  map('i', 'kj', '<Esc>')
+                  map('c', 'jk', '<C-c>')
+                  map('c', 'kj', '<C-c>')
+                  map('t', 'jk', '<C-\\><C-n>')
+                  map('t', 'kj', '<C-\\><C-n>')
+                  -- map('v', 'jk', '<Esc>')
+                  -- map('v', 'kj', '<Esc>')
+
+                  map('n', 'J', ':tabprevious<CR>')
+                  map('n', 'K', ':tabnext<CR>')
                 '';
               }
             ]
@@ -139,6 +163,8 @@ in
               '';
             })
             ++ [
+              mini-nvim
+              transparent-nvim
               vim-repeat
               # nnn-vim
               vim-fugitive
@@ -147,22 +173,64 @@ in
               nvim-web-devicons
               bufexplorer
               undotree
-              lexima-vim
-              vim-vsnip-integ
-              friendly-snippets
               {
-                plugin = indentLine;
+                plugin = dressing-nvim;
                 type = "lua";
                 config = ''
-                  vim.g.indentLine_char = '┆'
-                  vim.g.indentLine_color_term = 239
+                  require('dressing').setup{}
+                '';
+              }
+              # lexima-vim # use nvim-autopairs instead
+              {
+                plugin = nvim-autopairs;
+                type = "lua";
+                config = ''
+                  require('nvim-autopairs').setup{}
                 '';
               }
               {
-                plugin = vim-vsnip;
+                plugin = trouble-nvim;
                 type = "lua";
-                config = "";
+                config = ''
+                  require('trouble').setup{}
+                '';
               }
+              {
+                plugin = comment-nvim;
+                type = "lua";
+                config = ''
+                  require('Comment').setup{}
+                '';
+              }
+              {
+                plugin = todo-comments-nvim;
+                type = "lua";
+                config = ''
+                  require('todo-comments').setup{}
+                '';
+              }
+              # vim-vsnip-integ
+              # friendly-snippets
+              {
+                plugin = indent-blankline-nvim;
+                type = "lua";
+                config = ''
+                  require('ibl').setup{}
+                '';
+              }
+              # {
+              #   plugin = indentLine;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.indentLine_char = '┆'
+              #     vim.g.indentLine_color_term = 239
+              #   '';
+              # }
+              # {
+              #   plugin = vim-vsnip;
+              #   type = "lua";
+              #   config = "";
+              # }
               {
                 plugin = vim-move;
                 type = "lua";
@@ -173,9 +241,7 @@ in
               {
                 plugin = vim-suda;
                 type = "lua";
-                config = ''
-                  vim.g.move_key_modifier = "C"
-                '';
+                config = '''';
               }
               {
                 plugin = telescope-nvim;
@@ -188,13 +254,6 @@ in
                   }
                 '';
               }
-              # NOTE slows things down too much and I am also mostly using
-              # only hop.nvim
-              # {
-              #   plugin = quick-scope;
-              #   type = "lua";
-              #   config = '''';
-              # }
               {
                 plugin = hop-nvim;
                 type = "lua";
@@ -204,16 +263,6 @@ in
                   vim.keymap.set("n", ",", "<cmd>HopChar2<CR>", {})
                 '';
               }
-              # {
-              #   plugin = vim-easymotion;
-              #   type = "lua";
-              #   config = ''
-              #     vim.g.EasyMotion_do_mapping = false
-              #     vim.g.EasyMotion_smartcase = true
-
-              #     vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
-              #   '';
-              # }
               {
                 plugin = lualine-nvim;
                 type = "lua";
@@ -234,26 +283,6 @@ in
                   }
                 '';
               }
-              # {
-              #   plugin = nvim-treesitter.withAllGrammars;
-              #   type = "lua";
-              #   config = ''
-              #     require('nvim-treesitter.configs').setup{
-              #       sync_install = false,
-              #       auto_install = false,
-              #       highlight = {
-              #         enable = true,
-              #         disable = { "latex" }
-              #       },
-              #       incremental_selection = {
-              #         enable = true
-              #       },
-              #       indent = {
-              #         enable = true
-              #       }
-              #     };
-              #   '';
-              # }
               {
                 plugin = vim-fern;
                 type = "lua";
@@ -317,72 +346,209 @@ in
                 plugin = which-key-nvim;
                 type = "lua";
                 config = ''
-                  vim.api.nvim_set_option("timeoutlen", 500)
+                  -- vim.api.nvim_set_option("timeoutlen", 500)
 
-                  require('which-key').register({
-                    {
-                      name = "+general",
-                      ["<leader>"] = { ":Telescope find_files<CR>", "find-files" },
-                      ["/"] = { ":Telescope live_grep<CR>", "telescope-grep" },
-                      r = { ":noh<CR>", "highlights-remove" },
-                      h = { "<C-w>h", "window-left" },
-                      j = { "<C-w>j", "window-below" },
-                      k = { "<C-w>k", "window-above" },
-                      l = { "<C-w>l", "window-right" },
-                      s = { "<C-w>s", "window-split-below" },
-                      v = { "<C-w>v", "window-split-right" },
-                      q = { ":q<CR>", "file-quit" },
-                      Q = { ":qall<CR>", "file-quit-all" },
-                      w = { ":w<CR>", "file-save" },
-                      n = { ":tabnew<CR>", "tab-new" },
-                      u = { ":UndotreeToggle<CR>", "undotree-toggle" },
-                      t = { ":terminal<CR>", "terminal-open" },
-                      --- f = { ":NnnPicker %:p:h<CR>", "nnn-open" }
-                    },
-                    g = {
-                      name = "+git",
-                      s = { ":Git<CR>", "git-status" },
-                      b = { ":Git blame<CR>", "git-blame" },
-                      d = { ":Gdiff<CR>", "git-diff" },
-                      p = { ":Git push<CR>", "git-push" },
-                      l = { ":Git pull<CR>", "git-pull" },
-                      f = { ":Git fetch<CR>", "git-pull" },
-                      a = { ":Git add *<CR>", "git-add-all" },
-                      c = { ":Git commit --verbose<CR>", "git-commit-verbose" },
-                      e = { ":GitMessenger<CR>", "git-messenger" }
-                    },
-                    p = {
-                      name = "+telescope",
-                      f = { ":Telescope find_files<CR>", "telescope-files" },
-                      g = { ":GFiles<CR>", "telescope-git-files" },
-                      b = { ":Telescope buffers<CR>", "telescope-buffers" },
-                      l = { ":Colors<CR>", "telescope-colors" },
-                      r = { ":Telescope live_grep<CR>", "telescope-grep" },
-                      g = { ":Telescope git_commits<CR>", "telescope-commits" },
-                      s = { ":Snippets<CR>", "telescope-snippets" },
-                      m = { ":Telescope commands<CR>", "telescope-commands" },
-                      h = { ":Telescope man_pages<CR>", "telescope-man-pages" },
-                      -- t = { ":Telescope treesitter<CR>", "telescope-treesitter" }
-                    },
-                    b = {
-                      name = "+bufexplorer",
-                      i = "bufexplorer-open",
-                      t = "bufexplorer-toggle",
-                      s = "bufexplorer-horizontal-split",
-                      v = "bufexplorer-vertical-split"
-                    }
-                  }, { prefix = "<leader>" })
+                  require("which-key").setup{
+                    preset = "modern",
+                    delay = 100
+                  }
+
+                  require("which-key").add({
+                    { "<leader>", group = "+general" },
+                    { "<leader>/", ":Telescope live_grep<CR>", desc = "Telescope grep" },
+                    { "<leader><leader>", ":Telescope find_files<CR>", desc = "Find files" },
+                    { "<leader>Q", ":qall<CR>", desc = "Quit all files" },
+                    { "<leader>b", group = "+bufexplorer" },
+                    { "<leader>bi", "<cmd>BufExplorer<CR>", desc = "Open BufExplorer" },
+                    { "<leader>bs", "<cmd>BufExplorerHorizontalSplit<CR>", desc = "BufExplorer horizontal split" },
+                    { "<leader>bt", "<cmd>ToggleBufExplorer<CR>", desc = "Toggle BufExplorer" },
+                    { "<leader>bv", "<cmd>BufExplorerVerticalSplit<CR>", desc = "BufExplorer vertical split" },
+                    { "<leader>g", group = "+git" },
+                    { "<leader>ga", ":Git add *<CR>", desc = "Git add all" },
+                    { "<leader>gb", ":Git blame<CR>", desc = "Git blame" },
+                    { "<leader>gc", ":Git commit --verbose<CR>", desc = "Git commit (verbose)" },
+                    { "<leader>gd", ":Gdiff<CR>", desc = "Git diff" },
+                    { "<leader>ge", ":GitMessenger<CR>", desc = "Git messenger" },
+                    { "<leader>gf", ":Git fetch<CR>", desc = "Git fetch" },
+                    { "<leader>gl", ":Git pull<CR>", desc = "Git pull" },
+                    { "<leader>gp", ":Git push<CR>", desc = "Git push" },
+                    { "<leader>gs", ":Git<CR>", desc = "Git status" },
+                    { "<leader>h", "<C-w>h", desc = "Window left" },
+                    { "<leader>j", "<C-w>j", desc = "Window below" },
+                    { "<leader>k", "<C-w>k", desc = "Window above" },
+                    { "<leader>l", "<C-w>l", desc = "Window right" },
+                    { "<leader>n", ":tabnew<CR>", desc = "New tab" },
+                    { "<leader>p", group = "+telescope" },
+                    { "<leader>pb", ":Telescope buffers<CR>", desc = "Buffers" },
+                    { "<leader>pc", ":Telescope git_commits<CR>", desc = "Git commits" },
+                    { "<leader>pf", ":Telescope find_files<CR>", desc = "Find files" },
+                    { "<leader>pg", ":Telescope git_files<CR>", desc = "Git files" },
+                    { "<leader>ph", ":Telescope man_pages<CR>", desc = "Man pages" },
+                    { "<leader>pl", ":Telescope colorscheme<CR>", desc = "Colorschemes" },
+                    { "<leader>pm", ":Telescope commands<CR>", desc = "Commands" },
+                    { "<leader>pr", ":Telescope live_grep<CR>", desc = "Live grep" },
+                    { "<leader>ps", ":Telescope snippets<CR>", desc = "Snippets" },
+                    { "<leader>q", ":q<CR>", desc = "Quit file" },
+                    { "<leader>r", ":noh<CR>", desc = "Remove highlights" },
+                    { "<leader>s", "<C-w>s", desc = "Split window below" },
+                    { "<leader>t", ":terminal<CR>", desc = "Open terminal" },
+                    { "<leader>u", ":UndotreeToggle<CR>", desc = "Toggle Undotree" },
+                    { "<leader>v", "<C-w>v", desc = "Split window right" },
+                    { "<leader>w", ":w<CR>", desc = "Save file" }
+                  })
                 '';
               }
-              (pkgs.vimUtils.buildVimPlugin {
-                pname = "kitty-scrollback.nvim";
-                version = inputs.kitty-scrollback-nvim.rev;
-                src = inputs.kitty-scrollback-nvim;
-              })
+              # {
+              #   plugin = vim-easymotion;
+              #   type = "lua";
+              #   config = ''
+              #     vim.g.EasyMotion_do_mapping = false
+              #     vim.g.EasyMotion_smartcase = true
+
+              #     vim.keymap.set("n", ",", "<Plug>(easymotion-overwin-f2)", {})
+              #   '';
+              # }
+              # NOTE slows things down too much and I am also mostly using
+              # only hop.nvim
+              # {
+              #   plugin = quick-scope;
+              #   type = "lua";
+              #   config = '''';
+              # }
+              # (pkgs.vimUtils.buildVimPlugin {
+              #   pname = "kitty-scrollback.nvim";
+              #   version = inputs.kitty-scrollback-nvim.rev;
+              #   src = inputs.kitty-scrollback-nvim;
+              # })
             ]
           );
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.vscode.enable {
+      programs.neovim.plugins = [
+        {
+
+          plugin = pkgs.vimPlugins.vscode-neovim;
+          type = "lua";
+          config = ''
+            if exists('g:vscode')
+              set noloadplugins
+              set clipboard^=unnamed,unnamedplus
+
+              finish
+            endif
+          '';
+        }
+      ];
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.lsp.enable {
+      programs.neovim = {
+        # TODO
+        extraPackages = with pkgs; [ ];
+
+        plugins = with pkgs.vimPlugins; [
+          {
+            plugin = fidget-nvim;
+            type = "lua";
+            config = ''
+              require('fidget').setup{}
+            '';
+          }
+          {
+            plugin = nvim-lspconfig;
+            type = "lua";
+            config = ''
+              local lspconfig = require('lspconfig')
+
+              lspconfig.pyright.setup{}
+              lspconfig.nil_ls.setup{}
+              lspconfig.biome.setup{}
+              lspconfig.clangd.setup{}
+              lspconfig.cmake.setup{}
+              lspconfig.tsserver.setup{}
+              lspconfig.css_variables.setup{}
+              lspconfig.dockerls.setup{}
+              lspconfig.fish_lsp.setup{}
+              lspconfig.giltab_ci.setup{}
+              lspconfig.html.setup{}
+              lspconfig.julials.setup{}
+              lspconfig.lua_ls.setup{}
+              lspconfig.ols.setup{}
+              lspconfig.sqlls.setup{}
+              lspconfig.docker_compose_language_service.setup{}
+              lspconfig.vimls.setup{}
+              lspconfig.yamlls.setup{}
+              lspconfig.rust_analyzer.setup{}
+            '';
+          }
+          {
+            plugin = nvim-treesitter.withAllGrammars;
+            type = "lua";
+            config = ''
+              require('nvim-treesitter.configs').setup{
+                sync_install = false,
+                auto_install = false,
+                highlight = {
+                  enable = true,
+                  disable = { "latex" }
+                },
+                incremental_selection = {
+                  enable = true
+                },
+                indent = {
+                  enable = true
+                }
+              };
+            '';
+          }
+          {
+            plugin = copilot-lua;
+            type = "lua";
+            config = ''
+              require('copilot').setup{
+                suggestion = {
+                  auto_trigger = true
+                }
+              }
+            '';
+          }
+          {
+            plugin = render-markdown;
+            type = "lua";
+            config = ''
+              require('render-markdown').setup{}
+            '';
+          }
+          {
+            plugin = formatter-nvim;
+            type = "lua";
+            config = ''
+              require('formatter')
+
+              local augroup = vim.api.nvim_create_augroup
+              local autocmd = vim.api.nvim_create_autocmd
+              augroup("__formatter__", { clear = true })
+              autocmd("BufWritePost", {
+              	group = "__formatter__",
+              	command = ":FormatWrite",
+              })
+
+              require("which-key").add({
+                { "<leader>f", ":Format<CR>", desc = "Format file" },
+              })
+            '';
+          }
+          {
+            plugin = nvim-lint;
+            type = "lua";
+            config = '''';
+          }
+        ];
+      };
+
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

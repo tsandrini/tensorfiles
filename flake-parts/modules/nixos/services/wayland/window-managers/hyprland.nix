@@ -20,10 +20,18 @@
   system,
   ...
 }:
-with builtins;
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkMerge
+    hasAttr
+    genAttrs
+    attrNames
+    optional
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
+  inherit (localFlake.lib.options) mkUsersSettingsOption mkPywalEnableOption;
 
   cfg = config.tensorfiles.services.wayland.window-managers.hyprland;
   _ = mkOverrideAtModuleLevel;
@@ -35,34 +43,31 @@ let
 in
 {
   # TODO needs to be rewrited
-  options.tensorfiles.services.wayland.window-managers.hyprland =
-    with types;
-    with tensorfiles.options;
-    {
-      enable = mkEnableOption ''
-        TODO
-      '';
+  options.tensorfiles.services.wayland.window-managers.hyprland = {
+    enable = mkEnableOption ''
+      TODO
+    '';
 
-      home = {
-        enable = mkHomeEnableOption;
-
-        settings = mkHomeSettingsOption (_user: {
-          pywal = {
-            enable = mkPywalEnableOption;
-          };
-
-          ags = {
-            enable = mkAlreadyEnabledOption ''
-              Enable ags hyprland integration
-
-              This includes
-              1. launching ags
-              2. mediakeys via ags
-            '';
-          };
-        });
+    userSettings = mkUsersSettingsOption (_user: {
+      pywal = {
+        enable = mkPywalEnableOption;
       };
-    };
+
+      ags = {
+        enable =
+          mkEnableOption ''
+            Enable ags hyprland integration
+
+            This includes
+            1. launching ags
+            2. mediakeys via ags
+          ''
+          // {
+            default = true;
+          };
+      };
+    });
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -72,7 +77,7 @@ in
         package = _ inputs.hyprland.packages.${system}.hyprland;
       };
 
-      home-manager.users = genAttrs (attrNames cfg.home.settings) (
+      home-manager.users = genAttrs (attrNames cfg.userSettings) (
         _user:
         let
           userCfg = cfg.home.settings.${_user};
