@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/cmp/schemastore.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,11 +22,11 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.cmp.schemastore;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.plugins.cmp.schemastore = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,22 +35,13 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-      ];
-
-      plugins.undotree = {
+      plugins.schemastore = {
         enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
+        json = {
+          enable = _ true;
+        };
+        yaml = {
+          enable = _ true;
         };
       };
     }

@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 _:
-{ lib, ... }:
+{ lib, pkgs, ... }:
 let
   _ = lib.mkOverride 500;
 in
@@ -25,19 +25,55 @@ in
     keymaps.enable = true;
     auto_cmds.enable = true;
 
+    neovide.enable = true;
+
     plugins = {
       utils.telescope.enable = true;
       utils.hop.enable = true;
+      utils.orgmode.enable = true;
       utils.which-key.enable = true;
+      utils.markdown-preview.enable = true;
+      utils.project-nvim.enable = true;
 
       editor.neo-tree.enable = true;
       editor.undotree.enable = true;
+      editor.bufferline.enable = true;
+      editor.treesitter.enable = true;
+      # TODO [Copilot] Could not find agent.js (bad install?) : nil
+      editor.copilot-lua.enable = true;
 
       git.neogit.enable = true;
+
+      cmp.cmp.enable = true;
+      cmp.lspkind.enable = true;
+      cmp.schemastore.enable = true;
+
+      lsp.lsp.enable = true;
+      lsp.conform.enable = true;
+      lsp.fidget.enable = true;
+      lsp.trouble.enable = true;
     };
   };
 
-  # plugins.transparent.enable = true;
+  colorschemes.nightfox.enable = true;
+
+  extraPlugins = with pkgs.vimPlugins; [
+    # nightfox-nvim
+    catppuccin-nvim
+    cyberdream-nvim
+    gruvbox-nvim
+    kanagawa-nvim
+    modus-themes-nvim
+    neovim-ayu
+    onedark-nvim
+    oxocarbon-nvim
+    rose-pine
+    tokyonight-nvim
+    # vscode-nvim
+  ];
+
+  plugins.direnv.enable = _ true;
+  plugins.nvim-colorizer.enable = _ true;
 
   plugins.mini = {
     enable = _ true;
@@ -46,7 +82,7 @@ in
       icons = { };
       indentscope = { };
       pairs = { };
-      tabline = { }; # TODO I hate how it shows all buffers
+      # tabline = { }; # TODO I hate how it shows all buffers
       cursorword = { };
       comment = { };
       move = {
@@ -84,6 +120,7 @@ in
       diff = { };
     };
   };
+
 
   performance = {
     combinePlugins.enable = true;

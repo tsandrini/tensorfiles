@@ -16,6 +16,7 @@
 {
   config,
   lib,
+pkgs,
   ...
 }:
 let
@@ -26,6 +27,8 @@ let
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
+
+
   options.tensorfiles.nixvim.plugins.utils.telescope = {
     enable = mkEnableOption ''
       TODO
@@ -35,89 +38,7 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>/";
-          action = "<cmd>Telescope live_grep<CR>";
-          options = {
-            desc = "Grep in project";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader><leader>";
-          action = "<cmd>Telescope find_files<CR>";
-          options = {
-            desc = "Find files";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>pb";
-          action = "<cmd>Telescope buffers<CR>";
-          options = {
-            desc = "Telescope buffers";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>pg";
-          action = "<cmd>Telescope git_commits<CR>";
-          options = {
-            desc = "Telescope git commits";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>pf";
-          action = "<cmd>Telescope find_files<CR>";
-          options = {
-            desc = "Telescope files";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>ph";
-          action = "<cmd>Telescope man_pages<CR>";
-          options = {
-            desc = "Telescope man pages";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>pl";
-          action = "<cmd>Telescope colorschemes<CR>";
-          options = {
-            desc = "Telescope colorschemes";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>pc";
-          action = "<cmd>Telescope commands<CR>";
-          options = {
-            desc = "Telescope commands";
-            silent = true;
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>ps";
-          action = "<cmd>Telescope snippets<CR>";
-          options = {
-            desc = "Telescope snippets";
-            silent = true;
-          };
-        }
-      ];
+      extraPackages =     with pkgs; [ ripgrep ];
 
       plugins.telescope = {
         enable = _ true;
@@ -128,21 +49,66 @@ in
           fzf-native = {
             enable = _ true;
           };
+          frecency = {
+            enable = _ true;
+          };
         };
         settings = {
           defaults.prompt_prefix = _ "🔍";
+          pickers.colorscheme.enable_preview = _ true;
+        };
+        keymaps = {
+          "<leader>/" = {
+            action = "live_grep";
+            options = {
+              desc = "Grep in project";
+              silent = true;
+            };
+          };
+          "<leader><leader>" = {
+            action = "find_files";
+            options = {
+              desc = "Find files";
+              silent = true;
+            };
+          };
+          "<leader>pg" = {
+            action = "git_commits";
+            options = {
+              desc = "Telescope git commits";
+              silent = true;
+            };
+          };
+          "<leader>pf" = {
+            action = "find_files";
+            options = {
+              desc = "Telescope files";
+              silent = true;
+            };
+          };
+          "<leader>ph" = {
+            action = "man_pages";
+            options = {
+              desc = "Telescope man pages";
+              silent = true;
+            };
+          };
+          "<leader>pl" = {
+            action = "colorscheme";
+            options = {
+              desc = "Telescope colorschemes";
+              silent = true;
+            };
+          };
+          "<leader>ps" = {
+            action = "snippets";
+            options = {
+              desc = "Telescope snippets";
+              silent = true;
+            };
+          };
         };
       };
-
-      extraConfigLua = ''
-        require("telescope").setup{
-          pickers = {
-            colorscheme = {
-              enable_preview = true
-            }
-          }
-        }
-      '';
     }
     # |----------------------------------------------------------------------| #
   ]);

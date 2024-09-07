@@ -33,14 +33,33 @@ in
     auto_cmds = importApply ./auto_cmds.nix { inherit localFlake; };
     keymaps = importApply ./keymaps.nix { inherit localFlake; };
     settings = importApply ./settings.nix { inherit localFlake; };
+    neovide = importApply ./neovide.nix { inherit localFlake; };
 
     plugins_git_neogit = importApply ./plugins/git/neogit.nix { inherit localFlake; };
 
+    plugins_utils_project-nvim = importApply ./plugins/utils/project-nvim.nix { inherit localFlake; };
     plugins_utils_telescope = importApply ./plugins/utils/telescope.nix { inherit localFlake; };
     plugins_utils_hop = importApply ./plugins/utils/hop.nix { inherit localFlake; };
+    plugins_utils_orgmode = importApply ./plugins/utils/orgmode.nix { inherit localFlake; };
     plugins_utils_which-key = importApply ./plugins/utils/which-key.nix { inherit localFlake; };
+    plugins_utils_markdown-preview = importApply ./plugins/utils/markdown-preview.nix {
+      inherit localFlake;
+    };
 
     plugins_editor_neo-tree = importApply ./plugins/editor/neo-tree.nix { inherit localFlake; };
     plugins_editor_undotree = importApply ./plugins/editor/undotree.nix { inherit localFlake; };
+    plugins_editor_treesitter = importApply ./plugins/editor/treesitter.nix { inherit localFlake; };
+    plugins_editor_bufferline = importApply ./plugins/editor/bufferline.nix { inherit localFlake; };
+    plugins_editor_copilot-lua = importApply ./plugins/editor/copilot-lua.nix { inherit localFlake; };
+    plugins_editor_noice = importApply ./plugins/editor/noice.nix { inherit localFlake; };
+
+    plugins_cmp_cmp = importApply ./plugins/cmp/cmp.nix { inherit localFlake; };
+    plugins_cmp_lspkind = importApply ./plugins/cmp/lspkind.nix { inherit localFlake; };
+    plugins_cmp_schemastore = importApply ./plugins/cmp/schemastore.nix { inherit localFlake; };
+
+    plugins_lsp_lsp = importApply ./plugins/lsp/lsp.nix { inherit localFlake; };
+    plugins_lsp_conform = importApply ./plugins/lsp/conform.nix { inherit localFlake; };
+    plugins_lsp_fidget = importApply ./plugins/lsp/fidget.nix { inherit localFlake; };
+    plugins_lsp_trouble = importApply ./plugins/lsp/trouble.nix { inherit localFlake; };
   };
 }

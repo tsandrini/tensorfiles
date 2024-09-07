@@ -143,7 +143,6 @@
       inherit (import ./flake-parts/_bootstrap.nix { inherit lib; }) loadParts;
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
-
       # We recursively traverse all of the flakeModules in ./flake-parts and
       # import only the final modules, meaning that you can have an arbitrary
       # nested structure that suffices your needs. For example

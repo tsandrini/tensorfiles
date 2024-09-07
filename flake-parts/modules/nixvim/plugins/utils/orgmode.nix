@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/utils/orgmode.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,11 +22,11 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.utils.orgmode;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.plugins.utils.orgmode = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,22 +35,11 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-      ];
-
-      plugins.undotree = {
+      plugins.orgmode = {
         enable = _ true;
         settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
+          # TODO find a way to pass this dynamically
+          org_agenda_files = _ "/home/tsandrini/OrgBundle";
         };
       };
     }

@@ -37,8 +37,8 @@ in
     # |----------------------------------------------------------------------| #
     {
       extraPlugins = with pkgs.vimPlugins; [
-        nvim-web-devicons
         nui-nvim
+        nvim-web-devicons
       ];
 
       keymaps = [
@@ -54,10 +54,10 @@ in
         {
           mode = "n";
           key = "<leader>b";
-          action = "<cmd>Neotree buffers<CR>";
+          action = "<cmd>Neotree buffers focus<CR>";
           options = {
             silent = true;
-            desc = "Neotree buffers";
+            desc = "Neotree buffers focus";
           };
         }
       ];

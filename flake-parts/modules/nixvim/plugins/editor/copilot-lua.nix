@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/editor/copilot-lua.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,14 +19,18 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.editor.copilot-lua;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.plugins.editor.copilot-lua = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,23 +39,10 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-      ];
-
-      plugins.undotree = {
+      plugins.copilot-lua = {
         enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
-        };
+        suggestion.autoTrigger = _ true;
+        copilotNodeCommand = _ "node";
       };
     }
     # |----------------------------------------------------------------------| #

@@ -76,6 +76,9 @@ in
         ignorecase = _ true; # Ignore case when searching
         smartcase = _ true; # Override 'ignorecase' if the search pattern contains uppercase characters
         showmatch = _ true; # Highlight matching parenthesis
+
+        undofile = _ true;
+        undodir = _ "/home/tsandrini/.cache/nvim/undodir";
       };
     }
     # |----------------------------------------------------------------------| #

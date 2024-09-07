@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/utils/project-nvim.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,20 +13,15 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.utils.project-nvim;
   _ = mkOverrideAtNixvimModuleLevel;
-in
-{
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+in {
+  options.tensorfiles.nixvim.plugins.utils.project-nvim = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,24 +30,20 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-      ];
-
-      plugins.undotree = {
+      plugins.project-nvim = {
         enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
-        };
+        enableTelescope = _ true;
+        # NOTE DEFAULT produces too many false positives
+        # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
+        patterns = [ ".git" ];
       };
+
+      keymaps = [{
+        mode = "n";
+        key = "<leader>pp";
+        action = "<cmd>Telescope projects<CR>";
+        options = { desc = "Telescope projects."; };
+      }];
     }
     # |----------------------------------------------------------------------| #
   ]);

@@ -74,6 +74,7 @@ in
           config.enable_scroll_bar = true
           config.font_size = 10
           config.use_fancy_tab_bar = false
+          config.enable_tab_bar = false
           config.audible_bell = "Disabled"
           config.window_padding = {
               left = 5,

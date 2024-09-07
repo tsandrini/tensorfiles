@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/editor/bufferline.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,14 +19,18 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.editor.bufferline;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.plugins.editor.bufferline = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,25 +39,31 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-      ];
-
-      plugins.undotree = {
+      plugins.bufferline = {
         enable = _ true;
         settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
+          options = {
+            mode = _ "tabs";
+            diagnostics = _ "nvim_lsp";
+            diagnostics_indicator = ''
+              function(count, level, diagnostics_dict, context)
+                local s = ""
+                for e, n in pairs(diagnostics_dict) do
+                  local sym = e == "error" and " "
+                    or (e == "warning" and " " or "" )
+                  if(sym ~= "") then
+                    s = s .. " " .. n .. sym
+                  end
+                end
+                return s
+              end
+            '';
+          };
         };
+
       };
     }
+
     # |----------------------------------------------------------------------| #
   ]);
 

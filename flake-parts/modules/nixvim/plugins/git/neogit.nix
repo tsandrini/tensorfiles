@@ -39,7 +39,7 @@ in
         {
           mode = "n";
           key = "<leader>gg";
-          action = "<cmd>Neogit<CR>";
+          action = "<cmd>Neogit kind=vsplit<CR>";
           options = {
             desc = "Neogit";
           };
@@ -52,7 +52,9 @@ in
             desc = "Neogit branch";
           };
         }
+
         {
+
           mode = "n";
           key = "<leader>gF";
           action = "<cmd>Neogit fetch<CR>";

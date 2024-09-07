@@ -1,4 +1,5 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+
+# --- flake-parts/modules/nixvim/neovide.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -20,13 +21,13 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
-  _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.neovide;
+  # _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.neovide = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,24 +36,29 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-      ];
+      extraConfigLua = ''
+        if vim.fn.exists("g:neovide") ~= 0 then
+          local map = vim.keymap.set
+          local function neovideScale(amount)
+            local temp = vim.g.neovide_scale_factor + amount
+            if temp < 0.5 then
+              return
+            end
+            vim.g.neovide_scale_factor = temp
+          end
 
-      plugins.undotree = {
-        enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
-        };
-      };
+          map("n", "<C-=>", function()
+            neovideScale(0.1)
+          end)
+
+          map("n", "<C-->", function()
+            neovideScale(-0.1)
+          end)
+
+          vim.g.neovide_transparency = 0.92
+          neovideScale(-0.3)
+        end
+      '';
     }
     # |----------------------------------------------------------------------| #
   ]);

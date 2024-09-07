@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/lsp/trouble.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,11 +22,11 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.lsp.trouble;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.plugins.lsp.trouble = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,24 +35,33 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      plugins.trouble = {
+        enable = _ true;
+        settings = {
+          auto_close = _ true;
+        };
+      };
+
       keymaps = [
         {
           mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
+          key = "<leader>xx";
+          action = "<cmd>Trouble diagnostics focus<cr>";
           options = {
-            desc = "Neogit";
+            silent = true;
+            desc = "Document Diagnostics (Trouble)";
+          };
+        }
+        {
+          mode = "n";
+          key = "<leader>xq";
+          action = "<cmd>Trouble quickfix<cr>";
+          options = {
+            silent = true;
+            desc = "Quickfix List (Trouble)";
           };
         }
       ];
-
-      plugins.undotree = {
-        enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
-        };
-      };
     }
     # |----------------------------------------------------------------------| #
   ]);

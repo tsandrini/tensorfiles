@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/undotree.nix
+# --- flake-parts/modules/nixvim/plugins/utils/markdown-preview.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,11 +22,11 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.undotree;
+  cfg = config.tensorfiles.nixvim.plugins.utils.markdown-preview;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.undotree = {
+  options.tensorfiles.nixvim.plugins.utils.markdown-preview = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,24 +35,33 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      plugins = {
+        markdown-preview = {
+          enable = _ true;
+          settings = {
+            browser = _ "firefox";
+            echo_preview_url = _ true;
+            port = _ "6969";
+            preview_options = {
+              disable_filename = _ true;
+              disable_sync_scroll = _ true;
+              sync_scroll_type = _ "middle";
+            };
+            theme = _ "dark";
+          };
+        };
+      };
+
       keymaps = [
         {
           mode = "n";
-          key = "<leader>u";
-          action = "<cmd>UndotreeToggle<CR>";
+          key = "<leader>mp";
+          action = "<cmd>MarkdownPreview<cr>";
           options = {
-            desc = "Neogit";
+            desc = "Toggle Markdown Preview";
           };
         }
       ];
-
-      plugins.undotree = {
-        enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
-        };
-      };
     }
     # |----------------------------------------------------------------------| #
   ]);
