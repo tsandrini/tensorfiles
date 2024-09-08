@@ -64,6 +64,7 @@ in
         shiftround = _ true; # Round indent to multiple of shiftwidth
 
         scrolloff = _ 8; # Minimum number of screen lines to keep above and below the cursor
+        mouse = _ "a"; # Full mouse support
 
         list = _ true; # Show invisible characters
         listchars = {

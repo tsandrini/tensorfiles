@@ -46,7 +46,7 @@ in {
     {
       # TODO
       home.packages =
-        [ localFlake.packages.${system}.nvim-base-config pkgs.neovide ];
+        [ localFlake.packages.${system}.nvim-base-config ];
 
       home.shellAliases = {
         "neovim" = _ "nvim";

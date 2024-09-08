@@ -156,6 +156,7 @@
       programs.pywal.enable = true;
       # programs.spicetify.enable = true;
       # services.pywalfox-native.enable = true;
+      programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
       services.activitywatch.enable = true;
     };
@@ -188,6 +189,8 @@
 
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
+
+      vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment.
 
       # todoist # Todoist CLI Client
       # todoist-electron # The official Todoist electron app
