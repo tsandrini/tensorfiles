@@ -16,15 +16,26 @@
 { config, lib, ... }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.nixvim.plugins.utils.project-nvim;
   _ = mkOverrideAtNixvimModuleLevel;
-in {
+
+  telescopeCheck = isModuleLoadedAndEnabled config "tensorfiles.nixvim.plugins.utils.telescope";
+in
+{
   options.tensorfiles.nixvim.plugins.utils.project-nvim = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -37,14 +48,20 @@ in {
         # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
         patterns = [ ".git" ];
       };
-
-      keymaps = [{
-        mode = "n";
-        key = "<leader>pp";
-        action = "<cmd>Telescope projects<CR>";
-        options = { desc = "Telescope projects."; };
-      }];
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.withKeymaps && telescopeCheck) {
+      keymaps = [
+        {
+          mode = "n";
+          key = "<leader>pp";
+          action = "<cmd>Telescope projects<CR>";
+          options = {
+            desc = "Telescope projects.";
+          };
+        }
+      ];
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

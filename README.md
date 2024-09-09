@@ -95,8 +95,8 @@ secrets I use [agenix](https://github.com/ryantm/agenix). I also try to avoid
 using any globally available pubkeys and rather tend to use machine specific
 ones instead (for obvious reasons).
 
-_Note_: plz no pwn xd, if you see any vulnerabilities please DM me instead,
-thanks \<3.
+_Note_: plz no pwn xd, if you see any vulnerabilities **please, send me a
+mail** at [security@tsandrini.sh](mailto:security@tsandrini.sh)
 
 ## 4. Installation 💾
 

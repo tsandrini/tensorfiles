@@ -16,6 +16,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -24,121 +25,160 @@ let
 
   cfg = config.tensorfiles.nixvim.plugins.cmp.cmp;
   _ = mkOverrideAtNixvimModuleLevel;
+
+  get_bufnrs.__raw = ''
+    function()
+      local buf_size_limit = 1024 * 1024 -- 1MB size limit
+      local bufs = vim.api.nvim_list_bufs()
+      local valid_bufs = {}
+      for _, buf in ipairs(bufs) do
+        if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_offset(buf, vim.api.nvim_buf_line_count(buf)) < buf_size_limit then
+          table.insert(valid_bufs, buf)
+        end
+      end
+      return valid_bufs
+    end
+  '';
 in
 {
   options.tensorfiles.nixvim.plugins.cmp.cmp = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      opts.completeopt = [
+        "menu"
+        "menuone"
+        "noselect"
+      ];
+
+      plugins.luasnip = {
+        enable = true;
+        settings = {
+          enable_autosnippets = true;
+        };
+        fromVscode = [
+          {
+            lazyLoad = true;
+            paths = "${pkgs.vimPlugins.friendly-snippets}";
+          }
+        ];
+      };
+
       plugins = {
-        cmp-emoji = {
-          enable = _ true;
-        };
-        cmp-git = {
-          enable = _ true;
-        };
-        cmp-nvim-lsp = {
-          enable = _ true;
-        };
-        cmp-nvim-lsp-signature-help = {
-          enable = _ true;
-        };
-        cmp-nvim-lsp-document-symbol = {
-          enable = _ true;
-        };
-        cmp-buffer = {
-          enable = _ true;
-        };
-        cmp-path = {
-          enable = _ true;
-        };
-        # cmp_luasnip = {
-        #   enable = true;
-        # }; # snippets
-        # cmp-cmdline = {
-        #   enable = _ true;
-        # };
         cmp = {
           enable = _ true;
+          autoEnableSources = _ true;
           settings = {
-            autoEnableSources = _ true;
+            performance = {
+              # maxViewEntries = _ 100;
+              # fetchingTimeout = _ 200;
+            };
             experimental = {
               ghost_text = _ true;
             };
-            performance = {
-              debounce = _ 60;
-              fetchingTimeout = _ 200;
-              maxViewEntries = _ 30;
+            mapping = {
+              "<C-d>" = "cmp.mapping.scroll_docs(-4)";
+              "<C-f>" = "cmp.mapping.scroll_docs(4)";
+              "<C-Space>" = "cmp.mapping.complete()";
+              "<C-e>" = "cmp.mapping.close()";
+              "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
+              "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
+              "<C-j>" = "cmp.mapping(cmp.mapping.select_next_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
+              "<C-k>" = "cmp.mapping(cmp.mapping.select_prev_item({behavior = cmp.SelectBehavior.Select}), {'i', 's'})";
+              "<CR>" = "cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace })";
             };
+            preselect = "cmp.PreselectMode.None";
+            # snippet.expand = "function(args) require('luasnip').lsp_expand(args.body) end";
             sources = [
               {
                 name = "nvim_lsp";
+                priority = 1100;
+                option = {
+                  inherit get_bufnrs;
+                };
+              }
+              {
+                name = "nvim_lsp_signature_help";
                 priority = 1000;
-              }
-              { name = "cmp_git"; }
-              { name = "nvim_lsp_signature_help"; }
-              { name = "nvim_lsp_document_symbol"; }
-              { name = "emoji"; }
-              # NOTE usually irrelevant and can be autocompleted from telescope
-              # { name = "cmdline"; }
-              {
-                name = "buffer"; # text within current buffer
-                option.get_bufnrs.__raw = "vim.api.nvim_list_bufs";
-                keywordLength = 3;
+                option = {
+                  inherit get_bufnrs;
+                };
               }
               {
-                name = "path"; # file system paths
-                keywordLength = 3;
+                name = "nvim_lsp_document_symbol";
+                priority = 1000;
+                option = {
+                  inherit get_bufnrs;
+                };
+              }
+              {
+                name = "treesitter";
+                priority = 850;
+                option = {
+                  inherit get_bufnrs;
+                };
+              }
+              {
+                name = "luasnip";
+                priority = 750;
+              }
+              {
+                name = "buffer";
+                priority = 500;
+                option = {
+                  inherit get_bufnrs;
+                };
+              }
+              {
+                name = "async_path";
+                priority = 400;
+              }
+              {
+                name = "cmdline";
+                priority = 300;
+              }
+              {
+                name = "git";
+                priority = 250;
+              }
+              # {
+              #   name = "fish";
+              #   priority = 200;
+              # }
+              # {
+              #   name = "zsh";
+              #   priority = 250;
+              # }
+              {
+                name = "calc";
+                priority = 150;
+              }
+              {
+                name = "emoji";
+                priority = 100;
               }
             ];
-            mapping = {
-              "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
-              "<C-Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
-              "<C-j>" = "cmp.mapping.select_next_item()";
-              "<C-k>" = "cmp.mapping.select_prev_item()";
-              "<C-e>" = "cmp.mapping.abort()";
-              "<C-b>" = "cmp.mapping.scroll_docs(-4)";
-              "<C-f>" = "cmp.mapping.scroll_docs(4)";
-              "<C-Space>" = "cmp.mapping.complete()";
-              "<C-CR>" = "cmp.mapping.confirm({ select = true })";
-              "<S-CR>" = "cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })";
+
+            window = {
+              completion.__raw = ''cmp.config.window.bordered()'';
+              documentation.__raw = ''cmp.config.window.bordered()'';
             };
           };
         };
       };
-      extraConfigLua = ''
-        local cmp = require'cmp'
-
-         -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
-         cmp.setup.cmdline({'/', "?" }, {
-           sources = {
-             { name = 'buffer' }
-           }
-         })
-
-        -- Set configuration for specific filetype.
-         cmp.setup.filetype('gitcommit', {
-           sources = cmp.config.sources({
-             { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
-           }, {
-             { name = 'buffer' },
-           })
-         })
-
-        -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-        -- cmp.setup.cmdline(':', {
-        --   sources = cmp.config.sources({
-        --     { name = 'path' }
-        --   }, {
-        --     { name = 'cmdline' }
-        --   }),
-        -- })
-      '';
     }
     # |----------------------------------------------------------------------| #
   ]);

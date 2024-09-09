@@ -16,7 +16,7 @@
 {
   config,
   lib,
-pkgs,
+  pkgs,
   ...
 }:
 let
@@ -28,17 +28,24 @@ let
 in
 {
 
-
   options.tensorfiles.nixvim.plugins.utils.telescope = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      extraPackages =     with pkgs; [ ripgrep ];
+      extraPackages = with pkgs; [ ripgrep ];
 
       plugins.telescope = {
         enable = _ true;
@@ -57,7 +64,7 @@ in
           defaults.prompt_prefix = _ "🔍";
           pickers.colorscheme.enable_preview = _ true;
         };
-        keymaps = {
+        keymaps = mkIf cfg.withKeymaps {
           "<leader>/" = {
             action = "live_grep";
             options = {

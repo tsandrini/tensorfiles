@@ -13,44 +13,57 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{ config, lib, system, pkgs, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 let
-  inherit (lib) mkIf mkMerge mkBefore mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkBefore
+    mkEnableOption
+    getExe
+    ;
   inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules)
-    mkOverrideAtHmProfileLevel isModuleLoadedAndEnabled;
+    mkOverrideAtHmProfileLevel
+    isModuleLoadedAndEnabled
+    ;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.hm.profiles.headless;
   _ = mkOverrideAtHmProfileLevel;
 
   impermanenceCheck =
-    (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence")
-    && cfg.impermanence.enable;
-  impermanence = if impermanenceCheck then
-    config.tensorfiles.hm.system.impermanence
-  else
-    { };
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.system.impermanence") && cfg.impermanence.enable;
+  impermanence = if impermanenceCheck then config.tensorfiles.hm.system.impermanence else { };
   pathToRelative = removePrefix "${config.home.homeDirectory}/";
-in {
+in
+{
   options.tensorfiles.hm.profiles.headless = {
     enable = mkEnableOption ''
       TODO
     '';
 
-    impermanence = { enable = mkImpermanenceEnableOption; };
+    impermanence = {
+      enable = mkImpermanenceEnableOption;
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
       # TODO
-      home.packages =
-        [ localFlake.packages.${system}.nvim-base-config ];
+      home.packages = [ localFlake.packages.${system}.nvim-ide-config ];
 
       home.shellAliases = {
         "neovim" = _ "nvim";
         "vim" = _ "nvim";
+        "vanilla-nvim" = _ (getExe localFlake.packages.${system}.nvim-vanilla-config);
+        "minimal-nvim" = _ (getExe localFlake.packages.${system}.nvim-minimal-config);
       };
 
       tensorfiles.hm = {
@@ -102,19 +115,18 @@ in {
     }
     # |----------------------------------------------------------------------| #
     (mkIf impermanenceCheck {
-      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" =
-        {
-          directories = [
-            ".gnupg"
-            ".ssh"
-            # (pathToRelative config.xdg.cacheHome)
-            # (pathToRelative config.xdg.stateHome)
-            (pathToRelative config.home.sessionVariables.DOWNLOADS_DIR)
-            (pathToRelative config.home.sessionVariables.ORG_DIR)
-            (pathToRelative config.home.sessionVariables.PROJECTS_DIR)
-            (pathToRelative config.home.sessionVariables.MISC_DATA_DIR)
-          ];
-        };
+      home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
+        directories = [
+          ".gnupg"
+          ".ssh"
+          # (pathToRelative config.xdg.cacheHome)
+          # (pathToRelative config.xdg.stateHome)
+          (pathToRelative config.home.sessionVariables.DOWNLOADS_DIR)
+          (pathToRelative config.home.sessionVariables.ORG_DIR)
+          (pathToRelative config.home.sessionVariables.PROJECTS_DIR)
+          (pathToRelative config.home.sessionVariables.MISC_DATA_DIR)
+        ];
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);

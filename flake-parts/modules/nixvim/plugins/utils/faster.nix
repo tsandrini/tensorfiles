@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/utils/hop.nix
+# --- flake-parts/modules/nixvim/plugins/utils/faster.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,54 +16,34 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.utils.hop;
-  _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.plugins.utils.faster;
 in
+# _ = mkOverrideAtNixvimModuleLevel;
 {
-  options.tensorfiles.nixvim.plugins.utils.hop = {
+  options.tensorfiles.nixvim.plugins.utils.faster = {
     enable = mkEnableOption ''
       TODO
     '';
-
-    withKeymaps =
-      mkEnableOption ''
-        Enable the related included keymaps.
-      ''
-      // {
-        default = true;
-      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.hop = {
-        enable = _ true;
-        settings = {
-          keys = _ "asdfghjkl";
-        };
-      };
-    }
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.withKeymaps {
-      keymaps = [
-        {
-          mode = "n";
-          key = ",";
-          action = "<cmd>HopChar2<CR>";
-          options = {
-            desc = "Hop to char 2";
-            silent = true;
-          };
-        }
+      extraPlugins = with pkgs.vimPlugins; [
+        faster-nvim
       ];
-    })
+
+      extraConfigLua = ''
+        require('faster').setup()
+      '';
+    }
     # |----------------------------------------------------------------------| #
   ]);
 

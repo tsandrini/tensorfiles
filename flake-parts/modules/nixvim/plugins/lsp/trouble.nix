@@ -24,12 +24,21 @@ let
 
   cfg = config.tensorfiles.nixvim.plugins.lsp.trouble;
   _ = mkOverrideAtNixvimModuleLevel;
+
 in
 {
   options.tensorfiles.nixvim.plugins.lsp.trouble = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -41,7 +50,9 @@ in
           auto_close = _ true;
         };
       };
-
+    }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withKeymaps {
       keymaps = [
         {
           mode = "n";
@@ -61,8 +72,17 @@ in
             desc = "Quickfix List (Trouble)";
           };
         }
+        {
+          mode = "n";
+          key = "<leader>cx";
+          action = "<cmd>Trouble diagnostics focus<cr>";
+          options = {
+            silent = true;
+            desc = "Document Diagnostics (Trouble)";
+          };
+        }
       ];
-    }
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

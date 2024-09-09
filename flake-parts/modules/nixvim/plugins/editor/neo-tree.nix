@@ -31,6 +31,14 @@ in
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -39,27 +47,6 @@ in
       extraPlugins = with pkgs.vimPlugins; [
         nui-nvim
         nvim-web-devicons
-      ];
-
-      keymaps = [
-        {
-          mode = "n";
-          key = "m";
-          action = "<cmd>Neotree<CR>";
-          options = {
-            silent = true;
-            desc = "Neotree Open";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>b";
-          action = "<cmd>Neotree buffers focus<CR>";
-          options = {
-            silent = true;
-            desc = "Neotree buffers focus";
-          };
-        }
       ];
 
       plugins.neo-tree = {
@@ -114,6 +101,29 @@ in
         };
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withKeymaps {
+      keymaps = [
+        {
+          mode = "n";
+          key = "m";
+          action = "<cmd>Neotree<CR>";
+          options = {
+            silent = true;
+            desc = "Neotree Open";
+          };
+        }
+        {
+          mode = "n";
+          key = "<leader>b";
+          action = "<cmd>Neotree buffers focus<CR>";
+          options = {
+            silent = true;
+            desc = "Neotree buffers focus";
+          };
+        }
+      ];
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

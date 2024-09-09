@@ -30,11 +30,29 @@ in
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      plugins.undotree = {
+        enable = _ true;
+        settings = {
+          autoOpenDiff = _ true;
+          focusOnToggle = _ true;
+        };
+      };
+    }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withKeymaps {
       keymaps = [
         {
           mode = "n";
@@ -45,15 +63,7 @@ in
           };
         }
       ];
-
-      plugins.undotree = {
-        enable = _ true;
-        settings = {
-          autoOpenDiff = _ true;
-          focusOnToggle = _ true;
-        };
-      };
-    }
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

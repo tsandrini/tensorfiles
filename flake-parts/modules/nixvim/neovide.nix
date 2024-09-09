@@ -1,4 +1,3 @@
-
 # --- flake-parts/modules/nixvim/neovide.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
@@ -24,8 +23,8 @@ let
   # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
   cfg = config.tensorfiles.nixvim.neovide;
-  # _ = mkOverrideAtNixvimModuleLevel;
 in
+# _ = mkOverrideAtNixvimModuleLevel;
 {
   options.tensorfiles.nixvim.neovide = {
     enable = mkEnableOption ''

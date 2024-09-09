@@ -30,11 +30,28 @@ in
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      plugins.neogit = {
+        enable = _ true;
+        settings =
+          {
+          };
+      };
+    }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withKeymaps {
       keymaps = [
         {
           mode = "n";
@@ -52,9 +69,7 @@ in
             desc = "Neogit branch";
           };
         }
-
         {
-
           mode = "n";
           key = "<leader>gF";
           action = "<cmd>Neogit fetch<CR>";
@@ -63,14 +78,7 @@ in
           };
         }
       ];
-
-      plugins.neogit = {
-        enable = _ true;
-        settings =
-          {
-          };
-      };
-    }
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

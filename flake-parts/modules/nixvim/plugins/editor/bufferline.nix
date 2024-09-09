@@ -58,6 +58,15 @@ in
                 return s
               end
             '';
+            # NOTE offsets the neo-tree buffer
+            # offsets = [
+            #   {
+            #     filetype = "neo-tree";
+            #     text = "Neotree";
+            #     highlight = "Directory";
+            #     text_align = "left";
+            #   }
+            # ];
           };
         };
 

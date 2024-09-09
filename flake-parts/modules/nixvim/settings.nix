@@ -49,6 +49,7 @@ in
         ];
         rulerformat = _ "%l:%c"; # Show the line and column number of the cursor
         foldenable = _ false; # Disable folding by default
+        colorcolumn = _ "80";
 
         wildmenu = _ true; # Show a list of matching files when tab completing
         # TODO maybe use wilder.nvim plugin

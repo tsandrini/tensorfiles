@@ -30,6 +30,14 @@ in
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -51,7 +59,9 @@ in
           };
         };
       };
-
+    }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withKeymaps {
       keymaps = [
         {
           mode = "n";
@@ -62,7 +72,7 @@ in
           };
         }
       ];
-    }
+    })
     # |----------------------------------------------------------------------| #
   ]);
 
