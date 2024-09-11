@@ -43,7 +43,7 @@ in
     {
       plugins.project-nvim = {
         enable = _ true;
-        enableTelescope = _ true;
+        enableTelescope = _ telescopeCheck;
         # NOTE DEFAULT produces too many false positives
         # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
         patterns = [ ".git" ];

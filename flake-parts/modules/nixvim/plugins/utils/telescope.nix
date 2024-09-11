@@ -45,7 +45,10 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      extraPackages = with pkgs; [ ripgrep ];
+      extraPackages = with pkgs; [
+        ripgrep
+        fzf
+      ];
 
       plugins.telescope = {
         enable = _ true;

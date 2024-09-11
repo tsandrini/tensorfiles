@@ -82,11 +82,28 @@ in
         checks = {
           nvim-vanilla-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."vanilla-config";
           nvim-base-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."base-config";
-          nvim-minimal-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."minimal-config";
-          nvim-graphical-config =
-            mkTestDerivationFromNixvimModule
-              config.nixvimConfigurations."graphical-config";
-          nvim-ide-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."ide-config";
+
+          # NOTE Telescope-frecency produces
+          # ERROR: [Telescope-Frecency] Imported 0 entries from oldfiles.
+          # when ran in a pure environment unfortunately.
+          nvim-minimal-config = mkTestDerivationFromNixvimModule (
+            config.nixvimConfigurations."minimal-config"
+            // {
+              module.plugins.telescope.extensions.frecency.enable = false;
+            }
+          );
+          nvim-graphical-config = mkTestDerivationFromNixvimModule (
+            config.nixvimConfigurations."graphical-config"
+            // {
+              module.plugins.telescope.extensions.frecency.enable = false;
+            }
+          );
+          nvim-ide-config = mkTestDerivationFromNixvimModule (
+            config.nixvimConfigurations."ide-config"
+            // {
+              module.plugins.telescope.extensions.frecency.enable = false;
+            }
+          );
         };
       };
   };
