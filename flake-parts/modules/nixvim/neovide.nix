@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/utils/hop.nix
+# --- flake-parts/modules/nixvim/neovide.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -20,50 +20,45 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.utils.hop;
-  _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.neovide;
 in
+# _ = mkOverrideAtNixvimModuleLevel;
 {
-  options.tensorfiles.nixvim.plugins.utils.hop = {
+  options.tensorfiles.nixvim.neovide = {
     enable = mkEnableOption ''
       TODO
     '';
-
-    withKeymaps =
-      mkEnableOption ''
-        Enable the related included keymaps.
-      ''
-      // {
-        default = true;
-      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.hop = {
-        enable = _ true;
-        settings = {
-          keys = _ "asdfghjkl";
-        };
-      };
+      extraConfigLua = ''
+        if vim.fn.exists("g:neovide") ~= 0 then
+          local map = vim.keymap.set
+          local function neovideScale(amount)
+            local temp = vim.g.neovide_scale_factor + amount
+            if temp < 0.5 then
+              return
+            end
+            vim.g.neovide_scale_factor = temp
+          end
+
+          map("n", "<C-=>", function()
+            neovideScale(0.1)
+          end)
+
+          map("n", "<C-->", function()
+            neovideScale(-0.1)
+          end)
+
+          vim.g.neovide_transparency = 0.92
+          neovideScale(-0.3)
+        end
+      '';
     }
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.withKeymaps {
-      keymaps = [
-        {
-          mode = "n";
-          key = ",";
-          action = "<cmd>HopChar2<CR>";
-          options = {
-            desc = "Hop to char 2";
-            silent = true;
-          };
-        }
-      ];
-    })
     # |----------------------------------------------------------------------| #
   ]);
 

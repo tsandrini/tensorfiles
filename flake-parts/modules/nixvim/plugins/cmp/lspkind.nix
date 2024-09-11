@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/git/neogit.nix
+# --- flake-parts/modules/nixvim/plugins/cmp/lspkind.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,63 +22,30 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.git.neogit;
+  cfg = config.tensorfiles.nixvim.plugins.cmp.lspkind;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.git.neogit = {
+  options.tensorfiles.nixvim.plugins.cmp.lspkind = {
     enable = mkEnableOption ''
       TODO
     '';
-
-    withKeymaps =
-      mkEnableOption ''
-        Enable the related included keymaps.
-      ''
-      // {
-        default = true;
-      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.neogit = {
+      plugins.lspkind = {
         enable = _ true;
-        settings =
-          {
-          };
+        symbolMap = {
+          Copilot = _ " ";
+        };
+        extraOptions = {
+          maxwidth = _ 50;
+          ellipsis_char = _ "...";
+        };
       };
     }
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.withKeymaps {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>gg";
-          action = "<cmd>Neogit kind=vsplit<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gb";
-          action = "<cmd>Neogit branch<CR>";
-          options = {
-            desc = "Neogit branch";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gF";
-          action = "<cmd>Neogit fetch<CR>";
-          options = {
-            desc = "Neogit fetch";
-          };
-        }
-      ];
-    })
     # |----------------------------------------------------------------------| #
   ]);
 

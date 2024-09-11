@@ -13,16 +13,25 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  system,
+  ...
+}:
 let
   inherit (lib)
     mkIf
     mkMerge
     mkBefore
     mkEnableOption
+    getExe
     ;
   inherit (lib.strings) removePrefix;
-  inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.modules)
+    mkOverrideAtHmProfileLevel
+    isModuleLoadedAndEnabled
+    ;
   inherit (localFlake.lib.options) mkImpermanenceEnableOption;
 
   cfg = config.tensorfiles.hm.profiles.headless;
@@ -47,12 +56,22 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # TODO
+      home.packages = [ localFlake.packages.${system}.nvim-ide-config ];
+
+      home.shellAliases = {
+        "neovim" = _ "nvim";
+        "vim" = _ "nvim";
+        "vanilla-nvim" = _ (getExe localFlake.packages.${system}.nvim-vanilla-config);
+        "minimal-nvim" = _ (getExe localFlake.packages.${system}.nvim-minimal-config);
+      };
+
       tensorfiles.hm = {
         profiles.minimal.enable = _ true;
 
         programs = {
           shells.fish.enable = _ true;
-          editors.neovim.enable = _ true;
+          # editors.neovim.enable = _ true;
           file-managers.yazi.enable = _ true;
 
           btop.enable = _ true;

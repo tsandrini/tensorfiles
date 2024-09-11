@@ -62,18 +62,48 @@ in
       in
       {
         nixvimConfigurations = {
-          base-config = mkNixvimConfiguration "base-config" pkgs { };
           vanilla-config = mkNixvimConfiguration "vanilla-config" pkgs { };
+          base-config = mkNixvimConfiguration "base-config" pkgs { };
+          minimal-config = mkNixvimConfiguration "minimal-config" pkgs { };
+          graphical-config = mkNixvimConfiguration "graphical-config" pkgs { };
+          ide-config = mkNixvimConfiguration "ide-config" pkgs { };
         };
 
         packages = {
-          nvim-base-config = makeNixvimWithModule config.nixvimConfigurations."base-config";
+          nvim = config.packages.nvim-ide-config;
+
           nvim-vanilla-config = makeNixvimWithModule config.nixvimConfigurations."vanilla-config";
+          nvim-base-config = makeNixvimWithModule config.nixvimConfigurations."base-config";
+          nvim-minimal-config = makeNixvimWithModule config.nixvimConfigurations."minimal-config";
+          nvim-graphical-config = makeNixvimWithModule config.nixvimConfigurations."graphical-config";
+          nvim-ide-config = makeNixvimWithModule config.nixvimConfigurations."ide-config";
         };
 
         checks = {
-          nvim-base-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."base-config";
           nvim-vanilla-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."vanilla-config";
+          nvim-base-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."base-config";
+
+          # NOTE Telescope-frecency produces
+          # ERROR: [Telescope-Frecency] Imported 0 entries from oldfiles.
+          # when ran in a pure environment unfortunately.
+          nvim-minimal-config = mkTestDerivationFromNixvimModule (
+            config.nixvimConfigurations."minimal-config"
+            // {
+              module.plugins.telescope.extensions.frecency.enable = false;
+            }
+          );
+          nvim-graphical-config = mkTestDerivationFromNixvimModule (
+            config.nixvimConfigurations."graphical-config"
+            // {
+              module.plugins.telescope.extensions.frecency.enable = false;
+            }
+          );
+          nvim-ide-config = mkTestDerivationFromNixvimModule (
+            config.nixvimConfigurations."ide-config"
+            // {
+              module.plugins.telescope.extensions.frecency.enable = false;
+            }
+          );
         };
       };
   };

@@ -49,6 +49,7 @@ in
         ];
         rulerformat = _ "%l:%c"; # Show the line and column number of the cursor
         foldenable = _ false; # Disable folding by default
+        colorcolumn = _ "80";
 
         wildmenu = _ true; # Show a list of matching files when tab completing
         # TODO maybe use wilder.nvim plugin
@@ -64,6 +65,7 @@ in
         shiftround = _ true; # Round indent to multiple of shiftwidth
 
         scrolloff = _ 8; # Minimum number of screen lines to keep above and below the cursor
+        mouse = _ "a"; # Full mouse support
 
         list = _ true; # Show invisible characters
         listchars = {
@@ -76,6 +78,9 @@ in
         ignorecase = _ true; # Ignore case when searching
         smartcase = _ true; # Override 'ignorecase' if the search pattern contains uppercase characters
         showmatch = _ true; # Highlight matching parenthesis
+
+        undofile = _ true;
+        undodir = _ "/home/tsandrini/.cache/nvim/undodir";
       };
     }
     # |----------------------------------------------------------------------| #

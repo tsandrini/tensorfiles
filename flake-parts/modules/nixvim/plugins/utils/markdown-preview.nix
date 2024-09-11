@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/git/neogit.nix
+# --- flake-parts/modules/nixvim/plugins/utils/markdown-preview.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,11 +22,11 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.git.neogit;
+  cfg = config.tensorfiles.nixvim.plugins.utils.markdown-preview;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.git.neogit = {
+  options.tensorfiles.nixvim.plugins.utils.markdown-preview = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -43,11 +43,21 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.neogit = {
-        enable = _ true;
-        settings =
-          {
+      plugins = {
+        markdown-preview = {
+          enable = _ true;
+          settings = {
+            browser = _ "firefox";
+            echo_preview_url = _ true;
+            port = _ "6969";
+            preview_options = {
+              disable_filename = _ true;
+              disable_sync_scroll = _ true;
+              sync_scroll_type = _ "middle";
+            };
+            theme = _ "dark";
           };
+        };
       };
     }
     # |----------------------------------------------------------------------| #
@@ -55,26 +65,10 @@ in
       keymaps = [
         {
           mode = "n";
-          key = "<leader>gg";
-          action = "<cmd>Neogit kind=vsplit<CR>";
+          key = "<leader>mp";
+          action = "<cmd>MarkdownPreview<cr>";
           options = {
-            desc = "Neogit";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gb";
-          action = "<cmd>Neogit branch<CR>";
-          options = {
-            desc = "Neogit branch";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gF";
-          action = "<cmd>Neogit fetch<CR>";
-          options = {
-            desc = "Neogit fetch";
+            desc = "Toggle Markdown Preview";
           };
         }
       ];

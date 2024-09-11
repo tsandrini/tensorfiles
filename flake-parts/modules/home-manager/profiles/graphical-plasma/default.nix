@@ -54,8 +54,9 @@ in
           browsers.firefox.enable = _ true;
           browsers.firefox.userjs.betterfox.enable = _ true;
 
-          editors.emacs-doom.enable = _ true;
-          editors.neovim.lsp.enable = _ true;
+          # editors.emacs-doom.enable = _ true;
+          # NOTE switched to nixvim
+          # editors.neovim.lsp.enable = _ true;
 
           thunderbird.enable = _ true;
         };
@@ -66,7 +67,7 @@ in
       };
 
       home.packages = with pkgs; [
-        vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment. Should allow for easy usage of extensions without nix-specific modifications.
+        neovide # This is a simple graphical user interface for Neovim
       ];
 
       services.flameshot = {
@@ -82,7 +83,7 @@ in
         # Default programs
         BROWSER = _ "firefox";
         TERMINAL = _ "wezterm";
-        IDE = _ "emacs";
+        IDE = _ "nvim";
         EMAIL = _ "thunderbird";
       };
 

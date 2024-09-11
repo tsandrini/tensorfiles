@@ -241,7 +241,7 @@ in
               {
                 plugin = vim-suda;
                 type = "lua";
-                config = '''';
+                config = "";
               }
               {
                 plugin = telescope-nvim;
@@ -543,7 +543,7 @@ in
           {
             plugin = nvim-lint;
             type = "lua";
-            config = '''';
+            config = "";
           }
         ];
       };

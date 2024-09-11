@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/git/neogit.nix
+# --- flake-parts/modules/nixvim/plugins/lsp/trouble.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -22,11 +22,12 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.git.neogit;
+  cfg = config.tensorfiles.nixvim.plugins.lsp.trouble;
   _ = mkOverrideAtNixvimModuleLevel;
+
 in
 {
-  options.tensorfiles.nixvim.plugins.git.neogit = {
+  options.tensorfiles.nixvim.plugins.lsp.trouble = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -43,11 +44,11 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.neogit = {
+      plugins.trouble = {
         enable = _ true;
-        settings =
-          {
-          };
+        settings = {
+          auto_close = _ true;
+        };
       };
     }
     # |----------------------------------------------------------------------| #
@@ -55,26 +56,29 @@ in
       keymaps = [
         {
           mode = "n";
-          key = "<leader>gg";
-          action = "<cmd>Neogit kind=vsplit<CR>";
+          key = "<leader>xx";
+          action = "<cmd>Trouble diagnostics focus<cr>";
           options = {
-            desc = "Neogit";
+            silent = true;
+            desc = "Document Diagnostics (Trouble)";
           };
         }
         {
           mode = "n";
-          key = "<leader>gb";
-          action = "<cmd>Neogit branch<CR>";
+          key = "<leader>xq";
+          action = "<cmd>Trouble quickfix<cr>";
           options = {
-            desc = "Neogit branch";
+            silent = true;
+            desc = "Quickfix List (Trouble)";
           };
         }
         {
           mode = "n";
-          key = "<leader>gF";
-          action = "<cmd>Neogit fetch<CR>";
+          key = "<leader>cx";
+          action = "<cmd>Trouble diagnostics focus<cr>";
           options = {
-            desc = "Neogit fetch";
+            silent = true;
+            desc = "Document Diagnostics (Trouble)";
           };
         }
       ];

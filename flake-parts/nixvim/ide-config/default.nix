@@ -1,4 +1,4 @@
-# --- flake-parts/nixvim/base-config/default.nix
+# --- flake-parts/nixvim/ide-config/default.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -17,5 +17,5 @@ _:
 {
   imports = [ ];
 
-  tensorfiles.nixvim.profiles.base.enable = true;
+  tensorfiles.nixvim.profiles.ide.enable = true;
 }

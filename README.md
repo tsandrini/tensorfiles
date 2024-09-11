@@ -95,8 +95,8 @@ secrets I use [agenix](https://github.com/ryantm/agenix). I also try to avoid
 using any globally available pubkeys and rather tend to use machine specific
 ones instead (for obvious reasons).
 
-_Note_: plz no pwn xd, if you see any vulnerabilities please DM me instead,
-thanks \<3.
+_Note_: plz no pwn xd, if you see any vulnerabilities **please, send me a
+mail** at [security@tsandrini.sh](mailto:security@tsandrini.sh)
 
 ## 4. Installation 💾
 
@@ -163,3 +163,4 @@ manual.org?)
 - [A really nice blogpost/tutorial on encrypted nixos opt-in system using btrfs](https://mt-caret.github.io/blog/posts/2020-06-29-optin-state.html)
 - [Github code search: thanks to how the nix lang works the code search should be of a huge help, included an example](https://github.com/search?q=pkgs.writeShellScriptBin+language%3ANix&type=code&l=Nix)
 - [This is where flake-parts finally clicked for me, huge thanks to viperml~~](https://github.com/viperML/dotfiles)
+- [dc-tec/nixvim awesome nixvim config that got me started](https://github.com/dc-tec/nixvim/)

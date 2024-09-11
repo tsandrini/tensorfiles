@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/git/neogit.nix
+# --- flake-parts/modules/nixvim/plugins/utils/project-nvim.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,20 +13,18 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel isModuleLoadedAndEnabled;
 
-  cfg = config.tensorfiles.nixvim.plugins.git.neogit;
+  cfg = config.tensorfiles.nixvim.plugins.utils.project-nvim;
   _ = mkOverrideAtNixvimModuleLevel;
+
+  telescopeCheck = isModuleLoadedAndEnabled config "tensorfiles.nixvim.plugins.utils.telescope";
 in
 {
-  options.tensorfiles.nixvim.plugins.git.neogit = {
+  options.tensorfiles.nixvim.plugins.utils.project-nvim = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -43,38 +41,23 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.neogit = {
+      plugins.project-nvim = {
         enable = _ true;
-        settings =
-          {
-          };
+        enableTelescope = _ telescopeCheck;
+        # NOTE DEFAULT produces too many false positives
+        # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
+        patterns = [ ".git" ];
       };
     }
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.withKeymaps {
+    (mkIf (cfg.withKeymaps && telescopeCheck) {
       keymaps = [
         {
           mode = "n";
-          key = "<leader>gg";
-          action = "<cmd>Neogit kind=vsplit<CR>";
+          key = "<leader>pp";
+          action = "<cmd>Telescope projects<CR>";
           options = {
-            desc = "Neogit";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gb";
-          action = "<cmd>Neogit branch<CR>";
-          options = {
-            desc = "Neogit branch";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gF";
-          action = "<cmd>Neogit fetch<CR>";
-          options = {
-            desc = "Neogit fetch";
+            desc = "Telescope projects.";
           };
         }
       ];

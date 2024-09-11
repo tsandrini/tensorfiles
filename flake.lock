@@ -1416,11 +1416,11 @@
     "shadow-nix": {
       "flake": false,
       "locked": {
-        "lastModified": 1722864111,
-        "narHash": "sha256-lj0LERrD+/i0cbYxONXMkjRBWBJaByF7dDCs4VKjT40=",
+        "lastModified": 1725604009,
+        "narHash": "sha256-bTlb/sx7DjBxq6UhBlfJi4MixDMQQBSqgolGnCY0BFc=",
         "owner": "tsandrini",
         "repo": "shadow-nix",
-        "rev": "3a67bea43d2e9efa12ef18ece830ed81261fd6ec",
+        "rev": "5c818acba408850b9f04d761ee14922acb7ebef2",
         "type": "github"
       },
       "original": {

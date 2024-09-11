@@ -97,7 +97,7 @@ in
         }
         {
           mode = "n";
-          key = "<leader>t";
+          key = "<leader>ot";
           action = ":terminal<CR>";
           options = {
             desc = "Open terminal.";

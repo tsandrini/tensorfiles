@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/utils/hop.nix
+# --- flake-parts/modules/nixvim/profiles/base.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -20,50 +20,34 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimProfileLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.utils.hop;
-  _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.profiles.base;
+  _ = mkOverrideAtNixvimProfileLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.utils.hop = {
+  options.tensorfiles.nixvim.profiles.base = {
     enable = mkEnableOption ''
       TODO
     '';
-
-    withKeymaps =
-      mkEnableOption ''
-        Enable the related included keymaps.
-      ''
-      // {
-        default = true;
-      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.hop = {
-        enable = _ true;
-        settings = {
-          keys = _ "asdfghjkl";
-        };
+      tensorfiles.nixvim = {
+        settings.enable = _ true;
+        keymaps.enable = _ true;
+        auto_cmds.enable = _ true;
+      };
+
+      colorschemes.nightfox.enable = _ true;
+
+      performance = {
+        combinePlugins.enable = _ true;
+        byteCompileLua.enable = _ true;
       };
     }
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.withKeymaps {
-      keymaps = [
-        {
-          mode = "n";
-          key = ",";
-          action = "<cmd>HopChar2<CR>";
-          options = {
-            desc = "Hop to char 2";
-            silent = true;
-          };
-        }
-      ];
-    })
     # |----------------------------------------------------------------------| #
   ]);
 

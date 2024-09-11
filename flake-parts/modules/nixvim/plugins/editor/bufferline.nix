@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/git/neogit.nix
+# --- flake-parts/modules/nixvim/plugins/editor/bufferline.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,66 +19,60 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.git.neogit;
+  cfg = config.tensorfiles.nixvim.plugins.editor.bufferline;
   _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.git.neogit = {
+  options.tensorfiles.nixvim.plugins.editor.bufferline = {
     enable = mkEnableOption ''
       TODO
     '';
-
-    withKeymaps =
-      mkEnableOption ''
-        Enable the related included keymaps.
-      ''
-      // {
-        default = true;
-      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.neogit = {
+      plugins.bufferline = {
         enable = _ true;
-        settings =
-          {
+        settings = {
+          options = {
+            mode = _ "tabs";
+            diagnostics = _ "nvim_lsp";
+            diagnostics_indicator = ''
+              function(count, level, diagnostics_dict, context)
+                local s = ""
+                for e, n in pairs(diagnostics_dict) do
+                  local sym = e == "error" and " "
+                    or (e == "warning" and " " or "" )
+                  if(sym ~= "") then
+                    s = s .. " " .. n .. sym
+                  end
+                end
+                return s
+              end
+            '';
+            # NOTE offsets the neo-tree buffer
+            # offsets = [
+            #   {
+            #     filetype = "neo-tree";
+            #     text = "Neotree";
+            #     highlight = "Directory";
+            #     text_align = "left";
+            #   }
+            # ];
           };
+        };
+
       };
     }
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.withKeymaps {
-      keymaps = [
-        {
-          mode = "n";
-          key = "<leader>gg";
-          action = "<cmd>Neogit kind=vsplit<CR>";
-          options = {
-            desc = "Neogit";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gb";
-          action = "<cmd>Neogit branch<CR>";
-          options = {
-            desc = "Neogit branch";
-          };
-        }
-        {
-          mode = "n";
-          key = "<leader>gF";
-          action = "<cmd>Neogit fetch<CR>";
-          options = {
-            desc = "Neogit fetch";
-          };
-        }
-      ];
-    })
+
     # |----------------------------------------------------------------------| #
   ]);
 
