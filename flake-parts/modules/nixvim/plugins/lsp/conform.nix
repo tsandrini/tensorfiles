@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/lsp.conform.nix
+# --- flake-parts/modules/nixvim/plugins/lsp/conform.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -21,8 +21,10 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
   cfg = config.tensorfiles.nixvim.plugins.lsp.conform;
+  _ = mkOverrideAtNixvimModuleLevel;
 in
 {
   options.tensorfiles.nixvim.plugins.lsp.conform = {
@@ -43,7 +45,7 @@ in
     # |----------------------------------------------------------------------| #
     {
       plugins.conform-nvim = {
-        enable = true;
+        enable = _ true;
         settings = {
           # format_on_save = ''
           #   function(bufnr)
@@ -77,8 +79,8 @@ in
               return { lsp_fallback = true }
             end
           '';
-          notify_on_error = true;
-          notify_no_formatters = true;
+          notify_on_error = _ true;
+          notify_no_formatters = _ true;
           formatters_by_ft = {
             html = [
               [
@@ -135,40 +137,40 @@ in
 
           formatters = {
             black = {
-              command = "${lib.getExe pkgs.black}";
+              command = _ "${lib.getExe pkgs.black}";
             };
             isort = {
-              command = "${lib.getExe pkgs.isort}";
+              command = _ "${lib.getExe pkgs.isort}";
             };
             alejandra = {
-              command = "${lib.getExe pkgs.alejandra}";
+              command = _ "${lib.getExe pkgs.alejandra}";
             };
             nixfmt-rfc-style = {
-              command = "${lib.getExe pkgs.nixfmt-rfc-style}";
+              command = _ "${lib.getExe pkgs.nixfmt-rfc-style}";
             };
             jq = {
-              command = "${lib.getExe pkgs.jq}";
+              command = _ "${lib.getExe pkgs.jq}";
             };
             prettierd = {
-              command = "${lib.getExe pkgs.prettierd}";
+              command = _ "${lib.getExe pkgs.prettierd}";
             };
             stylua = {
-              command = "${lib.getExe pkgs.stylua}";
+              command = _ "${lib.getExe pkgs.stylua}";
             };
             shellcheck = {
-              command = "${lib.getExe pkgs.shellcheck}";
+              command = _ "${lib.getExe pkgs.shellcheck}";
             };
             shfmt = {
-              command = "${lib.getExe pkgs.shfmt}";
+              command = _ "${lib.getExe pkgs.shfmt}";
             };
             shellharden = {
-              command = "${lib.getExe pkgs.shellharden}";
+              command = _ "${lib.getExe pkgs.shellharden}";
             };
             bicep = {
-              command = "${lib.getExe pkgs.bicep}";
+              command = _ "${lib.getExe pkgs.bicep}";
             };
             #yamlfmt = {
-            #  command = "${lib.getExe pkgs.yamlfmt}";
+            #  command = _ "${lib.getExe pkgs.yamlfmt}";
             #};
           };
         };

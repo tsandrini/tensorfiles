@@ -53,11 +53,15 @@ in
     };
 
     plugins_editor_bufferline = importApply ./plugins/editor/bufferline.nix { inherit localFlake; };
+    plugins_editor_spectre = importApply ./plugins/editor/spectre.nix { inherit localFlake; };
     plugins_editor_copilot-lua = importApply ./plugins/editor/copilot-lua.nix { inherit localFlake; };
     plugins_editor_neo-tree = importApply ./plugins/editor/neo-tree.nix { inherit localFlake; };
     plugins_editor_noice = importApply ./plugins/editor/noice.nix { inherit localFlake; };
     plugins_editor_treesitter = importApply ./plugins/editor/treesitter.nix { inherit localFlake; };
     plugins_editor_undotree = importApply ./plugins/editor/undotree.nix { inherit localFlake; };
+    plugins_editor_render-markdown = importApply ./plugins/editor/render-markdown.nix {
+      inherit localFlake;
+    };
 
     plugins_cmp_cmp = importApply ./plugins/cmp/cmp.nix { inherit localFlake; };
     plugins_cmp_lspkind = importApply ./plugins/cmp/lspkind.nix { inherit localFlake; };
@@ -68,5 +72,6 @@ in
     plugins_lsp_lsp = importApply ./plugins/lsp/lsp.nix { inherit localFlake; };
     plugins_lsp_lspsaga = importApply ./plugins/lsp/lspsaga.nix { inherit localFlake; };
     plugins_lsp_trouble = importApply ./plugins/lsp/trouble.nix { inherit localFlake; };
+    plugins_lsp_otter = importApply ./plugins/lsp/otter.nix { inherit localFlake; };
   };
 }

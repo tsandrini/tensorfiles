@@ -53,6 +53,8 @@ in
           editor.treesitter.enable = _ true;
           editor.undotree.enable = _ true;
           editor.bufferline.enable = _ true;
+          editor.spectre.enable = _ true;
+          editor.render-markdown.enable = _ true;
         };
       };
 

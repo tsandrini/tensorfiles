@@ -41,8 +41,15 @@ in
     {
       plugins.copilot-lua = {
         enable = _ true;
-        suggestion.autoTrigger = _ true;
-        copilotNodeCommand = _ "node";
+        # package = _ patched-copilot-lua;
+        suggestion = {
+          enabled = _ true;
+          autoTrigger = _ true;
+        };
+        # filetypes = {
+        #   "*" = true;
+        # };
+        # copilotNodeCommand = _ "node";
       };
     }
     # |----------------------------------------------------------------------| #

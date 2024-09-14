@@ -53,6 +53,7 @@ in
           lsp.conform.enable = _ true;
           lsp.fidget.enable = _ true;
           lsp.trouble.enable = _ true;
+          lsp.otter.enable = _ true;
         };
       };
 
