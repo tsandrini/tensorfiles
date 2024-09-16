@@ -64,6 +64,7 @@ in
             ansiblels.enable = _ true;
             astro.enable = _ true;
             bashls.enable = _ true;
+            hls.enable = _ true;
             biome.enable = _ true;
             clangd.enable = _ true;
             cssls.enable = _ true;

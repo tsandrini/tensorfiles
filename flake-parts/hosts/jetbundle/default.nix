@@ -138,7 +138,13 @@
   # NOTE for wireguard
   networking.wireguard.enable = true;
   networking.firewall = {
-    allowedUDPPorts = [ 51820 ];
+    allowedUDPPorts = [
+      51820
+      4321
+    ];
+    allowedTCPPorts = [
+      4321
+    ];
   };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
