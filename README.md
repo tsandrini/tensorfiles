@@ -18,7 +18,10 @@
 1. [Impurities](6-impurities)
    1. [Currently known impurities](61-currently-known-impurities)
    1. [Notes](62-notes)
-1. [References](7-references)
+1. [Resources](7-resources)
+1. [Credits & Special thanks](8-credits-special-thanks)
+   1. [Major help](81-major-help)
+   1. [Additional help](82-additional-help)
 
 ## 1. About ❄️
 
@@ -149,10 +152,10 @@ avoid using it.
 ### 6.2 Notes
 
 - [shadow-nix](https://github.com/NicolasGuilloux/shadow-nix) and all its
-forks rely on impure imports of hashes, so I am maintaining my own fork
-[tsandrini/shadow-nix](https://github.com/tsandrini/shadow-nix)
+  forks rely on impure imports of hashes, so I am maintaining my own fork
+  [tsandrini/shadow-nix](https://github.com/tsandrini/shadow-nix)
 - I was previously using [devenv](https://devenv.sh/), however, it still doesn't
-work really well in a pure mode, so switched to a simple devshell instead.
+  work really well in a pure mode, so switched to a simple devshell instead.
 
 ## 7. Resources 📚
 
@@ -190,7 +193,7 @@ taken some piece of code or have been inspired from. Huge thanks ❤️
 ### 8.1 Major help
 
 These are people that are engrained in the nix community and whose work I/we
-use on a daily basis. I hope they will hapilly continue to be a part of the
+use on a daily basis. I hope they will happily continue to be a part of the
 nix community and I thank them for all of their contributions.
 
 [edolstra](https://github.com/edolstra)
@@ -203,7 +206,9 @@ nix community and I thank them for all of their contributions.
 -- [fufexan](https://github.com/fufexan)
 -- [NobbZ](https://github.com/NobbZ)
 
-### 8.2 Additional help with ideas & code snippets
+### 8.2 Additional help
+
+Additional help with certain specific areas, inspiration or code snippets.
 
 [balsoft](https://github.com/balsoft)
 -- [dc-tec](https://github.com/dc-tec)

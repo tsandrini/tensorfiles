@@ -21,7 +21,11 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel mkOverrideAtNixvimProfileLevel isModuleLoadedAndEnabled;
+  inherit (localFlake.lib.modules)
+    mkOverrideAtNixvimModuleLevel
+    mkOverrideAtNixvimProfileLevel
+    isModuleLoadedAndEnabled
+    ;
 
   cfg = config.tensorfiles.nixvim.plugins.cmp.cmp;
   _ = mkOverrideAtNixvimModuleLevel;
@@ -57,9 +61,13 @@ in
       };
 
     copilot-cmp = {
-      enable = mkEnableOption ''
-        Enable the copilot-cmp integration.
-      '' // { default = true; };
+      enable =
+        mkEnableOption ''
+          Enable the copilot-cmp integration.
+        ''
+        // {
+          default = true;
+        };
     };
   };
 
