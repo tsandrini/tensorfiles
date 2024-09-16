@@ -16,7 +16,12 @@
 1. [Troubleshooting](5-troubleshooting)
    1. [`Write error: disk full;` during `nixos-install`](write-error-disk-full-during-nixos-install)
 1. [Impurities](6-impurities)
-1. [References](7-references)
+   1. [Currently known impurities](61-currently-known-impurities)
+   1. [Notes](62-notes)
+1. [Resources](7-resources)
+1. [Credits & Special thanks](8-credits-special-thanks)
+   1. [Major help](81-major-help)
+   1. [Additional help](82-additional-help)
 
 ## 1. About ❄️
 
@@ -136,9 +141,23 @@ mount -o remount,size=15G /tmp
 
 ## 6. Impurities 💩
 
-- Currently **none**! 🚀🚀
+I heavily dislike using the `--impure` flag, which is unfortunately required
+in certain use cases, and I go really out of my way to patch stuff and
+avoid using it.
 
-## 7. References 📚
+### 6.1 Currently known impurities
+
+- **none**! 🚀🚀
+
+### 6.2 Notes
+
+- [shadow-nix](https://github.com/NicolasGuilloux/shadow-nix) and all its
+  forks rely on impure imports of hashes, so I am maintaining my own fork
+  [tsandrini/shadow-nix](https://github.com/tsandrini/shadow-nix)
+- I was previously using [devenv](https://devenv.sh/), however, it still doesn't
+  work really well in a pure mode, so switched to a simple devshell instead.
+
+## 7. Resources 📚
 
 The whole nix ecosystem is in its foundations a revolutionary piece of
 software and once you get the hang of it you feel like you’ve really
@@ -164,3 +183,33 @@ manual.org?)
 - [Github code search: thanks to how the nix lang works the code search should be of a huge help, included an example](https://github.com/search?q=pkgs.writeShellScriptBin+language%3ANix&type=code&l=Nix)
 - [This is where flake-parts finally clicked for me, huge thanks to viperml~~](https://github.com/viperML/dotfiles)
 - [dc-tec/nixvim awesome nixvim config that got me started](https://github.com/dc-tec/nixvim/)
+
+## 8. Credits & Special thanks
+
+To reiterate the previous [Resources](7-resources) section, here are also some
+explicit shoutouts & thanks to the people from whom I have at some point in time
+taken some piece of code or have been inspired from. Huge thanks ❤️
+
+### 8.1 Major help
+
+These are people that are engrained in the nix community and whose work I/we
+use on a daily basis. I hope they will happily continue to be a part of the
+nix community and I thank them for all of their contributions.
+
+[edolstra](https://github.com/edolstra)
+-- [grahamc](https://github.com/grahamc)
+-- [domenkozar](https://github.com/domenkozar)
+-- [Mic92](https://github.com/Mic92)
+-- [hlissner](https://github.com/hlissner)
+-- [viperML](https://github.com/viperML)
+-- [roberth](https://github.com/roberth)
+-- [fufexan](https://github.com/fufexan)
+-- [NobbZ](https://github.com/NobbZ)
+
+### 8.2 Additional help
+
+Additional help with certain specific areas, inspiration or code snippets.
+
+[balsoft](https://github.com/balsoft)
+-- [dc-tec](https://github.com/dc-tec)
+-- [notusknot](https://github.com/notusknot/)

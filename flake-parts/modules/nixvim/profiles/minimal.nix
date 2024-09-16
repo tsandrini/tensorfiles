@@ -53,6 +53,8 @@ in
           editor.treesitter.enable = _ true;
           editor.undotree.enable = _ true;
           editor.bufferline.enable = _ true;
+          editor.spectre.enable = _ true;
+          editor.render-markdown.enable = _ true;
         };
       };
 
@@ -60,17 +62,25 @@ in
 
       extraPlugins = with pkgs.vimPlugins; [
         # nightfox-nvim
+        # vscode-nvim
         catppuccin-nvim
         cyberdream-nvim
+        doom-one-nvim
+        dracula-nvim
+        everforest
         gruvbox-nvim
         kanagawa-nvim
+        melange-nvim
         modus-themes-nvim
         neovim-ayu
+        nord-nvim
+        one-nvim
         onedark-nvim
+        onenord-nvim
         oxocarbon-nvim
+        poimandres-nvim
         rose-pine
         tokyonight-nvim
-        # vscode-nvim
       ];
 
       plugins.mini = {

@@ -21,10 +21,16 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules)
+    mkOverrideAtNixvimModuleLevel
+    mkOverrideAtNixvimProfileLevel
+    isModuleLoadedAndEnabled
+    ;
 
   cfg = config.tensorfiles.nixvim.plugins.cmp.cmp;
   _ = mkOverrideAtNixvimModuleLevel;
+
+  copilot-lua-check = isModuleLoadedAndEnabled config "tensorfiles.nixvim.plugins.editor.copilot-lua";
 
   get_bufnrs.__raw = ''
     function()
@@ -53,6 +59,16 @@ in
       // {
         default = true;
       };
+
+    copilot-cmp = {
+      enable =
+        mkEnableOption ''
+          Enable the copilot-cmp integration.
+        ''
+        // {
+          default = true;
+        };
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -106,6 +122,7 @@ in
               {
                 name = "nvim_lsp";
                 priority = 1100;
+                # group_index = 2;
                 option = {
                   inherit get_bufnrs;
                 };
@@ -113,6 +130,7 @@ in
               {
                 name = "nvim_lsp_signature_help";
                 priority = 1000;
+                # group_index = 2;
                 option = {
                   inherit get_bufnrs;
                 };
@@ -120,6 +138,7 @@ in
               {
                 name = "nvim_lsp_document_symbol";
                 priority = 1000;
+                # group_index = 2;
                 option = {
                   inherit get_bufnrs;
                 };
@@ -180,6 +199,26 @@ in
         };
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.copilot-cmp.enable && copilot-lua-check) {
+      plugins.copilot-lua = {
+        suggestion.enabled = mkOverrideAtNixvimProfileLevel false;
+        panel.enabled = mkOverrideAtNixvimProfileLevel false;
+      };
+
+      plugins.cmp.settings = {
+        sources = [
+          {
+            name = "copilot";
+            priority = 1200;
+            # group_index = 2;
+            option = {
+              inherit get_bufnrs;
+            };
+          }
+        ];
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

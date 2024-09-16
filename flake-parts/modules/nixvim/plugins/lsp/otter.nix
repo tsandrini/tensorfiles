@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/profiles/base.nix
+# --- flake-parts/modules/nixvim/plugins/lsp/otter.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -20,13 +20,13 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimProfileLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.profiles.base;
-  _ = mkOverrideAtNixvimProfileLevel;
+  cfg = config.tensorfiles.nixvim.plugins.lsp.otter;
+  _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.profiles.base = {
+  options.tensorfiles.nixvim.plugins.lsp.otter = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,17 +35,13 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      tensorfiles.nixvim = {
-        settings.enable = _ true;
-        keymaps.enable = _ true;
-        auto_cmds.enable = _ true;
-      };
-
-      colorschemes.nightfox.enable = _ true;
-
-      performance = {
-        # combinePlugins.enable = _ true;
-        byteCompileLua.enable = _ true;
+      plugins.otter = {
+        enable = _ true;
+        settings = {
+          buffers = {
+            set_filetype = _ true;
+          };
+        };
       };
     }
     # |----------------------------------------------------------------------| #

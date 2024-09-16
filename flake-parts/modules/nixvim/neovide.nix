@@ -47,15 +47,15 @@ in
           end
 
           map("n", "<C-=>", function()
-            neovideScale(0.1)
+            neovideScale(0.05)
           end)
 
           map("n", "<C-->", function()
-            neovideScale(-0.1)
+            neovideScale(-0.05)
           end)
 
           vim.g.neovide_transparency = 0.92
-          neovideScale(-0.3)
+          neovideScale(-0.35)
         end
       '';
     }
