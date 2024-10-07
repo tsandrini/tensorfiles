@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/profiles/ide.nix
+# --- flake-parts/modules/nixvim/plugins/editor/indent-blankline.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,14 +19,20 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimProfileLevel;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel isModuleLoadedAndEnabled;
 
-  cfg = config.tensorfiles.nixvim.profiles.ide;
-  _ = mkOverrideAtNixvimProfileLevel;
+  cfg = config.tensorfiles.nixvim.plugins.editor.indent-blankline;
+  _ = mkOverrideAtNixvimModuleLevel;
+
+  treesitterCheck = isModuleLoadedAndEnabled config "tensorfiles.nixvim.plugins.editor.treesitter";
 in
 {
-  options.tensorfiles.nixvim.profiles.ide = {
+  options.tensorfiles.nixvim.plugins.editor.indent-blankline = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,31 +41,12 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      tensorfiles.nixvim = {
-        profiles.graphical.enable = _ true;
-
-        plugins = {
-          # TODO [Copilot] Could not find agent.js (bad install?) : nil
-          editor.copilot-lua.enable = _ true;
-
-          cmp.cmp.enable = _ true;
-          cmp.lspkind.enable = _ true;
-          cmp.schemastore.enable = _ true;
-
-          lsp.lsp.enable = _ true;
-          lsp.lsp.withKeymaps = _ false; # use lspsaga keymaps instead
-          lsp.lspsaga.enable = _ true;
-          lsp.sniprun.enable = _ true;
-
-          lsp.conform.enable = _ true;
-          lsp.fidget.enable = _ true;
-          lsp.trouble.enable = _ true;
-          lsp.otter.enable = _ true;
+      plugins.indent-blankline = {
+        enable = _ true;
+        settings = {
+          scope.enabled = _ treesitterCheck;
         };
       };
-
-      plugins.direnv.enable = _ true;
-      plugins.crates-nvim.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

@@ -117,6 +117,27 @@ in
               silent = true;
             };
           };
+          "<leader>po" = {
+            action = "vim_options";
+            options = {
+              desc = "Telescope vim options";
+              silent = true;
+            };
+          };
+          "<leader>pc" = {
+            action = "commands";
+            options = {
+              desc = "Telescope commands";
+              silent = true;
+            };
+          };
+          "<M-x>" = {
+            action = "commands";
+            options = {
+              desc = "Telescope commands";
+              silent = true;
+            };
+          };
         };
       };
     }

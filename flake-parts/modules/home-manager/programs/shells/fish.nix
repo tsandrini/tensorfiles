@@ -139,6 +139,8 @@ in
           end
 
           ${pkgs.any-nix-shell}/bin/any-nix-shell fish --info-right | source
+
+          ${getExe pkgs.microfetch}
         '';
         plugins =
           (optional cfg.withFzf {
@@ -160,7 +162,7 @@ in
 
       home.shellAliases = mkMerge [
         {
-          fetch = _ "${getExe pkgs.nitch}";
+          fetch = _ "${getExe pkgs.microfetch}";
           g = _ "${getExe config.programs.git.package}";
         }
         (mkIf cfg.shellAliases.lsToEza {
@@ -180,7 +182,6 @@ in
           grep = _ "${getExe pkgs.ripgrep}";
           list-todos = _ "${getExe pkgs.ripgrep} -g '!{.git,node_modules,result,build,dist,.idea,out,.DS_Store}' --no-follow 'TODO|FIXME' ";
         })
-        { fetch = _ "${getExe pkgs.nitch}"; }
       ];
     }
     # |----------------------------------------------------------------------| #

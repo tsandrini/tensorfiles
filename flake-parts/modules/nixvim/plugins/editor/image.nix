@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/profiles/ide.nix
+# --- flake-parts/modules/nixvim/plugins/editor/image.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -19,14 +19,18 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimProfileLevel;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.profiles.ide;
-  _ = mkOverrideAtNixvimProfileLevel;
+  cfg = config.tensorfiles.nixvim.plugins.editor.image;
+  _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.profiles.ide = {
+  options.tensorfiles.nixvim.plugins.editor.image = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,31 +39,9 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      tensorfiles.nixvim = {
-        profiles.graphical.enable = _ true;
-
-        plugins = {
-          # TODO [Copilot] Could not find agent.js (bad install?) : nil
-          editor.copilot-lua.enable = _ true;
-
-          cmp.cmp.enable = _ true;
-          cmp.lspkind.enable = _ true;
-          cmp.schemastore.enable = _ true;
-
-          lsp.lsp.enable = _ true;
-          lsp.lsp.withKeymaps = _ false; # use lspsaga keymaps instead
-          lsp.lspsaga.enable = _ true;
-          lsp.sniprun.enable = _ true;
-
-          lsp.conform.enable = _ true;
-          lsp.fidget.enable = _ true;
-          lsp.trouble.enable = _ true;
-          lsp.otter.enable = _ true;
-        };
+      plugins.image = {
+        enable = _ true;
       };
-
-      plugins.direnv.enable = _ true;
-      plugins.crates-nvim.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

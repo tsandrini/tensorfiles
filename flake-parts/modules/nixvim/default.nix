@@ -52,7 +52,17 @@ in
       inherit localFlake;
     };
 
+    plugins_editor_indent-blankline = importApply ./plugins/editor/indent-blankline.nix {
+      inherit localFlake;
+    };
+    plugins_editor_image = importApply ./plugins/editor/image.nix { inherit localFlake; };
+    plugins_editor_nvim-ufo = importApply ./plugins/editor/nvim-ufo.nix { inherit localFlake; };
+    plugins_editor_leetcode = importApply ./plugins/editor/leetcode.nix { inherit localFlake; };
+    plugins_editor_obsidian = importApply ./plugins/editor/obsidian.nix { inherit localFlake; };
     plugins_editor_bufferline = importApply ./plugins/editor/bufferline.nix { inherit localFlake; };
+    plugins_editor_buffer-manager = importApply ./plugins/editor/buffer-manager.nix {
+      inherit localFlake;
+    };
     plugins_editor_spectre = importApply ./plugins/editor/spectre.nix { inherit localFlake; };
     plugins_editor_copilot-lua = importApply ./plugins/editor/copilot-lua.nix { inherit localFlake; };
     plugins_editor_neo-tree = importApply ./plugins/editor/neo-tree.nix { inherit localFlake; };
@@ -68,6 +78,7 @@ in
     plugins_cmp_schemastore = importApply ./plugins/cmp/schemastore.nix { inherit localFlake; };
 
     plugins_lsp_conform = importApply ./plugins/lsp/conform.nix { inherit localFlake; };
+    plugins_lsp_sniprun = importApply ./plugins/lsp/sniprun.nix { inherit localFlake; };
     plugins_lsp_fidget = importApply ./plugins/lsp/fidget.nix { inherit localFlake; };
     plugins_lsp_lsp = importApply ./plugins/lsp/lsp.nix { inherit localFlake; };
     plugins_lsp_lspsaga = importApply ./plugins/lsp/lspsaga.nix { inherit localFlake; };

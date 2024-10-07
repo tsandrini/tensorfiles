@@ -41,6 +41,10 @@ in
         neovide.enable = _ true;
         plugins = {
           utils.markdown-preview.enable = _ true;
+
+          editor.obsidian.enable = _ true;
+          editor.leetcode.enable = _ true;
+          # editor.image.enable = _ true;
         };
       };
     }

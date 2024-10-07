@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/utils/project-nvim.nix
+# --- flake-parts/modules/nixvim/plugins/editor/buffer-manager.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -13,18 +13,25 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{ config, lib, ... }:
-let
-  inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel isModuleLoadedAndEnabled;
-
-  cfg = config.tensorfiles.nixvim.plugins.utils.project-nvim;
-  _ = mkOverrideAtNixvimModuleLevel;
-
-  telescopeCheck = isModuleLoadedAndEnabled config "tensorfiles.nixvim.plugins.utils.telescope";
-in
 {
-  options.tensorfiles.nixvim.plugins.utils.project-nvim = {
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
+  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+
+  cfg = config.tensorfiles.nixvim.plugins.editor.buffer-manager;
+in
+# _ = mkOverrideAtNixvimModuleLevel;
+{
+  options.tensorfiles.nixvim.plugins.editor.buffer-manager = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -41,23 +48,46 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.project-nvim = {
-        enable = _ true;
-        enableTelescope = _ telescopeCheck;
-        # NOTE DEFAULT produces too many false positives
-        # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
-        patterns = [ ".git" ".projectfile" ];
-      };
+      extraPlugins = [
+        (pkgs.vimUtils.buildVimPlugin {
+          name = "buffer_manager.nvim";
+          src = pkgs.fetchFromGitHub {
+            owner = "j-morano";
+            repo = "buffer_manager.nvim";
+            rev = "fd36131b2b3e0f03fd6353ae2ffc88cf920b3bbb";
+            hash = "sha256-abe9ZGmL7U9rC+LxC3LO5/bOn8lHke1FCKO0V3TZGs0=";
+          };
+        })
+      ];
+
+      extraConfigLua = ''
+        require("buffer_manager").setup({
+          win_extra_options = {
+            number = true,
+            relativenumber = true,
+          },
+        })
+      '';
     }
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.withKeymaps && telescopeCheck) {
+    (mkIf cfg.withKeymaps {
       keymaps = [
         {
           mode = "n";
-          key = "<leader>pp";
-          action = "<cmd>Telescope projects<CR>";
+          key = "<leader>bb";
+          action = ":lua require(\"buffer_manager.ui\").toggle_quick_menu()<CR>";
           options = {
-            desc = "Telescope projects.";
+            desc = "Buffers browser";
+            silent = true;
+          };
+        }
+        {
+          mode = "n";
+          key = "<leader>be";
+          action = ":lua require(\"buffer_manager.ui\").toggle_quick_menu()<CR>";
+          options = {
+            desc = "Buffers browser";
+            silent = true;
           };
         }
       ];

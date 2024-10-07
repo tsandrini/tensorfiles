@@ -57,31 +57,50 @@ in
           enable = _ true;
         };
 
+        # TODO possibly move?
+        rustaceanvim = {
+          enable = _ true;
+        };
+
         lsp = {
           enable = _ true;
           inlayHints = _ true;
           servers = {
-            ansiblels.enable = _ true;
-            astro.enable = _ true;
-            bashls.enable = _ true;
-            hls.enable = _ true;
-            biome.enable = _ true;
-            clangd.enable = _ true;
-            cssls.enable = _ true;
-            docker-compose-language-service.enable = _ true;
-            dockerls.enable = _ true;
-            graphql.enable = _ true;
-            html.enable = _ true;
+            ansiblels.enable = _ true; # ansiblels for Ansible
+            astro.enable = _ true; # astrols for Astro"
+            bashls.enable = _ true; # bashls for bash
+            biome.enable = _ true; # Biome, Toolchain of the Web
+            clangd.enable = _ true; # clangd LSP for C/C++
+            cmake.enable = _ true; # cmake language server
+            cssls.enable = _ true; # cssls for CSS
+            dhall-lsp-server.enable = _ true; # dhall-lsp-server for Dhall
+            docker-compose-language-service.enable = _ true; # docker-compose-language-service for Docker Compose
+            dockerls.enable = _ true; # dockerls for Dockerfile
+            gopls.enable = _ true; # gopls for Go
+            graphql.enable = _ true; # graphql for GraphQL
+            hls.enable = _ true; # haskell language server
+            html.enable = _ true; # HTML language server from `vscode-langservers-extracted`
+            htmx.enable = _ true; # htmx for HTMX
+            # idris2-lsp.enable = _ true; # Idris 2 Language Server
             # intelephense.enable = _ true; # NOTE unfree
-            jsonls.enable = _ true;
-            lua-ls.enable = _ true;
-            nginx-language-server.enable = _ true;
-            nil-ls.enable = _ true;
-            ocamllsp.enable = _ true;
+            jsonls.enable = _ true; # jsonls for JSON
+            julials.enable = _ true; # julials for Julia
+            leanls.enable = _ true; # leanls for Lean"
+            lua-ls.enable = _ true; # lua-ls for Lua
+            nginx-language-server.enable = _ true; # nginx-language-server for `nginx.conf`
+            nil-ls.enable = _ true; # nil for Nix
+            ocamllsp.enable = _ true; # ocamllsp for OCaml
+            phpactor.enable = _ true; # phpactor for PHP
             pyright.enable = _ true;
-            sqls.enable = _ true;
-            terraformls.enable = _ true;
+            ruby-lsp.enable = _ true; # ruby-lsp for Ruby
+            r-language-server.enable = _ true; # r-language-server for R
+            sqls.enable = _ true; # sqls for SQL
+            terraformls.enable = _ true; # terraformls for Terraform
             tsserver.enable = _ true;
+            typst-lsp.enable = _ true; # typst-lsp for the Typst language
+            texlab.enable = _ true; # texlab for LaTeX
+            vuels.enable = _ true; # vuels for Vue
+            zls.enable = _ true; # zls for Zig
             rust-analyzer = {
               enable = _ true;
               installCargo = _ false; # TODO
@@ -93,7 +112,7 @@ in
                 settings = {
                   yaml = {
                     schemas = {
-                      kubernetes = _ "'*.yaml";
+                      # kubernetes = _ "'*.yaml";
                       "http://json.schemastore.org/github-workflow" = _ ".github/workflows/*";
                       "http://json.schemastore.org/github-action" = _ ".github/action.{yml,yaml}";
                       "http://json.schemastore.org/ansible-stable-2.9" = _ "roles/tasks/*.{yml,yaml}";
@@ -102,7 +121,7 @@ in
                       "http://json.schemastore.org/chart" = _ "Chart.{yml,yaml}";
                       "https://json.schemastore.org/dependabot-v2" = _ ".github/dependabot.{yml,yaml}";
                       "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json" = _ "*docker-compose*.{yml,yaml}";
-                      "https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json" = _ "*flow*.{yml,yaml}";
+                      # "https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json" = _ "*flow*.{yml,yaml}";
                     };
                   };
                 };
