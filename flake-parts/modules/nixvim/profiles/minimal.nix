@@ -98,6 +98,7 @@ in
 
       plugins.mini = {
         enable = _ true;
+        mockDevIcons = _ true;
         modules = {
           ai = { };
           icons = { };

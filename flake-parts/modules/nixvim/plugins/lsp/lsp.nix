@@ -96,16 +96,16 @@ in
             r-language-server.enable = _ true; # r-language-server for R
             sqls.enable = _ true; # sqls for SQL
             terraformls.enable = _ true; # terraformls for Terraform
-            tsserver.enable = _ true;
+            ts-ls.enable = true;
             typst-lsp.enable = _ true; # typst-lsp for the Typst language
             texlab.enable = _ true; # texlab for LaTeX
             vuels.enable = _ true; # vuels for Vue
             zls.enable = _ true; # zls for Zig
-            rust-analyzer = {
-              enable = _ true;
-              installCargo = _ false; # TODO
-              installRustc = _ false; # TODO
-            };
+            # rust-analyzer = {
+            #   enable = _ true;
+            #   installCargo = _ false; # TODO
+            #   installRustc = _ false; # TODO
+            # };
             yamlls = {
               enable = _ true;
               extraOptions = {

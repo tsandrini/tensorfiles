@@ -42,7 +42,7 @@ in
     # |----------------------------------------------------------------------| #
     {
       extraPlugins = with pkgs.vimPlugins; [
-        render-markdown
+        render-markdown-nvim
       ];
 
       extraConfigLua = ''

@@ -48,11 +48,11 @@ in
           enable = _ true;
           settings = {
             browser = _ "firefox";
-            echo_preview_url = _ true;
+            echo_preview_url = _ 1;
             port = _ "6969";
             preview_options = {
-              disable_filename = _ true;
-              disable_sync_scroll = _ true;
+              disable_filename = _ 1;
+              disable_sync_scroll = _ 1;
               sync_scroll_type = _ "middle";
             };
             theme = _ "dark";
