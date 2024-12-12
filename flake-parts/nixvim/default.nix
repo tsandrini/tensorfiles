@@ -34,9 +34,12 @@ let
       module =
         { ... }:
         {
-          imports = [
-            (importApply ./${name} configImportArgs)
-          ] ++ extraModules ++ (lib.attrValues config.flake.nixvimModules);
+          imports =
+            [
+              (importApply ./${name} configImportArgs)
+            ]
+            ++ extraModules
+            ++ (lib.attrValues config.flake.nixvimModules);
         };
     };
 in

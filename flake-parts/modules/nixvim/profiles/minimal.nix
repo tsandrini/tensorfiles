@@ -61,7 +61,7 @@ in
         };
       };
 
-      plugins.nvim-colorizer.enable = _ true;
+      plugins.colorizer.enable = _ true;
 
       extraPlugins = with pkgs.vimPlugins; [
         # nightfox-nvim

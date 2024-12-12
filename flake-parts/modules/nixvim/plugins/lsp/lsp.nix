@@ -73,33 +73,41 @@ in
             clangd.enable = _ true; # clangd LSP for C/C++
             cmake.enable = _ true; # cmake language server
             cssls.enable = _ true; # cssls for CSS
-            dhall-lsp-server.enable = _ true; # dhall-lsp-server for Dhall
-            docker-compose-language-service.enable = _ true; # docker-compose-language-service for Docker Compose
+            dhall_lsp_server.enable = _ true; # dhall-lsp-server for Dhall
+            docker_compose_language_service.enable = _ true; # docker-compose-language-service for Docker Compose
             dockerls.enable = _ true; # dockerls for Dockerfile
             gopls.enable = _ true; # gopls for Go
             graphql.enable = _ true; # graphql for GraphQL
-            hls.enable = _ true; # haskell language server
+            hls = {
+              installGhc = _ true;
+              enable = _ true; # haskell language server
+            };
             html.enable = _ true; # HTML language server from `vscode-langservers-extracted`
             htmx.enable = _ true; # htmx for HTMX
             # idris2-lsp.enable = _ true; # Idris 2 Language Server
             # intelephense.enable = _ true; # NOTE unfree
             jsonls.enable = _ true; # jsonls for JSON
-            julials.enable = _ true; # julials for Julia
+            # TODO not sure which package to install, maybe
+            # vscode-extensions.julialang.language-julia ??
+            # julials.enable = _ true; # julials for Julia
             leanls.enable = _ true; # leanls for Lean"
-            lua-ls.enable = _ true; # lua-ls for Lua
-            nginx-language-server.enable = _ true; # nginx-language-server for `nginx.conf`
-            nil-ls.enable = _ true; # nil for Nix
+            lua_ls.enable = _ true; # lua-ls for Lua
+            nginx_language_server.enable = _ true; # nginx-language-server for `nginx.conf`
+            nil_ls.enable = _ true; # nil for Nix
             ocamllsp.enable = _ true; # ocamllsp for OCaml
+            ocamllsp.package = _ pkgs.ocamlPackages.ocaml-lsp;
             phpactor.enable = _ true; # phpactor for PHP
             pyright.enable = _ true;
-            ruby-lsp.enable = _ true; # ruby-lsp for Ruby
-            r-language-server.enable = _ true; # r-language-server for R
+            ruby_lsp.enable = _ true; # ruby-lsp for Ruby
+            r_language_server.enable = _ true; # r-language-server for R
+            r_language_server.package = _ pkgs.rPackages.languageserver;
             sqls.enable = _ true; # sqls for SQL
             terraformls.enable = _ true; # terraformls for Terraform
-            ts-ls.enable = true;
-            typst-lsp.enable = _ true; # typst-lsp for the Typst language
+            ts_ls.enable = true;
+            typst_lsp.enable = _ true; # typst-lsp for the Typst language
             texlab.enable = _ true; # texlab for LaTeX
             vuels.enable = _ true; # vuels for Vue
+            vuels.package = _ pkgs.nodePackages_latest.vls;
             zls.enable = _ true; # zls for Zig
             # rust-analyzer = {
             #   enable = _ true;
@@ -120,7 +128,8 @@ in
                       "http://json.schemastore.org/ansible-playbook" = _ "*play*.{yml,yaml}";
                       "http://json.schemastore.org/chart" = _ "Chart.{yml,yaml}";
                       "https://json.schemastore.org/dependabot-v2" = _ ".github/dependabot.{yml,yaml}";
-                      "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json" = _ "*docker-compose*.{yml,yaml}";
+                      "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json" =
+                        _ "*docker-compose*.{yml,yaml}";
                       # "https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json" = _ "*flow*.{yml,yaml}";
                     };
                   };

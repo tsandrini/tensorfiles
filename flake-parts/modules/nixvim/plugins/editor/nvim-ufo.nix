@@ -64,21 +64,23 @@ in
       # TODO treesitter backend borked for some reason
       plugins.nvim-ufo = {
         enable = _ true;
-        openFoldHlTimeout = _ 0;
-        providerSelector = ''
-          function(bufnr, filetype, buftype)
-            ${
-              if (lspCheck && treesitterCheck) then
-                "return {'lsp', 'indent'}"
-              else if (lspCheck && !treesitterCheck) then
-                "return {'lsp', 'indent'}"
-              # else if (!lspCheck && treesitterCheck) then
-              #   "return {'treesitter', 'indent'}"
-              else
-                "return {'indent'}"
-            }
-          end
-        '';
+        settings = {
+          open_fold_hl_timeout = _ 0;
+          provider_selector = ''
+            function(bufnr, filetype, buftype)
+              ${
+                if (lspCheck && treesitterCheck) then
+                  "return {'lsp', 'indent'}"
+                else if (lspCheck && !treesitterCheck) then
+                  "return {'lsp', 'indent'}"
+                # else if (!lspCheck && treesitterCheck) then
+                #   "return {'treesitter', 'indent'}"
+                else
+                  "return {'indent'}"
+              }
+            end
+          '';
+        };
       };
 
       keymaps = [

@@ -53,7 +53,8 @@ in
       home.packages = with pkgs; [
         iosevka
         libnotify
-        (nerdfonts.override { fonts = [ "Iosevka" ]; })
+        # (nerdfonts.override { fonts = [ "Iosevka" ]; })
+        nerd-fonts.iosevka
       ];
 
       systemd.user.tmpfiles.rules = [
