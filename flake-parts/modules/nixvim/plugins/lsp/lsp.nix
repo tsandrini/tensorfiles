@@ -104,7 +104,8 @@ in
             sqls.enable = _ true; # sqls for SQL
             terraformls.enable = _ true; # terraformls for Terraform
             ts_ls.enable = true;
-            typst_lsp.enable = _ true; # typst-lsp for the Typst language
+            # typst_lsp.enable = _ true; # typst-lsp for the Typst language
+            tinymist.enable = _ true; # tinymist for typst
             texlab.enable = _ true; # texlab for LaTeX
             vuels.enable = _ true; # vuels for Vue
             vuels.package = _ pkgs.nodePackages_latest.vls;
