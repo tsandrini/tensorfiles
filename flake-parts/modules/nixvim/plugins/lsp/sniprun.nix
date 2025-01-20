@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/render-markdown.nix
+# --- flake-parts/modules/nixvim/plugins/lsp/sniprun.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,39 +16,63 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
-  inherit (lib)
-    mkIf
-    mkMerge
-    mkEnableOption
-    ;
-  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.render-markdown;
-  # _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.plugins.lsp.sniprun;
+  _ = mkOverrideAtNixvimModuleLevel;
 
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.render-markdown = {
+  options.tensorfiles.nixvim.plugins.lsp.sniprun = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    withKeymaps =
+      mkEnableOption ''
+        Enable the related included keymaps.
+      ''
+      // {
+        default = true;
+      };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      extraPlugins = with pkgs.vimPlugins; [
-        render-markdown-nvim
-      ];
-
-      extraConfigLua = ''
-        require('render-markdown').setup()
-      '';
+      plugins.sniprun = {
+        enable = _ true;
+        settings = {
+        };
+      };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.withKeymaps {
+      keymaps = [
+        {
+          key = "<leader>ce";
+          action = "<cmd>SnipRun<CR>";
+          mode = "n";
+          options = {
+            silent = true;
+            desc = "Run SnipRun";
+          };
+        }
+        {
+          key = "<leader>ce";
+          action = "<cmd>'<,'>SnipRun<CR>";
+          mode = "v";
+          options = {
+            silent = true;
+            desc = "Run SnipRun on selection";
+          };
+        }
+      ];
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

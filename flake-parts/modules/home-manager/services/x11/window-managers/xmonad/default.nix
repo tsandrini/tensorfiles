@@ -184,12 +184,14 @@ in
             haskellPackages.xmobar
             i3lock-fancy-rapid
             ubuntu_font_family
-            (nerdfonts.override {
-              fonts = [
-                "Ubuntu"
-                "UbuntuMono"
-              ];
-            })
+            # (nerdfonts.override {
+            #   fonts = [
+            #     "Ubuntu"
+            #     "UbuntuMono"
+            #   ];
+            # })
+            nerd-fonts.ubuntu
+            nerd-fonts.ubuntu-mono
             ubuntu_font_family
             feh
             trayer

@@ -46,7 +46,10 @@ in
         enableTelescope = _ telescopeCheck;
         # NOTE DEFAULT produces too many false positives
         # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
-        patterns = [ ".git" ];
+        settings.patterns = [
+          ".git"
+          ".projectfile"
+        ];
       };
     }
     # |----------------------------------------------------------------------| #

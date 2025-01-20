@@ -121,7 +121,7 @@ in
 
         # fonts
         emacs-all-the-icons-fonts
-        (nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; })
+        nerd-fonts.symbols-only
         pandoc
         discount # Implementation of Markdown markup language in C
 
@@ -182,7 +182,7 @@ in
         fsharp # A functional CLI language
 
         ## :lang julia
-        julia-bin
+        # julia-bin
 
         ## :lang julia
         lua-language-server # A language server that offers Lua language support
@@ -204,7 +204,7 @@ in
             pyflakes
             isort
             pipenv
-            nose
+            # nose # NOTE deprecated and unsupported
             pytest
             inputs.self.packages.${system}.my_cookies
           ]

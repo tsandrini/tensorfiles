@@ -53,17 +53,24 @@ in
           editor.treesitter.enable = _ true;
           editor.undotree.enable = _ true;
           editor.bufferline.enable = _ true;
+          editor.buffer-manager.enable = _ true;
           editor.spectre.enable = _ true;
           editor.render-markdown.enable = _ true;
+          editor.nvim-ufo.enable = _ true;
+          editor.indent-blankline.enable = _ true;
         };
       };
 
-      plugins.nvim-colorizer.enable = _ true;
+      plugins.colorizer.enable = _ true;
 
       extraPlugins = with pkgs.vimPlugins; [
         # nightfox-nvim
         # vscode-nvim
+        bamboo-nvim
+        # bluloco-nvim # NOTE brokey
+        boo-colorscheme-nvim
         catppuccin-nvim
+        citruszest-nvim
         cyberdream-nvim
         doom-one-nvim
         dracula-nvim
@@ -71,24 +78,31 @@ in
         gruvbox-nvim
         kanagawa-nvim
         melange-nvim
+        miasma-nvim
         modus-themes-nvim
         neovim-ayu
         nord-nvim
-        one-nvim
+        nordic-nvim
+        # omni-nvim
+        # one-nvim # NOTE brokey
         onedark-nvim
         onenord-nvim
         oxocarbon-nvim
         poimandres-nvim
         rose-pine
+        substrata-nvim
         tokyonight-nvim
+        # zenbones-nvim # NOTE brokey
+        zephyr-nvim
       ];
 
       plugins.mini = {
         enable = _ true;
+        mockDevIcons = _ true;
         modules = {
           ai = { };
           icons = { };
-          indentscope = { };
+          # indentscope = { };
           pairs = { };
           # tabline = { }; # TODO I hate how it shows all buffers
           cursorword = { };

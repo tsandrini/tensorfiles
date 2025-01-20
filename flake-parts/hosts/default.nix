@@ -86,15 +86,13 @@ in
         extraOverlays = with inputs; [
           nix-topology.overlays.default
           emacs-overlay.overlays.default
-          nur.overlay
+          nur.overlays.default
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
         extraModules = with inputs; [
-          nur.nixosModules.nur
+          nur.modules.nixos.default
           nix-topology.nixosModules.default
-          # TODO remove when available https://github.com/NixOS/nixpkgs/pull/334638
-          { nixpkgs.config.permittedInsecurePackages = [ "olm-3.2.16" ]; }
         ];
       }
     );
@@ -104,14 +102,12 @@ in
         withHomeManager = true;
         extraOverlays = with inputs; [
           nix-topology.overlays.default
-          # nur.overlay
+          # nur.overlays.default
           # neovim-nightly-overlay.overlays.default
         ];
         extraModules = with inputs; [
           nix-topology.nixosModules.default
-          # nur.nixosModules.nur
-          # TODO remove when available https://github.com/NixOS/nixpkgs/pull/334638
-          { nixpkgs.config.permittedInsecurePackages = [ "olm-3.2.16" ]; }
+          # nur.modules.nixos.default
         ];
       }
     );
@@ -122,15 +118,13 @@ in
         extraOverlays = with inputs; [
           nix-topology.overlays.default
           emacs-overlay.overlays.default
-          nur.overlay
+          nur.overlays.default
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
         extraModules = with inputs; [
-          nur.nixosModules.nur
+          nur.modules.nixos.default
           nix-topology.nixosModules.default
-          # TODO remove when available https://github.com/NixOS/nixpkgs/pull/334638
-          { nixpkgs.config.permittedInsecurePackages = [ "olm-3.2.16" ]; }
         ];
       }
     );

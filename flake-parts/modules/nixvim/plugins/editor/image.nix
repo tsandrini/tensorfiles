@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/render-markdown.nix
+# --- flake-parts/modules/nixvim/plugins/editor/image.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,7 +16,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -25,14 +24,13 @@ let
     mkMerge
     mkEnableOption
     ;
-  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.render-markdown;
-  # _ = mkOverrideAtNixvimModuleLevel;
-
+  cfg = config.tensorfiles.nixvim.plugins.editor.image;
+  _ = mkOverrideAtNixvimModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.render-markdown = {
+  options.tensorfiles.nixvim.plugins.editor.image = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -41,13 +39,9 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      extraPlugins = with pkgs.vimPlugins; [
-        render-markdown-nvim
-      ];
-
-      extraConfigLua = ''
-        require('render-markdown').setup()
-      '';
+      plugins.image = {
+        enable = _ true;
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);

@@ -195,6 +195,8 @@
 
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
+      # github-desktop # GitHub Desktop
+      obsidian # A knowledge base that works on top of a local folder of plain text Markdown files
 
       vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment.
 

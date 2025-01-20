@@ -110,18 +110,18 @@ in
           action = "<cmd>Neotree<CR>";
           options = {
             silent = true;
-            desc = "Neotree Open";
+            desc = "eotree Open";
           };
         }
-        {
-          mode = "n";
-          key = "<leader>b";
-          action = "<cmd>Neotree buffers focus<CR>";
-          options = {
-            silent = true;
-            desc = "Neotree buffers focus";
-          };
-        }
+        # {
+        #   mode = "n";
+        #   key = "<leader>b";
+        #   action = "<cmd>Neotree buffers focus<CR>";
+        #   options = {
+        #     silent = true;
+        #     desc = "Neotree buffers focus";
+        #   };
+        # }
       ];
     })
     # |----------------------------------------------------------------------| #

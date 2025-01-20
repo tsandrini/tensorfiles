@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/utils/markdown-preview.nix
+# --- flake-parts/modules/nixvim/plugins/editor/buffer-manager.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,17 +16,22 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    ;
+  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.utils.markdown-preview;
-  _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.plugins.editor.buffer-manager;
 in
+# _ = mkOverrideAtNixvimModuleLevel;
 {
-  options.tensorfiles.nixvim.plugins.utils.markdown-preview = {
+  options.tensorfiles.nixvim.plugins.editor.buffer-manager = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -43,32 +48,46 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins = {
-        markdown-preview = {
-          enable = _ true;
-          settings = {
-            browser = _ "firefox";
-            echo_preview_url = _ 1;
-            port = _ "6969";
-            preview_options = {
-              disable_filename = _ 1;
-              disable_sync_scroll = _ 1;
-              sync_scroll_type = _ "middle";
-            };
-            theme = _ "dark";
+      extraPlugins = [
+        (pkgs.vimUtils.buildVimPlugin {
+          name = "buffer_manager.nvim";
+          src = pkgs.fetchFromGitHub {
+            owner = "j-morano";
+            repo = "buffer_manager.nvim";
+            rev = "fd36131b2b3e0f03fd6353ae2ffc88cf920b3bbb";
+            hash = "sha256-abe9ZGmL7U9rC+LxC3LO5/bOn8lHke1FCKO0V3TZGs0=";
           };
-        };
-      };
+        })
+      ];
+
+      extraConfigLua = ''
+        require("buffer_manager").setup({
+          win_extra_options = {
+            number = true,
+            relativenumber = true,
+          },
+        })
+      '';
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.withKeymaps {
       keymaps = [
         {
           mode = "n";
-          key = "<leader>mp";
-          action = "<cmd>MarkdownPreview<cr>";
+          key = "<leader>bb";
+          action = ":lua require(\"buffer_manager.ui\").toggle_quick_menu()<CR>";
           options = {
-            desc = "Toggle Markdown Preview";
+            desc = "Buffers browser";
+            silent = true;
+          };
+        }
+        {
+          mode = "n";
+          key = "<leader>be";
+          action = ":lua require(\"buffer_manager.ui\").toggle_quick_menu()<CR>";
+          options = {
+            desc = "Buffers browser";
+            silent = true;
           };
         }
       ];

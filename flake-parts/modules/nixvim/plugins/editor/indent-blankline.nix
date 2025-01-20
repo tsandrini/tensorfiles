@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/render-markdown.nix
+# --- flake-parts/modules/nixvim/plugins/editor/indent-blankline.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -16,7 +16,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -25,14 +24,15 @@ let
     mkMerge
     mkEnableOption
     ;
-  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel isModuleLoadedAndEnabled;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.render-markdown;
-  # _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.nixvim.plugins.editor.indent-blankline;
+  _ = mkOverrideAtNixvimModuleLevel;
 
+  treesitterCheck = isModuleLoadedAndEnabled config "tensorfiles.nixvim.plugins.editor.treesitter";
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.render-markdown = {
+  options.tensorfiles.nixvim.plugins.editor.indent-blankline = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -41,13 +41,12 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      extraPlugins = with pkgs.vimPlugins; [
-        render-markdown-nvim
-      ];
-
-      extraConfigLua = ''
-        require('render-markdown').setup()
-      '';
+      plugins.indent-blankline = {
+        enable = _ true;
+        settings = {
+          scope.enabled = _ treesitterCheck;
+        };
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);

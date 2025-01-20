@@ -49,6 +49,7 @@ in
           lsp.lsp.enable = _ true;
           lsp.lsp.withKeymaps = _ false; # use lspsaga keymaps instead
           lsp.lspsaga.enable = _ true;
+          lsp.sniprun.enable = _ true;
 
           lsp.conform.enable = _ true;
           lsp.fidget.enable = _ true;

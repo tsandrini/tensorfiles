@@ -340,6 +340,20 @@ in
             "browser.download.panel.shown" = _ true;
             "browser.theme.content-theme" = _ 0;
             "browser.theme.toolbar-theme" = _ 0;
+            # Vertical tabs
+            "sidebar.verticalTabs" = _ true;
+            "sidebar.revamp" = _ true;
+            "browser.tabs.closeTabByDblclick" = _ true;
+
+            "browser.newtabpage.activity-stream.feeds.section.highlights" = _ true;
+            "browser.newtabpage.activity-stream.feeds.section.topstories" = _ true;
+            "browser.newtabpage.activity-stream.feeds.telemetry" = _ false;
+            "browser.newtabpage.activity-stream.feeds.topsites" = _ true;
+            "browser.newtabpage.activity-stream.section.highlights.rows" = _ 2;
+            "browser.newtabpage.activity-stream.showSponsored" = _ false;
+            "browser.newtabpage.activity-stream.showSponsoredTopSites" = _ false;
+            "browser.newtabpage.activity-stream.telemetry" = _ false;
+            "browser.startup.page" = _ 3;
 
             # ~ General settings
             "extensions.ui.locale.hidden" = _ true;

@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixvim/plugins/editor/render-markdown.nix
+# --- flake-parts/modules/nixvim/plugins/editor/leetcode.nix
 #
 # Author:  tsandrini <tomas.sandrini@seznam.cz>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -24,29 +24,52 @@ let
     mkIf
     mkMerge
     mkEnableOption
+    mkOption
+    types
     ;
-  # inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
 
-  cfg = config.tensorfiles.nixvim.plugins.editor.render-markdown;
-  # _ = mkOverrideAtNixvimModuleLevel;
-
+  cfg = config.tensorfiles.nixvim.plugins.editor.leetcode;
 in
 {
-  options.tensorfiles.nixvim.plugins.editor.render-markdown = {
+  options.tensorfiles.nixvim.plugins.editor.leetcode = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    # TODO, uhhh, figure out how to modularize this
+    solutionsDir = mkOption {
+      type = types.str;
+      default = "~/ProjectBundle/tsandrini/leetcode-solutions";
+      description = ''
+        Directory where you store your leetcode solutions.
+      '';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      extraPlugins = with pkgs.vimPlugins; [
-        render-markdown-nvim
+      extraPlugins = [
+        (pkgs.vimUtils.buildVimPlugin {
+          name = "leetcode-nvim";
+          src = pkgs.fetchFromGitHub {
+            owner = "kawre";
+            repo = "leetcode.nvim";
+            rev = "02fb2c855658ad6b60e43671f6b040c812181a1d";
+            hash = "sha256-YoFRd9Uf+Yv4YM6/l7MVLMjfRqhroSS3RCmZvNowIAo=";
+          };
+        })
       ];
 
       extraConfigLua = ''
-        require('render-markdown').setup()
+        require('leetcode').setup({
+          lang = "rust",
+          storage = {
+            home = "${cfg.solutionsDir}",
+            cache = vim.fn.stdpath("cache") .. "/leetcode",
+          },
+          -- image_support = true,
+        })
       '';
     }
     # |----------------------------------------------------------------------| #
