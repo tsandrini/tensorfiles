@@ -18,8 +18,6 @@
   inputs = {
     # --- BASE DEPENDENCIES ---
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    # TODO wezterm rendering bug https://github.com/NixOS/nixpkgs/issues/336069
-    nixpkgs-wezterm.url = "github:nixos/nixpkgs?rev=d04953086551086b44b6f3c6b7eeb26294f207da";
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     # --- YOUR DEPENDENCIES ---
@@ -81,6 +79,15 @@
       url = "github:vpsfreecz/vpsadminos";
       flake = false;
     };
+    buffer_manager-nvim = {
+      url = "github:j-morano/buffer_manager.nvim";
+      flake = false;
+    };
+    leetcode-nvim = {
+      url = "github:kawre/leetcode.nvim";
+      flake = false;
+    };
+
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {
     #   url = "github:mikesmithgh/kitty-scrollback.nvim";

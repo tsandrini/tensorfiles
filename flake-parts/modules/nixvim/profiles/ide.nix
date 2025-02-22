@@ -59,7 +59,7 @@ in
       };
 
       plugins.direnv.enable = _ true;
-      plugins.crates-nvim.enable = _ true;
+      plugins.crates.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

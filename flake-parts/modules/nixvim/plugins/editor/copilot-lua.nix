@@ -42,14 +42,16 @@ in
       plugins.copilot-lua = {
         enable = _ true;
         # package = _ patched-copilot-lua;
-        suggestion = {
-          enabled = _ true;
-          autoTrigger = _ true;
+        settings = {
+          suggestion = {
+            enabled = _ true;
+            autoTrigger = _ true;
+          };
+          # filetypes = {
+          #   "*" = true;
+          # };
+          # copilotNodeCommand = _ "node";
         };
-        # filetypes = {
-        #   "*" = true;
-        # };
-        # copilotNodeCommand = _ "node";
       };
     }
     # |----------------------------------------------------------------------| #

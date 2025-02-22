@@ -12,11 +12,10 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   config,
   lib,
-  system,
   ...
 }:
 let
@@ -28,12 +27,6 @@ let
   _ = mkOverrideAtHmModuleLevel;
 
   pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
-
-  # TODO wezterm rendering bug https://github.com/NixOS/nixpkgs/issues/336069
-  nixpkgs-wezterm = import inputs.nixpkgs-wezterm {
-    inherit system;
-    config.allowUnfree = true;
-  };
 in
 {
   options.tensorfiles.hm.programs.terminals.wezterm = {
@@ -51,7 +44,6 @@ in
     {
       programs.wezterm = {
         enable = _ true;
-        package = _ nixpkgs-wezterm.wezterm;
         # NOTE enabled by default so probably unnecessary
         # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
         # enableZshIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.zsh");

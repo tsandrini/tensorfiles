@@ -95,7 +95,7 @@ in
         kdePackages.akonadi-contacts
         kdePackages.akonadi-import-wizard
         kdePackages.akonadi-mime
-        kdePackages.akonadi-notes
+        # kdePackages.akonadi-notes
         kdePackages.akonadi-search
         kdePackages.akonadiconsole
         kdePackages.kdepim-runtime

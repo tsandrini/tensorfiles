@@ -57,10 +57,14 @@ in
     };
     plugins_editor_image = importApply ./plugins/editor/image.nix { inherit localFlake; };
     plugins_editor_nvim-ufo = importApply ./plugins/editor/nvim-ufo.nix { inherit localFlake; };
-    plugins_editor_leetcode = importApply ./plugins/editor/leetcode.nix { inherit localFlake; };
+    plugins_editor_leetcode = importApply ./plugins/editor/leetcode.nix {
+      inherit (inputs) leetcode-nvim;
+      inherit localFlake;
+    };
     plugins_editor_obsidian = importApply ./plugins/editor/obsidian.nix { inherit localFlake; };
     plugins_editor_bufferline = importApply ./plugins/editor/bufferline.nix { inherit localFlake; };
     plugins_editor_buffer-manager = importApply ./plugins/editor/buffer-manager.nix {
+      inherit (inputs) buffer_manager-nvim;
       inherit localFlake;
     };
     plugins_editor_spectre = importApply ./plugins/editor/spectre.nix { inherit localFlake; };
