@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, buffer_manager-nvim }:
 {
   config,
   lib,
@@ -51,12 +51,14 @@ in
       extraPlugins = [
         (pkgs.vimUtils.buildVimPlugin {
           name = "buffer_manager.nvim";
-          src = pkgs.fetchFromGitHub {
-            owner = "j-morano";
-            repo = "buffer_manager.nvim";
-            rev = "fd36131b2b3e0f03fd6353ae2ffc88cf920b3bbb";
-            hash = "sha256-abe9ZGmL7U9rC+LxC3LO5/bOn8lHke1FCKO0V3TZGs0=";
-          };
+          doCheck = false;
+          src = buffer_manager-nvim;
+          # src = pkgs.fetchFromGitHub {
+          #   owner = "j-morano";
+          #   repo = "buffer_manager.nvim";
+          #   rev = "03df0142e60cdf3827d270f01ccb36999d5a4e08";
+          #   hash = "sha256-sIkz5jkt+VkZNbiHRB7E+ttcm9XNtDiI/2sTyyYd1gg=";
+          # };
         })
       ];
 

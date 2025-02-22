@@ -205,7 +205,7 @@ in
     }
     # |----------------------------------------------------------------------| #
     (mkIf (cfg.copilot-cmp.enable && copilot-lua-check) {
-      plugins.copilot-lua = {
+      plugins.copilot-lua.settings = {
         suggestion.enabled = mkOverrideAtNixvimProfileLevel false;
         panel.enabled = mkOverrideAtNixvimProfileLevel false;
       };

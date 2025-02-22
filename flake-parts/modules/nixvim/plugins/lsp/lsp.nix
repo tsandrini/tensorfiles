@@ -77,7 +77,8 @@ in
             docker_compose_language_service.enable = _ true; # docker-compose-language-service for Docker Compose
             dockerls.enable = _ true; # dockerls for Dockerfile
             gopls.enable = _ true; # gopls for Go
-            graphql.enable = _ true; # graphql for GraphQL
+            # TODO nodePackages.graphql-language-service-cli cannot be found in pkgs
+            # graphql.enable = _ true; # graphql for GraphQL
             hls = {
               installGhc = _ true;
               enable = _ true; # haskell language server
@@ -107,8 +108,9 @@ in
             # typst_lsp.enable = _ true; # typst-lsp for the Typst language
             tinymist.enable = _ true; # tinymist for typst
             texlab.enable = _ true; # texlab for LaTeX
-            vuels.enable = _ true; # vuels for Vue
-            vuels.package = _ pkgs.nodePackages_latest.vls;
+            volar.enable = _ true; # volar for Vue, replaces vuels
+            # vuels.enable = _ true; # vuels for Vue
+            # vuels.package = _ pkgs.nodePackages_latest.vls;
             zls.enable = _ true; # zls for Zig
             # rust-analyzer = {
             #   enable = _ true;

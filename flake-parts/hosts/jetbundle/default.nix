@@ -63,7 +63,7 @@
     profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
-    programs.shadow-nix.enable = true;
+    programs.shadow-nix.enable = false;
     tasks.system-autoupgrade.enable = false;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -140,10 +140,14 @@
   networking.firewall = {
     allowedUDPPorts = [
       51820
-      4321
+      8000
+      8080
+      5173
     ];
     allowedTCPPorts = [
-      4321
+      8000
+      8080
+      5173
     ];
   };
 

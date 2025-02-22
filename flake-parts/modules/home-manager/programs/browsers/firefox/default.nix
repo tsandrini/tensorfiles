@@ -234,7 +234,7 @@ in
           id = _ 0;
           name = _ "Default";
           isDefault = _ true;
-          extensions =
+          extensions.packages =
             with pkgs.nur.repos.rycee.firefox-addons;
             (
               [
