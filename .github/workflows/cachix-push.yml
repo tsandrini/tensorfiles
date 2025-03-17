@@ -20,7 +20,7 @@ jobs:
       - name: "Setting up magic-nix-cache..."
         uses: DeterminateSystems/magic-nix-cache-action@main
       - name: "Settings up cachix binary cache..."
-        uses: cachix/cachix-action@v15
+        uses: cachix/cachix-action@v16
         with:
           name: tsandrini
           # If you chose API tokens for write access OR if you have a private cache
