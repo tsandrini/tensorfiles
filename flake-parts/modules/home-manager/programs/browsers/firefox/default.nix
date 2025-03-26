@@ -223,9 +223,55 @@ in
             };
             "3rdparty".Extensions = {
               "uBlock0@raymondhill.net" = {
-                # uBlock settings are written in JSON to be more compatible with the
-                # backup format. This checks the syntax.
-                adminSettings = builtins.fromJSON (builtins.readFile ./ublock-settings.json);
+                adminSettings = {
+                  permissions = [ "internal:privateBrowsingAllowed" ];
+                  dynamicFilteringString = "behind-the-scene * * noop\nbehind-the-scene * inline-script noop\nbehind-the-scene * 1p-script noop\nbehind-the-scene * 3p-script noop\nbehind-the-scene * 3p-frame noop\nbehind-the-scene * image noop\nbehind-the-scene * 3p noop\n* * 3p-script block\n* * 3p-frame block\n* * 3p block";
+                  hostnameSwitchesString = "no-large-media: behind-the-scene false\nno-csp-reports: * true";
+                  userFiltersTrusted = true;
+                  userSettings = {
+                    advancedUserEnabled = false;
+                    uiTheme = "dark";
+                    importedLists = [
+                      "https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/list.txt"
+                      "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt"
+                    ];
+                  };
+                  selectedFilterLists = [
+                    "CZE-0"
+                    "adguard-cookies"
+                    "adguard-generic"
+                    "adguard-mobile-app-banners"
+                    "adguard-other-annoyances"
+                    "adguard-popup-overlays"
+                    "adguard-social"
+                    "adguard-spyware-url"
+                    "adguard-widgets"
+                    "block-lan"
+                    "curben-phishing"
+                    "easylist"
+                    "easylist-annoyances"
+                    "easylist-chat"
+                    "easylist-newsletters"
+                    "easylist-notifications"
+                    "easyprivacy"
+                    "fanboy-cookiemonster"
+                    "fanboy-social"
+                    "fanboy-thirdparty_social"
+                    "plowe-0"
+                    "ublock-abuse"
+                    "ublock-annoyances"
+                    "ublock-badware"
+                    "ublock-cookies-adguard"
+                    "ublock-cookies-easylist"
+                    "ublock-filters"
+                    "ublock-privacy"
+                    "ublock-quick-fixes"
+                    "ublock-unbreak"
+                    "urlhaus-1"
+                    "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/LegitimateURLShortener.txt"
+                    "https://raw.githubusercontent.com/laylavish/uBlockOrigin-HUGE-AI-Blocklist/main/list.txt"
+                  ];
+                };
               };
             };
           };
@@ -334,16 +380,17 @@ in
           settings = {
             # ~ UI
             "general.smoothScroll" = _ true;
-            "browser.toolbars.bookmarks.visibility" = _ "always";
             "browser.uidensity" = _ 1;
             "devtools.theme" = _ "dark";
             "browser.download.panel.shown" = _ true;
             "browser.theme.content-theme" = _ 0;
             "browser.theme.toolbar-theme" = _ 0;
+
             # Vertical tabs
             "sidebar.verticalTabs" = _ true;
             "sidebar.revamp" = _ true;
             "browser.tabs.closeTabByDblclick" = _ true;
+            "browser.toolbars.bookmarks.visibility" = _ "never";
 
             "browser.newtabpage.activity-stream.feeds.section.highlights" = _ true;
             "browser.newtabpage.activity-stream.feeds.section.topstories" = _ true;
