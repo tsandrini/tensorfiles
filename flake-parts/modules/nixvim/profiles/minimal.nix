@@ -88,7 +88,7 @@ in
         onedark-nvim
         onenord-nvim
         oxocarbon-nvim
-        poimandres-nvim
+        # poimandres-nvim
         rose-pine
         substrata-nvim
         tokyonight-nvim
