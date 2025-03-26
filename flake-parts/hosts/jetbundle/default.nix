@@ -108,6 +108,11 @@
 
   programs.winbox.enable = true;
 
+  # services.udev.packages = with pkgs; [
+  #   via
+  #   vial
+  # ];
+
   services = {
     pipewire = {
       enable = true;

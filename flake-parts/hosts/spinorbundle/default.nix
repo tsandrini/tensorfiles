@@ -59,7 +59,7 @@
     profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
-    programs.shadow-nix.enable = true;
+    # programs.shadow-nix.enable = true;
     tasks.system-autoupgrade.enable = false;
 
     system.users.usersSettings."root" = {
@@ -135,7 +135,17 @@
   # NOTE for wireguard
   networking.wireguard.enable = true;
   networking.firewall = {
-    allowedUDPPorts = [ 51820 ];
+    allowedUDPPorts = [
+      51820
+      8000
+      8080
+      5173
+    ];
+    allowedTCPPorts = [
+      8000
+      8080
+      5173
+    ];
   };
 
   # If you intend to route all your traffic through the wireguard tunnel, the
@@ -191,7 +201,7 @@
       zathura # A highly customizable and functional PDF viewer
 
       # inputs.nix-gaming.packages.${system}.osu-stable
-      inputs.nix-gaming.packages.${system}.osu-lazer-bin
+      # inputs.nix-gaming.packages.${system}.osu-lazer-bin
       # inputs.self.packages.${system}.pywalfox-native
     ];
   };
