@@ -1,6 +1,6 @@
 # --- flake-parts/modules/home-manager/services/x11/picom.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #

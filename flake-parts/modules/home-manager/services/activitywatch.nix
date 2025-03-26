@@ -1,6 +1,6 @@
 # --- flake-parts/modules/home-manager/services/activitywatch.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #

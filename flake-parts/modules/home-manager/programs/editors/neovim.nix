@@ -1,6 +1,6 @@
 # --- flake-parts/modules/home-manager/programs/editors/neovim.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles.hm
 # License: MIT
 #

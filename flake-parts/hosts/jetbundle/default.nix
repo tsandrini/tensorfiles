@@ -1,6 +1,6 @@
 # --- flake-parts/hosts/jetbundle/default.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #
@@ -185,7 +185,7 @@
     home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
-      DEFAULT_MAIL = "tomas.sandrini@seznam.cz";
+      DEFAULT_MAIL = "t@tsandrini.sh";
     };
     programs.git.signing.key = "3E83AD690FA4F657";
 
