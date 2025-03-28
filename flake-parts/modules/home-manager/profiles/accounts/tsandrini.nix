@@ -66,7 +66,7 @@ in
         })
         // {
           default = {
-            "t@tsandrini.sh" = { };
+            "tomas.sandrini@seznam.cz" = { };
             "WareCzech@gmail.com" = { };
             "t@tsandrini.sh" = { };
             "business@tsandrini.sh" = { };
@@ -82,15 +82,15 @@ in
   # its kinda useless, but I prepared it nonetheless
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.email.enable && cfg.email.accounts."t@tsandrini.sh".enable) {
+    (mkIf (cfg.email.enable && cfg.email.accounts."tomas.sandrini@seznam.cz".enable) {
       accounts.email.accounts =
         let
-          accountCfg = cfg.email.accounts."t@tsandrini.sh";
+          accountCfg = cfg.email.accounts."tomas.sandrini@seznam.cz";
         in
         {
-          "t@tsandrini.sh" = {
-            address = _ "t@tsandrini.sh";
-            userName = _ "t@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
+          "tomas.sandrini@seznam.cz" = {
+            address = _ "tomas.sandrini@seznam.cz";
+            userName = _ "tomas.sandrini@seznam.cz"; # TODO https://github.com/nix-community/home-manager/issues/3712
             imap.host = _ "imap.seznam.cz";
             imap.port = _ 993;
             primary = _ false;
