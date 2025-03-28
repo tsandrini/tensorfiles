@@ -202,6 +202,7 @@
       vesktop # Alternate client for Discord with Vencord built-in
       gnucash # Free software for double entry accounting
 
+      element-desktop # A feature-rich client for Matrix.org
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
       # github-desktop # GitHub Desktop
