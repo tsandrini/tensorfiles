@@ -1,6 +1,6 @@
 # --- flake-parts/modules/home-manager/programs/file-managers/yazi.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #

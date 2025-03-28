@@ -1,6 +1,6 @@
 # --- flake-parts/modules/nixvim/plugins/editor/indent-blankline.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #

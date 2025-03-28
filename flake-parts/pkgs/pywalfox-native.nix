@@ -1,6 +1,6 @@
 # --- flake-parts/pkgs/pywalfox-native.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #

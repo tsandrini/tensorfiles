@@ -1,6 +1,6 @@
 # --- flake-parts/modules/home-manager/profiles/headless.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #
@@ -95,7 +95,7 @@ in
         MISC_DATA_DIR = _ (config.home.homeDirectory + "/FiberBundle");
         # Fallbacks
         # DEFAULT_USERNAME = "tsandrini";
-        # DEFAULT_MAIL = "tomas.sandrini@seznam.cz";
+        # DEFAULT_MAIL = "t@tsandrini.sh";
       };
 
       home.file = {

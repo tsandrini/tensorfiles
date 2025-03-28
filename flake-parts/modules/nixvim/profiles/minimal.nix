@@ -1,6 +1,6 @@
 # --- flake-parts/modules/nixvim/profiles/minimal.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #
@@ -88,7 +88,7 @@ in
         onedark-nvim
         onenord-nvim
         oxocarbon-nvim
-        poimandres-nvim
+        # poimandres-nvim
         rose-pine
         substrata-nvim
         tokyonight-nvim

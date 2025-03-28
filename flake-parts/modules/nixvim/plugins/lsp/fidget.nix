@@ -1,6 +1,6 @@
 # --- flake-parts/modules/nixvim/plugins/lsp/fidget.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #
@@ -40,53 +40,53 @@ in
         settings = {
           logger = {
             level = _ "warn"; # “off”, “error”, “warn”, “info”, “debug”, “trace”
-            floatPrecision = _ 1.0e-2; # Limit the number of decimals displayed for floats
+            float_precision = _ 1.0e-2; # Limit the number of decimals displayed for floats
           };
           progress = {
-            pollRate = _ 0; # How and when to poll for progress messages
+            poll_rate = _ 0; # How and when to poll for progress messages
             # suppressOnInsert = true; # Suppress new messages while in insert mode
-            ignoreDoneAlready = _ false; # Ignore new tasks that are already complete
-            ignoreEmptyMessage = _ false; # Ignore new tasks that don't contain a message
-            clearOnDetach =
+            ignore_done_already = _ false; # Ignore new tasks that are already complete
+            ignore_empty_message = _ false; # Ignore new tasks that don't contain a message
+            clear_on_detach =
               # Clear notification group when LSP server detaches
-              ''
+              lib.nixvim.mkRaw ''
                 function(client_id)
                   local client = vim.lsp.get_client_by_id(client_id)
                   return client and client.name or nil
                 end
               '';
-            notificationGroup =
+            notification_group =
               # How to get a progress message's notification group key
-              ''
+              lib.nixvim.mkRaw ''
                 function(msg) return msg.lsp_client.name end
               '';
             ignore = [ ]; # List of LSP servers to ignore
             lsp = {
-              progressRingbufSize = _ 0; # Configure the nvim's LSP progress ring buffer size
+              progress_ringbuf_size = _ 0; # Configure the nvim's LSP progress ring buffer size
             };
             display = {
-              renderLimit = _ 16; # How many LSP messages to show at once
-              doneTtl = _ 3; # How long a message should persist after completion
-              doneIcon = _ "✔"; # Icon shown when all LSP progress tasks are complete
-              doneStyle = _ "Constant"; # Highlight group for completed LSP tasks
-              progressTtl = lib.nixvim.mkRaw "math.huge"; # How long a message should persist when in progress
-              progressIcon = {
+              render_limit = _ 16; # How many LSP messages to show at once
+              done_ttl = _ 3; # How long a message should persist after completion
+              done_icon = _ "✔"; # Icon shown when all LSP progress tasks are complete
+              done_style = _ "Constant"; # Highlight group for completed LSP tasks
+              progress_ttl = lib.nixvim.mkRaw "math.huge"; # How long a message should persist when in progress
+              progress_icon = {
                 pattern = _ "dots";
                 period = _ 1;
               }; # Icon shown when LSP progress tasks are in progress
-              progressStyle = _ "WarningMsg"; # Highlight group for in-progress LSP tasks
-              groupStyle = _ "Title"; # Highlight group for group name (LSP server name)
-              iconStyle = _ "Question"; # Highlight group for group icons
+              progress_style = _ "WarningMsg"; # Highlight group for in-progress LSP tasks
+              group_style = _ "Title"; # Highlight group for group name (LSP server name)
+              icon_style = _ "Question"; # Highlight group for group icons
               priority = _ 30; # Ordering priority for LSP notification group
-              skipHistory = _ true; # Whether progress notifications should be omitted from history
-              formatMessage = ''
+              skip_history = _ true; # Whether progress notifications should be omitted from history
+              format_message = lib.nixvim.mkRaw ''
                 require ("fidget.progress.display").default_format_message
               ''; # How to format a progress message
-              formatAnnote = ''
-                function (msg) return msg.title end
+              format_annote = lib.nixvim.mkRaw ''
+                function(msg) return msg.title end
               ''; # How to format a progress annotation
-              formatGroupName = ''
-                function (group) return tostring (group) end
+              format_group_name = lib.nixvim.mkRaw ''
+                function(group) return tostring (group) end
               ''; # How to format a progress notification group's name
               overrides = {
                 rust_analyzer = {
@@ -96,10 +96,10 @@ in
             };
           };
           notification = {
-            pollRate = _ 10; # How frequently to update and render notifications
+            poll_rate = _ 10; # How frequently to update and render notifications
             filter = _ "info"; # “off”, “error”, “warn”, “info”, “debug”, “trace”
-            historySize = _ 128; # Number of removed messages to retain in history
-            overrideVimNotify = _ true;
+            history_size = _ 128; # Number of removed messages to retain in history
+            override_vim_notify = _ true;
             redirect = lib.nixvim.mkRaw ''
               function(msg, level, opts)
                 if opts and opts.on_open then
@@ -112,22 +112,22 @@ in
             };
 
             window = {
-              normalHl = _ "Comment";
+              normal_hl = _ "Comment";
               winblend = _ 0;
               border = _ "none"; # none, single, double, rounded, solid, shadow
               zindex = _ 45;
-              maxWidth = _ 0;
-              maxHeight = _ 0;
-              xPadding = _ 1;
-              yPadding = _ 0;
+              max_width = _ 0;
+              max_height = _ 0;
+              x_padding = _ 1;
+              y_padding = _ 0;
               align = _ "bottom";
               relative = _ "editor";
             };
             view = {
-              stackUpwards = _ true; # Display notification items from bottom to top
-              iconSeparator = _ " "; # Separator between group name and icon
-              groupSeparator = _ "---"; # Separator between notification groups
-              groupSeparatorHl =
+              stack_upwards = _ true; # Display notification items from bottom to top
+              icon_separator = _ " "; # Separator between group name and icon
+              group_separator = _ "---"; # Separator between notification groups
+              group_separator_hl =
                 # Highlight group used for group separator
                 "Comment";
             };

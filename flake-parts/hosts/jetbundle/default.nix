@@ -1,6 +1,6 @@
 # --- flake-parts/hosts/jetbundle/default.nix
 #
-# Author:  tsandrini <tomas.sandrini@seznam.cz>
+# Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
 # License: MIT
 #
@@ -108,6 +108,11 @@
 
   programs.winbox.enable = true;
 
+  # services.udev.packages = with pkgs; [
+  #   via
+  #   vial
+  # ];
+
   services = {
     pipewire = {
       enable = true;
@@ -180,7 +185,7 @@
     home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
-      DEFAULT_MAIL = "tomas.sandrini@seznam.cz";
+      DEFAULT_MAIL = "t@tsandrini.sh";
     };
     programs.git.signing.key = "3E83AD690FA4F657";
 
@@ -197,6 +202,7 @@
       vesktop # Alternate client for Discord with Vencord built-in
       gnucash # Free software for double entry accounting
 
+      element-desktop # A feature-rich client for Matrix.org
       slack # Desktop client for Slack
       signal-desktop # Private, simple, and secure messenger
       # github-desktop # GitHub Desktop

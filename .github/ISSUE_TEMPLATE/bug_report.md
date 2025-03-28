@@ -1,7 +1,7 @@
 ---
 name: 🪲 Bug Report
 about: Create a bug report to help us resolve the bug
-title: "🪲[BUG]: "
+title: "🪲[Bug]: "
 labels: "bug"
 assignees: ""
 ---

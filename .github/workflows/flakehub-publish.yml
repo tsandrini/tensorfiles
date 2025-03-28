@@ -1,10 +1,12 @@
 # --- Publish flake to FlakeHub
 name: FlakeHub
+
 on:
   workflow_dispatch: # allows manual triggering from the Actions UI
   push:
     branches:
       - main
+
 jobs:
   flakehub-publish:
     runs-on: "ubuntu-latest"
@@ -14,14 +16,14 @@ jobs:
     steps:
       - name: "Checking out repository..."
         uses: actions/checkout@v4
+
       - name: "Installing and configuring the nix package manager..."
-        uses: DeterminateSystems/nix-installer-action@main
+        uses: cachix/install-nix-action@v31
         with:
-          extra-conf: |
+          extra_nix_config: |
             accept-flake-config = true
             allow-import-from-derivation = true
-      - name: "Setting up magic-nix-cache..."
-        uses: DeterminateSystems/magic-nix-cache-action@main
+
       - name: "Publishing flake to FlakeHub..."
         uses: DeterminateSystems/flakehub-push@main
         with:
