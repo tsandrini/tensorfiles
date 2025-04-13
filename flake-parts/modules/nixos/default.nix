@@ -29,6 +29,7 @@ in
 
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
+    profiles_packages-base = importApply ./profiles/packages-base.nix { inherit localFlake; };
     profiles_packages-extra = importApply ./profiles/packages-extra.nix { inherit localFlake inputs; };
     profiles_graphical-plasma5 = importApply ./profiles/graphical-plasma5.nix {
       inherit localFlake inputs;
