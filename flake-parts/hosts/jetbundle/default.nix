@@ -27,6 +27,7 @@
     disko.nixosModules.disko
     nixos-hardware.nixosModules.lenovo-thinkpad-x270
     nix-gaming.nixosModules.pipewireLowLatency
+    nix-index-database.nixosModules.nix-index
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
@@ -60,6 +61,7 @@
   # ---------------------
   tensorfiles = {
     profiles.graphical-plasma6.enable = true;
+    profiles.packages-base.enable = true;
     profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
@@ -107,6 +109,7 @@
   };
 
   programs.winbox.enable = true;
+  programs.nix-index-database.comma.enable = true;
 
   # services.udev.packages = with pkgs; [
   #   via

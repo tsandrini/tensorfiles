@@ -26,6 +26,7 @@
   imports = with inputs; [
     disko.nixosModules.disko
     nix-gaming.nixosModules.pipewireLowLatency
+    nix-index-database.nixosModules.nix-index
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
     # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
@@ -56,6 +57,7 @@
   # ---------------------
   tensorfiles = {
     profiles.graphical-plasma6.enable = true;
+    profiles.packages-base.enable = true;
     profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
@@ -102,6 +104,7 @@
   };
 
   programs.winbox.enable = true;
+  programs.nix-index-database.comma.enable = true;
 
   services = {
     pipewire = {

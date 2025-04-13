@@ -41,7 +41,8 @@
 
   tensorfiles = {
     profiles.headless.enable = true;
-    profiles.packages-extra.enable = true;
+    profiles.packages-base.enable = true;
+    # profiles.packages-extra.enable = true;
 
     services.mailserver.enable = true;
     services.mailserver.roundcube.enable = true;

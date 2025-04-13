@@ -87,6 +87,10 @@
       url = "github:kawre/leetcode.nvim";
       flake = false;
     };
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {
