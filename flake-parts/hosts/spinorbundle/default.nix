@@ -194,7 +194,7 @@
       vesktop # Alternate client for Discord with Vencord built-in
 
       slack # Desktop client for Slack
-      signal-desktop # Private, simple, and secure messenger
+      signal-desktop-bin # Private, simple, and secure messenger
 
       # todoist # Todoist CLI Client
       # todoist-electron # The official Todoist electron app

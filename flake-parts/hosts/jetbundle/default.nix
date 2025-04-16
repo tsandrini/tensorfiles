@@ -207,7 +207,7 @@
 
       element-desktop # A feature-rich client for Matrix.org
       slack # Desktop client for Slack
-      signal-desktop # Private, simple, and secure messenger
+      signal-desktop-bin # Private, simple, and secure messenger
       # github-desktop # GitHub Desktop
       obsidian # A knowledge base that works on top of a local folder of plain text Markdown files
 
