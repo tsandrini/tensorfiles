@@ -199,7 +199,7 @@ in
           # to `nativeMessagingHosts.packages` instead
           nativeMessagingHosts =
             with pkgs;
-            ([ tridactyl-native ] ++ (optional plasmaCheck plasma-browser-integration));
+            ([ tridactyl-native ] ++ (optional plasmaCheck kdePackages.plasma-browser-integration));
           extraPolicies = {
             CaptivePortal = false;
             DisableFirefoxStudies = true;
@@ -320,7 +320,7 @@ in
                     template = "https://kagi.com/search?q={searchTerms}";
                   }
                 ];
-                iconUpdateURL = "https://assets.kagi.com/v1/favicon-32x32.png";
+                icon = "https://assets.kagi.com/v1/favicon-32x32.png";
                 definedAliases = [ "@k" ];
               };
               "Nix Packages" = {
@@ -371,7 +371,7 @@ in
               };
               "NixOS Wiki" = {
                 urls = [ { template = "https://nixos.wiki/index.php?search={searchTerms}"; } ];
-                iconUpdateURL = "https://nixos.wiki/favicon.png";
+                icon = "https://nixos.wiki/favicon.png";
                 updateInterval = 24 * 60 * 60 * 1000;
                 definedAliases = [ "@nw" ];
               };
