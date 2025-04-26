@@ -27,6 +27,7 @@
     disko.nixosModules.disko
     nix-gaming.nixosModules.pipewireLowLatency
     nix-index-database.nixosModules.nix-index
+    (nix-mineral + "/nix-mineral.nix")
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
     # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
@@ -35,6 +36,7 @@
     # nix-gaming.nixosModules.steamCompat
     ./hardware-configuration.nix
     ./disko.nix
+    ./nm-overrides.nix
   ];
 
   # ------------------------------
@@ -81,6 +83,7 @@
       ];
     };
   };
+  nix-mineral.enable = true;
 
   # Use the `nh` garbage collect to also collect .direnv and XDG profiles
   # roots instead of the default ones.
