@@ -88,6 +88,7 @@
   tensorfiles.programs.nh.enable = true;
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
+  programs.steam.enable = true; # just trying it out
 
   programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
@@ -116,7 +117,8 @@
     };
   };
 
-  programs.steam.enable = true; # just trying it out
+  services.openssh.enable = false;
+  services.fail2ban.enable = false;
 
   networking.networkmanager.enable = true;
   networking.networkmanager.enableStrongSwan = true;
@@ -198,6 +200,12 @@
 
       # todoist # Todoist CLI Client
       # todoist-electron # The official Todoist electron app
+
+      wireshark # Powerful network protocol analyzer
+      pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
+      mqttui # Terminal client for MQTT
+      mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
+      mqtt-explorer # An all-round MQTT client that provides a structured topic overview
 
       spotify # Play music from the Spotify music service
       mpv # General-purpose media player, fork of MPlayer and mplayer2

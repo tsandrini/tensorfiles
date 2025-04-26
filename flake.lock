@@ -672,6 +672,22 @@
         "type": "github"
       }
     },
+    "nix-mineral": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1745620301,
+        "narHash": "sha256-Tb9exhnw4njAQkvYMHcXl0wKHkM2epuEuSbbtXz0djI=",
+        "owner": "tsandrini",
+        "repo": "nix-mineral",
+        "rev": "c0cbad73243d0ce358c8074855e2c98578340422",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tsandrini",
+        "repo": "nix-mineral",
+        "type": "github"
+      }
+    },
     "nix-topology": {
       "inputs": {
         "devshell": "devshell",
@@ -1187,6 +1203,7 @@
         "nix-alien": "nix-alien",
         "nix-gaming": "nix-gaming",
         "nix-index-database": "nix-index-database_2",
+        "nix-mineral": "nix-mineral",
         "nix-topology": "nix-topology",
         "nixGL": "nixGL",
         "nixos-hardware": "nixos-hardware",

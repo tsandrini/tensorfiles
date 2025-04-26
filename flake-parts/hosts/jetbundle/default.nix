@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
-{ pkgs, ... }:
+{ pkgs, system, ... }:
 {
   # -----------------
   # | SPECIFICATION |
@@ -31,14 +31,16 @@
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
+    (nix-mineral + "/nix-mineral.nix")
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
     # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
     # is already declared in
     # `/nix/store/cqapfi5bvhzvarrbi2h1qrf2dav5r1nd-source/flake.nix#nixosModules.steamCompat'.
     # nix-gaming.nixosModules.steamCompat
-    ./hardware-configuration.nix
     ./disko.nix
+    ./hardware-configuration.nix
+    ./nm-overrides.nix
   ];
 
   # ------------------------------
@@ -90,6 +92,7 @@
       ];
     };
   };
+  nix-mineral.enable = true;
 
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
@@ -125,6 +128,9 @@
       lowLatency.enable = true;
     };
   };
+
+  services.openssh.enable = false;
+  services.fail2ban.enable = false;
 
   # programs.steam.enable = true; # just trying it out
   networking.networkmanager.enableStrongSwan = true;
@@ -210,11 +216,18 @@
       signal-desktop-bin # Private, simple, and secure messenger
       # github-desktop # GitHub Desktop
       obsidian # A knowledge base that works on top of a local folder of plain text Markdown files
+      virt-viewer # Viewer for remote virtual machines
 
       vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment.
 
       # todoist # Todoist CLI Client
       # todoist-electron # The official Todoist electron app
+
+      wireshark # Powerful network protocol analyzer
+      pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
+      mqttui # Terminal client for MQTT
+      mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
+      mqtt-explorer # An all-round MQTT client that provides a structured topic overview
 
       spotify # Play music from the Spotify music service
       mpv # General-purpose media player, fork of MPlayer and mplayer2

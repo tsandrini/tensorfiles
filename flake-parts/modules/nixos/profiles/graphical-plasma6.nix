@@ -49,12 +49,6 @@ in
         maim # A command-line screenshot utility
         xxdiff # Graphical file and directories comparator and merge tool
 
-        wireshark # Powerful network protocol analyzer
-        pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
-        mqttui # Terminal client for MQTT
-        mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
-        mqtt-explorer # An all-round MQTT client that provides a structured topic overview
-
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
         glxinfo # Test utilities for OpenGL

@@ -91,6 +91,10 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-mineral = {
+      url = "github:tsandrini/nix-mineral";
+      flake = false;
+    };
 
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {

@@ -74,6 +74,9 @@
                       mountOptions = [
                         "compress=zstd"
                         "noatime"
+                        "nosuid"
+                        "nodev"
+                        "noexec"
                       ];
                     };
                   };

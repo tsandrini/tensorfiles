@@ -26,6 +26,7 @@ let
     mkBefore
     mkEnableOption
     getExe
+    optional
     ;
   inherit (lib.strings) removePrefix;
   inherit (localFlake.lib.modules)
@@ -48,6 +49,14 @@ in
       TODO
     '';
 
+    include-nvim =
+      mkEnableOption ''
+        Whether the module should add nvim-minimal-config to home.packages
+      ''
+      // {
+        default = true;
+      };
+
     impermanence = {
       enable = mkImpermanenceEnableOption;
     };
@@ -56,13 +65,13 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      # TODO
-      home.packages = [ localFlake.packages.${system}.nvim-ide-config ];
+      home.packages = optional cfg.include-nvim localFlake.packages.${system}.nvim-minimal-config;
 
       home.shellAliases = {
         "neovim" = _ "nvim";
         "vim" = _ "nvim";
         "vanilla-nvim" = _ (getExe localFlake.packages.${system}.nvim-vanilla-config);
+        "base-nvim" = _ (getExe localFlake.packages.${system}.nvim-base-config);
         "minimal-nvim" = _ (getExe localFlake.packages.${system}.nvim-minimal-config);
       };
 

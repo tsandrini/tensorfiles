@@ -55,6 +55,7 @@ in
           gitu # TUI Git client inspired by Magit
           commitizen # Tool to create committing rules for projects, auto bump versions, and generate changelogs
           cz-cli # Commitizen command line utility
+          gh # GitHub CLI tool
 
           # --- NET UTILS ---
 

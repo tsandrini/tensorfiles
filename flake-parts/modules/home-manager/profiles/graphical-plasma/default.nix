@@ -17,10 +17,17 @@
   pkgs,
   config,
   lib,
+  system,
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    getExe
+    optional
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
 
   cfg = config.tensorfiles.hm.profiles.graphical-plasma;
@@ -31,6 +38,14 @@ in
     enable = mkEnableOption ''
       TODO
     '';
+
+    include-nvim =
+      mkEnableOption ''
+        Whether the module should add nvim-ide-config to home.packages
+      ''
+      // {
+        default = true;
+      };
   };
 
   imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];
@@ -42,6 +57,7 @@ in
     {
       tensorfiles.hm = {
         profiles.headless.enable = _ true;
+        profiles.headless.include-nvim = _ false;
 
         # TODO nixGL requires --impure
         # hardware.nixGL.enable = _ true;
@@ -66,9 +82,12 @@ in
         };
       };
 
-      home.packages = with pkgs; [
-        neovide # This is a simple graphical user interface for Neovim
-      ];
+      home.packages =
+        with pkgs;
+        [
+          neovide # This is a simple graphical user interface for Neovim
+        ]
+        ++ (optional cfg.include-nvim localFlake.packages.${system}.nvim-ide-config);
 
       services.flameshot = {
         enable = _ true;
@@ -78,6 +97,11 @@ in
       };
 
       services.rsibreak.enable = _ false;
+
+      home.shellAliases = {
+        "graphical-nvim" = _ (getExe localFlake.packages.${system}.nvim-graphical-config);
+        "ide-nvim" = _ (getExe localFlake.packages.${system}.nvim-ide-config);
+      };
 
       home.sessionVariables = {
         # Default programs
