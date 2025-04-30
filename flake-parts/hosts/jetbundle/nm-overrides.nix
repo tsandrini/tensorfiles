@@ -28,7 +28,7 @@ _: {
 
   # Enable ip forwarding. Useful for certain VM networking and is required if
   # the system is meant to function as a router.
-  # nix-mineral.overrides.compatibility.ip-forward = true;
+  # nix-mineral.overrides.compatibility.allow-ip-forward = true;
 
   ## Desktop
   # Options that are useful to desktop experience and general convenience. Some
