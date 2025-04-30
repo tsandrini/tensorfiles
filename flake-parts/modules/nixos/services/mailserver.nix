@@ -145,6 +145,9 @@ in
           "newsletters@${defaultDomain}" = {
             aliases = [ ];
           };
+          "grafana-bot@${defaultDomain}" = {
+            aliases = [ ];
+          };
         };
       };
 
@@ -209,7 +212,7 @@ in
         # down nginx and opens port 80.
         certificateScheme = _ "acme-nginx";
         enableManageSieve = _ true;
-        virusScanning = _ true;
+        virusScanning = _ false;
       };
       security.acme.acceptTerms = _ true;
       security.acme.defaults.email = _ "security@${cfg.baseDomain}";
