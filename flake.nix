@@ -95,6 +95,7 @@
       url = "github:tsandrini/nix-mineral";
       flake = false;
     };
+    immutable-insights.url = "github:tsandrini/immutable-insights";
 
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {

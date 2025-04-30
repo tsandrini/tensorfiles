@@ -109,6 +109,10 @@ in
           nix-topology.nixosModules.default
           # nur.modules.nixos.default
         ];
+        hostImportArgs = {
+          inherit inputs;
+          inherit (config.agenix) secretsPath;
+        };
       }
     );
     spinorbundle = withSystem "x86_64-linux" (
