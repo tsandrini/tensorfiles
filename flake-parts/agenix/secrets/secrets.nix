@@ -39,6 +39,7 @@ in
   "hosts/remotebundle/users/tsandrini/system-password.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
+  # mailserver
   "hosts/remotebundle/mailserver/t-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
@@ -54,7 +55,22 @@ in
   "hosts/remotebundle/mailserver/newsletters-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/grafana-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  # rspamd
   "hosts/remotebundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  # grafana
+  "hosts/remotebundle/grafana-admin-password.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/grafana-bot-mail-password.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  # pgadmin
+  "hosts/remotebundle/pgadmin-admin-password.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
 

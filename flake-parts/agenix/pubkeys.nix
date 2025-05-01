@@ -36,7 +36,7 @@ in
       users = {
         root = {
           sshKey = null;
-          authorizedKeys = [ tsandrini ]; # TODO only temporary
+          authorizedKeys = [ ];
         };
         tsandrini = {
           sshKey = null;
