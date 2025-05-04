@@ -24,7 +24,11 @@ in
 
       profiles.system = {
         user = "root";
-        sshUser = "tsandrini"; # TODO only for now
+        sshUser = "tsandrini"; # TODO: add deply user?
+        sshOpts = [
+          "-p"
+          "2222"
+        ];
         autoRollback = true;
         magicRollback = true;
 

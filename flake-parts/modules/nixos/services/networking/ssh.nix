@@ -69,6 +69,9 @@ in
       };
       services.openssh = {
         enable = _ true;
+        # NOTE Just using a different port mitigates a ton of brute force attacks
+        # that have 22 hardcoded.
+        ports = _ [ 2222 ];
         banner = mkBefore ''
           =====================================================================
           Welcome, you should note that this host is completely
