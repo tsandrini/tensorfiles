@@ -61,6 +61,28 @@ in
     services.mailserver.roundcube.enable = true;
     services.mailserver.rspamd-ui.enable = true;
 
+    services.monit = {
+      enable = true;
+      alertAddress = "monitoring@${domain}";
+      mailserver.enable = true;
+      checks = {
+        filesystem.root.enable = false;
+        system.enable = true;
+        processes = {
+          sshd = {
+            enable = true;
+            port = 2222;
+          };
+          postfix.enable = true;
+          dovecot = {
+            enable = true;
+            fqdn = "mail.${domain}";
+          };
+          rspamd.enable = true;
+        };
+      };
+    };
+
     services.networking.networkmanager.enable = false;
     security.agenix.enable = true;
     tasks.system-autoupgrade.enable = false;
@@ -197,10 +219,10 @@ in
 
       smtp = {
         enabled = true;
-        host = "mail.tsandrini.sh:587"; # TODO test
-        user = "grafana-bot@tsandrini.sh";
+        host = "mail.${domain}:587";
+        user = "grafana-bot@${domain}";
         password = "$__file{${config.age.secrets."hosts/${hostName}/grafana-bot-mail-password".path}}";
-        fromAddress = "grafana-bot@tsandrini.sh";
+        fromAddress = "grafana-bot@${domain}";
       };
 
       database = {
@@ -212,7 +234,7 @@ in
       # NOTE enable again on init
       security.disable_initial_admin_creation = true;
 
-      security.admin_email = "t@tsandrini.sh";
+      security.admin_email = "t@${domain}";
       security.admin_password = "$__file{${
         config.age.secrets."hosts/${hostName}/grafana-admin-password".path
       }}";
@@ -270,7 +292,7 @@ in
       group = "grafana";
       source = pkgs.fetchurl {
         url = "https://grafana.com/api/dashboards/14055/revisions/5/download";
-        sha256 = "sha256-xkzDitnr168JVR7oPmaaOPYqdufICSmvVmilhScys3Y=";
+        sha256 = "sha256-9vfUGpypFNKm9T1F12Cqh8TIl0x3jSwv2fL9HVRLt3o=";
       };
     };
   };
@@ -278,7 +300,6 @@ in
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_16;
-    ensureDatabases = [ "grafana" ];
     settings = {
       password_encryption = "scram-sha-256";
     };
@@ -295,6 +316,7 @@ in
       # local   all             all                                     reject
       # host    all             all             all                     reject
     '';
+    ensureDatabases = [ "grafana" ];
     ensureUsers = [
       {
         name = "admin";
