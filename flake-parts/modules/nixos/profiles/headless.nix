@@ -49,7 +49,23 @@ in
         };
       };
 
-      services.fail2ban.enable = _ true;
+      services.fail2ban = {
+        enable = _ true;
+        maxretry = _ 6;
+        bantime = _ "11m";
+        bantime-increment = {
+          enable = _ true;
+          rndtime = _ "7m";
+          overalljails = _ true;
+        };
+      };
+
+      networking.nftables.enable = _ true;
+      networking.firewall = {
+        enable = _ true;
+        pingLimit =
+          if config.networking.nftables.enable then "2/second" else "--limit 1/minute --limit-burst 5";
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);
