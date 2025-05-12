@@ -124,24 +124,24 @@
   services.fail2ban.enable = false;
 
   networking.networkmanager.enable = true;
-  networking.networkmanager.enableStrongSwan = true;
-  services.xl2tpd.enable = true;
-  services.strongswan = {
-    enable = true;
-    secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
-  };
+  # networking.networkmanager.enableStrongSwan = true;
+  # services.xl2tpd.enable = true;
+  # services.strongswan = {
+  #   enable = true;
+  #   secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
+  # };
 
   # Needed for gpg pinetry
   services.pcscd.enable = true;
-
-  virtualisation.docker = {
-    enable = true;
-    autoPrune.enable = true;
-    storageDriver = "btrfs";
-  };
+  #
+  # virtualisation.docker = {
+  #   enable = true;
+  #   autoPrune.enable = true;
+  #   storageDriver = "btrfs";
+  # };
 
   # NOTE for wireguard
-  networking.wireguard.enable = true;
+  # networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
       51820
@@ -159,7 +159,7 @@
   # If you intend to route all your traffic through the wireguard tunnel, the
   # default configuration of the NixOS firewall will block the traffic because
   # of rpfilter. You can either disable rpfilter altogether:
-  networking.firewall.checkReversePath = false;
+  # networking.firewall.checkReversePath = false;
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
@@ -191,15 +191,15 @@
       # beeper # Universal chat app.
       anki # Spaced repetition flashcard program
       libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
-      texlive.combined.scheme-full # TeX Live environment
+      # texlive.combined.scheme-full # TeX Live environment
       zotero # Collect, organize, cite, and share your research sources
       lapack # openblas with just the LAPACK C and FORTRAN ABI
       ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
-      zoom-us # Player for Z-Code, TADS and HUGO stories or games
-      vesktop # Alternate client for Discord with Vencord built-in
+      # zoom-us # Player for Z-Code, TADS and HUGO stories or games
+      # vesktop # Alternate client for Discord with Vencord built-in
 
-      slack # Desktop client for Slack
-      signal-desktop-bin # Private, simple, and secure messenger
+      # slack # Desktop client for Slack
+      # signal-desktop-bin # Private, simple, and secure messenger
 
       # todoist # Todoist CLI Client
       # todoist-electron # The official Todoist electron app
