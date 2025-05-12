@@ -23,11 +23,11 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = with inputs; [
-    disko.nixosModules.disko
-    nix-gaming.nixosModules.pipewireLowLatency
-    nix-index-database.nixosModules.nix-index
-    (nix-mineral + "/nix-mineral.nix")
+  imports = [
+    inputs.disko.nixosModules.disko
+    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    inputs.nix-index-database.nixosModules.nix-index
+    (inputs.nix-mineral + "/nix-mineral.nix")
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
     # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'

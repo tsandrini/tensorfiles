@@ -37,7 +37,6 @@ in
         enable = _ true;
         clean = {
           enable = _ true;
-          extraArgs = _ "--delete-older-than 3d";
           dates = _ "weekly";
         };
       };

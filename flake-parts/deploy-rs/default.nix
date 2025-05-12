@@ -15,6 +15,9 @@
 { inputs, config, ... }:
 let
   inherit (inputs) deploy-rs;
+
+  hostPath =
+    system: name: deploy-rs.lib.${system}.activate.nixos config.flake.nixosConfigurations.${name};
 in
 {
 
@@ -32,7 +35,7 @@ in
         autoRollback = true;
         magicRollback = true;
 
-        path = deploy-rs.lib.x86_64-linux.activate.nixos config.flake.nixosConfigurations."remotebundle";
+        path = hostPath "x86_64-linux" "remotebundle";
       };
     };
   };

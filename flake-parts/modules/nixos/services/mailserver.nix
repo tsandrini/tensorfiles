@@ -154,6 +154,9 @@ in
           "grafana-bot@${defaultDomain}" = {
             aliases = [ ];
           };
+          "git-bot@${defaultDomain}" = {
+            aliases = [ ];
+          };
         };
       };
 

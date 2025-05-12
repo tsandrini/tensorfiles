@@ -21,6 +21,16 @@
 }:
 let
   inherit (inputs.flake-parts.lib) importApply;
+  inherit (config.agenix) secretsPath;
+
+  sharedModules = [
+    inputs.nix-topology.nixosModules.default
+    inputs.lix-module.nixosModules.default
+  ];
+
+  sharedOverlays = [
+    inputs.nix-topology.overlays.default
+  ];
 
   mkHost =
     args: hostName:
@@ -29,9 +39,7 @@ let
       extraModules ? [ ],
       extraOverlays ? [ ],
       withHomeManager ? false,
-      hostImportArgs ? {
-        inherit inputs;
-      },
+      hostImportArgs ? { },
       ...
     }:
     let
@@ -79,39 +87,31 @@ let
 in
 {
   flake.nixosConfigurations = {
+    remotebundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "remotebundle" {
+        extraOverlays = sharedOverlays;
+        extraModules = sharedModules;
+        hostImportArgs = {
+          inherit inputs secretsPath;
+        };
+      }
+    );
     jetbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "jetbundle" {
         withHomeManager = true;
-        extraOverlays = with inputs; [
-          nix-topology.overlays.default
-          emacs-overlay.overlays.default
-          nur.overlays.default
+        extraOverlays = sharedOverlays ++ [
+          inputs.emacs-overlay.overlays.default
+          inputs.nur.overlays.default
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
-        extraModules = with inputs; [
-          nur.modules.nixos.default
-          nix-topology.nixosModules.default
-        ];
-      }
-    );
-    remotebundle = withSystem "x86_64-linux" (
-      args:
-      mkHost args "remotebundle" {
-        withHomeManager = true;
-        extraOverlays = with inputs; [
-          nix-topology.overlays.default
-          # nur.overlays.default
-          # neovim-nightly-overlay.overlays.default
-        ];
-        extraModules = with inputs; [
-          nix-topology.nixosModules.default
-          # nur.modules.nixos.default
+        extraModules = sharedModules ++ [
+          inputs.nur.modules.nixos.default
         ];
         hostImportArgs = {
           inherit inputs;
-          inherit (config.agenix) secretsPath;
         };
       }
     );
@@ -119,17 +119,18 @@ in
       args:
       mkHost args "spinorbundle" {
         withHomeManager = true;
-        extraOverlays = with inputs; [
-          nix-topology.overlays.default
-          emacs-overlay.overlays.default
-          nur.overlays.default
+        extraOverlays = sharedOverlays ++ [
+          inputs.emacs-overlay.overlays.default
+          inputs.nur.overlays.default
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
-        extraModules = with inputs; [
-          nur.modules.nixos.default
-          nix-topology.nixosModules.default
+        extraModules = sharedModules ++ [
+          inputs.nur.modules.nixos.default
         ];
+        hostImportArgs = {
+          inherit inputs;
+        };
       }
     );
   };

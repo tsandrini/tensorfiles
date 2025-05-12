@@ -63,6 +63,9 @@ in
   "hosts/remotebundle/mailserver/grafana-bot-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/git-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
   # rspamd
   "hosts/remotebundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
     remotebundle
@@ -76,6 +79,10 @@ in
   ] ++ [ tsandrini ];
   # pgadmin
   "hosts/remotebundle/pgadmin-admin-password.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  # firefly
+  "hosts/remotebundle/firefly-iii-app-key.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
 

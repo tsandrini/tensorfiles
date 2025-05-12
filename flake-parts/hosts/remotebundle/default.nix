@@ -25,6 +25,8 @@ let
   domain = "tsandrini.sh";
   grafanaDomain = "grafana.${domain}";
   pgadminDomain = "pgadmin.${domain}";
+  fireflyDomain = "firefly.${domain}";
+  forgejoDomain = "git.${domain}";
   immutable-insights = inputs.immutable-insights.packages.${system}.default;
 in
 {
@@ -36,9 +38,9 @@ in
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = with inputs; [
-    (vpsadminos + "/os/lib/nixos-container/vpsadminos.nix")
-    (nix-mineral + "/nix-mineral.nix")
+  imports = [
+    (inputs.vpsadminos + "/os/lib/nixos-container/vpsadminos.nix")
+    (inputs.nix-mineral + "/nix-mineral.nix")
 
     ./nm-overrides.nix
   ];
@@ -87,11 +89,6 @@ in
     security.agenix.enable = true;
     tasks.system-autoupgrade.enable = false;
 
-    # Use the `nh` garbage collect to also collect .direnv and XDG profiles
-    # roots instead of the default ones.
-    tasks.nix-garbage-collect.enable = false;
-    programs.nh.enable = true;
-
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
     };
@@ -126,14 +123,73 @@ in
     config.users.groups.anubis.name
   ];
 
+  services.fail2ban.jails = {
+    # Auth failures - moderate risk of false positives
+    nginx-http-auth.settings = {
+      enabled = true;
+      maxretry = 5;
+      bantime = "10m";
+      findtime = "3m";
+    };
+
+    # Rate limiting - medium-high risk of false positives
+    nginx-limit-req.settings = {
+      enabled = true;
+      maxretry = 3;
+      findtime = "1m";
+      bantime = "30m";
+    };
+
+    # Bad requests - low-medium risk of false positives
+    nginx-bad-request.settings = {
+      enabled = true;
+      maxretry = 3;
+      findtime = "1m";
+      bantime = "1h";
+    };
+
+    # Bot scanning - very low risk of false positives
+    nginx-botsearch.settings = {
+      enabled = true;
+      maxretry = 10;
+      findtime = "2m";
+      bantime = "2h";
+    };
+
+    # Forbidden access - low risk of false positives
+    nginx-forbidden.settings = {
+      enabled = true;
+      maxretry = 5;
+      findtime = "2m";
+      bantime = "2h";
+    };
+
+    grafana.settings = {
+      enabled = true;
+    };
+    roundcube.settings = {
+      enabled = true;
+    };
+  };
+
   services.nginx = {
     enable = true;
 
+    recommendedProxySettings = true;
     recommendedGzipSettings = true;
     recommendedOptimisation = true;
     recommendedTlsSettings = true;
 
     commonHttpConfig = ''
+      # Define rate limiting zones
+      limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=5r/s;
+      limit_conn_zone $binary_remote_addr zone=conn_limit_per_ip:10m;
+
+      # Set log level to notice to catch rate limiting events
+      error_log /var/log/nginx/error.log notice;
+      limit_req_log_level notice;
+      limit_conn_log_level notice;
+
       proxy_headers_hash_max_size 1024;
       proxy_headers_hash_bucket_size 128;
     '';
@@ -141,10 +197,8 @@ in
     virtualHosts."${domain}" = {
       enableACME = true;
       forceSSL = true;
-      # serverName = domain;
 
       locations."/" = {
-        recommendedProxySettings = true;
         proxyPass = "http://unix:${config.services.anubis.instances."".settings.BIND}";
       };
       # locations."/metrics" = {
@@ -175,7 +229,6 @@ in
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        recommendedProxySettings = true;
         proxyWebsockets = true;
         proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
       };
@@ -185,12 +238,92 @@ in
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        recommendedProxySettings = true;
         proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
       };
     };
 
+    virtualHosts."${forgejoDomain}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyWebsockets = true;
+        proxyPass = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+      };
+    };
+
+    virtualHosts."${fireflyDomain}" = {
+      enableACME = true;
+      forceSSL = true;
+    };
   };
+
+  # Add firefly-pico and firefly-importer
+
+  services.forgejo = {
+    enable = true;
+    database = {
+      createDatabase = false;
+      type = "postgres";
+      socket = "/run/postgresql";
+    };
+    settings = {
+      server = {
+        ROOT_URL = "https://${forgejoDomain}/";
+        DOMAIN = forgejoDomain;
+        SSH_PORT = 2222;
+        LANDING_PAGE = "explore";
+      };
+      service = {
+        # TODO
+        DISABLE_REGISTRATION = true;
+        COOKIE_SECURE = true;
+        ENABLE_NOTIFY_MAIL = true;
+        # REGISTER_EMAIL_CONFIRM = true;
+      };
+      indexer = {
+        REPO_INDEXER_ENABLED = true;
+      };
+      mailer = {
+        # TODO: DOESNT WORK
+        ENABLED = true;
+        PROTOCOL = "sendmail";
+        SENDMAIL_PATH = "${pkgs.system-sendmail}/bin/sendmail";
+        FROM = "git-bot@${domain}";
+      };
+      DEFAULT = {
+        APP_NAME = "tsandrini's git";
+      };
+    };
+  };
+
+  systemd.services.forgejo.path = [ pkgs.system-sendmail ];
+
+  services.firefly-iii = {
+    enable = true;
+    virtualHost = fireflyDomain;
+    enableNginx = true;
+    settings = {
+      APP_KEY_FILE = config.age.secrets."hosts/${hostName}/firefly-iii-app-key".path;
+      APP_URL = "https://${config.services.firefly-iii.virtualHost}";
+      DB_CONNECTION = "pgsql";
+      DB_HOST = "/run/postgresql";
+      SITE_OWNER = "t@${domain}";
+      TZ = "Europe/Prague";
+    };
+  };
+
+  # services.firefly-pico = {
+  #   enable = true;
+  #   enableNginx = true;
+  #   virtualHost = "firefly-pico.${domain}";
+  #   settings = {
+  #     APP_URL = "https://${config.services.firefly-pico.virtualHost}";
+  #     TZ = "Europe/Berlin";
+  #     FIREFLY_URL = config.services.firefly-iii.settings.APP_URL;
+  #     SITE_OWNER = "t@${domain}";
+  #     # APP_KEY_FILE = config.age.secrets.firefly-pico-app-key.path;
+  #   };
+  # };
 
   services.anubis = {
     instances."" = {
@@ -305,7 +438,10 @@ in
     };
     authentication = ''
       # Allow grafana user to connect via local socket with peer auth (no password)
-      local   all             grafana                                 peer
+      local   all potgres                                             peer
+      local   all ${config.services.grafana.settings.database.user}   peer
+      local   all firefly-iii                                         peer
+      local   all ${config.services.forgejo.database.user}            peer
 
       # Require SCRAM password for admin on local socket and TCP (IPv4 + IPv6)
       local   all             admin                                   scram-sha-256
@@ -316,7 +452,11 @@ in
       # local   all             all                                     reject
       # host    all             all             all                     reject
     '';
-    ensureDatabases = [ "grafana" ];
+    ensureDatabases = [
+      "firefly-iii"
+      config.services.grafana.settings.database.name
+      config.services.forgejo.database.name
+    ];
     ensureUsers = [
       {
         name = "admin";
@@ -328,7 +468,15 @@ in
         };
       }
       {
-        name = "grafana";
+        name = config.services.grafana.settings.database.user;
+        ensureDBOwnership = true;
+      }
+      {
+        name = "firefly-iii";
+        ensureDBOwnership = true;
+      }
+      {
+        name = config.services.forgejo.database.user;
         ensureDBOwnership = true;
       }
     ];
@@ -516,6 +664,9 @@ in
     };
   };
 
+  systemd.services.promtail.after = [ "loki.service" ];
+  systemd.services.promtail.requires = [ "loki.service" ];
+
   age.secrets = {
     "hosts/${hostName}/grafana-bot-mail-password" = {
       file = "${secretsPath}/hosts/${hostName}/grafana-bot-mail-password.age";
@@ -529,6 +680,11 @@ in
 
     "hosts/${hostName}/pgadmin-admin-password" = {
       file = "${secretsPath}/hosts/${hostName}/pgadmin-admin-password.age";
+    };
+
+    "hosts/${hostName}/firefly-iii-app-key" = {
+      file = "${secretsPath}/hosts/${hostName}/firefly-iii-app-key.age";
+      owner = config.services.firefly-iii.user;
     };
   };
 }

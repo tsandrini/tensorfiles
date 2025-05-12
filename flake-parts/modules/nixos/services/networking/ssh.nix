@@ -72,6 +72,7 @@ in
         # NOTE Just using a different port mitigates a ton of brute force attacks
         # that have 22 hardcoded.
         ports = _ [ 2222 ];
+        # openFirewall = _ true;
         banner = mkBefore ''
           =====================================================================
           Welcome, you should note that this host is completely
