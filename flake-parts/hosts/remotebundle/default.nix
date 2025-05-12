@@ -274,20 +274,18 @@ in
         LANDING_PAGE = "explore";
       };
       service = {
-        # TODO
         DISABLE_REGISTRATION = true;
         COOKIE_SECURE = true;
         ENABLE_NOTIFY_MAIL = true;
-        # REGISTER_EMAIL_CONFIRM = true;
+        REGISTER_EMAIL_CONFIRM = true;
       };
       indexer = {
         REPO_INDEXER_ENABLED = true;
       };
       mailer = {
-        # TODO: DOESNT WORK
         ENABLED = true;
-        PROTOCOL = "sendmail";
-        SENDMAIL_PATH = "${pkgs.system-sendmail}/bin/sendmail";
+        PROTOCOL = "smtp"; # <--- Change protocol
+        SMTP_ADDR = "localhost";
         FROM = "git-bot@${domain}";
       };
       DEFAULT = {
@@ -296,7 +294,9 @@ in
     };
   };
 
-  systemd.services.forgejo.path = [ pkgs.system-sendmail ];
+  systemd.services.forgejo = {
+    path = [ pkgs.system-sendmail ];
+  };
 
   services.firefly-iii = {
     enable = true;
