@@ -631,11 +631,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1746297873,
-        "narHash": "sha256-uKA86e9MZJOdBFx8WSWP4Dd7NKzaqXCDCznTDudDpok=",
+        "lastModified": 1747483392,
+        "narHash": "sha256-oSNOQhQ0PDaUb/tKtxyIUEgFsvnLmZBEB812Fs+C63o=",
         "owner": "tsandrini",
         "repo": "immutable-insights",
-        "rev": "18a4aaf8aff8e1146c1000115c458ecec8886fbd",
+        "rev": "f91548341e6f9f58bf7f639bbb20bd871cd57f56",
         "type": "github"
       },
       "original": {
