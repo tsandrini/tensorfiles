@@ -28,6 +28,8 @@ jobs:
 
       - name: "Cleaning up the GitHub runner from default bloat..."
         uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: "rampage"
 
       - name: "Installing and configuring the nix package manager..."
         uses: cachix/install-nix-action@v31
