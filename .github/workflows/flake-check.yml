@@ -49,7 +49,8 @@ jobs:
           nix profile install nixpkgs#nix-fast-build # parallel nix builder
 
       - name: "Building `.#checks` attribute..."
-        run: nix-fast-build ${BUILD_OPTS} --flake '.#checks'
+        run: nix flake check --accept-flake-config
+        # run: nix-fast-build ${BUILD_OPTS} --flake '.#checks'
 
       - name: "Building `.#packages` attribute..."
         run: nix-fast-build ${BUILD_OPTS} --flake '.#packages'
