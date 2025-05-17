@@ -164,12 +164,9 @@ in
       bantime = "2h";
     };
 
-    grafana.settings = {
-      enabled = true;
-    };
-    roundcube.settings = {
-      enabled = true;
-    };
+    # grafana.settings = {
+    #   enabled = true;
+    # };
   };
 
   services.nginx = {
