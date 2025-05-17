@@ -26,6 +26,9 @@ jobs:
       - name: "Checking out repository..."
         uses: actions/checkout@v4
 
+      - name: "Cleaning up the GitHub runner from default bloat..."
+        uses: wimpysworld/nothing-but-nix@main
+
       - name: "Installing and configuring the nix package manager..."
         uses: cachix/install-nix-action@v31
         with:
@@ -39,9 +42,6 @@ jobs:
           name: tsandrini
           # If you chose API tokens for write access OR if you have a private cache
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
-
-      - name: "Cleaning up the GitHub runner from default bloat..."
-        uses: wimpysworld/nothing-but-nix@main
 
       # NOTE Install any necessary packages here
       - name: "Setting up packages..."
