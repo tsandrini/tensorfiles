@@ -2,7 +2,6 @@
 
 [![flake check](https://github.com/tsandrini/tensorfiles/actions/workflows/flake-check.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/flake-check.yml)
 [![FlakeHub](https://github.com/tsandrini/tensorfiles/actions/workflows/flakehub-publish.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/flakehub-publish.yml)
-[![cachix](https://github.com/tsandrini/tensorfiles/actions/workflows/cachix-push.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/cachix-push.yml)
 [![flake.lock update](https://github.com/tsandrini/tensorfiles/actions/workflows/update-flake-lock.yml/badge.svg)](https://github.com/tsandrini/flake-parts-builder/actions/workflows/update-flake-lock.yml)
 
 ## Table of Contents

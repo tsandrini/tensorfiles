@@ -11,6 +11,14 @@ on:
   repository_dispatch:
     types: [create-pull-request]
 
+env:
+  BUILD_OPTS: >-
+    --no-nom
+    --no-link
+    --skip-cached
+    --option accept-flake-config true
+    --option allow-import-from-derivation true
+
 jobs:
   flake-check:
     runs-on: "ubuntu-latest"
@@ -25,19 +33,29 @@ jobs:
             accept-flake-config = true
             allow-import-from-derivation = true
 
+      - name: "Settings up cachix binary cache..."
+        uses: cachix/cachix-action@v16
+        with:
+          name: tsandrini
+          # If you chose API tokens for write access OR if you have a private cache
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: "Cleaning up the GitHub runner from default bloat..."
+        uses: wimpysworld/nothing-but-nix@main
+
       # NOTE Install any necessary packages here
       - name: "Setting up packages..."
         run: |
           nix profile install nixpkgs#nix-fast-build # parallel nix builder
 
-      - name: "Running `nix flake check`..."
-        run: nix-fast-build --skip-cached --no-nom --flake ".#checks.$(nix eval --raw --impure --expr builtins.currentSystem)"
+      - name: "Building `.#checks` attribute..."
+        run: nix-fast-build ${BUILD_OPTS} --flake '.#checks'
 
-      - name: "Running `nix build ...`..."
-        run: nix-fast-build --skip-cached --no-nom --flake ".#packages.$(nix eval --raw --impure --expr builtins.currentSystem)"
+      - name: "Building `.#packages` attribute..."
+        run: nix-fast-build ${BUILD_OPTS} --flake '.#packages'
 
-      - name: "Running `nix develop...`..."
-        run: nix-fast-build --skip-cached --no-nom --flake ".#devShells.$(nix eval --raw --impure --expr builtins.currentSystem)"
+      - name: "Building `.#devShells` attribute..."
+        run: nix-fast-build ${BUILD_OPTS} --flake '.#devShells'
 
       - name: "Checking flake inputs for stale & insecure nixpkgs versions..."
         uses: DeterminateSystems/flake-checker-action@main
