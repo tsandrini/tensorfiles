@@ -15,6 +15,7 @@
 { localFlake, inputs }:
 {
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -47,7 +48,7 @@ in
         nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
         # NOTE: Using lix instead, so we'll leave the default settings
         #       that will get overriden by the lix overlay
-        # package = _ pkgs.nixVersions.latest;
+        package = _ pkgs.nixVersions.latest;
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
           auto-optimise-store = _ true;

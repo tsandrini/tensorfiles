@@ -25,7 +25,7 @@ let
 
   sharedModules = [
     inputs.nix-topology.nixosModules.default
-    inputs.lix-module.nixosModules.default
+    # inputs.lix-module.nixosModules.default
   ];
 
   sharedOverlays = [
