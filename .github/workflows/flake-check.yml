@@ -55,7 +55,7 @@ jobs:
         # run: nix flake check --accept-flake-config
 
       - name: "Building `.#packages` attribute..."
-        run: nix-fast-build ${BUILD_OPTS} --flake '.#packages'
+        run: nix-fast-build ${BUILD_OPTS} --flake '.#packages.x86_64-linux'
 
       - name: "Building `.#devShells` attribute..."
         run: nix-fast-build ${BUILD_OPTS} --flake '.#devShells'
