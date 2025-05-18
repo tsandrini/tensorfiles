@@ -139,6 +139,12 @@ in
               "info@${defaultDomain}"
             ];
           };
+          "monitoring@${defaultDomain}" = {
+            aliases = [
+              "alerts@${defaultDomain}"
+              "notifications@${defaultDomain}"
+            ];
+          };
           "shopping@${defaultDomain}" = {
             aliases = [ ];
           };
@@ -146,6 +152,9 @@ in
             aliases = [ ];
           };
           "grafana-bot@${defaultDomain}" = {
+            aliases = [ ];
+          };
+          "git-bot@${defaultDomain}" = {
             aliases = [ ];
           };
         };
@@ -180,6 +189,17 @@ in
         };
       };
     };
+
+    fail2ban-jails = {
+      enable =
+        mkEnableOption ''
+          Enables the fail2ban jails for the mailserver.
+          Namely the postfix and dovecot jails.
+        ''
+        // {
+          default = true;
+        };
+    };
   };
 
   # --------------------------
@@ -213,6 +233,11 @@ in
         certificateScheme = _ "acme-nginx";
         enableManageSieve = _ true;
         virusScanning = _ false;
+
+        monitoring = {
+          enable = _ false;
+          alertAddress = _ "monitoring@${cfg.baseDomain}";
+        };
       };
       security.acme.acceptTerms = _ true;
       security.acme.defaults.email = _ "security@${cfg.baseDomain}";
@@ -233,6 +258,26 @@ in
         '';
       };
       services.nginx.enable = _ true;
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.fail2ban-jails.enable {
+      services.fail2ban = {
+        jails = {
+          postfix.settings = {
+            enabled = _ true;
+            filter = _ "postfix";
+            findtime = _ "4h";
+            bantime = _ "2d";
+          };
+          dovecot.settings = {
+            enabled = _ true;
+            filter = _ "dovecot";
+            mode = _ "aggressive";
+            findtime = _ "3h";
+            bantime = _ "2d";
+          };
+        };
+      };
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.rspamd-ui.enable {

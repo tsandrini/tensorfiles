@@ -15,8 +15,8 @@
 { localFlake, inputs }:
 {
   config,
-  lib,
   pkgs,
+  lib,
   ...
 }:
 let
@@ -46,6 +46,8 @@ in
         enable = _ true;
         checkConfig = _ true;
         nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
+        # NOTE: Using lix instead, so we'll leave the default settings
+        #       that will get overriden by the lix overlay
         package = _ pkgs.nixVersions.latest;
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
@@ -58,6 +60,7 @@ in
             "https://tsandrini.cachix.org"
             "https://nixpkgs-wayland.cachix.org"
             "https://nix-gaming.cachix.org"
+            "https://cache.lix.systems"
             # "https://hyprland.cachix.org"
             # "https://anyrun.cachix.org"
           ];
@@ -68,6 +71,7 @@ in
             "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
             "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
             "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
+            "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
             # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
             # "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
           ];

@@ -19,6 +19,8 @@ let
 
   agenixCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.agenix.enable;
+
+  defaultDomain = "tsandrini.sh";
 in
 {
   options.tensorfiles.hm.profiles.accounts.tsandrini = {
@@ -68,11 +70,12 @@ in
           default = {
             "tomas.sandrini@seznam.cz" = { };
             "WareCzech@gmail.com" = { };
-            "t@tsandrini.sh" = { };
-            "business@tsandrini.sh" = { };
-            "security@tsandrini.sh" = { };
-            "shopping@tsandrini.sh" = { };
-            "newsletters@tsandrini.sh" = { };
+            "t@${defaultDomain}" = { };
+            "business@${defaultDomain}" = { };
+            "security@${defaultDomain}" = { };
+            "shopping@${defaultDomain}" = { };
+            "newsletters@${defaultDomain}" = { };
+            "monitoring@${defaultDomain}" = { };
           };
         };
     };
@@ -136,20 +139,20 @@ in
         };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.email.enable && cfg.email.accounts."t@tsandrini.sh".enable) {
+    (mkIf (cfg.email.enable && cfg.email.accounts."t@${defaultDomain}".enable) {
       accounts.email.accounts =
         let
-          accountCfg = cfg.email.accounts."t@tsandrini.sh";
+          accountCfg = cfg.email.accounts."t@${defaultDomain}";
         in
         {
-          "t@tsandrini.sh" = {
-            address = _ "t@tsandrini.sh";
-            userName = _ "t@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
-            imap.host = _ "mail.tsandrini.sh";
+          "t@${defaultDomain}" = {
+            address = _ "t@${defaultDomain}";
+            userName = _ "t@${defaultDomain}"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.${defaultDomain}";
             imap.port = _ 993;
             primary = _ true;
             realName = _ "Tomáš Sandrini";
-            smtp.host = _ "mail.tsandrini.sh";
+            smtp.host = _ "mail.${defaultDomain}";
             smtp.port = _ 587;
             smtp.tls.useStartTls = _ true;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
@@ -163,20 +166,20 @@ in
         };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.email.enable && cfg.email.accounts."business@tsandrini.sh".enable) {
+    (mkIf (cfg.email.enable && cfg.email.accounts."business@${defaultDomain}".enable) {
       accounts.email.accounts =
         let
-          accountCfg = cfg.email.accounts."business@tsandrini.sh";
+          accountCfg = cfg.email.accounts."business@${defaultDomain}";
         in
         {
-          "business@tsandrini.sh" = {
-            address = _ "business@tsandrini.sh";
-            userName = _ "business@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
-            imap.host = _ "mail.tsandrini.sh";
+          "business@${defaultDomain}" = {
+            address = _ "business@${defaultDomain}";
+            userName = _ "business@${defaultDomain}"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.${defaultDomain}";
             imap.port = _ 993;
             primary = _ false;
             realName = _ "Tomáš Sandrini";
-            smtp.host = _ "mail.tsandrini.sh";
+            smtp.host = _ "mail.${defaultDomain}";
             smtp.port = _ 587;
             smtp.tls.useStartTls = _ true;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
@@ -190,20 +193,20 @@ in
         };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.email.enable && cfg.email.accounts."security@tsandrini.sh".enable) {
+    (mkIf (cfg.email.enable && cfg.email.accounts."security@${defaultDomain}".enable) {
       accounts.email.accounts =
         let
-          accountCfg = cfg.email.accounts."security@tsandrini.sh";
+          accountCfg = cfg.email.accounts."security@${defaultDomain}";
         in
         {
-          "security@tsandrini.sh" = {
-            address = _ "security@tsandrini.sh";
-            userName = _ "security@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
-            imap.host = _ "mail.tsandrini.sh";
+          "security@${defaultDomain}" = {
+            address = _ "security@${defaultDomain}";
+            userName = _ "security@${defaultDomain}"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.${defaultDomain}";
             imap.port = _ 993;
             primary = _ false;
             realName = _ "Tomáš Sandrini";
-            smtp.host = _ "mail.tsandrini.sh";
+            smtp.host = _ "mail.${defaultDomain}";
             smtp.port = _ 587;
             smtp.tls.useStartTls = _ true;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
@@ -244,20 +247,47 @@ in
         };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (cfg.email.enable && cfg.email.accounts."newsletters@tsandrini.sh".enable) {
+    (mkIf (cfg.email.enable && cfg.email.accounts."newsletters@${defaultDomain}".enable) {
       accounts.email.accounts =
         let
-          accountCfg = cfg.email.accounts."newsletters@tsandrini.sh";
+          accountCfg = cfg.email.accounts."newsletters@${defaultDomain}";
         in
         {
-          "newsletters@tsandrini.sh" = {
-            address = _ "newsletters@tsandrini.sh";
-            userName = _ "newsletters@tsandrini.sh"; # TODO https://github.com/nix-community/home-manager/issues/3712
-            imap.host = _ "mail.tsandrini.sh";
+          "newsletters@${defaultDomain}" = {
+            address = _ "newsletters@${defaultDomain}";
+            userName = _ "newsletters@${defaultDomain}"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.${defaultDomain}";
             imap.port = _ 993;
             primary = _ false;
             realName = _ "Tomáš Sandrini";
-            smtp.host = _ "mail.tsandrini.sh";
+            smtp.host = _ "mail.${defaultDomain}";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."monitoring@${defaultDomain}".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."monitoring@${defaultDomain}";
+        in
+        {
+          "monitoring@${defaultDomain}" = {
+            address = _ "monitoring@${defaultDomain}";
+            userName = _ "monitoring@${defaultDomain}"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "mail.${defaultDomain}";
+            imap.port = _ 993;
+            primary = _ false;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "mail.${defaultDomain}";
             smtp.port = _ 587;
             smtp.tls.useStartTls = _ true;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");

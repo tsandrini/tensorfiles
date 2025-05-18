@@ -116,7 +116,10 @@
         configurationLimit = 3;
       };
     };
-    binfmt.emulatedSystems = [ "aarch64-linux" ];
+    binfmt.emulatedSystems = [
+      "aarch64-linux"
+      "armv7l-linux"
+    ];
     kernelPackages = pkgs.linuxPackages_latest;
   };
 

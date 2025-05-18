@@ -15,6 +15,9 @@
 { inputs, config, ... }:
 let
   inherit (inputs) deploy-rs;
+
+  hostPath =
+    system: name: deploy-rs.lib.${system}.activate.nixos config.flake.nixosConfigurations.${name};
 in
 {
 
@@ -24,11 +27,15 @@ in
 
       profiles.system = {
         user = "root";
-        sshUser = "tsandrini"; # TODO only for now
+        sshUser = "tsandrini"; # TODO: add deply user?
+        sshOpts = [
+          "-p"
+          "2222"
+        ];
         autoRollback = true;
         magicRollback = true;
 
-        path = deploy-rs.lib.x86_64-linux.activate.nixos config.flake.nixosConfigurations."remotebundle";
+        path = hostPath "x86_64-linux" "remotebundle";
       };
     };
   };

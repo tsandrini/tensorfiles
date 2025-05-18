@@ -157,6 +157,9 @@ in
             user_pref("dom.security.https_only_mode", true);
             user_pref("dom.security.https_only_mode_error_page_user_suggestions", true);
 
+            // This has unironically real life issues
+            user_pref("privacy.resistFingerprinting.spoofTimezone", false);
+
             /****************************************************************************************
             * OPTION: INSTANT SCROLLING (SIMPLE ADJUSTMENT)                                       *
             ****************************************************************************************/

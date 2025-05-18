@@ -23,15 +23,15 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = with inputs; [
-    disko.nixosModules.disko
-    nixos-hardware.nixosModules.lenovo-thinkpad-x270
-    nix-gaming.nixosModules.pipewireLowLatency
-    nix-index-database.nixosModules.nix-index
+  imports = [
+    inputs.disko.nixosModules.disko
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
+    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    inputs.nix-index-database.nixosModules.nix-index
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
-    (nix-mineral + "/nix-mineral.nix")
+    (inputs.nix-mineral + "/nix-mineral.nix")
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
     # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'

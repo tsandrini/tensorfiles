@@ -61,6 +61,9 @@ in
       inherit localFlake inputs;
       inherit (config.agenix) secretsPath;
     };
+    services_monit = importApply ./services/monit.nix {
+      inherit localFlake;
+    };
 
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix { inherit localFlake inputs; };

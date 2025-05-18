@@ -42,7 +42,7 @@ in
 
       services.gpg-agent = {
         enable = _ true;
-        pinentryPackage = _ pkgs.pinentry-qt;
+        pinentry.package = _ pkgs.pinentry-qt;
         # NOTE true by default so probably unnecessary
         # enableBashIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.bash");
         # enableFishIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.fish");

@@ -30,11 +30,13 @@ in
   # | HOSTS |
   # ---------
 
-  # jetbundle
+  # --- jetbundle ---
+  # --------------------
   "hosts/jetbundle/users/root/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
   "hosts/jetbundle/users/tsandrini/system-password.age".publicKeys = [ jetbundle ] ++ [ tsandrini ];
 
-  # remotebundle
+  # --- remotebundle ---
+  # --------------------
   "hosts/remotebundle/users/root/system-password.age".publicKeys = [ remotebundle ] ++ [ tsandrini ];
   "hosts/remotebundle/users/tsandrini/system-password.age".publicKeys = [
     remotebundle
@@ -49,6 +51,9 @@ in
   "hosts/remotebundle/mailserver/security-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/monitoring-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/shopping-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
@@ -56,6 +61,9 @@ in
     remotebundle
   ] ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/grafana-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/git-bot-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
   # rspamd
@@ -73,8 +81,13 @@ in
   "hosts/remotebundle/pgadmin-admin-password.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
+  # firefly
+  "hosts/remotebundle/firefly-iii-app-key.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
 
-  # spinorbundle
+  # --- spinorbundle ---
+  # --------------------
   "hosts/spinorbundle/users/root/system-password.age".publicKeys = [ spinorbundle ] ++ [ tsandrini ];
   "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys = [
     spinorbundle

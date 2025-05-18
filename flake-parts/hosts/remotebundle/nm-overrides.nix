@@ -2,6 +2,10 @@ _: {
   nix-mineral.overrides.fileSystem.baseFileSystems = false;
   nix-mineral.overrides.fileSystem.specialFileSystems = true;
 
+  # NOTE resolve warnings like this one
+  # nginx.service: bpf-firewall: Attaching egress BPF program to cgroup /sys/fs/cgroup/system.slice/nginx.service failed: Invalid argument
+  # boot.kernel.sysctl."kernel.unprivileged_bpf_disabled" = "0";
+
   ## Compatibility
   # Options to ensure compatibility with certain usecases and hardware, at the
   # expense of overall security.

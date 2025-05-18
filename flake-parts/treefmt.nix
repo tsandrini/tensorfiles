@@ -60,7 +60,7 @@
           shellcheck.enable = true; # Shell script analysis tool
           shfmt.enable = true; # Shell parser and formatter
 
-          actionlint.enable = true; # Static checker for GitHub Actions workflow files
+          # actionlint.enable = true; # Static checker for GitHub Actions workflow files
           # mdsh.enable = true; # Markdown shell pre-processor
         };
       };
