@@ -58,7 +58,7 @@ jobs:
         run: nix-fast-build ${BUILD_OPTS} --flake '.#packages.x86_64-linux'
 
       - name: "Building `.#devShells` attribute..."
-        run: nix-fast-build ${BUILD_OPTS} --flake '.#devShells'
+        run: nix-fast-build ${BUILD_OPTS} --flake '.#devShells.x86_64-linux'
 
       - name: "Checking flake inputs for stale & insecure nixpkgs versions..."
         uses: DeterminateSystems/flake-checker-action@main
