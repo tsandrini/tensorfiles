@@ -22,6 +22,7 @@
 let
   inherit (lib) mkOption types;
   inherit (inputs.flake-parts.lib) importApply;
+  inherit (config.agenix) secretsPath pubkeys;
   localFlake = self;
 in
 {
@@ -41,8 +42,7 @@ in
 
     # -- profiles --
     profiles_accounts_tsandrini = importApply ./profiles/accounts/tsandrini.nix {
-      inherit localFlake;
-      inherit (config.agenix) secretsPath;
+      inherit localFlake secretsPath;
     };
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake inputs; };
@@ -71,8 +71,7 @@ in
     programs_shells_fish = importApply ./programs/shells/fish.nix { inherit localFlake; };
     # programs_spicetify = importApply ./programs/spicetify.nix { inherit localFlake inputs; };
     programs_ssh = importApply ./programs/ssh.nix {
-      inherit (config.agenix) secretsPath pubkeys;
-      inherit localFlake;
+      inherit localFlake secretsPath pubkeys;
     };
     programs_terminals_alacritty = importApply ./programs/terminals/alacritty.nix {
       inherit localFlake;
