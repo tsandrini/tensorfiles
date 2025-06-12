@@ -50,7 +50,6 @@
     cpuFreqGovernor = "performance";
   };
 
-  programs.gamemode.enable = true;
   services.fwupd.enable = true;
 
   # BTRFS stuff
@@ -96,7 +95,7 @@
         configurationLimit = 3;
       };
     };
-    binfmt.emulatedSystems = [ "aarch64-linux" ];
+    # binfmt.emulatedSystems = [ "aarch64-linux" ];
     kernelPackages = pkgs.linuxPackages_latest;
   };
 
