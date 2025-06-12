@@ -20,6 +20,7 @@
 }:
 let
   inherit (inputs.flake-parts.lib) importApply;
+  inherit (config.agenix) secretsPath;
   localFlake = self;
 in
 {
@@ -40,7 +41,7 @@ in
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
-    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
+    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake secretsPath; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
 
     # -- programs --

@@ -12,9 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, secretsPath }:
 {
-  pkgs,
   config,
   lib,
   ...
@@ -35,6 +34,12 @@ in
       server-like functionality like simple shells, basic networking for remote
       access and simple editors.
     '';
+
+    nix = {
+      accessTokens = mkEnableOption ''
+        Also include the default global git access token for nix evaluation.
+      '';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -54,28 +59,28 @@ in
         };
       };
 
-      services.logrotate = {
-        enable = _ true;
-        settings = {
-          header.dateext = _ true; # Rotated logs will have the date in their name (e.g., logfile-YYYYMMDD)
-          fail2ban = {
-            files = "/var/log/fail2ban/*.log"; # Explicitly the file to rotate
-            create = "0600 root root";
-
-            postrotate = ''
-              # Check if fail2ban service is active
-              if ${config.systemd.package}/bin/systemctl is-active --quiet fail2ban.service; then
-                # Command fail2ban to set its log target to the new file.
-                ${pkgs.fail2ban}/bin/fail2ban-client set logtarget /var/log/fail2ban.log > /dev/null
-                # As a fallback if the above fails (e.g., command error), try sending SIGUSR1
-                if [ $? -ne 0 ]; then
-                  ${config.systemd.package}/bin/systemctl kill -s USR1 fail2ban.service > /dev/null || true
-                fi
-              fi
-            '';
-          };
-        };
-      };
+      # services.logrotate = {
+      #   enable = _ true;
+      #   settings = {
+      #     header.dateext = _ true; # Rotated logs will have the date in their name (e.g., logfile-YYYYMMDD)
+      #     fail2ban = {
+      #       files = "/var/log/fail2ban/*.log"; # Explicitly the file to rotate
+      #       create = "0600 root root";
+      #
+      #       postrotate = ''
+      #         # Check if fail2ban service is active
+      #         if ${config.systemd.package}/bin/systemctl is-active --quiet fail2ban.service; then
+      #           # Command fail2ban to set its log target to the new file.
+      #           ${pkgs.fail2ban}/bin/fail2ban-client set logtarget /var/log/fail2ban.log > /dev/null
+      #           # As a fallback if the above fails (e.g., command error), try sending SIGUSR1
+      #           if [ $? -ne 0 ]; then
+      #             ${config.systemd.package}/bin/systemctl kill -s USR1 fail2ban.service > /dev/null || true
+      #           fi
+      #         fi
+      #       '';
+      #     };
+      #   };
+      # };
 
       services.fail2ban = {
         enable = _ true;
@@ -95,6 +100,18 @@ in
           if config.networking.nftables.enable then "2/second" else "--limit 1/minute --limit-burst 5";
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.nix.accessTokens {
+      nix.extraOptions = ''
+        !include ${config.age.secrets."common/nix-conf-global-access-tokens".path}
+      '';
+
+      age.secrets = {
+        "common/nix-conf-global-access-tokens" = {
+          file = secretsPath + "/common/nix-conf-global-access-tokens.age";
+        };
+      };
+    })
     # |----------------------------------------------------------------------| #
   ]);
 

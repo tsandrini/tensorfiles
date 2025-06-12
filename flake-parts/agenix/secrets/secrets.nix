@@ -16,15 +16,20 @@ let
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
+  hosts = [
+    spinorbundle
+    jetbundle
+    remotebundle
+  ];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
+  users = [ tsandrini ];
 in
 {
   # ----------
   # | COMMON |
   # ----------
-  # "common/accounts/tomas-dot-sandrini-at-seznam-dot-cz.age".publicKeys = [ tsandrini ];
-  # "common/accounts/wareczech-at-gmail-dot-com.age".publicKeys = [ tsandrini ];
+  "common/nix-conf-global-access-tokens.age".publicKeys = hosts ++ users;
 
   # ---------
   # | HOSTS |
