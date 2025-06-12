@@ -26,7 +26,8 @@
   imports = [
     inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    # inputs.nix-gaming.nixosModules.pipewireLowLatency
+    # inputs.nix-gaming.nixosModules.platformOptimizations
     inputs.nix-index-database.nixosModules.nix-index
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
@@ -125,14 +126,33 @@
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
-      lowLatency.enable = true;
+      # lowLatency.enable = true;
     };
   };
 
   services.openssh.enable = false;
   services.fail2ban.enable = false;
 
-  # programs.steam.enable = true; # just trying it out
+  # programs.gamemode = {
+  #   enable = true;
+  #   settings = {
+  #     custom = {
+  #       start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
+  #       end = "${pkgs.libnotify}/bin/notify-send 'GameMode stopped'";
+  #     };
+  #   };
+  # };
+  # programs.steam = {
+  #   enable = true; # just trying it out
+  #   # extest.enable = true;
+  #   platformOptimizations.enable = true;
+  #   extraPackages = with pkgs; [
+  #     gamescope
+  #     xwayland-run
+  #   ];
+  # };
+  # hardware.graphics.enable32Bit = true;
+
   networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {
