@@ -83,7 +83,7 @@
       ];
     };
   };
-  nix-mineral.enable = true;
+  # nix-mineral.enable = true;
 
   # Use the `nh` garbage collect to also collect .direnv and XDG profiles
   # roots instead of the default ones.
@@ -127,7 +127,7 @@
       xwayland-run
     ];
   };
-  # hardware.graphics.enable32Bit = true;
+  hardware.graphics.enable32Bit = true;
 
   services = {
     pipewire = {

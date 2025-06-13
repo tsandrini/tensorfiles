@@ -15,9 +15,9 @@
 {
   disko.devices = {
     disk = {
-      sshd = {
+      vdb = {
         type = "disk";
-        device = "/dev/disk/by-id/ata-ST1000LM014-SSHD-8GB_W772F375";
+        device = "/dev/sda";
         content = {
           type = "gpt";
           partitions = {
@@ -28,6 +28,7 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = [ "defaults" ];
               };
             };
             swap = {
@@ -44,10 +45,38 @@
                 name = "crypted";
                 settings.allowDiscards = true;
                 content = {
-                  type = "filesystem";
-                  format = "ext4";
-                  mountpoint = "/";
-                  mountOptions = [ "noatime" ];
+                  type = "btrfs";
+                  extraArgs = [ "-f" ];
+                  subvolumes = {
+                    "/root" = {
+                      mountpoint = "/";
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
+                    };
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
+                    };
+                    "/nix" = {
+                      mountpoint = "/nix";
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
+                    };
+                    "/var/log" = {
+                      mountpoint = "/var/log";
+                      mountOptions = [
+                        "compress=zstd"
+                        "noatime"
+                      ];
+                    };
+                  };
                 };
               };
             };
