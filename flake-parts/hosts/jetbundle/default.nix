@@ -184,7 +184,7 @@
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
     };
-    programs.git.signing.key = "3E83AD690FA4F657";
+    programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
     home.packages = with pkgs; [
       # thunderbird # A full-featured e-mail client

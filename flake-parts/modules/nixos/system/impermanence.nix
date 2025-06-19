@@ -87,7 +87,7 @@ in
            installation specified by `blankRootSnapshot`.
 
         The TL;DR of this approach is that we basically just restore the rootSubvolume
-        to its initial blank snaphost.
+        to its initial blank snapshot.
 
         You can populate the root partition with any amount of desired btrfs
         subvolumes. The `rootSubvolume` is the only one required.

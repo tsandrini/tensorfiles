@@ -1,0 +1,9 @@
+[default.extend-words]
+lazer = "lazer"
+ags = "ags"
+nitch = "nitch"
+annote = "annote"
+crypted = "crypted"
+noice = "noice"
+fo = "fo" # flake-parts/modules/home-manager/programs/git.nix:61:11
+ot = "ot" # flake-parts/modules/nixvim/keymaps.nix:100:26

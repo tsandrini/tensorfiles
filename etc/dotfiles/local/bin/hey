@@ -7,5 +7,5 @@ xmonad --recompile && xmonad --restart
 systemctl restart --user dunst.service
 
 if pgrep -x "emacs" >/dev/null; then
-    emacsclient -e "(progn (load-theme 'ewal-doom-one))"
+	emacsclient -e "(progn (load-theme 'ewal-doom-one))"
 fi

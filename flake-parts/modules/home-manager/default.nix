@@ -45,7 +45,7 @@ in
       inherit localFlake secretsPath;
     };
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
-    profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake inputs; };
+    profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake; };
     profiles_graphical-xmonad = importApply ./profiles/graphical-xmonad.nix { inherit localFlake; };
     profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };

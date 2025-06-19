@@ -32,7 +32,7 @@ in
   options.tensorfiles.services.networking.ssh = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles everything related to ssh,
-      that is remote access, messagess, ssh-agents and ssh-keys with the
+      that is remote access, messages, ssh-agents and ssh-keys with the
       openssh backend.
     '';
 

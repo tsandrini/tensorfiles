@@ -23,6 +23,7 @@
   commitizen,
   cz-cli,
   # fh, # TODO error[E0425]: cannot find function `parse` in module `crate::ffi`
+  typos,
   gh,
   nh,
   nix-fast-build,
@@ -32,7 +33,6 @@
   cachix,
   markdownlint-cli,
   writeShellScriptBin,
-  treefmt-wrapper ? null,
   dev-process ? null,
   pre-commit ? null,
 }:
@@ -52,7 +52,6 @@ mkShell {
 
   packages =
     (lib.attrValues scripts)
-    ++ (lib.optional (treefmt-wrapper != null) treefmt-wrapper)
     ++ (lib.optional (dev-process != null) dev-process)
     ++ [
       # -- NIX UTILS --
@@ -73,7 +72,7 @@ mkShell {
       # -- BASE LANG UTILS --
       markdownlint-cli # Command line interface for MarkdownLint
       # nodePackages.prettier # Prettier is an opinionated code formatter
-      # typos # Source code spell checker
+      typos # Source code spell checker
 
       # -- (YOUR) EXTRA PKGS --
       nh # Yet another nix cli helper

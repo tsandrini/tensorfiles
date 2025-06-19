@@ -31,7 +31,7 @@ in
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_packages-base = importApply ./profiles/packages-base.nix { inherit localFlake; };
-    profiles_packages-extra = importApply ./profiles/packages-extra.nix { inherit localFlake inputs; };
+    profiles_packages-extra = importApply ./profiles/packages-extra.nix { inherit localFlake; };
     profiles_graphical-plasma5 = importApply ./profiles/graphical-plasma5.nix {
       inherit localFlake inputs;
     };
@@ -41,7 +41,7 @@ in
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
-    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake secretsPath; };
+    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
     profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
       inherit localFlake;

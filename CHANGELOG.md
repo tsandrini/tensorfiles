@@ -149,14 +149,14 @@
 - **hm-headless**: test
 - **headless**: remove blank inits
 - **zsh**: fix impermanence option
-- **doom**: fix unbound varialbe
+- **doom**: fix unbound variable
 - **spinorbundle**: fix zsh
 - **spinorbundle**: zsh enable
 - **spinorbundle**: set default user shell
 - **hm-headless**: fix impermanece persistentroot
 - **agenix**: fix impermanence agenix option definition
 - **agenix**: fix host ssh key path
-- **agenix**: fix identities loading stategy
+- **agenix**: fix identities loading strategy
 - **project**: fixed all of the various bugs due to reformat
 - **doom-emacs**: fix overlay package
 - **hyprland**: fix code typo

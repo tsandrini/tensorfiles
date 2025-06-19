@@ -55,11 +55,13 @@ in
   # ---------------------
 
   tensorfiles = {
-    profiles.headless.enable = true;
-    profiles.packages-base.enable = true;
-    profiles.with-base-monitoring-exports.enable = true;
-    profiles.with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
-    # profiles.packages-extra.enable = true;
+    profiles = {
+      headless.enable = true;
+      packages-base.enable = true;
+      # packages-extra.enable = true;
+      with-base-monitoring-exports.enable = true;
+      with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
+    };
 
     services.mailserver.enable = true;
     services.mailserver.roundcube.enable = true;
