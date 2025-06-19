@@ -16,6 +16,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -34,12 +35,6 @@ in
       server-like functionality like simple shells, basic networking for remote
       access and simple editors.
     '';
-
-    nix = {
-      accessTokens = mkEnableOption ''
-        Also include the default global git access token for nix evaluation.
-      '';
-    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -50,68 +45,22 @@ in
 
         services.networking.networkmanager.enable = _ true;
         services.networking.ssh.enable = _ true;
-
-        system.users = {
-          enable = _ true;
-          usersSettings = {
-            "root" = { };
-          };
-        };
       };
 
-      # services.logrotate = {
-      #   enable = _ true;
-      #   settings = {
-      #     header.dateext = _ true; # Rotated logs will have the date in their name (e.g., logfile-YYYYMMDD)
-      #     fail2ban = {
-      #       files = "/var/log/fail2ban/*.log"; # Explicitly the file to rotate
-      #       create = "0600 root root";
-      #
-      #       postrotate = ''
-      #         # Check if fail2ban service is active
-      #         if ${config.systemd.package}/bin/systemctl is-active --quiet fail2ban.service; then
-      #           # Command fail2ban to set its log target to the new file.
-      #           ${pkgs.fail2ban}/bin/fail2ban-client set logtarget /var/log/fail2ban.log > /dev/null
-      #           # As a fallback if the above fails (e.g., command error), try sending SIGUSR1
-      #           if [ $? -ne 0 ]; then
-      #             ${config.systemd.package}/bin/systemctl kill -s USR1 fail2ban.service > /dev/null || true
-      #           fi
-      #         fi
-      #       '';
-      #     };
-      #   };
-      # };
-
-      services.fail2ban = {
-        enable = _ true;
-        maxretry = _ 6;
-        bantime = _ "11m";
-        bantime-increment = {
-          enable = _ true;
-          rndtime = _ "7m";
-          overalljails = _ true;
-        };
+      programs.bash = {
+        interactiveShellInit = lib.mkBefore ''
+          ${lib.getExe pkgs.microfetch}
+        '';
       };
 
+      services.fail2ban.enable = _ true;
       networking.nftables.enable = _ true;
-      networking.firewall = {
-        enable = _ true;
-        pingLimit =
-          if config.networking.nftables.enable then "2/second" else "--limit 1/minute --limit-burst 5";
-      };
-    }
-    # |----------------------------------------------------------------------| #
-    (mkIf cfg.nix.accessTokens {
-      nix.extraOptions = ''
-        !include ${config.age.secrets."common/nix-conf-global-access-tokens".path}
-      '';
+      networking.firewall.enable = _ true;
 
-      age.secrets = {
-        "common/nix-conf-global-access-tokens" = {
-          file = secretsPath + "/common/nix-conf-global-access-tokens.age";
-        };
-      };
-    })
+      services.rsyslogd.enable = _ true;
+      services.journald.forwardToSyslog = _ true;
+      services.logrotate.enable = _ true;
+    }
     # |----------------------------------------------------------------------| #
   ]);
 

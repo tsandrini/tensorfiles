@@ -48,11 +48,11 @@ in
       };
   };
 
-  imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];
+  # imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (import ./rc2nix.nix)
+    # (import ./rc2nix.nix)
     # |----------------------------------------------------------------------| #
     {
       tensorfiles.hm = {

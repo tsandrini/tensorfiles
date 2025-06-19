@@ -43,6 +43,9 @@ in
     };
     profiles_headless = importApply ./profiles/headless.nix { inherit localFlake secretsPath; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
+    profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
+      inherit localFlake;
+    };
 
     # -- programs --
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
@@ -63,6 +66,9 @@ in
       inherit (config.agenix) secretsPath;
     };
     services_monit = importApply ./services/monit.nix {
+      inherit localFlake;
+    };
+    services_monitoring_loki = importApply ./services/monitoring/loki.nix {
       inherit localFlake;
     };
 

@@ -17,7 +17,7 @@
     disk = {
       sshd = {
         type = "disk";
-        device = "/dev/disk/by-id/ata-ST1000LM014-SSHD-8GB_W772F375";
+        device = "/dev/sda";
         content = {
           type = "gpt";
           partitions = {
