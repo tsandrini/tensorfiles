@@ -192,7 +192,7 @@ in
         gomodifytags # Go tool to modify struct field tags
         gotests # Generate Go tests from your source code
         gore # Yet another Go REPL that works nicely
-        gotools # Additional tools for Go development
+        # gotools # Additional tools for Go development
 
         ## :lang python
         black # The uncompromising Python code formatter
