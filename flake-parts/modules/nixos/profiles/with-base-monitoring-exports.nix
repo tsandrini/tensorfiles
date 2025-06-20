@@ -54,7 +54,7 @@ in
       # TODO: maybe create infraVars?
       clientUrl = mkOption {
         type = types.str;
-        default = "http://localhost:3031/loki/api/v1/push";
+        default = "http://localhost:3100/loki/api/v1/push";
         description = ''
           The URL of the Loki server to which Promtail will send logs.
         '';
