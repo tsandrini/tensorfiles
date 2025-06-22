@@ -1,0 +1,4 @@
+disabled = [
+  # TODO: One day I will reformat this, but not today
+  "repeated_keys"
+]

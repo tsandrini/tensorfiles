@@ -38,8 +38,12 @@ in
     # |----------------------------------------------------------------------| #
     {
       tensorfiles = {
-        profiles.headless.enable = _ true;
+        profiles.minimal.enable = _ true;
+        services.networking.networkmanager.enable = _ true;
       };
+
+      networking.nftables.enable = _ true;
+      networking.firewall.enable = _ true;
 
       environment.systemPackages = with pkgs; [
         # -- GENERAL PACKAGES --

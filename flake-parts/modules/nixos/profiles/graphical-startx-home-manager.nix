@@ -32,10 +32,14 @@ in
     # |----------------------------------------------------------------------| #
     {
       tensorfiles = {
-        profiles.headless.enable = _ true;
+        profiles.minimal.enable = _ true;
+        services.networking.networkmanager.enable = _ true;
 
         services.x11.desktop-managers.startx-home-manager.enable = _ true;
       };
+
+      networking.nftables.enable = _ true;
+      networking.firewall.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);

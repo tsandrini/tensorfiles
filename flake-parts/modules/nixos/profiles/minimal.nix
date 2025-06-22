@@ -44,10 +44,16 @@ in
       tensorfiles = {
         profiles.base.enable = _ true;
 
-        system.users.enable = _ true;
         misc.nix.enable = _ true;
         tasks.nix-garbage-collect.enable = _ true;
-        tasks.system-autoupgrade.enable = _ true;
+        tasks.system-autoupgrade.enable = _ false;
+
+        system.users = {
+          enable = _ true;
+          usersSettings = {
+            "root" = { };
+          };
+        };
       };
 
       time.timeZone = _ "Europe/Prague";
@@ -71,6 +77,21 @@ in
         useXkbConfig = _ true;
         font = _ "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
       };
+
+      # NOTE: We only set the defaults, end configurations can enable/disable
+      # them as needed.
+      services.fail2ban = {
+        maxretry = _ 6;
+        bantime = _ "11m";
+        bantime-increment = {
+          enable = _ true;
+          rndtime = _ "7m";
+          overalljails = _ true;
+        };
+      };
+      networking.firewall.pingLimit = _ (
+        if config.networking.nftables.enable then "2/second" else "--limit 1/minute --limit-burst 5"
+      );
     }
     # |----------------------------------------------------------------------| #
   ]);

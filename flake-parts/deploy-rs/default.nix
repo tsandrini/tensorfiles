@@ -27,7 +27,7 @@ in
 
       profiles.system = {
         user = "root";
-        sshUser = "tsandrini"; # TODO: add deply user?
+        sshUser = "tsandrini"; # TODO: add deploy user?
         sshOpts = [
           "-p"
           "2222"

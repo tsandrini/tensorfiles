@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   pkgs,
   config,
@@ -48,11 +48,11 @@ in
       };
   };
 
-  imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];
+  # imports = with inputs; [ plasma-manager.homeManagerModules.plasma-manager ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (import ./rc2nix.nix)
+    # (import ./rc2nix.nix)
     # |----------------------------------------------------------------------| #
     {
       tensorfiles.hm = {

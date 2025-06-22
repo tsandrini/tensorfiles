@@ -42,7 +42,7 @@ let
     && config.tensorfiles.programs.wayland.ags.enable;
 in
 {
-  # TODO needs to be rewrited
+  # TODO needs to be rewritten
   options.tensorfiles.services.wayland.window-managers.hyprland = {
     enable = mkEnableOption ''
       TODO

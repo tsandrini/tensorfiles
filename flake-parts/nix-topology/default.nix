@@ -23,7 +23,7 @@ in
   perSystem = _: {
     topology.modules = [
       { inherit (localFlake) nixosConfigurations; }
-      (importApply ./topology.nix { inherit localFlake; })
+      (importApply ./topology.nix { })
     ];
   };
 }

@@ -19,10 +19,10 @@
     # --- BASE DEPENDENCIES ---
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts-builder.url = "github:tsandrini/flake-parts-builder";
 
     # --- YOUR DEPENDENCIES ---
     systems.url = "github:nix-systems/default";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -140,7 +140,7 @@
       "https://tsandrini.cachix.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://nix-gaming.cachix.org"
-      "https://cache.lix.systems"
+      # "https://cache.lix.systems"
       # "https://hyprland.cachix.org"
       # "https://anyrun.cachix.org"
       # "https://devenv.cachix.org"
@@ -151,7 +151,7 @@
       "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-      "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
+      # "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
       # "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
       # "anyrun.cachix.org-1:pqBobmOjI7nKlsUMV25u9QHa9btJK65/C8vnO3p346s="
       # "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
@@ -161,8 +161,7 @@
   outputs =
     inputs@{ flake-parts, ... }:
     let
-      inherit (inputs.nixpkgs) lib;
-      inherit (import ./flake-parts/_bootstrap.nix { inherit lib; }) loadParts;
+      inherit (inputs.flake-parts-builder.lib) loadParts;
     in
     flake-parts.lib.mkFlake { inherit inputs; } {
       # We recursively traverse all of the flakeModules in ./flake-parts and

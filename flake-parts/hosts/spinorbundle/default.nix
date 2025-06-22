@@ -26,6 +26,7 @@
   imports = [
     inputs.disko.nixosModules.disko
     inputs.nix-gaming.nixosModules.pipewireLowLatency
+    inputs.nix-gaming.nixosModules.platformOptimizations
     inputs.nix-index-database.nixosModules.nix-index
     (inputs.nix-mineral + "/nix-mineral.nix")
 
@@ -43,10 +44,9 @@
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = with pkgs; [
-    libva-utils
     networkmanagerapplet # need this to configure L2TP ipsec
-    docker-compose
-    wireguard-tools
+    # docker-compose
+    # wireguard-tools
   ];
 
   # ----------------------------
@@ -83,7 +83,7 @@
       ];
     };
   };
-  nix-mineral.enable = true;
+  # nix-mineral.enable = true;
 
   # Use the `nh` garbage collect to also collect .direnv and XDG profiles
   # roots instead of the default ones.
@@ -91,9 +91,8 @@
   tensorfiles.programs.nh.enable = true;
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
-  programs.steam.enable = true; # just trying it out
 
-  programs.shadow-client.forceDriver = "iHD";
+  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -110,6 +109,26 @@
   programs.winbox.enable = true;
   programs.nix-index-database.comma.enable = true;
 
+  programs.gamemode = {
+    enable = true;
+    settings = {
+      custom = {
+        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
+        end = "${pkgs.libnotify}/bin/notify-send 'GameMode stopped'";
+      };
+    };
+  };
+  programs.steam = {
+    enable = true;
+    # extest.enable = true;
+    platformOptimizations.enable = true;
+    extraPackages = with pkgs; [
+      gamescope
+      xwayland-run
+    ];
+  };
+  hardware.graphics.enable32Bit = true;
+
   services = {
     pipewire = {
       enable = true;
@@ -124,12 +143,6 @@
   services.fail2ban.enable = false;
 
   networking.networkmanager.enable = true;
-  # networking.networkmanager.enableStrongSwan = true;
-  # services.xl2tpd.enable = true;
-  # services.strongswan = {
-  #   enable = true;
-  #   secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
-  # };
 
   # Needed for gpg pinetry
   services.pcscd.enable = true;
@@ -184,7 +197,7 @@
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
     };
-    programs.git.signing.key = "3E83AD690FA4F657";
+    programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
     home.packages = with pkgs; [
       thunderbird # A full-featured e-mail client
@@ -205,9 +218,9 @@
       # todoist-electron # The official Todoist electron app
 
       wireshark # Powerful network protocol analyzer
-      pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
-      mqttui # Terminal client for MQTT
-      mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
+      # pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
+      # mqttui # Terminal client for MQTT
+      # mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
       mqtt-explorer # An all-round MQTT client that provides a structured topic overview
 
       spotify # Play music from the Spotify music service

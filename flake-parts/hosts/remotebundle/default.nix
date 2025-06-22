@@ -25,7 +25,7 @@ let
   domain = "tsandrini.sh";
   grafanaDomain = "grafana.${domain}";
   pgadminDomain = "pgadmin.${domain}";
-  fireflyDomain = "firefly.${domain}";
+  # fireflyDomain = "firefly.${domain}";
   forgejoDomain = "git.${domain}";
   immutable-insights = inputs.immutable-insights.packages.${system}.default;
 in
@@ -55,9 +55,13 @@ in
   # ---------------------
 
   tensorfiles = {
-    profiles.headless.enable = true;
-    profiles.packages-base.enable = true;
-    # profiles.packages-extra.enable = true;
+    profiles = {
+      headless.enable = true;
+      packages-base.enable = true;
+      # packages-extra.enable = true;
+      with-base-monitoring-exports.enable = true;
+      with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
+    };
 
     services.mailserver.enable = true;
     services.mailserver.roundcube.enable = true;
@@ -85,9 +89,10 @@ in
       };
     };
 
+    services.monitoring.loki.enable = true;
+
     services.networking.networkmanager.enable = false;
     security.agenix.enable = true;
-    tasks.system-autoupgrade.enable = false;
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -101,12 +106,6 @@ in
   };
 
   nix-mineral.enable = true;
-
-  programs.bash = {
-    interactiveShellInit = lib.mkBefore ''
-      ${lib.getExe pkgs.microfetch}
-    '';
-  };
 
   networking.firewall = {
     allowedTCPPorts = [
@@ -122,52 +121,6 @@ in
   users.users.nginx.extraGroups = [
     config.users.groups.anubis.name
   ];
-
-  services.fail2ban.jails = {
-    # Auth failures - moderate risk of false positives
-    nginx-http-auth.settings = {
-      enabled = true;
-      maxretry = 5;
-      bantime = "10m";
-      findtime = "3m";
-    };
-
-    # Rate limiting - medium-high risk of false positives
-    nginx-limit-req.settings = {
-      enabled = true;
-      maxretry = 3;
-      findtime = "1m";
-      bantime = "30m";
-    };
-
-    # Bad requests - low-medium risk of false positives
-    nginx-bad-request.settings = {
-      enabled = true;
-      maxretry = 3;
-      findtime = "1m";
-      bantime = "1h";
-    };
-
-    # Bot scanning - very low risk of false positives
-    nginx-botsearch.settings = {
-      enabled = true;
-      maxretry = 10;
-      findtime = "2m";
-      bantime = "2h";
-    };
-
-    # Forbidden access - low risk of false positives
-    nginx-forbidden.settings = {
-      enabled = true;
-      maxretry = 5;
-      findtime = "2m";
-      bantime = "2h";
-    };
-
-    # grafana.settings = {
-    #   enabled = true;
-    # };
-  };
 
   services.nginx = {
     enable = true;
@@ -194,9 +147,8 @@ in
     virtualHosts."${domain}" = {
       enableACME = true;
       forceSSL = true;
-
       locations."/" = {
-        proxyPass = "http://unix:${config.services.anubis.instances."".settings.BIND}";
+        proxyPass = "http://unix:${config.services.anubis.instances.immutable-insights.settings.BIND}";
       };
       # locations."/metrics" = {
       #   proxyPass = "http://unix:${config.services.anubis.instances."".settings.METRICS_BIND}";
@@ -227,7 +179,7 @@ in
       forceSSL = true;
       locations."/" = {
         proxyWebsockets = true;
-        proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+        proxyPass = "http://unix:${config.services.anubis.instances.grafana.settings.BIND}";
       };
     };
 
@@ -235,7 +187,8 @@ in
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
+        # proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
+        proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
       };
     };
 
@@ -244,17 +197,10 @@ in
       forceSSL = true;
       locations."/" = {
         proxyWebsockets = true;
-        proxyPass = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+        proxyPass = "http://unix:${config.services.anubis.instances.forgejo.settings.BIND}";
       };
     };
-
-    virtualHosts."${fireflyDomain}" = {
-      enableACME = true;
-      forceSSL = true;
-    };
   };
-
-  # Add firefly-pico and firefly-importer
 
   services.forgejo = {
     enable = true;
@@ -295,20 +241,21 @@ in
     path = [ pkgs.system-sendmail ];
   };
 
-  services.firefly-iii = {
-    enable = true;
-    virtualHost = fireflyDomain;
-    enableNginx = true;
-    settings = {
-      APP_KEY_FILE = config.age.secrets."hosts/${hostName}/firefly-iii-app-key".path;
-      APP_URL = "https://${config.services.firefly-iii.virtualHost}";
-      DB_CONNECTION = "pgsql";
-      DB_HOST = "/run/postgresql";
-      SITE_OWNER = "t@${domain}";
-      TZ = "Europe/Prague";
-    };
-  };
-
+  # Add firefly-pico and firefly-importer
+  # services.firefly-iii = {
+  #   enable = true;
+  #   virtualHost = fireflyDomain;
+  #   enableNginx = true;
+  #   settings = {
+  #     APP_KEY_FILE = config.age.secrets."hosts/${hostName}/firefly-iii-app-key".path;
+  #     APP_URL = "https://${config.services.firefly-iii.virtualHost}";
+  #     DB_CONNECTION = "pgsql";
+  #     DB_HOST = "/run/postgresql";
+  #     SITE_OWNER = "t@${domain}";
+  #     TZ = "Europe/Prague";
+  #   };
+  # };
+  #
   # services.firefly-pico = {
   #   enable = true;
   #   enableNginx = true;
@@ -323,14 +270,50 @@ in
   # };
 
   services.anubis = {
-    instances."" = {
-      # TODO update name
-      enable = true;
-      group = "nginx";
+    defaultOptions = {
       settings = {
-        TARGET = "unix:///run/nginx/nginx.sock";
         SERVE_ROBOTS_TXT = true;
+        OG_PASSTHROUGH = true;
       };
+    };
+
+    instances = {
+      immutable-insights = {
+        enable = true;
+        group = "nginx";
+        settings = {
+          TARGET = "unix:///run/nginx/nginx.sock";
+        };
+      };
+
+      forgejo = {
+        enable = true;
+        settings = {
+          TARGET = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+        };
+      };
+
+      grafana = {
+        enable = true;
+        settings = {
+          TARGET = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+        };
+      };
+
+      pgadmin = {
+        enable = true;
+        settings = {
+          TARGET = "http://localhost:${toString config.services.pgadmin.port}";
+        };
+      };
+
+      # firefly = {
+      #   enable = true;
+      #   group = "nginx";
+      #   settings = {
+      #     TARGET = "unix:///run/nginx/firefly.sock";
+      #   };
+      # };
     };
   };
 
@@ -495,23 +478,10 @@ in
   services.prometheus = {
     enable = true;
     port = 9001;
-    exporters = {
-      node = {
-        enable = true;
-        enabledCollectors = [
-          "systemd"
-          "sysctl"
-          "diskstats"
-          "netdev"
-          "cpu"
-          "filesystem"
-        ];
-        port = 9002;
-      };
-    };
+    globalConfig.scrape_interval = "15s";
     scrapeConfigs = [
       {
-        job_name = "${hostName}-node-exporter";
+        job_name = "NixOS-node-exporter";
         static_configs = [
           {
             targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
@@ -520,149 +490,6 @@ in
       }
     ];
   };
-
-  services.loki = {
-    enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 3100;
-        http_listen_address = "0.0.0.0"; # Listen on all interfaces
-      };
-      auth_enabled = false;
-
-      common = {
-        instance_addr = "127.0.0.1";
-        ring = {
-          kvstore = {
-            store = "inmemory"; # Use inmemory instead of Consul
-          };
-        };
-      };
-
-      ingester = {
-        lifecycler = {
-          address = "0.0.0.0";
-          ring = {
-            kvstore = {
-              store = "inmemory";
-            };
-            replication_factor = 1;
-          };
-        };
-        chunk_idle_period = "2h";
-        max_chunk_age = "2h";
-        chunk_target_size = 999999;
-        chunk_retain_period = "30s";
-      };
-
-      schema_config = {
-        configs = [
-          {
-            from = "2023-04-29";
-            index = {
-              period = "24h";
-              prefix = "index_";
-            };
-            object_store = "filesystem";
-            schema = "v13";
-            store = "tsdb";
-          }
-        ];
-      };
-
-      storage_config = {
-        tsdb_shipper = {
-          active_index_directory = "/var/lib/loki/tsdb-index";
-          cache_location = "/var/lib/loki/tsdb-cache";
-        };
-        filesystem = {
-          directory = "/var/lib/loki/chunks";
-        };
-      };
-
-      query_scheduler = {
-        max_outstanding_requests_per_tenant = 32768;
-        # Remove Consul dependency - use in-memory store
-        scheduler_ring = {
-          kvstore = {
-            store = "inmemory";
-          };
-        };
-      };
-
-      querier = {
-        max_concurrent = 16;
-      };
-
-      limits_config = {
-        reject_old_samples = true;
-        reject_old_samples_max_age = "168h";
-      };
-
-      compactor = {
-        working_directory = "/var/lib/loki";
-        compaction_interval = "10m";
-        retention_enabled = true;
-        retention_delete_delay = "2h";
-        delete_request_store = "filesystem";
-        delete_request_cancel_period = "24h";
-        compactor_ring = {
-          kvstore = {
-            store = "inmemory";
-          };
-        };
-      };
-
-      # Add explicit configuration for distributor to use inmemory store
-      distributor = {
-        ring = {
-          kvstore = {
-            store = "inmemory";
-          };
-        };
-      };
-    };
-  };
-
-  services.promtail = {
-    enable = true;
-    configuration = {
-      server = {
-        http_listen_port = 3031;
-        grpc_listen_port = 0;
-      };
-      positions = {
-        filename = "/tmp/positions.yaml";
-      };
-      clients = [
-        {
-          url = "http://127.0.0.1:${toString config.services.loki.configuration.server.http_listen_port}/loki/api/v1/push";
-        }
-      ];
-      scrape_configs = [
-        {
-          job_name = "journal";
-          journal = {
-            max_age = "12h";
-            labels = {
-              job = "systemd-journal";
-              app = "promtail";
-              host = hostName;
-            };
-          };
-          relabel_configs = [
-            {
-              source_labels = [ "__journal__systemd_unit" ];
-              target_label = "unit";
-            }
-          ];
-        }
-      ];
-    };
-  };
-
-  systemd.services.promtail.after = [ "loki.service" ];
-  systemd.services.promtail.requires = [ "loki.service" ];
 
   age.secrets = {
     "hosts/${hostName}/grafana-bot-mail-password" = {
@@ -679,9 +506,9 @@ in
       file = "${secretsPath}/hosts/${hostName}/pgadmin-admin-password.age";
     };
 
-    "hosts/${hostName}/firefly-iii-app-key" = {
-      file = "${secretsPath}/hosts/${hostName}/firefly-iii-app-key.age";
-      owner = config.services.firefly-iii.user;
-    };
+    # "hosts/${hostName}/firefly-iii-app-key" = {
+    #   file = "${secretsPath}/hosts/${hostName}/firefly-iii-app-key.age";
+    #   owner = config.services.firefly-iii.user;
+    # };
   };
 }

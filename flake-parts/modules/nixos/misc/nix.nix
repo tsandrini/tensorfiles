@@ -47,7 +47,7 @@ in
         checkConfig = _ true;
         nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
         # NOTE: Using lix instead, so we'll leave the default settings
-        #       that will get overriden by the lix overlay
+        #       that will get overridden by the lix overlay
         package = _ pkgs.nixVersions.latest;
         registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {

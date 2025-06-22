@@ -32,7 +32,7 @@ in
   options.tensorfiles.services.networking.ssh = {
     enable = mkEnableOption ''
       Enables NixOS module that configures/handles everything related to ssh,
-      that is remote access, messagess, ssh-agents and ssh-keys with the
+      that is remote access, messages, ssh-agents and ssh-keys with the
       openssh backend.
     '';
 
@@ -84,10 +84,17 @@ in
           =====================================================================
         '';
         settings = {
-          PermitRootLogin = _ "no";
-          PasswordAuthentication = _ false;
-          StrictModes = _ true;
+          # Additional security hardenings
+          AllowAgentForwarding = _ false;
+          AllowTcpForwarding = _ false;
+          ClientAliveCountMax = _ 2;
           KbdInteractiveAuthentication = _ false;
+          MaxAuthTries = _ 3;
+          MaxSessions = _ 2;
+          PasswordAuthentication = _ false;
+          PermitRootLogin = _ "no";
+          StrictModes = _ true;
+          # TCPKeepAlive = _ false; # TODO: not sure
         };
       };
     }

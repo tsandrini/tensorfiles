@@ -12,45 +12,49 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ inputs, lib, ... }:
+{ inputs, ... }:
 {
   imports = with inputs; [ pre-commit-hooks.flakeModule ];
 
-  perSystem =
-    { config, pkgs, ... }:
-    {
-      pre-commit.settings =
-        let
-          treefmt-wrapper = if (lib.hasAttr "treefmt" config) then config.treefmt.build.wrapper else null;
-        in
-        {
-          excludes = [ "flake.lock" ];
+  perSystem = _: {
+    pre-commit.settings = {
+      excludes = [
+        "flake.lock" # NOTE: prettier thinks this is json >.< prettier baka!!!
+        "p10k.zsh"
+        "flake-parts/modules/home-manager/programs/file-managers/lf/icons"
+        "etc/"
+      ];
 
-          hooks = {
-            treefmt.enable = if (treefmt-wrapper != null) then true else false;
-            treefmt.package = if (treefmt-wrapper != null) then treefmt-wrapper else pkgs.treefmt;
+      hooks = {
+        # --- Nix ---
+        deadnix.enable = true; # Find and remove unused code in .nix source files
+        nil.enable = true; # Nix Language server, an incremental analysis assistant for writing in Nix.
+        nixfmt-rfc-style.enable = true; # An opinionated formatter for Nix
+        statix.enable = true; # Lints and suggestions for the nix programming language
 
-            nil.enable = true; # Nix Language server, an incremental analysis assistant for writing in Nix.
-            markdownlint.enable = true; # Markdown lint tool
+        # --- Shell ---
+        shellcheck.enable = true; # Shell script analysis tool
+        shfmt.enable = true; # Shell parser and formatter
 
-            commitizen.enable = true; # Commitizen is release management tool designed for teams.
-            editorconfig-checker.enable = true; # A tool to verify that your files are in harmony with your .editorconfig
-            # actionlint.enable = true; # GitHub workflows linting
-            # typos.enable = true; # Source code spell checker
+        # --- Misc ---
+        markdownlint.enable = true; # Markdown lint tool
+        editorconfig-checker.enable = true; # .editorconfig file checker
+        typos.enable = true; # Source code spell checker
+        prettier.enable = true; # Prettier is an opinionated code formatter
+        # jsonfmt.enable = true; # Formatter for JSON files
 
-            trim-trailing-whitespace.enable = true;
-            mixed-line-endings.enable = true;
-            end-of-file-fixer.enable = true;
-            check-executables-have-shebangs.enable = true;
-            check-added-large-files.enable = true;
+        # --- fs utils ---
+        check-added-large-files.enable = true;
+        check-executables-have-shebangs.enable = true;
+        end-of-file-fixer.enable = true;
+        mixed-line-endings.enable = true;
+        trim-trailing-whitespace.enable = true;
 
-            gitleaks = {
-              enable = true;
-              name = "gitleaks";
-              entry = "${pkgs.gitleaks}/bin/gitleaks protect --verbose --redact --staged";
-              pass_filenames = false;
-            };
-          };
-        };
+        # --- VCS ---
+        # actionlint.enable = true; # GitHub workflows linting
+        commitizen.enable = true; # Commitizen is release management tool designed for teams.
+        ripsecrets.enable = true; # A tool to prevent committing secret keys into your source code
+      };
     };
+  };
 }

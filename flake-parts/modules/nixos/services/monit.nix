@@ -148,7 +148,7 @@ in
             This is used by the monit service.
           '';
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 80;
             description = ''
@@ -176,7 +176,7 @@ in
               default = true;
             };
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 95;
             description = ''
@@ -204,7 +204,7 @@ in
               default = true;
             };
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 75;
             description = ''
@@ -231,7 +231,7 @@ in
               default = true;
             };
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 20;
             description = ''
@@ -259,7 +259,7 @@ in
               default = true;
             };
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 98;
             description = ''
@@ -287,7 +287,7 @@ in
               default = true;
             };
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 90;
             description = ''
@@ -315,7 +315,7 @@ in
               default = true;
             };
 
-          treshold = mkOption {
+          threshold = mkOption {
             type = types.int;
             default = 85;
             description = ''
@@ -567,8 +567,8 @@ in
                 if enable then
                   ''
                     check filesystem root with path /
-                      if space usage > ${toString treshold}% then alert
-                      if inode usage > ${toString treshold}% then alert
+                      if space usage > ${toString threshold}% then alert
+                      if inode usage > ${toString threshold}% then alert
                   ''
                 else
                   ""
@@ -581,37 +581,37 @@ in
                     check system $HOST
                       ${
                         if cpu.enable then
-                          "if cpu usage > ${toString cpu.treshold}% for ${toString cpu.num_cycles} cycles then alert"
+                          "if cpu usage > ${toString cpu.threshold}% for ${toString cpu.num_cycles} cycles then alert"
                         else
                           ""
                       }
                       ${
                         if memory.enable then
-                          "if memory usage > ${toString memory.treshold}% for ${toString memory.num_cycles} cycles then alert"
+                          "if memory usage > ${toString memory.threshold}% for ${toString memory.num_cycles} cycles then alert"
                         else
                           ""
                       }
                       ${
                         if swap.enable then
-                          "if swap usage > ${toString swap.treshold}% for ${toString swap.num_cycles} cycles then alert"
+                          "if swap usage > ${toString swap.threshold}% for ${toString swap.num_cycles} cycles then alert"
                         else
                           ""
                       }
                       ${
                         if loadavg_1min.enable then
-                          "if loadavg (1 min) > ${toString loadavg_1min.treshold} for ${toString loadavg_1min.num_cycles} cycles then alert"
+                          "if loadavg (1 min) > ${toString loadavg_1min.threshold} for ${toString loadavg_1min.num_cycles} cycles then alert"
                         else
                           ""
                       }
                       ${
                         if loadavg_5min.enable then
-                          "if loadavg (5 min) > ${toString loadavg_5min.treshold} for ${toString loadavg_5min.num_cycles} cycles then alert"
+                          "if loadavg (5 min) > ${toString loadavg_5min.threshold} for ${toString loadavg_5min.num_cycles} cycles then alert"
                         else
                           ""
                       }
                       ${
                         if loadavg_15min.enable then
-                          "if loadavg (15 min) > ${toString loadavg_15min.treshold} for ${toString loadavg_15min.num_cycles} cycles then alert"
+                          "if loadavg (15 min) > ${toString loadavg_15min.threshold} for ${toString loadavg_15min.num_cycles} cycles then alert"
                         else
                           ""
                       }

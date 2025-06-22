@@ -26,18 +26,12 @@
   imports = [
     inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-index-database.nixosModules.nix-index
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
     (inputs.nix-mineral + "/nix-mineral.nix")
 
-    # TODO fails with The option `programs.steam.extraCompatPackages' in
-    # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
-    # is already declared in
-    # `/nix/store/cqapfi5bvhzvarrbi2h1qrf2dav5r1nd-source/flake.nix#nixosModules.steamCompat'.
-    # nix-gaming.nixosModules.steamCompat
     ./disko.nix
     ./hardware-configuration.nix
     ./nm-overrides.nix
@@ -68,7 +62,6 @@
 
     security.agenix.enable = true;
     programs.shadow-nix.enable = false;
-    tasks.system-autoupgrade.enable = false;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
@@ -125,14 +118,9 @@
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
-      lowLatency.enable = true;
     };
   };
 
-  services.openssh.enable = false;
-  services.fail2ban.enable = false;
-
-  # programs.steam.enable = true; # just trying it out
   networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {
@@ -196,7 +184,7 @@
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
     };
-    programs.git.signing.key = "3E83AD690FA4F657";
+    programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
     home.packages = with pkgs; [
       # thunderbird # A full-featured e-mail client
