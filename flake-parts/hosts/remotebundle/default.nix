@@ -25,7 +25,7 @@ let
   domain = "tsandrini.sh";
   grafanaDomain = "grafana.${domain}";
   pgadminDomain = "pgadmin.${domain}";
-  fireflyDomain = "firefly.${domain}";
+  # fireflyDomain = "firefly.${domain}";
   forgejoDomain = "git.${domain}";
   immutable-insights = inputs.immutable-insights.packages.${system}.default;
 in
@@ -114,8 +114,6 @@ in
     ];
   };
 
-  # NOTE: Forwarding
-
   systemd.extraConfig = ''
     DefaultTimeoutStartSec=900s
   '';
@@ -123,53 +121,6 @@ in
   users.users.nginx.extraGroups = [
     config.users.groups.anubis.name
   ];
-
-  # TODO: remove and use anubis, these aren't catching anything
-  services.fail2ban.jails = {
-    # Auth failures - moderate risk of false positives
-    nginx-http-auth.settings = {
-      enabled = true;
-      maxretry = 5;
-      bantime = "10m";
-      findtime = "3m";
-    };
-
-    # Rate limiting - medium-high risk of false positives
-    nginx-limit-req.settings = {
-      enabled = true;
-      maxretry = 3;
-      findtime = "1m";
-      bantime = "30m";
-    };
-
-    # Bad requests - low-medium risk of false positives
-    nginx-bad-request.settings = {
-      enabled = true;
-      maxretry = 3;
-      findtime = "1m";
-      bantime = "1h";
-    };
-
-    # Bot scanning - very low risk of false positives
-    nginx-botsearch.settings = {
-      enabled = true;
-      maxretry = 10;
-      findtime = "2m";
-      bantime = "2h";
-    };
-
-    # Forbidden access - low risk of false positives
-    nginx-forbidden.settings = {
-      enabled = true;
-      maxretry = 5;
-      findtime = "2m";
-      bantime = "2h";
-    };
-
-    # grafana.settings = {
-    #   enabled = true;
-    # };
-  };
 
   services.nginx = {
     enable = true;
@@ -196,9 +147,8 @@ in
     virtualHosts."${domain}" = {
       enableACME = true;
       forceSSL = true;
-
       locations."/" = {
-        proxyPass = "http://unix:${config.services.anubis.instances."".settings.BIND}";
+        proxyPass = "http://unix:${config.services.anubis.instances.immutable-insights.settings.BIND}";
       };
       # locations."/metrics" = {
       #   proxyPass = "http://unix:${config.services.anubis.instances."".settings.METRICS_BIND}";
@@ -229,7 +179,7 @@ in
       forceSSL = true;
       locations."/" = {
         proxyWebsockets = true;
-        proxyPass = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+        proxyPass = "http://unix:${config.services.anubis.instances.grafana.settings.BIND}";
       };
     };
 
@@ -237,7 +187,8 @@ in
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
+        # proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
+        proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
       };
     };
 
@@ -246,17 +197,10 @@ in
       forceSSL = true;
       locations."/" = {
         proxyWebsockets = true;
-        proxyPass = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+        proxyPass = "http://unix:${config.services.anubis.instances.forgejo.settings.BIND}";
       };
     };
-
-    virtualHosts."${fireflyDomain}" = {
-      enableACME = true;
-      forceSSL = true;
-    };
   };
-
-  # Add firefly-pico and firefly-importer
 
   services.forgejo = {
     enable = true;
@@ -297,20 +241,21 @@ in
     path = [ pkgs.system-sendmail ];
   };
 
-  services.firefly-iii = {
-    enable = true;
-    virtualHost = fireflyDomain;
-    enableNginx = true;
-    settings = {
-      APP_KEY_FILE = config.age.secrets."hosts/${hostName}/firefly-iii-app-key".path;
-      APP_URL = "https://${config.services.firefly-iii.virtualHost}";
-      DB_CONNECTION = "pgsql";
-      DB_HOST = "/run/postgresql";
-      SITE_OWNER = "t@${domain}";
-      TZ = "Europe/Prague";
-    };
-  };
-
+  # Add firefly-pico and firefly-importer
+  # services.firefly-iii = {
+  #   enable = true;
+  #   virtualHost = fireflyDomain;
+  #   enableNginx = true;
+  #   settings = {
+  #     APP_KEY_FILE = config.age.secrets."hosts/${hostName}/firefly-iii-app-key".path;
+  #     APP_URL = "https://${config.services.firefly-iii.virtualHost}";
+  #     DB_CONNECTION = "pgsql";
+  #     DB_HOST = "/run/postgresql";
+  #     SITE_OWNER = "t@${domain}";
+  #     TZ = "Europe/Prague";
+  #   };
+  # };
+  #
   # services.firefly-pico = {
   #   enable = true;
   #   enableNginx = true;
@@ -325,14 +270,50 @@ in
   # };
 
   services.anubis = {
-    instances."" = {
-      # TODO update name
-      enable = true;
-      group = "nginx";
+    defaultOptions = {
       settings = {
-        TARGET = "unix:///run/nginx/nginx.sock";
         SERVE_ROBOTS_TXT = true;
+        OG_PASSTHROUGH = true;
       };
+    };
+
+    instances = {
+      immutable-insights = {
+        enable = true;
+        group = "nginx";
+        settings = {
+          TARGET = "unix:///run/nginx/nginx.sock";
+        };
+      };
+
+      forgejo = {
+        enable = true;
+        settings = {
+          TARGET = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+        };
+      };
+
+      grafana = {
+        enable = true;
+        settings = {
+          TARGET = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+        };
+      };
+
+      pgadmin = {
+        enable = true;
+        settings = {
+          TARGET = "http://localhost:${toString config.services.pgadmin.port}";
+        };
+      };
+
+      # firefly = {
+      #   enable = true;
+      #   group = "nginx";
+      #   settings = {
+      #     TARGET = "unix:///run/nginx/firefly.sock";
+      #   };
+      # };
     };
   };
 
@@ -497,6 +478,7 @@ in
   services.prometheus = {
     enable = true;
     port = 9001;
+    globalConfig.scrape_interval = "15s";
     scrapeConfigs = [
       {
         job_name = "NixOS-node-exporter";
@@ -524,9 +506,9 @@ in
       file = "${secretsPath}/hosts/${hostName}/pgadmin-admin-password.age";
     };
 
-    "hosts/${hostName}/firefly-iii-app-key" = {
-      file = "${secretsPath}/hosts/${hostName}/firefly-iii-app-key.age";
-      owner = config.services.firefly-iii.user;
-    };
+    # "hosts/${hostName}/firefly-iii-app-key" = {
+    #   file = "${secretsPath}/hosts/${hostName}/firefly-iii-app-key.age";
+    #   owner = config.services.firefly-iii.user;
+    # };
   };
 }
