@@ -24,7 +24,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checking out repository..."
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Cleaning up the GitHub runner from default bloat..."
         uses: wimpysworld/nothing-but-nix@main
