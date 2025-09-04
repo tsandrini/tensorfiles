@@ -45,7 +45,7 @@
 
   boot.initrd.luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
 
-  filesystems = {
+  fileSystems = {
     "/" = {
       device = "/dev/disk/by-label/root";
       fsType = "ext4";
