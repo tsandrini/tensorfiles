@@ -14,6 +14,12 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
 { pkgs, system, ... }:
+let
+  pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in
 {
   # -----------------
   # | SPECIFICATION |
@@ -144,6 +150,10 @@
 
   networking.networkmanager.enable = true;
 
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
   # Needed for gpg pinetry
   services.pcscd.enable = true;
   #
@@ -227,6 +237,7 @@
       mpv # General-purpose media player, fork of MPlayer and mplayer2
       zathura # A highly customizable and functional PDF viewer
 
+      (pkgs-osu-lazer-bin.osu-lazer-bin.override { nativeWayland = true; })
       # inputs.nix-gaming.packages.${system}.osu-stable
       # inputs.nix-gaming.packages.${system}.osu-lazer-bin
       # inputs.self.packages.${system}.pywalfox-native

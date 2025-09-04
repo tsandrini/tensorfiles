@@ -14,6 +14,12 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
 { pkgs, system, ... }:
+let
+  pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in
 {
   # -----------------
   # | SPECIFICATION |
@@ -27,6 +33,8 @@
     inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
     inputs.nix-index-database.nixosModules.nix-index
+    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    inputs.nix-gaming.nixosModules.platformOptimizations
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
@@ -118,7 +126,13 @@
       alsa.enable = true;
       pulse.enable = true;
       jack.enable = true;
+      lowLatency.enable = true;
     };
+  };
+
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
   };
 
   networking.networkmanager.enableStrongSwan = true;
@@ -168,9 +182,9 @@
       programs.pywal.enable = true;
       # programs.spicetify.enable = true;
       # services.pywalfox-native.enable = true;
+      # services.activitywatch.enable = true;
       programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
-      services.activitywatch.enable = true;
     };
 
     services.syncthing = {
@@ -221,6 +235,8 @@
       mpv # General-purpose media player, fork of MPlayer and mplayer2
       zathura # A highly customizable and functional PDF viewer
 
+      # (pkgs-osu-lazer-bin.osu-lazer-bin.override { nativeWayland = true; })
+      pkgs-osu-lazer-bin.osu-lazer-bin
       # inputs.nix-gaming.packages.${system}.osu-lazer-bin
       # inputs.self.packages.${system}.pywalfox-native
     ];

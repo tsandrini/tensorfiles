@@ -73,7 +73,12 @@ in
       mailserver.enable = true;
       checks = {
         filesystem.root.enable = false;
-        system.enable = true;
+        system = {
+          enable = true;
+          loadavg_1min.enable = false;
+          loadavg_5min.enable = false;
+          loadavg_15min.enable = false;
+        };
         processes = {
           sshd = {
             enable = true;
@@ -106,6 +111,11 @@ in
   };
 
   nix-mineral.enable = true;
+
+  services.tailscale = {
+    enable = true;
+    # openFirewall = true;
+  };
 
   networking.firewall = {
     allowedTCPPorts = [

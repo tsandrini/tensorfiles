@@ -23,6 +23,7 @@
 
     # --- YOUR DEPENDENCIES ---
     systems.url = "github:nix-systems/default";
+    nixpkgs-osu-lazer-bin.url = "github:nixos/nixpkgs";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
     home-manager = {
       url = "github:nix-community/home-manager";
