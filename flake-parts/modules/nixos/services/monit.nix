@@ -261,7 +261,7 @@ in
 
           threshold = mkOption {
             type = types.int;
-            default = 98;
+            default = 90;
             description = ''
               Threshold for the loadavg check.
             '';
@@ -289,7 +289,7 @@ in
 
           threshold = mkOption {
             type = types.int;
-            default = 90;
+            default = 80;
             description = ''
               Threshold for the loadavg check.
             '';
@@ -317,7 +317,7 @@ in
 
           threshold = mkOption {
             type = types.int;
-            default = 85;
+            default = 70;
             description = ''
               Threshold for the loadavg check.
             '';
