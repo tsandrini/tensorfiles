@@ -13,13 +13,15 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 let
-  spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
+  flatbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG8avUMhkJ8zQ6/uvLGGEhU6VZ00bNDR9nWko7Kk8pbX root@flatbundle";
   jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
+  spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
   hosts = [
     spinorbundle
     jetbundle
     remotebundle
+    flatbundle
   ];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
@@ -34,6 +36,10 @@ in
   # ---------
   # | HOSTS |
   # ---------
+  # --- flatbundle ---
+  # --------------------
+  "hosts/flatbundle/users/root/system-password.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
+  "hosts/flatbundle/users/tsandrini/system-password.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
 
   # --- jetbundle ---
   # --------------------

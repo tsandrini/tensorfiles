@@ -97,6 +97,24 @@ in
         };
       }
     );
+    flatbundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "flatbundle" {
+        withHomeManager = true;
+        extraOverlays = sharedOverlays ++ [
+          inputs.emacs-overlay.overlays.default
+          inputs.nur.overlays.default
+          # neovim-nightly-overlay.overlays.default
+          # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+        ];
+        extraModules = sharedModules ++ [
+          inputs.nur.modules.nixos.default
+        ];
+        hostImportArgs = {
+          inherit inputs;
+        };
+      }
+    );
     jetbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "jetbundle" {
