@@ -86,7 +86,7 @@ in
         {
           mode = "n";
           key = "<leader>cd";
-          action = "<cmd>Lspsaga peek_definition<CR>";
+          action = "<cmd>Lspsaga goto_definition<CR>";
           options = {
             silent = true;
             desc = "LSP Peek definition.";

@@ -40,7 +40,7 @@ in
 
         plugins = {
           # TODO [Copilot] Could not find agent.js (bad install?) : nil
-          editor.copilot-lua.enable = _ true;
+          # editor.copilot-lua.enable = _ true;
 
           cmp.cmp.enable = _ true;
           cmp.lspkind.enable = _ true;
