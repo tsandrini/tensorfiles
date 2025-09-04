@@ -30,6 +30,7 @@
       availableKernelModules = [
         "xhci_pci"
         "ahci"
+        "nvme"
         "usb_storage"
         "sd_mod"
         "sr_mod"
@@ -41,6 +42,27 @@
     extraModulePackages = [ ];
     blacklistedKernelModules = [ ];
   };
+
+  boot.initrd.luks.devices."enc".device = "/dev/disk/by-label/root_crypt";
+
+  filesystems = {
+    "/" = {
+      device = "/dev/disk/by-label/root";
+      fsType = "ext4";
+    };
+    "/boot" = {
+      device = "/dev/disk/by-label/boot";
+      fsType = "vfat";
+      options = [
+        "fmask=0022"
+        "dmask=0022"
+      ];
+    };
+  };
+
+  swapDevices = [
+    { device = "/dev/disk/by-label/swap"; }
+  ];
 
   powerManagement = {
     enable = true;

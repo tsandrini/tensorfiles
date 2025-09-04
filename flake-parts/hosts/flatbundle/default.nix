@@ -30,17 +30,12 @@ in
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
     inputs.nix-index-database.nixosModules.nix-index
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
-    # Fingerprint sensor
-    # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
-    # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
     (inputs.nix-mineral + "/nix-mineral.nix")
 
-    ./disko.nix
     ./hardware-configuration.nix
     ./nm-overrides.nix
   ];
