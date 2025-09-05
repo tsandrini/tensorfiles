@@ -24,13 +24,13 @@ in
   # -----------------
   # | SPECIFICATION |
   # -----------------
-  # Model: Lenovo B51-80
+  # Model: Lenovo Thinkpad T14
 
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14
     inputs.nix-index-database.nixosModules.nix-index
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
@@ -64,7 +64,7 @@ in
     profiles.packages-extra.enable = true;
 
     security.agenix.enable = true;
-    programs.shadow-nix.enable = false;
+    services.networking.ssh.enable = true;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
@@ -93,7 +93,6 @@ in
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
-  programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -110,10 +109,16 @@ in
   programs.winbox.enable = true;
   programs.nix-index-database.comma.enable = true;
 
-  # services.udev.packages = with pkgs; [
-  #   via
-  #   vial
-  # ];
+  programs.steam = {
+    enable = true;
+    # extest.enable = true;
+    platformOptimizations.enable = true;
+    extraPackages = with pkgs; [
+      gamescope
+      xwayland-run
+    ];
+  };
+  hardware.graphics.enable32Bit = true;
 
   services = {
     pipewire = {
@@ -146,7 +151,6 @@ in
     storageDriver = "btrfs";
   };
 
-  # NOTE for wireguard
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
@@ -161,11 +165,6 @@ in
       5173
     ];
   };
-
-  # If you intend to route all your traffic through the wireguard tunnel, the
-  # default configuration of the NixOS firewall will block the traffic because
-  # of rpfilter. You can either disable rpfilter altogether:
-  networking.firewall.checkReversePath = false;
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {

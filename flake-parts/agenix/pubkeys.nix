@@ -20,6 +20,18 @@ in
 {
   common = { };
   hosts = {
+    flatbundle = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [ ];
+        };
+        tsandrini = {
+          sshKey = null;
+          authorizedKeys = [ tsandrini ];
+        };
+      };
+    };
     jetbundle = {
       users = {
         root = {

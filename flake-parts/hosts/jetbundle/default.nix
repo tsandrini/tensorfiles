@@ -68,8 +68,9 @@ in
     profiles.packages-base.enable = true;
     profiles.packages-extra.enable = true;
 
+    services.networking.ssh.enable = true;
     security.agenix.enable = true;
-    programs.shadow-nix.enable = false;
+    # programs.shadow-nix.enable = false;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
@@ -98,7 +99,7 @@ in
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
-  programs.shadow-client.forceDriver = "iHD";
+  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
