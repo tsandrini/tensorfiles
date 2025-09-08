@@ -54,7 +54,7 @@ in
             neovideScale(-0.05)
           end)
 
-          vim.g.neovide_transparency = 0.92
+          vim.g.neovide_opacity = 0.92
           neovideScale(-0.35)
         end
       '';
