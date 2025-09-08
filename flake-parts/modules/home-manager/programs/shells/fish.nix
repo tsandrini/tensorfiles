@@ -56,6 +56,7 @@ in
         "autopair"
         "sponge"
         "z"
+        "puffer"
         # "fzf-fish"
         # "forgit"
       ];
