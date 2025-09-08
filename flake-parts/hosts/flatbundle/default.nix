@@ -111,7 +111,6 @@ in
 
   programs.steam = {
     enable = true;
-    # extest.enable = true;
     platformOptimizations.enable = true;
     extraPackages = with pkgs; [
       gamescope

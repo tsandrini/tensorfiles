@@ -36,7 +36,7 @@ _: {
   # options reduce security to a certain degree.
 
   # Reenable multilib, may be useful to playing certain games.
-  # nix-mineral.overrides.desktop.allow-multilib = true;
+  nix-mineral.overrides.desktop.allow-multilib = true;
 
   # Reenable unprivileged userns. Although userns is the target of many
   # exploits, it also used in the Chromium sandbox, unprivileged containers,
