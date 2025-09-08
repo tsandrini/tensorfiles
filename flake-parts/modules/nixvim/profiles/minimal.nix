@@ -65,7 +65,7 @@ in
 
       extraPlugins = with pkgs.vimPlugins; [
         # nightfox-nvim
-        # vscode-nvim
+        vscode-nvim
         bamboo-nvim
         # bluloco-nvim # NOTE brokey
         boo-colorscheme-nvim
@@ -76,18 +76,22 @@ in
         dracula-nvim
         everforest
         gruvbox-nvim
+        gruvbox-material-nvim
         kanagawa-nvim
         melange-nvim
         miasma-nvim
         modus-themes-nvim
+        monokai-pro-nvim
         neovim-ayu
         nord-nvim
         nordic-nvim
+        github-nvim-theme
         # omni-nvim
         # one-nvim # NOTE brokey
         onedark-nvim
         onenord-nvim
         oxocarbon-nvim
+        palette-nvim
         # poimandres-nvim
         rose-pine
         substrata-nvim
