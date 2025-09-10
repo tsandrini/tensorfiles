@@ -37,7 +37,7 @@ in
         enable = _ true;
         clean = {
           enable = _ true;
-          dates = _ "weekly";
+          dates = _ "monthly";
         };
       };
     }
