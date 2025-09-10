@@ -152,26 +152,27 @@ in
     storageDriver = "btrfs";
   };
 
-  # NOTE for wireguard
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
+      # WG
       51820
+      51821
+      # Dev ports
       8000
       8080
       5173
     ];
     allowedTCPPorts = [
+      # WG
+      51820
+      51821
+      # Dev ports
       8000
       8080
       5173
     ];
   };
-
-  # If you intend to route all your traffic through the wireguard tunnel, the
-  # default configuration of the NixOS firewall will block the traffic because
-  # of rpfilter. You can either disable rpfilter altogether:
-  networking.firewall.checkReversePath = false;
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {

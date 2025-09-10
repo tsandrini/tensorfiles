@@ -153,12 +153,19 @@ in
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
+      # WG
       51820
+      51821
+      # Dev ports
       8000
       8080
       5173
     ];
     allowedTCPPorts = [
+      # WG
+      51820
+      51821
+      # Dev ports
       8000
       8080
       5173
