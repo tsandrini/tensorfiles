@@ -42,7 +42,7 @@ in
 
     ./disko.nix
     ./hardware-configuration.nix
-    ./nm-overrides.nix
+    # ./nm-overrides.nix
   ];
 
   # ------------------------------
@@ -94,7 +94,7 @@ in
       ];
     };
   };
-  nix-mineral.enable = true;
+  # nix-mineral.enable = true;
 
   # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
