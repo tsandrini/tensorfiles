@@ -147,7 +147,6 @@ in
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
-    storageDriver = "btrfs";
   };
 
   networking.wireguard.enable = true;
