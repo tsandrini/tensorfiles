@@ -141,8 +141,7 @@ in
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
 
-  # Needed for gpg pinetry
-  services.pcscd.enable = true;
+  services.pcscd.enable = true; # needed for gpg pinentry
 
   virtualisation.docker = {
     enable = true;
