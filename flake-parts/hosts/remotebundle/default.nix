@@ -112,11 +112,6 @@ in
 
   nix-mineral.enable = true;
 
-  services.tailscale = {
-    enable = true;
-    # openFirewall = true;
-  };
-
   networking.firewall = {
     allowedTCPPorts = [
       80

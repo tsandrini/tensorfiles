@@ -129,11 +129,6 @@ in
     };
   };
 
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-  };
-
   networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {

@@ -150,12 +150,7 @@ in
 
   networking.networkmanager.enable = true;
 
-  services.tailscale = {
-    enable = true;
-    openFirewall = true;
-  };
-  # Needed for gpg pinetry
-  services.pcscd.enable = true;
+  services.pcscd.enable = true; # # Needed for gpg pinetry
   #
   # virtualisation.docker = {
   #   enable = true;
