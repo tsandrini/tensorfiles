@@ -56,7 +56,7 @@ in
         };
       };
     };
-    spinorbundle = {
+    pupibundle = {
       users = {
         root = {
           sshKey = null;

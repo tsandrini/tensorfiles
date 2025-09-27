@@ -17,11 +17,14 @@ let
   jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
+  pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIeZq4IufhkS27VvvYbeLVQG40BTN78d9AziJyroQeNE root@pupibundle";
+
   hosts = [
     spinorbundle
     jetbundle
     remotebundle
     flatbundle
+    pupibundle
   ];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
@@ -36,6 +39,11 @@ in
   # ---------
   # | HOSTS |
   # ---------
+  # --- pupibundle ---
+  # --------------------
+  "hosts/pupibundle/users/root/system-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+  "hosts/pupibundle/users/tsandrini/system-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+
   # --- flatbundle ---
   # --------------------
   "hosts/flatbundle/users/root/system-password.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];

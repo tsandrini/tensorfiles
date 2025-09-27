@@ -35,6 +35,7 @@ let
   mkHost =
     args: hostName:
     {
+      initFunction ? inputs.nixpkgs.lib.nixosSystem,
       extraSpecialArgs ? { },
       extraModules ? [ ],
       extraOverlays ? [ ],
@@ -48,7 +49,7 @@ let
         inherit inputs hostName;
       } // extraSpecialArgs;
     in
-    inputs.nixpkgs.lib.nixosSystem {
+    initFunction {
       inherit (args) system;
       specialArgs = baseSpecialArgs // {
         inherit lib hostName;
@@ -87,16 +88,6 @@ let
 in
 {
   flake.nixosConfigurations = {
-    remotebundle = withSystem "x86_64-linux" (
-      args:
-      mkHost args "remotebundle" {
-        extraOverlays = sharedOverlays;
-        extraModules = sharedModules;
-        hostImportArgs = {
-          inherit inputs secretsPath;
-        };
-      }
-    );
     flatbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "flatbundle" {
@@ -130,6 +121,28 @@ in
         ];
         hostImportArgs = {
           inherit inputs;
+        };
+      }
+    );
+    pupibundle = withSystem "aarch64-linux" (
+      args:
+      mkHost args "pupibundle" {
+        initFunction = inputs.nixos-raspberrypi.lib.nixosSystem;
+        extraOverlays = sharedOverlays;
+        extraModules = sharedModules;
+        extraSpecialArgs = {
+          inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi
+        };
+        hostImportArgs = { };
+      }
+    );
+    remotebundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "remotebundle" {
+        extraOverlays = sharedOverlays;
+        extraModules = sharedModules;
+        hostImportArgs = {
+          inherit inputs secretsPath;
         };
       }
     );
