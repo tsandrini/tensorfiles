@@ -101,7 +101,7 @@ in
         # nh # Yet another nix cli helper
         cachix # Command-line client for Nix binary cache hosting https://cachix.org
         devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
-
+        nixos-anywhere # Install nixos everywhere via ssh
       ];
 
       programs.nix-ld.enable = _ true; # Run unpatched dynamic binaries on NixOS
