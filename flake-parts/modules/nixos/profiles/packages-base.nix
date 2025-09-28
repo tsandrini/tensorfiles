@@ -60,7 +60,7 @@ in
         iotop # A tool to find out the processes doing the most IO
 
         # -- ARCHIVING UTILS --
-        rar # Utility for RAR archives
+        # rar # Utility for RAR archives
         # unrar # Utility for RAR archives # NOTE collision with rar
         unzip # An extraction utility for archives compressed in .zip format
         zip # Compressor/archiver for creating and modifying zipfiles

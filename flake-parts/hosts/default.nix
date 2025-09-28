@@ -24,6 +24,7 @@ let
   inherit (config.agenix) secretsPath;
 
   sharedModules = [
+    # TODO: this break pupibundle
     inputs.nix-topology.nixosModules.default
     # inputs.lix-module.nixosModules.default
   ];
@@ -52,7 +53,7 @@ let
     initFunction {
       inherit (args) system;
       specialArgs = baseSpecialArgs // {
-        inherit lib hostName;
+        inherit hostName;
         host.hostName = hostName;
       };
       modules =
@@ -128,12 +129,26 @@ in
       args:
       mkHost args "pupibundle" {
         initFunction = inputs.nixos-raspberrypi.lib.nixosSystem;
+        # TODO: https://github.com/nvmd/nixos-raspberrypi/issues/90
+        # initFunction =
+        #   attrs:
+        #   inputs.nixos-raspberrypi.lib.nixosSystem (
+        #     attrs
+        #     // {
+        #       inherit (inputs.nixos-raspberrypi.inputs) nixpkgs;
+        #     }
+        #   );
+
         extraOverlays = sharedOverlays;
-        extraModules = sharedModules;
+        extraModules = [
+          inputs.nixos-generators.nixosModules.all-formats
+        ];
         extraSpecialArgs = {
           inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi
         };
-        hostImportArgs = { };
+        hostImportArgs = {
+          inherit inputs;
+        };
       }
     );
     remotebundle = withSystem "x86_64-linux" (

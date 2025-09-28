@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-_:
+{ inputs }:
 {
   pkgs,
   system,
@@ -28,16 +28,21 @@ _:
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports = with nixos-raspberrypi.nixosModules; [
-    raspberry-pi-5.base
-    raspberry-pi-5.page-size-16k
-    raspberry-pi-5.display-vc4
-    raspberry-pi-5.bluetooth
+  imports =
+    [
+      # (inputs.nix-mineral + "/nix-mineral.nix")
+      # ./nm-overrides.nix
+      inputs.disko.nixosModules.disko
 
-    # (inputs.nix-mineral + "/nix-mineral.nix")
-    ./hardware-configuration.nix
-    # ./nm-overrides.nix
-  ];
+      ./hardware-configuration.nix
+      ./disko.nix
+    ]
+    ++ (with nixos-raspberrypi.nixosModules; [
+      raspberry-pi-5.base
+      raspberry-pi-5.page-size-16k
+      raspberry-pi-5.display-vc4
+      raspberry-pi-5.bluetooth
+    ]);
 
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
