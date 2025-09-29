@@ -97,6 +97,7 @@ in
         # nix-du # A tool to determine which gc-roots take space in your nix store
         nix-tree # Interactively browse a Nix store paths dependencies
         nix-update # Swiss-knife for updating nix packages
+        nix-prefetch-scripts # Collection of all the nix-prefetch-* scripts which may be used to obtain source hashes
         # nix-serve # A utility for sharing a Nix store as a binary cache # NOTE conflict with serve-ng
         nix-serve-ng # A drop-in replacement for nix-serve that's faster and more stable
         nixos-shell # Spawns lightweight nixos vms in a shell
