@@ -104,6 +104,9 @@ in
   "hosts/remotebundle/firefly-iii-app-key.age".publicKeys = [
     remotebundle
   ] ++ [ tsandrini ];
+  "hosts/remotebundle/wg-home-tunnel-privkey.age".publicKeys = [
+    remotebundle
+  ] ++ [ tsandrini ];
 
   # --- spinorbundle ---
   # --------------------

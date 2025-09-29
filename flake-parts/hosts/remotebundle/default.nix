@@ -117,6 +117,34 @@ in
       80
       443
     ];
+    allowedUDPPorts = [
+      51821
+    ];
+  };
+
+  networking.wireguard.interfaces = {
+    wg-home-tunnel = {
+      ips = [ "10.0.33.13/32" ];
+      listenPort = 51821;
+      privateKeyFile = config.age.secrets."hosts/${hostName}/wg-home-tunnel-privkey".path;
+
+      peers = [
+        {
+          publicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
+
+          allowedIPs = [
+            "10.10.0.0/24"
+            "10.20.0.0/24"
+            "10.0.33.1/32"
+            "10.0.0.0/24"
+            "10.5.0.0/24"
+          ];
+
+          endpoint = "[2a02:8308:298:c900::a]:51821";
+          persistentKeepalive = 25;
+        }
+      ];
+    };
   };
 
   systemd.extraConfig = ''
@@ -586,6 +614,10 @@ in
 
     "hosts/${hostName}/pgadmin-admin-password" = {
       file = "${secretsPath}/hosts/${hostName}/pgadmin-admin-password.age";
+    };
+
+    "hosts/${hostName}/wg-home-tunnel-privkey" = {
+      file = "${secretsPath}/hosts/${hostName}/wg-home-tunnel-privkey.age";
     };
 
     # "hosts/${hostName}/firefly-iii-app-key" = {
