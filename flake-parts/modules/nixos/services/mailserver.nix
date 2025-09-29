@@ -122,6 +122,7 @@ in
               "sandrinit@${defaultDomain}"
               "tom@${defaultDomain}"
               "tomas@${defaultDomain}"
+              "ter@${defaultDomain}"
               "personal@${defaultDomain}"
             ];
           };

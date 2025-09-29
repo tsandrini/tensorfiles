@@ -40,11 +40,18 @@ in
           isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
         );
         settings = {
-          manager = {
+          mgr = {
             sort_by = _ "natural";
+            sort_dir_first = _ true;
             linemode = _ "size";
             show_hidden = _ false;
             show_symlink = _ true;
+          };
+          tasks = {
+            image_bound = [
+              0
+              0
+            ];
           };
         };
       };

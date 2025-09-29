@@ -73,7 +73,12 @@ in
       mailserver.enable = true;
       checks = {
         filesystem.root.enable = false;
-        system.enable = true;
+        system = {
+          enable = true;
+          loadavg_1min.enable = false;
+          loadavg_5min.enable = false;
+          loadavg_15min.enable = false;
+        };
         processes = {
           sshd = {
             enable = true;
@@ -143,6 +148,20 @@ in
       proxy_headers_hash_max_size 1024;
       proxy_headers_hash_bucket_size 128;
     '';
+
+    statusPage = true;
+    virtualHosts.localhost = {
+      serverAliases = [ "127.0.0.1" ];
+      listenAddresses = [ "127.0.0.1" ];
+      locations."/nginx_status" = {
+        extraConfig = ''
+          stub_status on;
+          access_log off;
+          allow 127.0.0.1;
+          deny all;
+        '';
+      };
+    };
 
     virtualHosts."${domain}" = {
       enableACME = true;
@@ -355,58 +374,58 @@ in
     provision = {
       datasources.settings.datasources = [
         {
+          uid = "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd";
           name = "Prometheus";
           type = "prometheus";
-          uid = "local_prometheus";
           url = "http://localhost:${toString config.services.prometheus.port}";
         }
         {
+          uid = "x2dSQip31bGxOYQBo3GtZdCtCz9Tbt1q";
           name = "Loki";
           type = "loki";
           access = "proxy";
           url = "http://localhost:${toString config.services.loki.configuration.server.http_listen_port}";
         }
       ];
-      dashboards.settings.providers = [
-        {
-          name = "Dashboards";
-          options.path = "/etc/grafana-dashboards";
-        }
-      ];
-    };
-  };
-
-  environment.etc = {
-    "grafana-dashboards/node.json" = {
-      user = "grafana";
-      group = "grafana";
-      source = pkgs.fetchurl {
-        url = "https://grafana.com/api/dashboards/1860/revisions/37/download";
-        sha256 = "sha256-1DE1aaanRHHeCOMWDGdOS1wBXxOF84UXAjJzT5Ek6mM=";
-      };
-    };
-    "grafana-dashboards/nginx.json" = {
-      user = "grafana";
-      group = "grafana";
-      source = pkgs.fetchurl {
-        url = "https://grafana.com/api/dashboards/14900/revisions/2/download";
-        sha256 = "sha256-9iOEwKdFxOyw2T7Non4k2yUwiajWpH3qgQTyJRrttwM=";
-      };
-    };
-    # "grafana-dashboards/postgres.json" = {
-    #   user = "grafana";
-    #   group = "grafana";
-    #   source = pkgs.fetchurl {
-    #     url = "https://grafana.com/api/dashboards/9628/revisions/7/download";
-    #     sha256 = "sha256-xkzDitnr168JVR7oPmaaOPYqdufICSmvVmilhScys3Y=";
-    #   };
-    "grafana-dashboards/loki.json" = {
-      user = "grafana";
-      group = "grafana";
-      source = pkgs.fetchurl {
-        url = "https://grafana.com/api/dashboards/14055/revisions/5/download";
-        sha256 = "sha256-9vfUGpypFNKm9T1F12Cqh8TIl0x3jSwv2fL9HVRLt3o=";
-      };
+      dashboards.settings.providers =
+        map
+          (
+            attrs:
+            {
+              orgId = 1;
+              folder = "";
+              type = "file";
+              disableDeletion = true;
+              allowUiUpdates = true;
+            }
+            // attrs
+          )
+          [
+            {
+              name = "Node Exporter Full";
+              options.path = ./grafana/dashboards/node-exporter-full.json;
+            }
+            {
+              name = "Logs / App";
+              options.path = ./grafana/dashboards/logs-app.json;
+            }
+            {
+              name = "Prometheus 2.0 Overview";
+              options.path = ./grafana/dashboards/prometheus-2-0-overview.json;
+            }
+            {
+              name = "NGINX by nginxinc";
+              options.path = ./grafana/dashboards/nginx-by-nginxinc.json;
+            }
+            {
+              name = "PostgreSQL Database";
+              options.path = ./grafana/dashboards/postgresql-database.json;
+            }
+            {
+              name = "Loki & Promtail";
+              options.path = ./grafana/dashboards/loki-and-promtail.json;
+            }
+          ];
     };
   };
 
@@ -468,6 +487,13 @@ in
     ''}
   '';
 
+  services.postgresqlBackup = {
+    enable = true;
+    compression = "zstd";
+    compressionLevel = 11;
+    backupAll = true;
+  };
+
   services.pgadmin = {
     enable = true;
     openFirewall = true;
@@ -488,7 +514,63 @@ in
           }
         ];
       }
+      {
+        job_name = "${hostName}_prometheus";
+        static_configs = [
+          {
+            targets = [ "localhost:${toString config.services.prometheus.port}" ];
+          }
+        ];
+      }
+      {
+        job_name = "${hostName}_postgres";
+        static_configs = [
+          {
+            targets = [ "localhost:${toString config.services.prometheus.exporters.postgres.port}" ];
+          }
+        ];
+      }
+      {
+        job_name = "${hostName}_nginx";
+        static_configs = [
+          {
+            targets = [ "localhost:${toString config.services.prometheus.exporters.nginx.port}" ];
+          }
+        ];
+      }
+      {
+        job_name = "${hostName}_nginxlog";
+        static_configs = [
+          {
+            targets = [ "localhost:${toString config.services.prometheus.exporters.nginxlog.port}" ];
+          }
+        ];
+      }
     ];
+  };
+
+  services.prometheus.exporters = {
+    postgres = {
+      enable = true;
+      runAsLocalSuperUser = true;
+    };
+
+    nginx = {
+      enable = true;
+      scrapeUri = "http://127.0.0.1/nginx_status";
+    };
+
+    nginxlog = {
+      enable = true;
+      inherit (config.services.nginx) group;
+      settings.namespaces = [
+        {
+          format = "$remote_addr - $remote_user [$time_local] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\"";
+          metrics_override.prefix = "nginx";
+          source_files = [ "/var/log/nginx/access.log" ];
+        }
+      ];
+    };
   };
 
   age.secrets = {

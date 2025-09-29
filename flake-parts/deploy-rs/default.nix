@@ -38,6 +38,22 @@ in
         path = hostPath "x86_64-linux" "remotebundle";
       };
     };
+    # "pupibundle" = {
+    #   hostname = "10.10.0.10";
+    #
+    #   profiles.system = {
+    #     user = "root";
+    #     sshUser = "tsandrini"; # TODO: add deploy user?
+    #     sshOpts = [
+    #       "-p"
+    #       "2222"
+    #     ];
+    #     autoRollback = true;
+    #     magicRollback = true;
+    #
+    #     path = hostPath "x86_64-linux" "remotebundle";
+    #   };
+    # };
   };
 
   flake.checks = builtins.mapAttrs (

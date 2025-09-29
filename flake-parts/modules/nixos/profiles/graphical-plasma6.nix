@@ -81,6 +81,8 @@ in
         kdePackages.plasma-browser-integration
         kdePackages.kaddressbook # KDE contact manager
         kdePackages.merkuro # A calendar application using Akonadi to sync with external services
+        kdePackages.kcontacts # KContacts - Library for working with contact information
+        kdePackages.kpeople # A library that provides access to all contacts and the people who hold them
         kdePackages.kompare # Graphical File Differences Tool
 
         kdePackages.kmail # Mail client

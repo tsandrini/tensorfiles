@@ -24,6 +24,7 @@ let
   inherit (config.agenix) secretsPath;
 
   sharedModules = [
+    # TODO: this break pupibundle
     inputs.nix-topology.nixosModules.default
     # inputs.lix-module.nixosModules.default
   ];
@@ -35,6 +36,7 @@ let
   mkHost =
     args: hostName:
     {
+      initFunction ? inputs.nixpkgs.lib.nixosSystem,
       extraSpecialArgs ? { },
       extraModules ? [ ],
       extraOverlays ? [ ],
@@ -48,10 +50,10 @@ let
         inherit inputs hostName;
       } // extraSpecialArgs;
     in
-    inputs.nixpkgs.lib.nixosSystem {
+    initFunction {
       inherit (args) system;
       specialArgs = baseSpecialArgs // {
-        inherit lib hostName;
+        inherit hostName;
         host.hostName = hostName;
       };
       modules =
@@ -87,13 +89,21 @@ let
 in
 {
   flake.nixosConfigurations = {
-    remotebundle = withSystem "x86_64-linux" (
+    flatbundle = withSystem "x86_64-linux" (
       args:
-      mkHost args "remotebundle" {
-        extraOverlays = sharedOverlays;
-        extraModules = sharedModules;
+      mkHost args "flatbundle" {
+        withHomeManager = true;
+        extraOverlays = sharedOverlays ++ [
+          inputs.emacs-overlay.overlays.default
+          inputs.nur.overlays.default
+          # neovim-nightly-overlay.overlays.default
+          # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
+        ];
+        extraModules = sharedModules ++ [
+          inputs.nur.modules.nixos.default
+        ];
         hostImportArgs = {
-          inherit inputs secretsPath;
+          inherit inputs;
         };
       }
     );
@@ -112,6 +122,42 @@ in
         ];
         hostImportArgs = {
           inherit inputs;
+        };
+      }
+    );
+    pupibundle = withSystem "aarch64-linux" (
+      args:
+      mkHost args "pupibundle" {
+        initFunction = inputs.nixos-raspberrypi.lib.nixosSystem;
+        # TODO: https://github.com/nvmd/nixos-raspberrypi/issues/90
+        # initFunction =
+        #   attrs:
+        #   inputs.nixos-raspberrypi.lib.nixosSystem (
+        #     attrs
+        #     // {
+        #       inherit (inputs.nixos-raspberrypi.inputs) nixpkgs;
+        #     }
+        #   );
+
+        extraOverlays = sharedOverlays;
+        extraModules = [
+          inputs.nixos-generators.nixosModules.all-formats
+        ];
+        extraSpecialArgs = {
+          inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi
+        };
+        hostImportArgs = {
+          inherit inputs;
+        };
+      }
+    );
+    remotebundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "remotebundle" {
+        extraOverlays = sharedOverlays;
+        extraModules = sharedModules;
+        hostImportArgs = {
+          inherit inputs secretsPath;
         };
       }
     );

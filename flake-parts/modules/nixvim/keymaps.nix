@@ -96,6 +96,14 @@ in
           };
         }
         {
+          mode = "v";
+          key = "/";
+          action = "\"vy/<C-r>v";
+          options = {
+            desc = "Search visual selection.";
+          };
+        }
+        {
           mode = "n";
           key = "<leader>ot";
           action = ":terminal<CR>";

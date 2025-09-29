@@ -53,6 +53,8 @@ in
         '';
       };
 
+      services.getty.autologinUser = _ "root";
+
       services.fail2ban.enable = _ true;
       networking.nftables.enable = _ true;
       networking.firewall.enable = _ true;

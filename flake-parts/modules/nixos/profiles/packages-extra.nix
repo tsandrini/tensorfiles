@@ -74,6 +74,8 @@ in
         p7zip # A new p7zip fork with additional codecs and improvements (forked from https://sourceforge.net/projects/p7zip/)
         rzip # Compression program
         lha # LHa is an archiver and compressor using the LZSS and Huffman encoding compression algorithms
+        rar # Utility for RAR archives
+        unrar # Utility for RAR archives # NOTE collision with rar
 
         # -- MISC --
         sqlite # A self-contained, serverless, zero-configuration, transactional SQL database engine
@@ -101,7 +103,7 @@ in
         # nh # Yet another nix cli helper
         cachix # Command-line client for Nix binary cache hosting https://cachix.org
         devenv # Fast, Declarative, Reproducible, and Composable Developer Environments
-
+        nixos-anywhere # Install nixos everywhere via ssh
       ];
 
       programs.nix-ld.enable = _ true; # Run unpatched dynamic binaries on NixOS
