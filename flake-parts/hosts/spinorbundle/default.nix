@@ -14,12 +14,6 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
 { pkgs, system, ... }:
-let
-  pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
-    inherit system;
-    config.allowUnfree = true;
-  };
-in
 {
   # -----------------
   # | SPECIFICATION |
@@ -51,8 +45,6 @@ in
   # ------------------------------
   environment.systemPackages = with pkgs; [
     networkmanagerapplet # need this to configure L2TP ipsec
-    # docker-compose
-    # wireguard-tools
   ];
 
   # ----------------------------
@@ -64,9 +56,12 @@ in
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    profiles.graphical-plasma6.enable = true;
-    profiles.packages-base.enable = true;
-    profiles.packages-extra.enable = true;
+    profiles = {
+      graphical-plasma6.enable = true;
+      packages-base.enable = true;
+      packages-extra.enable = true;
+      # packages-graphical-extra.enable = true;
+    };
 
     security.agenix.enable = true;
     # programs.shadow-nix.enable = true;
@@ -112,18 +107,6 @@ in
     '';
   };
 
-  programs.winbox.enable = true;
-  programs.nix-index-database.comma.enable = true;
-
-  programs.gamemode = {
-    enable = true;
-    settings = {
-      custom = {
-        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
-        end = "${pkgs.libnotify}/bin/notify-send 'GameMode stopped'";
-      };
-    };
-  };
   programs.steam = {
     enable = true;
     # extest.enable = true;
@@ -204,38 +187,8 @@ in
     };
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
-    home.packages = with pkgs; [
-      thunderbird # A full-featured e-mail client
-      # beeper # Universal chat app.
-      anki # Spaced repetition flashcard program
-      libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
-      # texlive.combined.scheme-full # TeX Live environment
-      zotero # Collect, organize, cite, and share your research sources
-      lapack # openblas with just the LAPACK C and FORTRAN ABI
-      ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
-      # zoom-us # Player for Z-Code, TADS and HUGO stories or games
-      # vesktop # Alternate client for Discord with Vencord built-in
-
-      # slack # Desktop client for Slack
-      # signal-desktop-bin # Private, simple, and secure messenger
-
-      # todoist # Todoist CLI Client
-      # todoist-electron # The official Todoist electron app
-
-      wireshark # Powerful network protocol analyzer
-      # pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
-      # mqttui # Terminal client for MQTT
-      # mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
-      mqtt-explorer # An all-round MQTT client that provides a structured topic overview
-
-      spotify # Play music from the Spotify music service
-      mpv # General-purpose media player, fork of MPlayer and mplayer2
-      zathura # A highly customizable and functional PDF viewer
-
-      (pkgs-osu-lazer-bin.osu-lazer-bin.override { nativeWayland = true; })
-      # inputs.nix-gaming.packages.${system}.osu-stable
-      # inputs.nix-gaming.packages.${system}.osu-lazer-bin
-      # inputs.self.packages.${system}.pywalfox-native
+    home.packages = [
+      #
     ];
   };
 }
