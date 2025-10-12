@@ -52,6 +52,7 @@ in
         wl-clipboard # Command-line copy/paste utilities for Wayland
         maim # A command-line screenshot utility
         xxdiff # Graphical file and directories comparator and merge tool
+        networkmanagerapplet # need this to configure L2TP ipsec
 
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
