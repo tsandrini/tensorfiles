@@ -80,6 +80,7 @@ in
         # lapack # openblas with just the LAPACK C and FORTRAN ABI
 
         # github-desktop # GitHub Desktop
+        winbox4 # Graphical configuration utility for RouterOS-based devices
       ];
 
       programs.winbox.enable = true;
