@@ -16,7 +16,6 @@
 {
   pkgs,
   config,
-  lib,
   system,
   hostName,
   ...
@@ -39,7 +38,7 @@ in
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    (inputs.vpsadminos + "/os/lib/nixos-container/vpsadminos.nix")
+    (inputs.vpsadminos + "/os/lib/nixos-container/unstable/vpsadminos.nix")
     (inputs.nix-mineral + "/nix-mineral.nix")
 
     ./nm-overrides.nix
@@ -62,10 +61,6 @@ in
       with-base-monitoring-exports.enable = true;
       with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
     };
-
-    services.mailserver.enable = true;
-    services.mailserver.roundcube.enable = true;
-    services.mailserver.rspamd-ui.enable = true;
 
     services.monit = {
       enable = true;
@@ -110,6 +105,17 @@ in
     };
   };
 
+  # Mailserver
+  tensorfiles.services.mailserver = {
+    enable = true;
+    roundcube.enable = true;
+    rspamd-ui.enable = true;
+  };
+  mailserver.stateVersion = 3;
+  services.rspamd.locals."worker-controller.inc".text = ''
+    secure_ip = "0.0.0.0/0, ::/0";
+  '';
+
   nix-mineral.enable = true;
 
   networking.firewall = {
@@ -146,10 +152,6 @@ in
       ];
     };
   };
-
-  systemd.extraConfig = ''
-    DefaultTimeoutStartSec=900s
-  '';
 
   users.users.nginx.extraGroups = [
     config.users.groups.anubis.name
@@ -509,11 +511,11 @@ in
     ];
   };
 
-  systemd.services.postgresql.postStart = lib.mkAfter ''
-    $PSQL -f ${pkgs.writeText "postgresql-post-init.sql" ''
-      ALTER USER admin WITH PASSWORD 'SCRAM-SHA-256$4096:4ASEVqDlBNdjM7PKDkIYXg==$Y0n8toSrM6lgAzASCTCVq+UzxVEc3ANMCPYfEarQs88=:yVyYyjmUqUoLe26EXSQE4Zvo7B3me+3HcelupObpFf4=';
-    ''}
-  '';
+  # systemd.services.postgresql.postStart = ''
+  #   $PSQL -f ${pkgs.writeText "postgresql-post-init.sql" ''
+  #     ALTER USER admin WITH PASSWORD 'SCRAM-SHA-256$4096:4ASEVqDlBNdjM7PKDkIYXg==$Y0n8toSrM6lgAzASCTCVq+UzxVEc3ANMCPYfEarQs88=:yVyYyjmUqUoLe26EXSQE4Zvo7B3me+3HcelupObpFf4=';
+  #   ''}
+  # '';
 
   services.postgresqlBackup = {
     enable = true;

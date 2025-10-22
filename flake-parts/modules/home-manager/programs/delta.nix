@@ -1,7 +1,7 @@
-# --- flake-parts/modules/nixvim/plugins/cmp/lspkind.nix
+# --- flake-parts/modules/home-manager/programs/delta.nix
 #
 # Author:  tsandrini <t@tsandrini.sh>
-# URL:     https://github.com/tsandrini/tensorfiles
+# URL:     https://deltahub.com/tsandrini/tensorfiles
 # License: MIT
 #
 # 888                                                .d888 d8b 888
@@ -13,20 +13,19 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake }:
-{
-  config,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  inherit (localFlake.lib.modules) mkOverrideAtNixvimModuleLevel;
+  inherit (localFlake.lib.modules)
+    mkOverrideAtHmModuleLevel
+    isModuleLoadedAndEnabled
+    ;
 
-  cfg = config.tensorfiles.nixvim.plugins.cmp.lspkind;
-  _ = mkOverrideAtNixvimModuleLevel;
+  cfg = config.tensorfiles.hm.programs.delta;
+  _ = mkOverrideAtHmModuleLevel;
 in
 {
-  options.tensorfiles.nixvim.plugins.cmp.lspkind = {
+  options.tensorfiles.hm.programs.delta = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,14 +34,12 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      plugins.lspkind = {
+      programs.delta = {
         enable = _ true;
-        settings = {
-          symbol_map = {
-            Copilot = _ " ";
-          };
-          maxwidth = _ 50;
-          ellipsis_char = _ "...";
+        enableGitIntegration = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.git");
+        options = {
+          navigate = _ true;
+          syntax-theme = _ "Nord";
         };
       };
     }

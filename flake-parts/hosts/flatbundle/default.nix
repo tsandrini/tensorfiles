@@ -31,7 +31,6 @@ in
   # --------------------------
   imports = [
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14
-    inputs.nix-index-database.nixosModules.nix-index
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
     (inputs.nix-mineral + "/nix-mineral.nix")
@@ -126,7 +125,6 @@ in
     lowLatency.enable = true;
   };
 
-  networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {
     enable = true;
@@ -139,6 +137,8 @@ in
     enable = true;
     autoPrune.enable = true;
   };
+
+  services.tailscale.enable = true;
 
   networking.wireguard.enable = true;
   networking.firewall = {

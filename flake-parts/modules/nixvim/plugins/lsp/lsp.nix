@@ -66,7 +66,9 @@ in
           enable = _ true;
           inlayHints = _ true;
           servers = {
-            ansiblels.enable = _ true; # ansiblels for Ansible
+            # TODO: unmaintained
+            # ansiblels.enable = _ true; # ansiblels for Ansible
+            # ansiblels.package = _ pkgs.ansible-language-server;
             astro.enable = _ true; # astrols for Astro"
             bashls.enable = _ true; # bashls for bash
             biome.enable = _ true; # Biome, Toolchain of the Web
@@ -108,7 +110,8 @@ in
             # typst_lsp.enable = _ true; # typst-lsp for the Typst language
             tinymist.enable = _ true; # tinymist for typst
             texlab.enable = _ true; # texlab for LaTeX
-            volar.enable = _ true; # volar for Vue, replaces vuels
+            # volar.enable = _ true; # volar for Vue, replaces vuels
+            vue_ls.enable = _ true;
             # vuels.enable = _ true; # vuels for Vue
             # vuels.package = _ pkgs.nodePackages_latest.vls;
             zls.enable = _ true; # zls for Zig

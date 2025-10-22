@@ -54,6 +54,7 @@ mkShell {
   packages =
     (lib.attrValues scripts)
     ++ (lib.optional (dev-process != null) dev-process)
+    ++ (lib.optional (pre-commit != null) pre-commit.settings.enabledPackages)
     ++ [
       # -- NIX UTILS --
       nil # Yet another language server for Nix
@@ -87,7 +88,7 @@ mkShell {
 
   shellHook = ''
     ${lib.concatLines (lib.mapAttrsToList (name: value: "export ${name}=${value}") env)}
-    ${lib.optionalString (pre-commit != null) pre-commit.installationScript}
+    ${lib.optionalString (pre-commit != null) pre-commit.settings.shellHook}
 
     # Welcome splash text
     echo ""; echo -e "\e[1;37;42mWelcome to the tensorfiles devshell!\e[0m"; echo ""

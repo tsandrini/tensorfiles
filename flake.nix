@@ -93,7 +93,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-mineral = {
-      url = "github:tsandrini/nix-mineral";
+      url = "github:tsandrini/nix-mineral?rev=c0cbad73243d0ce358c8074855e2c98578340422";
       flake = false;
     };
     immutable-insights.url = "github:tsandrini/immutable-insights";
@@ -144,6 +144,7 @@
       "https://cache.nixos.org"
       "https://nix-community.cachix.org/"
       "https://tsandrini.cachix.org"
+      "https://cache.vpsadminos.org"
       "https://nixpkgs-wayland.cachix.org"
       "https://nix-gaming.cachix.org"
       "https://nixos-raspberrypi.cachix.org"
@@ -156,6 +157,7 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
+      "cache.vpsadminos.org:wpIJlNZQIhS+0gFf1U3MC9sLZdLW3sh5qakOWGDoDrE="
       "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
       "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
       "nixos-raspberrypi.cachix.org-1:4iMO9LXa8BqhU+Rpg6LQKiGa2lsNh/j2oiYLNOQ5sPI="

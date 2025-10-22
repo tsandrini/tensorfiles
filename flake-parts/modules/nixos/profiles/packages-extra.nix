@@ -81,7 +81,7 @@ in
         sqlite # A self-contained, serverless, zero-configuration, transactional SQL database engine
         sqlitebrowser # DB Browser for SQLite
         libarchive # Multi-format archive and compression library
-        libbtbb # Bluetooth baseband decoding library
+        # libbtbb # Bluetooth baseband decoding library
         adminer # Database management in a single PHP file
 
         # -- PACKAGING UTILS --

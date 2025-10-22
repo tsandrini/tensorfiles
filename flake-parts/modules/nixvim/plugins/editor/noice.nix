@@ -43,7 +43,7 @@ in
 
       plugins.noice = {
         enable = _ true;
-        lsp = {
+        settings.lsp = {
           override = {
             "vim.lsp.util.convert_input_to_markdown_lines" = _ true;
             "vim.lsp.util.stylize_markdown" = _ true;
@@ -53,13 +53,13 @@ in
           message.enabled = _ false;
           signature.enabled = _ false;
           progress.enabled = _ false;
-        };
-        presets = {
-          bottom_search = _ true;
-          command_palette = _ true;
-          long_message_to_split = _ true;
-          inc_rename = _ false;
-          lsp_doc_border = _ false;
+          presets = {
+            bottom_search = _ true;
+            command_palette = _ true;
+            long_message_to_split = _ true;
+            inc_rename = _ false;
+            lsp_doc_border = _ false;
+          };
         };
       };
 

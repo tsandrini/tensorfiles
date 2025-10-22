@@ -97,7 +97,7 @@
     sqlite # A self-contained, serverless, zero-configuration, transactional SQL database engine
     sqlitebrowser # DB Browser for SQLite
     libarchive # Multi-format archive and compression library
-    libbtbb # Bluetooth baseband decoding library
+    # libbtbb # Bluetooth baseband decoding library
 
     # -- NIX UTILS --
     nix-index # A files database for nixpkgs

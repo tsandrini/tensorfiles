@@ -63,6 +63,7 @@ in
     programs_file-managers_lf = importApply ./programs/file-managers/lf { inherit localFlake; };
     programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix { inherit localFlake; };
     programs_git = importApply ./programs/git.nix { inherit localFlake; };
+    programs_delta = importApply ./programs/delta.nix { inherit localFlake; };
     programs_gpg = importApply ./programs/gpg.nix { inherit localFlake; };
     programs_newsboat = importApply ./programs/newsboat.nix { inherit localFlake; };
     programs_pywal = importApply ./programs/pywal.nix { inherit localFlake; };

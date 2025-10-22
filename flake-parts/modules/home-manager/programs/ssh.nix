@@ -98,6 +98,7 @@ in
     {
       programs.ssh = {
         enable = _ true;
+        enableDefaultConfig = _ true;
       };
 
       programs.keychain = {

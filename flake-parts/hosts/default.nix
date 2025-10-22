@@ -48,7 +48,8 @@ let
       baseSpecialArgs = {
         inherit (args) system;
         inherit inputs hostName;
-      } // extraSpecialArgs;
+      }
+      // extraSpecialArgs;
     in
     initFunction {
       inherit (args) system;
@@ -56,35 +57,34 @@ let
         inherit hostName;
         host.hostName = hostName;
       };
-      modules =
-        [
-          {
-            nixpkgs.overlays = extraOverlays;
-            nixpkgs.config.allowUnfree = true;
-            networking.hostName = hostName;
-          }
-          (importApply ./${hostName} hostImportArgs)
-        ]
-        ++ extraModules
-        # Disabled by default, therefore load every module and enable via attributes
-        # instead of imports
-        ++ (lib.attrValues config.flake.nixosModules)
-        ++ (
-          if withHomeManager then
-            [
-              inputs.home-manager.nixosModules.home-manager
-              {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  extraSpecialArgs = baseSpecialArgs;
-                  sharedModules = lib.attrValues config.flake.homeModules;
-                };
-              }
-            ]
-          else
-            [ ]
-        );
+      modules = [
+        {
+          nixpkgs.overlays = extraOverlays;
+          nixpkgs.config.allowUnfree = true;
+          networking.hostName = hostName;
+        }
+        (importApply ./${hostName} hostImportArgs)
+      ]
+      ++ extraModules
+      # Disabled by default, therefore load every module and enable via attributes
+      # instead of imports
+      ++ (lib.attrValues config.flake.nixosModules)
+      ++ (
+        if withHomeManager then
+          [
+            inputs.home-manager.nixosModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                extraSpecialArgs = baseSpecialArgs;
+                sharedModules = lib.attrValues config.flake.homeModules;
+              };
+            }
+          ]
+        else
+          [ ]
+      );
     };
 in
 {
@@ -129,19 +129,13 @@ in
       args:
       mkHost args "pupibundle" {
         initFunction = inputs.nixos-raspberrypi.lib.nixosSystem;
-        # TODO: https://github.com/nvmd/nixos-raspberrypi/issues/90
-        # initFunction =
-        #   attrs:
-        #   inputs.nixos-raspberrypi.lib.nixosSystem (
-        #     attrs
-        #     // {
-        #       inherit (inputs.nixos-raspberrypi.inputs) nixpkgs;
-        #     }
-        #   );
-
         extraOverlays = sharedOverlays;
         extraModules = [
           inputs.nixos-generators.nixosModules.all-formats
+          {
+            nixpkgs.buildPlatform = "x86_64-linux";
+            nixpkgs.hostPlatform = "aarch64-linux";
+          }
         ];
         extraSpecialArgs = {
           inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi

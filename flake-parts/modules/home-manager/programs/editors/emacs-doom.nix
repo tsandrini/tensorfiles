@@ -126,7 +126,7 @@ in
         discount # Implementation of Markdown markup language in C
 
         dockfmt # Dockerfile format
-        dockerfile-language-server-nodejs # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
+        dockerfile-language-server # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
 
         ## :lang config (json, yaml, xml)
         nodePackages.vscode-json-languageserver # JSON language server

@@ -211,7 +211,6 @@ in
     {
       mailserver = {
         enable = _ true;
-        stateVersion = _ 1;
         fqdn = _ "mail.${cfg.baseDomain}";
         domains = [ cfg.baseDomain ] ++ cfg.additionalDomains;
 

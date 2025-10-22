@@ -13,7 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
-{ pkgs, system, ... }:
+{ pkgs, ... }:
 {
   # -----------------
   # | SPECIFICATION |
@@ -27,7 +27,6 @@
     inputs.disko.nixosModules.disko
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
-    inputs.nix-index-database.nixosModules.nix-index
     (inputs.nix-mineral + "/nix-mineral.nix")
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in

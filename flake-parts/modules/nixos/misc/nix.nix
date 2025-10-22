@@ -48,7 +48,7 @@ in
         nixPath = [ "nixpkgs=${inputs.nixpkgs}" ];
         # NOTE: Using lix instead, so we'll leave the default settings
         #       that will get overridden by the lix overlay
-        package = _ pkgs.nixVersions.latest;
+        package = _ pkgs.nixVersions.stable;
         # registry.nixpkgs.flake = _ inputs.nixpkgs;
         settings = {
           auto-optimise-store = _ true;
@@ -58,6 +58,7 @@ in
             "https://nix-community.cachix.org/"
             "https://devenv.cachix.org"
             "https://tsandrini.cachix.org"
+            "https://cache.vpsadminos.org"
             "https://nixpkgs-wayland.cachix.org"
             "https://nix-gaming.cachix.org"
             "https://cache.lix.systems"
@@ -70,6 +71,7 @@ in
             "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
             "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
             "tsandrini.cachix.org-1:t0AzIUglIqwiY+vz/WRWXrOkDZN8TwY3gk+n+UDt4gw="
+            "cache.vpsadminos.org:wpIJlNZQIhS+0gFf1U3MC9sLZdLW3sh5qakOWGDoDrE="
             "nixpkgs-wayland.cachix.org-1:3lwxaILxMRkVhehr5StQprHdEo4IrE8sRho9R9HOLYA="
             "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
             "cache.lix.systems:aBnZUw8zA7H35Cz2RyKFVs3H4PlGTLawyY5KRbvJR8o="
