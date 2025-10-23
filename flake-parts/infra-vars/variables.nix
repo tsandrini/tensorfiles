@@ -1,0 +1,157 @@
+# --- flake-parts/infra-vars/variables.nix
+#
+# Author:  tsandrini <t@tsandrini.sh>
+# URL:     https://github.com/tsandrini/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+_: rec {
+  # TODO: We could decouple this into multiple separate flakeModule options,
+  #       but is that worth it? We can still do that in the future
+  #       if we need to so its not a big deal.
+  common = {
+    contacts = {
+      securityEmail = "security@tsandrini.sh";
+      contactEmail = "t@tsandrini.sh";
+      monitoringEmail = "monitoring@tsandrini.sh";
+    };
+    networking = {
+      defaultSubnet = "10.10.0.0/24";
+      defaultGateway = "10.10.0.1";
+      defaultNameservers = [
+        "8.8.8.8"
+        "8.8.4.4"
+        "1.1.1.1"
+      ];
+    };
+    services = {
+      openssh = {
+        defaultPort = 2222;
+      };
+      promtail = {
+        defaultPort = 3031;
+      };
+      prometheus = {
+        defaultPort = 9090;
+        exporters = {
+          node = {
+            defaultPort = 9100;
+          };
+        };
+      };
+    };
+  };
+  hosts = {
+    # ----------------------------------
+    "remotebundle" = {
+      address = "localhost"; # TODO: this is currently a good hack to preserve generality
+      publicAddress = "37.205.15.242";
+      users = {
+        root = { };
+        tsandrini = { };
+      };
+      services = {
+        grafana = {
+          server = {
+            http_port = 3001;
+            http_addr = "0.0.0.0";
+          };
+        };
+        influxdb2 = {
+          server = {
+            http_port = 8086;
+            http_addr = "localhost";
+          };
+        };
+        loki = {
+          server = {
+            http_port = 3200;
+            http_addr = "localhost";
+          };
+        };
+        promtail = {
+          server = {
+            http_port = 3031;
+            grpc_port = 0;
+          };
+        };
+        prometheus = {
+          server = {
+            http_port = 9090;
+            http_addr = "localhost";
+          };
+          exporters = {
+            postgres = {
+              port = 9187;
+            };
+            nginx = {
+              port = 9113;
+            };
+            nginxlog = {
+              port = 9117;
+            };
+          };
+        };
+        postgresql = {
+          port = 5432;
+          instances = {
+            # NOTE: The user and database names need to be uqual for
+            #       ensureDBOwnership to work
+            "grafana" = {
+              database = "grafana";
+              user = "grafana";
+            };
+            "forgejo" = {
+              database = "forgejo";
+              user = "forgejo";
+            };
+            "firefly-iii" = {
+              database = "firefly-iii";
+              user = "firefly-iii";
+            };
+          };
+        };
+        pgadmin = {
+          port = 5050;
+        };
+        forgejo = {
+          server = {
+            http_port = 3000;
+            http_addr = "localhost";
+          };
+        };
+        nginx = {
+          primaryDomain = "tsandrini.sh";
+          virtualHosts = {
+            "pgadmin" = {
+              domain = "pgadmin.${hosts."remotebundle".services.nginx.primaryDomain}";
+              proxyEndpoint = "${hosts."remotebundle".address}:${
+                toString hosts."remotebundle".services.pgadmin.port
+              }";
+            };
+            "grafana" = {
+              domain = "grafana.${hosts."remotebundle".services.nginx.primaryDomain}";
+              proxyEndpoint = "${hosts."remotebundle".address}:${
+                toString hosts."remotebundle".services.grafana.server.http_port
+              }";
+            };
+            "forgejo" = {
+              domain = "git.${hosts."remotebundle".services.nginx.primaryDomain}";
+              proxyEndpoint = "${hosts."remotebundle".address}:${
+                toString hosts."remotebundle".services.forgejo.server.http_port
+              }";
+            };
+          };
+        };
+      };
+    };
+    # ----------------------------------
+  };
+}
