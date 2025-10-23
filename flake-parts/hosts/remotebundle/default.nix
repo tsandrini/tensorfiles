@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ inputs, secretsPath }:
+{
+  inputs,
+  secretsPath,
+  infraVars,
+}:
 {
   pkgs,
   config,
@@ -21,12 +25,30 @@
   ...
 }:
 let
-  domain = "tsandrini.sh";
-  grafanaDomain = "grafana.${domain}";
-  pgadminDomain = "pgadmin.${domain}";
-  # fireflyDomain = "firefly.${domain}";
-  forgejoDomain = "git.${domain}";
+  selfVars = infraVars.hosts."${hostName}";
   immutable-insights = inputs.immutable-insights.packages.${system}.default;
+
+  # --- database ---
+  postgresVars = selfVars.services.postgresql;
+  pgadminVars = selfVars.services.pgadmin;
+
+  # --- monitoring ---
+  monitoringVars = infraVars.hosts."remotebundle";
+  grafanaVars = monitoringVars.services.grafana;
+  lokiVars = monitoringVars.services.loki;
+  prometheusVars = monitoringVars.services.prometheus;
+  prometheusExporters = monitoringVars.services.prometheus.exporters;
+
+  # --- nginx ---
+  nginxVars = infraVars.hosts."remotebundle".services.nginx;
+  virtualHostsVar = nginxVars.virtualHosts;
+
+  # --- forgejo ---
+  forgejoVars = infraVars.hosts."remotebundle".services.forgejo;
+
+  # --- prometheus exporters ---
+  nginxProxyExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
+  postgresExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
 in
 {
   # -----------------
@@ -47,7 +69,7 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = [ ];
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -64,7 +86,7 @@ in
 
     services.monit = {
       enable = true;
-      alertAddress = "monitoring@${domain}";
+      alertAddress = "monitoring@tsandrini.sh";
       mailserver.enable = true;
       checks = {
         filesystem.root.enable = false;
@@ -77,12 +99,12 @@ in
         processes = {
           sshd = {
             enable = true;
-            port = 2222;
+            port = infraVars.common.services.openssh.defaultPort;
           };
           postfix.enable = true;
           dovecot = {
             enable = true;
-            fqdn = "mail.${domain}";
+            fqdn = "mail.tsandrini.sh";
           };
           rspamd.enable = true;
         };
@@ -124,7 +146,7 @@ in
       443
     ];
     allowedUDPPorts = [
-      51821
+      config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
     ];
   };
 
@@ -193,7 +215,7 @@ in
       };
     };
 
-    virtualHosts."${domain}" = {
+    virtualHosts."${nginxVars.primaryDomain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
@@ -204,8 +226,8 @@ in
       # };
     };
 
-    virtualHosts."upstream-${domain}" = {
-      serverName = domain;
+    virtualHosts."upstream-${nginxVars.primaryDomain}" = {
+      serverName = nginxVars.primaryDomain;
       listen = [ { addr = "unix:/run/nginx/nginx.sock"; } ];
 
       root = "${immutable-insights}/var/www";
@@ -223,7 +245,7 @@ in
       };
     };
 
-    virtualHosts."${grafanaDomain}" = {
+    virtualHosts."${virtualHostsVar."grafana".domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
@@ -232,16 +254,15 @@ in
       };
     };
 
-    virtualHosts."${pgadminDomain}" = {
+    virtualHosts."${virtualHostsVar."pgadmin".domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        # proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
         proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
       };
     };
 
-    virtualHosts."${forgejoDomain}" = {
+    virtualHosts."${virtualHostsVar."forgejo".domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
@@ -260,9 +281,12 @@ in
     };
     settings = {
       server = {
-        ROOT_URL = "https://${forgejoDomain}/";
-        DOMAIN = forgejoDomain;
-        SSH_PORT = 2222;
+        HTTP_PORT = forgejoVars.server.http_port;
+        HTTP_ADDR = forgejoVars.server.http_addr;
+
+        ROOT_URL = "https://${virtualHostsVar."forgejo".domain}/";
+        DOMAIN = virtualHostsVar."forgejo".domain;
+        SSH_PORT = infraVars.common.services.openssh.defaultPort;
         LANDING_PAGE = "explore";
       };
       service = {
@@ -276,9 +300,9 @@ in
       };
       mailer = {
         ENABLED = true;
-        PROTOCOL = "smtp"; # <--- Change protocol
+        PROTOCOL = "smtp";
         SMTP_ADDR = "localhost";
-        FROM = "git-bot@${domain}";
+        FROM = "git-bot@$tsandrini.sh";
       };
       DEFAULT = {
         APP_NAME = "tsandrini's git";
@@ -338,21 +362,21 @@ in
       forgejo = {
         enable = true;
         settings = {
-          TARGET = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+          TARGET = "http://${virtualHostsVar."forgejo".proxyEndpoint}";
         };
       };
 
       grafana = {
         enable = true;
         settings = {
-          TARGET = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+          TARGET = "http://${virtualHostsVar."grafana".proxyEndpoint}";
         };
       };
 
       pgadmin = {
         enable = true;
         settings = {
-          TARGET = "http://localhost:${toString config.services.pgadmin.port}";
+          TARGET = "http://${virtualHostsVar."pgadmin".proxyEndpoint}";
         };
       };
 
@@ -371,20 +395,20 @@ in
     settings = {
       analytics.reporting_enabled = false;
       server = {
-        root_url = "https://${grafanaDomain}";
-        domain = "${grafanaDomain}";
+        inherit (grafanaVars.server) http_addr http_port;
+        inherit (virtualHostsVar."grafana") domain;
+
+        root_url = "https://${virtualHostsVar."grafana".domain}";
         enforce_domain = true;
         enable_gzip = true;
-        http_addr = "127.0.0.1";
-        http_port = 3001;
       };
 
       smtp = {
         enabled = true;
-        host = "mail.${domain}:587";
-        user = "grafana-bot@${domain}";
+        host = "mail.tsandrini.sh:587";
+        user = "grafana-bot@tsandrini.sh";
         password = "$__file{${config.age.secrets."hosts/${hostName}/grafana-bot-mail-password".path}}";
-        fromAddress = "grafana-bot@${domain}";
+        fromAddress = "grafana-bot@tsandrini.sh";
       };
 
       database = {
@@ -396,7 +420,7 @@ in
       # NOTE enable again on init
       security.disable_initial_admin_creation = true;
 
-      security.admin_email = "t@${domain}";
+      security.admin_email = "t@tsandrini.sh";
       security.admin_password = "$__file{${
         config.age.secrets."hosts/${hostName}/grafana-admin-password".path
       }}";
@@ -407,14 +431,14 @@ in
           uid = "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd";
           name = "Prometheus";
           type = "prometheus";
-          url = "http://localhost:${toString config.services.prometheus.port}";
+          url = "http://localhost:${toString prometheusVars.server.http_port}";
         }
         {
           uid = "x2dSQip31bGxOYQBo3GtZdCtCz9Tbt1q";
           name = "Loki";
           type = "loki";
           access = "proxy";
-          url = "http://localhost:${toString config.services.loki.configuration.server.http_listen_port}";
+          url = "http://localhost:${toString lokiVars.server.http_port}";
         }
       ];
       dashboards.settings.providers =
@@ -463,14 +487,15 @@ in
     enable = true;
     package = pkgs.postgresql_16;
     settings = {
+      inherit (postgresVars) port;
       password_encryption = "scram-sha-256";
     };
     authentication = ''
       # Allow grafana user to connect via local socket with peer auth (no password)
       local   all potgres                                             peer
-      local   all ${config.services.grafana.settings.database.user}   peer
-      local   all firefly-iii                                         peer
-      local   all ${config.services.forgejo.database.user}            peer
+      local   all ${postgresVars.instances."grafana".user}            peer
+      local   all ${postgresVars.instances."forgejo".user}            peer
+      local   all ${postgresVars.instances."firefly-iii".user}        peer
 
       # Require SCRAM password for admin on local socket and TCP (IPv4 + IPv6)
       local   all             admin                                   scram-sha-256
@@ -482,9 +507,9 @@ in
       # host    all             all             all                     reject
     '';
     ensureDatabases = [
-      "firefly-iii"
-      config.services.grafana.settings.database.name
-      config.services.forgejo.database.name
+      postgresVars.instances."grafana".database
+      postgresVars.instances."forgejo".database
+      postgresVars.instances."firefly-iii".database
     ];
     ensureUsers = [
       {
@@ -497,15 +522,15 @@ in
         };
       }
       {
-        name = config.services.grafana.settings.database.user;
+        name = postgresVars.instances."grafana".user;
         ensureDBOwnership = true;
       }
       {
-        name = "firefly-iii";
+        name = postgresVars.instances."forgejo".user;
         ensureDBOwnership = true;
       }
       {
-        name = config.services.forgejo.database.user;
+        name = postgresVars.instances."firefly-iii".user;
         ensureDBOwnership = true;
       }
     ];
@@ -526,14 +551,14 @@ in
 
   services.pgadmin = {
     enable = true;
-    openFirewall = true;
+    inherit (pgadminVars) port;
     initialEmail = "t@tsandrini.sh";
     initialPasswordFile = config.age.secrets."hosts/${hostName}/pgadmin-admin-password".path;
   };
 
   services.prometheus = {
     enable = true;
-    port = 9001;
+    port = prometheusVars.server.http_port;
     globalConfig.scrape_interval = "15s";
     scrapeConfigs = [
       {
@@ -556,7 +581,9 @@ in
         job_name = "${hostName}_postgres";
         static_configs = [
           {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.postgres.port}" ];
+            targets = [
+              "${infraVars.hosts."remotebundle".address}:${toString postgresExporters.postgres.port}"
+            ];
           }
         ];
       }
@@ -564,7 +591,9 @@ in
         job_name = "${hostName}_nginx";
         static_configs = [
           {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.nginx.port}" ];
+            targets = [
+              "${infraVars.hosts."remotebundle".address}:${toString nginxProxyExporters.nginx.port}"
+            ];
           }
         ];
       }
@@ -572,26 +601,36 @@ in
         job_name = "${hostName}_nginxlog";
         static_configs = [
           {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.nginxlog.port}" ];
+            targets = [
+              "${infraVars.hosts."remotebundle".address}:${toString nginxProxyExporters.nginxlog.port}"
+            ];
           }
         ];
       }
     ];
   };
 
+  services.loki.configuration.server = {
+    http_listen_address = lokiVars.server.http_addr;
+    http_listen_port = lokiVars.server.http_port;
+  };
+
   services.prometheus.exporters = {
     postgres = {
       enable = true;
+      inherit (prometheusExporters.postgres) port;
       runAsLocalSuperUser = true;
     };
 
     nginx = {
       enable = true;
+      inherit (prometheusExporters.nginx) port;
       scrapeUri = "http://127.0.0.1/nginx_status";
     };
 
     nginxlog = {
       enable = true;
+      inherit (prometheusExporters.nginxlog) port;
       inherit (config.services.nginx) group;
       settings.namespaces = [
         {

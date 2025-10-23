@@ -20,7 +20,8 @@
 }:
 let
   inherit (inputs.flake-parts.lib) importApply;
-  inherit (config.agenix) secretsPath;
+  # inherit (config.agenix) secretsPath;
+  inherit (config) infraVars;
   localFlake = self;
 in
 {
@@ -47,7 +48,7 @@ in
     profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
     profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
-      inherit localFlake;
+      inherit localFlake infraVars;
     };
 
     # -- programs --
@@ -60,7 +61,9 @@ in
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {
       inherit localFlake;
     };
-    services_networking_ssh = importApply ./services/networking/ssh.nix { inherit localFlake; };
+    services_networking_ssh = importApply ./services/networking/ssh.nix {
+      inherit localFlake infraVars;
+    };
     services_x11_desktop-managers_startx-home-manager =
       importApply ./services/x11/desktop-managers/startx-home-manager.nix
         { inherit localFlake; };

@@ -15,6 +15,7 @@
 { inputs, config, ... }:
 let
   inherit (inputs) deploy-rs;
+  inherit (config) infraVars;
 
   hostPath =
     system: name: deploy-rs.lib.${system}.activate.nixos config.flake.nixosConfigurations.${name};
@@ -23,14 +24,14 @@ in
 
   flake.deploy.nodes = {
     "remotebundle" = {
-      hostname = "37.205.15.242";
+      hostname = infraVars.hosts."remotebundle".publicAddress;
 
       profiles.system = {
         user = "root";
         sshUser = "tsandrini"; # TODO: add deploy user?
         sshOpts = [
           "-p"
-          "2222"
+          "${toString infraVars.common.services.openssh.defaultPort}"
         ];
         autoRollback = true;
         magicRollback = true;

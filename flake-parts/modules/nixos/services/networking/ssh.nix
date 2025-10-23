@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, infraVars }:
 { config, lib, ... }:
 let
   inherit (lib)
@@ -69,10 +69,7 @@ in
       };
       services.openssh = {
         enable = _ true;
-        # NOTE Just using a different port mitigates a ton of brute force attacks
-        # that have 22 hardcoded.
-        ports = _ [ 2222 ];
-        # openFirewall = _ true;
+        ports = _ [ infraVars.common.services.openssh.defaultPort ];
         banner = mkBefore ''
           =====================================================================
           Welcome, you should note that this host is completely

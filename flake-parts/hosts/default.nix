@@ -22,6 +22,7 @@
 let
   inherit (inputs.flake-parts.lib) importApply;
   inherit (config.agenix) secretsPath;
+  inherit (config) infraVars;
 
   sharedModules = [
     # TODO: this break pupibundle
@@ -151,7 +152,7 @@ in
         extraOverlays = sharedOverlays;
         extraModules = sharedModules;
         hostImportArgs = {
-          inherit inputs secretsPath;
+          inherit inputs secretsPath infraVars;
         };
       }
     );

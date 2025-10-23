@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, infraVars }:
 {
   config,
   hostName,
@@ -51,10 +51,12 @@ in
           default = true;
         };
 
-      # TODO: maybe create infraVars?
       clientUrl = mkOption {
         type = types.str;
-        default = "http://localhost:3100/loki/api/v1/push";
+        # default = "http://localhost:3100/loki/api/v1/push";
+        default = "http://localhost:${
+          toString infraVars.hosts."remotebundle".services.loki.server.http_port
+        }/loki/api/v1/push";
         description = ''
           The URL of the Loki server to which Promtail will send logs.
         '';
@@ -82,7 +84,7 @@ in
 
           port = mkOption {
             type = types.int;
-            default = 9002;
+            default = infraVars.common.services.prometheus.exporters.node.defaultPort;
             description = ''
               The port on which the Node Exporter will listen for
               Prometheus scrape requests.
