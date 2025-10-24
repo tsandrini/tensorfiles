@@ -221,9 +221,6 @@ in
       locations."/" = {
         proxyPass = "http://unix:${config.services.anubis.instances.immutable-insights.settings.BIND}";
       };
-      # locations."/metrics" = {
-      #   proxyPass = "http://unix:${config.services.anubis.instances."".settings.METRICS_BIND}";
-      # };
     };
 
     virtualHosts."upstream-${nginxVars.primaryDomain}" = {
@@ -268,6 +265,15 @@ in
       locations."/" = {
         proxyWebsockets = true;
         proxyPass = "http://unix:${config.services.anubis.instances.forgejo.settings.BIND}";
+      };
+    };
+
+    virtualHosts."${virtualHostsVar."prometheus".domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      basicAuthFile = config.age.secrets."hosts/${hostName}/prometheus-ui-basic-auth-file".path;
+      locations."/" = {
+        proxyPass = "http://${virtualHostsVar."prometheus".proxyEndpoint}";
       };
     };
   };
@@ -565,7 +571,7 @@ in
         job_name = "NixOS-node-exporter";
         static_configs = [
           {
-            targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
+            targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
           }
         ];
       }
@@ -659,6 +665,11 @@ in
 
     "hosts/${hostName}/wg-home-tunnel-privkey" = {
       file = "${secretsPath}/hosts/${hostName}/wg-home-tunnel-privkey.age";
+    };
+
+    "hosts/${hostName}/prometheus-ui-basic-auth-file" = {
+      file = "${secretsPath}/hosts/${hostName}/prometheus-ui-basic-auth-file.age";
+      owner = config.services.nginx.user;
     };
 
     # "hosts/${hostName}/firefly-iii-app-key" = {

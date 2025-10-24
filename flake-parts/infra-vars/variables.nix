@@ -148,6 +148,12 @@ _: rec {
                 toString hosts."remotebundle".services.forgejo.server.http_port
               }";
             };
+            "prometheus" = {
+              domain = "prometheus.${hosts."remotebundle".services.nginx.primaryDomain}";
+              proxyEndpoint = "${hosts."remotebundle".address}:${
+                toString hosts."remotebundle".services.prometheus.server.http_port
+              }";
+            };
           };
         };
       };
