@@ -115,7 +115,7 @@ in
         # :lang latex & :lang org (latex previews)
         # texlive.combined.scheme-medium
         # :lang beancount
-        fava # HACK Momentarily broken on nixos-unstable
+        # fava # HACK Momentarily broken on nixos-unstable
         graphviz
         nodejs
 
@@ -198,7 +198,7 @@ in
         black # The uncompromising Python code formatter
         pipenv # Python Development Workflow for Humans
         poetry # Python dependency management and packaging made easy
-        (python311.withPackages (
+        (python3.withPackages (
           ps: with ps; [
             grip
             pyflakes

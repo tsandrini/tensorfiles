@@ -78,13 +78,15 @@ in
         mpv # General-purpose media player, fork of MPlayer and mplayer2
 
         # --- MISC & TOOLS ---
-        rpi-imager # Raspberry Pi Imaging Utility
+        # TODO: https://github.com/NixOS/nixpkgs/issues/454826
+        # rpi-imager # Raspberry Pi Imaging Utility
         virt-viewer # Viewer for remote virtual machines
         vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment.
         # lapack # openblas with just the LAPACK C and FORTRAN ABI
 
         # github-desktop # GitHub Desktop
         winbox4 # Graphical configuration utility for RouterOS-based devices
+        hoppscotch # Open source API development ecosystem
       ];
 
       programs.winbox.enable = true;
