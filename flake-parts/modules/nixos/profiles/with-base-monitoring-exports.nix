@@ -76,7 +76,7 @@ in
 
           openFirewall = mkOption {
             type = types.bool;
-            default = true;
+            default = false;
             description = ''
               Whether to open the firewall for the Node Exporter port.
             '';
