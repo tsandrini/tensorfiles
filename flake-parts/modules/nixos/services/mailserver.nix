@@ -18,6 +18,7 @@
   secretsPath,
 }:
 {
+  pkgs,
   config,
   lib,
   hostName,
@@ -247,6 +248,20 @@ in
     (mkIf cfg.roundcube.enable {
       services.roundcube = {
         enable = _ true;
+        dicts = with pkgs.aspellDicts; [
+          en
+          en-computers
+          en-science
+          cs
+        ];
+        plugins = [
+          "emoticons"
+          "enigma"
+          "userinfo"
+          "zipdownload"
+          "markasjunk"
+          "jqueryui"
+        ];
         # this is the url of the vhost, not necessarily the same as the fqdn of
         # the mailserver
         hostName = _ "webmail.${cfg.baseDomain}";
@@ -254,8 +269,10 @@ in
           # starttls needed for authentication, so the fqdn required to match
           # the certificate
           $config['smtp_server'] = "tls://${config.mailserver.fqdn}";
+          $config['imap_host'] = "ssl://${config.mailserver.fqdn}";
           $config['smtp_user'] = "%u";
           $config['smtp_pass'] = "%p";
+
         '';
       };
       services.nginx.enable = _ true;
