@@ -1,4 +1,5 @@
 [default.extend-words]
+receipients = "receipients" # this is actually wrong inside the prometheus exporter
 lazer = "lazer"
 ags = "ags"
 nitch = "nitch"

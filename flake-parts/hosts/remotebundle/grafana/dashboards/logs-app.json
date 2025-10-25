@@ -189,7 +189,7 @@
   "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
-  "tags": [],
+  "tags": ["promtail", "loki"],
   "templating": {
     "list": [
       {

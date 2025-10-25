@@ -429,7 +429,7 @@
   "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
-  "tags": ["nginx", "prometheus", "nginx prometheus exporter"],
+  "tags": ["nginx", "prometheus"],
   "templating": {
     "list": [
       {

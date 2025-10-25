@@ -49,6 +49,7 @@ let
   # --- prometheus exporters ---
   nginxProxyExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
   postgresExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
+  mailserverExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
 in
 {
   # -----------------
@@ -280,6 +281,7 @@ in
 
   services.forgejo = {
     enable = true;
+    package = pkgs.forgejo;
     database = {
       createDatabase = false;
       type = "postgres";
@@ -485,6 +487,22 @@ in
               name = "Loki & Promtail";
               options.path = ./grafana/dashboards/loki-and-promtail.json;
             }
+            {
+              name = "dovecot2 (old_stats) overview by tsandrini";
+              options.path = ./grafana/dashboards/dovecot2-old-stats-overview-by-tsandrini.json;
+            }
+            {
+              name = "Postfix";
+              options.path = ./grafana/dashboards/postfix.json;
+            }
+            {
+              name = "Postfix overview by tsandrini";
+              options.path = ./grafana/dashboards/postfix-overview-by-tsandrini.json;
+            }
+            {
+              name = "Rspamd stat overview by tsandrini";
+              options.path = ./grafana/dashboards/rspamd-stat-overview-by-tsandrini.json;
+            }
           ];
     };
   };
@@ -604,6 +622,45 @@ in
         ];
       }
       {
+        job_name = "${hostName}_postfix";
+        static_configs = [
+          {
+            targets = [
+              "${infraVars.hosts."remotebundle".address}:${toString mailserverExporters.postfix.port}"
+            ];
+          }
+        ];
+      }
+      {
+        job_name = "${hostName}_rspamd";
+        honor_labels = true;
+        metrics_path = "/probe";
+        params = {
+          target = [
+            "http://${
+              infraVars.hosts."remotebundle".address
+            }:${toString mailserverExporters.rspamd.targetPort}/stat"
+          ];
+        };
+        static_configs = [
+          {
+            targets = [
+              "${infraVars.hosts."remotebundle".address}:${toString mailserverExporters.rspamd.port}"
+            ];
+          }
+        ];
+      }
+      {
+        job_name = "${hostName}_dovecot";
+        static_configs = [
+          {
+            targets = [
+              "${infraVars.hosts."remotebundle".address}:${toString mailserverExporters.dovecot.port}"
+            ];
+          }
+        ];
+      }
+      {
         job_name = "${hostName}_nginxlog";
         static_configs = [
           {
@@ -621,6 +678,43 @@ in
     http_listen_port = lokiVars.server.http_port;
   };
 
+  services.dovecot2 = {
+    mailPlugins.globally.enable = [ "old_stats" ];
+    extraConfig = ''
+      service old-stats {
+        unix_listener old-stats {
+          user = ${config.services.dovecot2.user}
+          group = ${config.services.dovecot2.group}
+          mode = 0660
+        }
+        fifo_listener old-stats-mail {
+          mode = 0660
+          user = ${config.services.dovecot2.user}
+          group = ${config.services.dovecot2.group}
+        }
+        fifo_listener old-stats-user {
+          mode = 0660
+          user = ${config.services.dovecot2.user}
+          group = ${config.services.dovecot2.group}
+        }
+      }
+      plugin {
+        old_stats_refresh = 30 secs
+        old_stats_track_cmds = yes
+      }
+    '';
+  };
+
+  services.rspamd = {
+    workers.controller.bindSockets = [
+      {
+        socket = "/run/rspamd/worker-controller.sock";
+        mode = "0666";
+      }
+      "0.0.0.0:${toString mailserverExporters.rspamd.targetPort}"
+    ];
+  };
+
   services.prometheus.exporters = {
     postgres = {
       enable = true;
@@ -632,6 +726,28 @@ in
       enable = true;
       inherit (prometheusExporters.nginx) port;
       scrapeUri = "http://127.0.0.1/nginx_status";
+    };
+
+    postfix = {
+      enable = true;
+      inherit (prometheusExporters.postfix) port;
+      logfilePath = "/var/log/mail";
+    };
+
+    rspamd = {
+      enable = true;
+      inherit (prometheusExporters.rspamd) port;
+    };
+
+    dovecot = {
+      enable = true;
+      inherit (config.services.dovecot2) user group;
+      inherit (prometheusExporters.dovecot) port;
+      socketPath = "/var/run/dovecot2/old-stats";
+      scopes = [
+        "user"
+        "global"
+      ];
     };
 
     nginxlog = {

@@ -97,6 +97,16 @@ _: rec {
             nginxlog = {
               port = 9117;
             };
+            postfix = {
+              port = 9154;
+            };
+            rspamd = {
+              port = 7980;
+              targetPort = 11334;
+            };
+            dovecot = {
+              port = 9166;
+            };
           };
         };
         postgresql = {
