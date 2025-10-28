@@ -50,124 +50,131 @@ _: rec {
   };
   hosts = {
     # ----------------------------------
-    "remotebundle" = {
-      address = "localhost"; # TODO: this is currently a good hack to preserve generality
-      publicAddress = "37.205.15.242";
-      users = {
-        root = { };
-        tsandrini = { };
+    "remotebundle" =
+      let
+        address = "localhost";
+      in
+      {
+        inherit address;
+        publicAddress = "37.205.15.242";
+        users = {
+          root = { };
+          tsandrini = { };
+        };
+        services = {
+          grafana = {
+            server = {
+              http_port = 3001;
+              http_addr = "0.0.0.0";
+            };
+          };
+          influxdb2 = {
+            server = {
+              http_port = 8086;
+              http_addr = "localhost";
+            };
+          };
+          loki = {
+            server = {
+              http_port = 3200;
+              http_addr = "localhost";
+            };
+          };
+          promtail = {
+            server = {
+              http_port = 3031;
+              grpc_port = 0;
+            };
+          };
+          prometheus = {
+            server = {
+              http_port = 9090;
+              http_addr = "localhost";
+            };
+            exporters = {
+              postgres = {
+                port = 9187;
+              };
+              nginx = {
+                port = 9113;
+              };
+              nginxlog = {
+                port = 9117;
+              };
+              postfix = {
+                port = 9154;
+              };
+              rspamd = {
+                port = 7980;
+                targetPort = 11334;
+              };
+              dovecot = {
+                port = 9166;
+              };
+            };
+          };
+          postgresql = {
+            port = 5432;
+            instances = {
+              # NOTE: The user and database names need to be uqual for
+              #       ensureDBOwnership to work
+              "grafana" = {
+                database = "grafana";
+                user = "grafana";
+              };
+              "forgejo" = {
+                database = "forgejo";
+                user = "forgejo";
+              };
+              "firefly-iii" = {
+                database = "firefly-iii";
+                user = "firefly-iii";
+              };
+            };
+          };
+          pgadmin = {
+            port = 5050;
+          };
+          forgejo = {
+            server = {
+              http_port = 3000;
+              http_addr = "localhost";
+            };
+          };
+          nginx =
+            let
+              primaryDomain = "tsandrini.sh";
+            in
+            {
+              inherit primaryDomain;
+              virtualHosts = {
+                "pgadmin" = {
+                  domain = "pgadmin.${primaryDomain}";
+                  proxyEndpoint = "${address}:${toString hosts."remotebundle".services.pgadmin.port}";
+                  # anubisMetricsEndpoint = ""
+                };
+                "grafana" = {
+                  domain = "grafana.${primaryDomain}";
+                  proxyEndpoint = "${hosts."remotebundle".address}:${
+                    toString hosts."remotebundle".services.grafana.server.http_port
+                  }";
+                };
+                "forgejo" = {
+                  domain = "git.${primaryDomain}";
+                  proxyEndpoint = "${hosts."remotebundle".address}:${
+                    toString hosts."remotebundle".services.forgejo.server.http_port
+                  }";
+                };
+                "prometheus" = {
+                  domain = "prometheus.${primaryDomain}";
+                  proxyEndpoint = "${hosts."remotebundle".address}:${
+                    toString hosts."remotebundle".services.prometheus.server.http_port
+                  }";
+                };
+              };
+            };
+        };
       };
-      services = {
-        grafana = {
-          server = {
-            http_port = 3001;
-            http_addr = "0.0.0.0";
-          };
-        };
-        influxdb2 = {
-          server = {
-            http_port = 8086;
-            http_addr = "localhost";
-          };
-        };
-        loki = {
-          server = {
-            http_port = 3200;
-            http_addr = "localhost";
-          };
-        };
-        promtail = {
-          server = {
-            http_port = 3031;
-            grpc_port = 0;
-          };
-        };
-        prometheus = {
-          server = {
-            http_port = 9090;
-            http_addr = "localhost";
-          };
-          exporters = {
-            postgres = {
-              port = 9187;
-            };
-            nginx = {
-              port = 9113;
-            };
-            nginxlog = {
-              port = 9117;
-            };
-            postfix = {
-              port = 9154;
-            };
-            rspamd = {
-              port = 7980;
-              targetPort = 11334;
-            };
-            dovecot = {
-              port = 9166;
-            };
-          };
-        };
-        postgresql = {
-          port = 5432;
-          instances = {
-            # NOTE: The user and database names need to be uqual for
-            #       ensureDBOwnership to work
-            "grafana" = {
-              database = "grafana";
-              user = "grafana";
-            };
-            "forgejo" = {
-              database = "forgejo";
-              user = "forgejo";
-            };
-            "firefly-iii" = {
-              database = "firefly-iii";
-              user = "firefly-iii";
-            };
-          };
-        };
-        pgadmin = {
-          port = 5050;
-        };
-        forgejo = {
-          server = {
-            http_port = 3000;
-            http_addr = "localhost";
-          };
-        };
-        nginx = {
-          primaryDomain = "tsandrini.sh";
-          virtualHosts = {
-            "pgadmin" = {
-              domain = "pgadmin.${hosts."remotebundle".services.nginx.primaryDomain}";
-              proxyEndpoint = "${hosts."remotebundle".address}:${
-                toString hosts."remotebundle".services.pgadmin.port
-              }";
-            };
-            "grafana" = {
-              domain = "grafana.${hosts."remotebundle".services.nginx.primaryDomain}";
-              proxyEndpoint = "${hosts."remotebundle".address}:${
-                toString hosts."remotebundle".services.grafana.server.http_port
-              }";
-            };
-            "forgejo" = {
-              domain = "git.${hosts."remotebundle".services.nginx.primaryDomain}";
-              proxyEndpoint = "${hosts."remotebundle".address}:${
-                toString hosts."remotebundle".services.forgejo.server.http_port
-              }";
-            };
-            "prometheus" = {
-              domain = "prometheus.${hosts."remotebundle".services.nginx.primaryDomain}";
-              proxyEndpoint = "${hosts."remotebundle".address}:${
-                toString hosts."remotebundle".services.prometheus.server.http_port
-              }";
-            };
-          };
-        };
-      };
-    };
     # ----------------------------------
   };
 }

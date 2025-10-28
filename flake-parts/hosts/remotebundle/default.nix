@@ -47,8 +47,6 @@ let
   forgejoVars = infraVars.hosts."remotebundle".services.forgejo;
 
   # --- prometheus exporters ---
-  nginxProxyExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
-  postgresExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
   mailserverExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
 in
 {
@@ -364,6 +362,8 @@ in
         group = "nginx";
         settings = {
           TARGET = "unix:///run/nginx/nginx.sock";
+          METRICS_BIND_NETWORK = "tcp";
+          METRICS_BIND = "127.0.0.1:8081";
         };
       };
 
@@ -584,93 +584,101 @@ in
     enable = true;
     port = prometheusVars.server.http_port;
     globalConfig.scrape_interval = "15s";
-    scrapeConfigs = [
-      {
-        job_name = "NixOS-node-exporter";
-        static_configs = [
-          {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_prometheus";
-        static_configs = [
-          {
-            targets = [ "localhost:${toString config.services.prometheus.port}" ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_postgres";
-        static_configs = [
-          {
-            targets = [
-              "${infraVars.hosts."remotebundle".address}:${toString postgresExporters.postgres.port}"
-            ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_nginx";
-        static_configs = [
-          {
-            targets = [
-              "${infraVars.hosts."remotebundle".address}:${toString nginxProxyExporters.nginx.port}"
-            ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_postfix";
-        static_configs = [
-          {
-            targets = [
-              "${infraVars.hosts."remotebundle".address}:${toString mailserverExporters.postfix.port}"
-            ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_rspamd";
-        honor_labels = true;
-        metrics_path = "/probe";
-        params = {
-          target = [
-            "http://${
-              infraVars.hosts."remotebundle".address
-            }:${toString mailserverExporters.rspamd.targetPort}/stat"
+    scrapeConfigs =
+      let
+        mkTarget =
+          host: service:
+          "${infraVars.hosts.${host}.address}:${
+            toString infraVars.hosts.${host}.services.prometheus.exporters.${service}.port
+          }";
+      in
+      [
+        {
+          job_name = "NixOS-node-exporter";
+          static_configs = [
+            {
+              targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+            }
           ];
-        };
-        static_configs = [
-          {
-            targets = [
-              "${infraVars.hosts."remotebundle".address}:${toString mailserverExporters.rspamd.port}"
+        }
+        {
+          job_name = "prometheus";
+          static_configs = [
+            {
+              targets = [ "localhost:${toString config.services.prometheus.port}" ];
+            }
+          ];
+        }
+        {
+          job_name = "postgres";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "postgres")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "nginx";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "nginx")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "postfix";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "postfix")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "rspamd";
+          honor_labels = true;
+          metrics_path = "/probe";
+          params = {
+            target = [
+              "http://${
+                infraVars.hosts."remotebundle".address
+              }:${toString mailserverExporters.rspamd.targetPort}/stat"
             ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_dovecot";
-        static_configs = [
-          {
-            targets = [
-              "${infraVars.hosts."remotebundle".address}:${toString mailserverExporters.dovecot.port}"
-            ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_nginxlog";
-        static_configs = [
-          {
-            targets = [
-              "${infraVars.hosts."remotebundle".address}:${toString nginxProxyExporters.nginxlog.port}"
-            ];
-          }
-        ];
-      }
-    ];
+          };
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "rspamd")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "dovecot";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "dovecot")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "nginxlog";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "nginxlog")
+              ];
+            }
+          ];
+        }
+      ];
   };
 
   services.loki.configuration.server = {
