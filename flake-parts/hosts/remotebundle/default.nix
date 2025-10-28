@@ -353,6 +353,7 @@ in
       settings = {
         SERVE_ROBOTS_TXT = true;
         OG_PASSTHROUGH = true;
+        METRICS_BIND_NETWORK = "tcp";
       };
     };
 
@@ -362,8 +363,7 @@ in
         group = "nginx";
         settings = {
           TARGET = "unix:///run/nginx/nginx.sock";
-          METRICS_BIND_NETWORK = "tcp";
-          METRICS_BIND = "127.0.0.1:8081";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."immutable-insights".anubisMetricsPort}";
         };
       };
 
@@ -371,6 +371,7 @@ in
         enable = true;
         settings = {
           TARGET = "http://${virtualHostsVar."forgejo".proxyEndpoint}";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."forgejo".anubisMetricsPort}";
         };
       };
 
@@ -378,6 +379,7 @@ in
         enable = true;
         settings = {
           TARGET = "http://${virtualHostsVar."grafana".proxyEndpoint}";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."grafana".anubisMetricsPort}";
         };
       };
 
@@ -385,6 +387,7 @@ in
         enable = true;
         settings = {
           TARGET = "http://${virtualHostsVar."pgadmin".proxyEndpoint}";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."pgadmin".anubisMetricsPort}";
         };
       };
 
@@ -591,6 +594,11 @@ in
           "${infraVars.hosts.${host}.address}:${
             toString infraVars.hosts.${host}.services.prometheus.exporters.${service}.port
           }";
+        mkAnubisTarget =
+          host: virtualHost:
+          "${infraVars.hosts.${host}.address}:${
+            toString infraVars.hosts.${host}.services.nginx.virtualHosts.${virtualHost}.anubisMetricsPort
+          }";
       in
       [
         {
@@ -674,6 +682,19 @@ in
             {
               targets = [
                 (mkTarget "remotebundle" "nginxlog")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "anubis";
+          static_configs = [
+            {
+              targets = [
+                (mkAnubisTarget "remotebundle" "immutable-insights")
+                (mkAnubisTarget "remotebundle" "pgadmin")
+                (mkAnubisTarget "remotebundle" "grafana")
+                (mkAnubisTarget "remotebundle" "forgejo")
               ];
             }
           ];

@@ -44,6 +44,9 @@ _: rec {
           node = {
             defaultPort = 9100;
           };
+          anubis = {
+            portRangeStart = 26000;
+          };
         };
       };
     };
@@ -143,27 +146,34 @@ _: rec {
           };
           nginx =
             let
+              inherit (common.services.prometheus.exporters.anubis) portRangeStart;
               primaryDomain = "tsandrini.sh";
             in
             {
               inherit primaryDomain;
               virtualHosts = {
+                "immutable-insights" = {
+                  domain = "${primaryDomain}";
+                  anubisMetricsPort = portRangeStart + 0;
+                };
                 "pgadmin" = {
                   domain = "pgadmin.${primaryDomain}";
                   proxyEndpoint = "${address}:${toString hosts."remotebundle".services.pgadmin.port}";
-                  # anubisMetricsEndpoint = ""
+                  anubisMetricsPort = portRangeStart + 1;
                 };
                 "grafana" = {
                   domain = "grafana.${primaryDomain}";
                   proxyEndpoint = "${hosts."remotebundle".address}:${
                     toString hosts."remotebundle".services.grafana.server.http_port
                   }";
+                  anubisMetricsPort = portRangeStart + 2;
                 };
                 "forgejo" = {
                   domain = "git.${primaryDomain}";
                   proxyEndpoint = "${hosts."remotebundle".address}:${
                     toString hosts."remotebundle".services.forgejo.server.http_port
                   }";
+                  anubisMetricsPort = portRangeStart + 3;
                 };
                 "prometheus" = {
                   domain = "prometheus.${primaryDomain}";
