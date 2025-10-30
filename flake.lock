@@ -1284,11 +1284,11 @@
     },
     "nixpkgs-osu-lazer-bin": {
       "locked": {
-        "lastModified": 1761332642,
-        "narHash": "sha256-qDE1z4Xkj/buG/5dofU4hmFYag3h+DwRfn5h7+ATq7U=",
+        "lastModified": 1761831010,
+        "narHash": "sha256-031yufVkvbfKpsTh0brUGGRgszkqNj3iS3406qE8Zdc=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "a3860e9b3fa58629265dc4025e0d4ddb370ba08b",
+        "rev": "1a19c695c7a589d412093ec6a4d846717289f0bd",
         "type": "github"
       },
       "original": {
