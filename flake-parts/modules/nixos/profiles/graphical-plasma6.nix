@@ -70,6 +70,7 @@ in
         krename # A powerful batch renamer for KDE
         krusader # Norton/Total Commander clone for KDE
         kdePackages.filelight # Disk usage statistics
+        kdePackages.kfind # File search utility by KDE
         kdePackages.kweather
         kdePackages.kweathercore
         kdePackages.quazip # Provides access to ZIP archives from Qt programs
