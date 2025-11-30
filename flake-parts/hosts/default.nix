@@ -133,10 +133,6 @@ in
         extraOverlays = sharedOverlays;
         extraModules = [
           inputs.nixos-generators.nixosModules.all-formats
-          {
-            nixpkgs.buildPlatform = "x86_64-linux";
-            nixpkgs.hostPlatform = "aarch64-linux";
-          }
         ];
         extraSpecialArgs = {
           inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi

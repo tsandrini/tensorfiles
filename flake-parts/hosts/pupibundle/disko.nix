@@ -12,6 +12,50 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ lib, ... }:
+let
+  firmwarePartition = lib.recursiveUpdate {
+    priority = 1;
+    type = "0700"; # Microsoft basic data
+    attributes = [
+      0 # Required Partition
+    ];
+
+    size = "1024M";
+    content = {
+      type = "filesystem";
+      format = "vfat";
+      # mountpoint = "/boot/firmware";
+      mountOptions = [
+        "noatime"
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.idle-timeout=1min"
+      ];
+    };
+  };
+
+  espPartition = lib.recursiveUpdate {
+    type = "EF00"; # EFI System Partition (ESP)
+    attributes = [
+      2 # Legacy BIOS Bootable, for U-Boot to find extlinux config
+    ];
+
+    size = "1024M";
+    content = {
+      type = "filesystem";
+      format = "vfat";
+      # mountpoint = "/boot";
+      mountOptions = [
+        "noatime"
+        "noauto"
+        "x-systemd.automount"
+        "x-systemd.idle-timeout=1min"
+        "umask=0077"
+      ];
+    };
+  };
+in
 {
   disko.devices = {
     disk = {
@@ -21,15 +65,13 @@
         content = {
           type = "gpt";
           partitions = {
-            boot = {
-              size = "512M";
-              type = "EF00";
-              content = {
-                type = "filesystem";
-                format = "vfat";
-                mountpoint = "/boot/firmware";
-                mountOptions = [ "umask=0077" ];
-              };
+            FIRMWARE = firmwarePartition {
+              label = "FIRMWARE";
+              content.mountpoint = "/boot/firmware";
+            };
+            ESP = espPartition {
+              label = "ESP";
+              content.mountpoint = "/boot";
             };
             swap = {
               size = "4G";

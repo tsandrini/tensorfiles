@@ -15,7 +15,6 @@
 { inputs }:
 {
   pkgs,
-  system,
   nixos-raspberrypi,
   ...
 }:
@@ -28,26 +27,25 @@
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
-  imports =
-    [
-      # (inputs.nix-mineral + "/nix-mineral.nix")
-      # ./nm-overrides.nix
-      inputs.disko.nixosModules.disko
+  imports = [
+    # (inputs.nix-mineral + "/nix-mineral.nix")
+    # ./nm-overrides.nix
+    inputs.disko.nixosModules.disko
 
-      ./hardware-configuration.nix
-      ./disko.nix
-    ]
-    ++ (with nixos-raspberrypi.nixosModules; [
-      raspberry-pi-5.base
-      raspberry-pi-5.page-size-16k
-      raspberry-pi-5.display-vc4
-      raspberry-pi-5.bluetooth
-    ]);
+    ./hardware-configuration.nix
+    ./disko.nix
+  ]
+  ++ (with nixos-raspberrypi.nixosModules; [
+    raspberry-pi-5.base
+    raspberry-pi-5.page-size-16k
+    raspberry-pi-5.display-vc4
+    raspberry-pi-5.bluetooth
+  ]);
 
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = [ pkgs.raspberrypi-eeprom ];
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -90,6 +88,9 @@
       ];
     }
   ];
+
+  boot.loader.raspberryPi.bootloader = "kernel";
+  boot.tmp.useTmpfs = true;
 
   # nix-mineral.enable = true;
 }
