@@ -42,10 +42,11 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    libva-utils
-    docker-compose
-    wireguard-tools
+  environment.systemPackages = [
+    pkgs.libva-utils
+    pkgs.docker-compose
+    pkgs.wireguard-tools
+    pkgs.claude-code
   ];
 
   # ----------------------------
@@ -192,6 +193,7 @@ in
 
     home.packages = [
       pkgs-osu-lazer-bin.osu-lazer-bin
+      pkgs.olympus
     ];
   };
 }
