@@ -65,6 +65,9 @@ _: rec {
           tsandrini = { };
         };
         services = {
+          immich = {
+            port = 2283;
+          };
           grafana = {
             server = {
               http_port = 3001;
@@ -95,6 +98,7 @@ _: rec {
               http_addr = "localhost";
             };
             exporters = {
+              node.port = common.services.prometheus.exporters.node.defaultPort;
               postgres = {
                 port = 9187;
               };
@@ -128,6 +132,10 @@ _: rec {
               "forgejo" = {
                 database = "forgejo";
                 user = "forgejo";
+              };
+              "immich" = {
+                database = "immich";
+                user = "immich";
               };
               "firefly-iii" = {
                 database = "firefly-iii";
@@ -181,8 +189,33 @@ _: rec {
                     toString hosts."remotebundle".services.prometheus.server.http_port
                   }";
                 };
+                "immich" = {
+                  domain = "pics.${primaryDomain}";
+                  proxyEndpoint = "${hosts."remotebundle".address}:${
+                    toString hosts."remotebundle".services.immich.port
+                  }";
+                };
               };
             };
+        };
+      };
+    # ----------------------------------
+    "pupibundle" =
+      let
+        address = "10.10.0.10";
+      in
+      {
+        inherit address;
+        users = {
+          root = { };
+          tsandrini = { };
+        };
+        services = {
+          prometheus = {
+            exporters = {
+              node.port = common.services.prometheus.exporters.node.defaultPort;
+            };
+          };
         };
       };
     # ----------------------------------

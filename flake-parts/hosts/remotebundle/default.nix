@@ -46,6 +46,9 @@ let
   # --- forgejo ---
   forgejoVars = infraVars.hosts."remotebundle".services.forgejo;
 
+  # --- immich ---
+  immichVars = infraVars.hosts."remotebundle".services.immich;
+
   # --- prometheus exporters ---
   mailserverExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
 in
@@ -124,6 +127,13 @@ in
       agenixPassword.enable = true;
       extraGroups = [ "input" ];
     };
+  };
+
+  # NAS
+  fileSystems."/mnt/NAS" = {
+    device = "172.16.131.12:/nas/5829";
+    fsType = "nfs";
+    options = [ "nofail" ];
   };
 
   # Mailserver
@@ -275,7 +285,40 @@ in
         proxyPass = "http://${virtualHostsVar."prometheus".proxyEndpoint}";
       };
     };
+
+    virtualHosts."${virtualHostsVar."immich".domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://${virtualHostsVar."immich".proxyEndpoint}";
+        extraConfig = ''
+          client_max_body_size 50000M;
+          proxy_read_timeout   600s;
+          proxy_send_timeout   600s;
+          send_timeout         600s;
+        '';
+      };
+    };
   };
+
+  services.immich = {
+    enable = true;
+    inherit (immichVars) port;
+    accelerationDevices = null;
+    database = {
+      enable = true;
+      createDB = false;
+      host = "/run/postgresql";
+      inherit (postgresVars.instances."immich") user;
+      name = postgresVars.instances."immich".database;
+    };
+  };
+
+  # HW acceleration
+  users.users."${config.services.immich.user}".extraGroups = [
+    "video"
+    "render"
+  ];
 
   services.forgejo = {
     enable = true;
@@ -284,6 +327,8 @@ in
       createDatabase = false;
       type = "postgres";
       socket = "/run/postgresql";
+      inherit (postgresVars.instances."forgejo") user;
+      name = postgresVars.instances."forgejo".database;
     };
     settings = {
       server = {
@@ -424,9 +469,9 @@ in
 
       database = {
         type = "postgres";
-        name = "grafana";
         host = "/run/postgresql";
-        user = "grafana";
+        inherit (postgresVars.instances."grafana") user;
+        name = postgresVars.instances."grafana".database;
       };
       # NOTE enable again on init
       security.disable_initial_admin_creation = true;
@@ -471,14 +516,6 @@ in
               options.path = ./grafana/dashboards/node-exporter-full.json;
             }
             {
-              name = "Logs / App";
-              options.path = ./grafana/dashboards/logs-app.json;
-            }
-            {
-              name = "Prometheus 2.0 Overview";
-              options.path = ./grafana/dashboards/prometheus-2-0-overview.json;
-            }
-            {
               name = "NGINX by nginxinc";
               options.path = ./grafana/dashboards/nginx-by-nginxinc.json;
             }
@@ -486,25 +523,41 @@ in
               name = "PostgreSQL Database";
               options.path = ./grafana/dashboards/postgresql-database.json;
             }
+            # --- Logs ---
+            {
+              name = "Logs / App";
+              options.path = ./grafana/dashboards/logs-app.json;
+              folder = "Logs & Loki";
+            }
             {
               name = "Loki & Promtail";
               options.path = ./grafana/dashboards/loki-and-promtail.json;
             }
             {
+              name = "Loki Metrics Dashboard";
+              options.path = ./grafana/dashboards/loki-metrics-dashboard.json;
+              folder = "Logs & Loki";
+            }
+            # --- Mailserver ---
+            {
               name = "dovecot2 (old_stats) overview by tsandrini";
               options.path = ./grafana/dashboards/dovecot2-old-stats-overview-by-tsandrini.json;
+              folder = "Mailserver";
             }
             {
               name = "Postfix";
               options.path = ./grafana/dashboards/postfix.json;
+              folder = "Mailserver";
             }
             {
               name = "Postfix overview by tsandrini";
               options.path = ./grafana/dashboards/postfix-overview-by-tsandrini.json;
+              folder = "Mailserver";
             }
             {
               name = "Rspamd stat overview by tsandrini";
               options.path = ./grafana/dashboards/rspamd-stat-overview-by-tsandrini.json;
+              folder = "Mailserver";
             }
           ];
     };
@@ -521,6 +574,7 @@ in
       # Allow grafana user to connect via local socket with peer auth (no password)
       local   all potgres                                             peer
       local   all ${postgresVars.instances."grafana".user}            peer
+      local   all ${postgresVars.instances."immich".user}             peer
       local   all ${postgresVars.instances."forgejo".user}            peer
       local   all ${postgresVars.instances."firefly-iii".user}        peer
 
@@ -535,6 +589,7 @@ in
     '';
     ensureDatabases = [
       postgresVars.instances."grafana".database
+      postgresVars.instances."immich".database
       postgresVars.instances."forgejo".database
       postgresVars.instances."firefly-iii".database
     ];
@@ -558,6 +613,10 @@ in
       }
       {
         name = postgresVars.instances."firefly-iii".user;
+        ensureDBOwnership = true;
+      }
+      {
+        name = postgresVars.instances."immich".user;
         ensureDBOwnership = true;
       }
     ];
@@ -605,7 +664,10 @@ in
           job_name = "NixOS-node-exporter";
           static_configs = [
             {
-              targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+              # targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+              targets = [
+                (mkTarget "remotebundle" "node")
+              ];
             }
           ];
         }
