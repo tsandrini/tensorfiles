@@ -160,6 +160,9 @@ in
           "systemd"
         ];
         port = _ cfg.prometheus.exporters.node.port;
+        firewallRules = ''
+          ip saddr 10.0.0.0/8 tcp dport ${toString config.services.prometheus.exporters.rspamd.port} accept
+        '';
       };
     })
   ]);
