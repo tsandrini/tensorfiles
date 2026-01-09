@@ -30,6 +30,20 @@ let
 
   cfg = config.tensorfiles.misc.nix;
   _ = mkOverrideAtModuleLevel;
+
+  substituters = [
+    "https://cache.nixos.org"
+    "https://nix-community.cachix.org/"
+    "https://devenv.cachix.org"
+    "https://tsandrini.cachix.org"
+    "https://cache.vpsadminos.org"
+    "https://nixpkgs-wayland.cachix.org"
+    "https://nix-gaming.cachix.org"
+    "https://cache.lix.systems"
+    "https://nixos-raspberrypi.cachix.org"
+    # "https://hyprland.cachix.org"
+    # "https://anyrun.cachix.org"
+  ];
 in
 {
   options.tensorfiles.misc.nix = {
@@ -53,19 +67,8 @@ in
         settings = {
           auto-optimise-store = _ true;
           builders-use-substitutes = _ true;
-          trusted-substituters = [
-            "https://cache.nixos.org"
-            "https://nix-community.cachix.org/"
-            "https://devenv.cachix.org"
-            "https://tsandrini.cachix.org"
-            "https://cache.vpsadminos.org"
-            "https://nixpkgs-wayland.cachix.org"
-            "https://nix-gaming.cachix.org"
-            "https://cache.lix.systems"
-            "https://nixos-raspberrypi.cachix.org"
-            # "https://hyprland.cachix.org"
-            # "https://anyrun.cachix.org"
-          ];
+          inherit substituters;
+          trusted-substituters = substituters;
           trusted-public-keys = [
             "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
             "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="

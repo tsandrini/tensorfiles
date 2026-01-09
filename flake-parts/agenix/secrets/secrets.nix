@@ -17,7 +17,7 @@ let
   jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
-  pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIeZq4IufhkS27VvvYbeLVQG40BTN78d9AziJyroQeNE root@pupibundle";
+  pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINLvjzkKLhKbaRU/uf3A+pf25rir3y+6mvcbaAxt2DHP root@pupibundle";
 
   hosts = [
     spinorbundle
@@ -91,6 +91,9 @@ in
   ]
   ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/git-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ];
+  "hosts/remotebundle/mailserver/immich-bot-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
   ]
   ++ [ tsandrini ];

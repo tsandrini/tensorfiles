@@ -56,6 +56,7 @@
       headless.enable = true;
       packages-base.enable = true;
       # packages-extra.enable = true;
+
       # with-base-monitoring-exports.enable = true;
       # with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
     };
@@ -88,9 +89,6 @@
       ];
     }
   ];
-
-  boot.loader.raspberryPi.bootloader = "kernel";
-  boot.tmp.useTmpfs = true;
 
   # nix-mineral.enable = true;
 }

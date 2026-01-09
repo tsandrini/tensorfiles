@@ -17,10 +17,6 @@ let
   firmwarePartition = lib.recursiveUpdate {
     priority = 1;
     type = "0700"; # Microsoft basic data
-    attributes = [
-      0 # Required Partition
-    ];
-
     size = "1024M";
     content = {
       type = "filesystem";
@@ -37,10 +33,6 @@ let
 
   espPartition = lib.recursiveUpdate {
     type = "EF00"; # EFI System Partition (ESP)
-    attributes = [
-      2 # Legacy BIOS Bootable, for U-Boot to find extlinux config
-    ];
-
     size = "1024M";
     content = {
       type = "filesystem";

@@ -19,12 +19,11 @@ let
 
   hostPath =
     system: name: deploy-rs.lib.${system}.activate.nixos config.flake.nixosConfigurations.${name};
-in
-{
 
-  flake.deploy.nodes = {
-    "remotebundle" = {
-      hostname = infraVars.hosts."remotebundle".publicAddress;
+  deployHost =
+    hostName: system: opts:
+    {
+      hostname = infraVars.hosts.${hostName}.address;
 
       profiles.system = {
         user = "root";
@@ -35,26 +34,18 @@ in
         ];
         autoRollback = true;
         magicRollback = true;
-
-        path = hostPath "x86_64-linux" "remotebundle";
+        path = hostPath system hostName;
       };
+    }
+    // opts;
+in
+{
+
+  flake.deploy.nodes = {
+    "remotebundle" = deployHost "remotebundle" "x86_64-linux" {
+      hostname = infraVars.hosts."remotebundle".publicAddress;
     };
-    # "pupibundle" = {
-    #   hostname = "10.10.0.10";
-    #
-    #   profiles.system = {
-    #     user = "root";
-    #     sshUser = "tsandrini"; # TODO: add deploy user?
-    #     sshOpts = [
-    #       "-p"
-    #       "2222"
-    #     ];
-    #     autoRollback = true;
-    #     magicRollback = true;
-    #
-    #     path = hostPath "x86_64-linux" "remotebundle";
-    #   };
-    # };
+    "pupibundle" = deployHost "pupibundle" "aarch64-linux" { };
   };
 
   flake.checks = builtins.mapAttrs (

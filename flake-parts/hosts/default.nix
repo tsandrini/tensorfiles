@@ -129,7 +129,7 @@ in
     pupibundle = withSystem "aarch64-linux" (
       args:
       mkHost args "pupibundle" {
-        initFunction = inputs.nixos-raspberrypi.lib.nixosSystem;
+        initFunction = inputs.nixos-raspberrypi.lib.nixosSystemFull;
         extraOverlays = sharedOverlays;
         extraModules = [
           inputs.nixos-generators.nixosModules.all-formats
