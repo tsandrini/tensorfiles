@@ -302,6 +302,7 @@ in
                 sponsorblock # Easily skip YouTube video sponsors
                 aw-watcher-web # This extension logs the current tab and your browser activity to ActivityWatch.
                 darkreader # Dark mode for every website. Take care of your eyes, use dark theme for night and daily browsing.
+                auto-tab-discard # Increase browser speed and reduce memory load and when you have numerous open tabs
 
                 # DEV related
                 vue-js-devtools # DevTools extension for debugging Vue.js applications.
