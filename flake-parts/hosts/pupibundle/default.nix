@@ -57,8 +57,8 @@
       packages-base.enable = true;
       # packages-extra.enable = true;
 
-      # with-base-monitoring-exports.enable = true;
-      # with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
+      with-base-monitoring-exports.enable = true;
+      with-base-monitoring-exports.prometheus.exporters.node.openFirewall = true;
     };
 
     services.networking.networkmanager.enable = false;

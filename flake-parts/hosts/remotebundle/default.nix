@@ -667,6 +667,7 @@ in
               # targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
               targets = [
                 (mkTarget "remotebundle" "node")
+                (mkTarget "pupibundle" "node")
               ];
             }
           ];
