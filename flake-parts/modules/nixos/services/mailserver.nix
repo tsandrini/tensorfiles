@@ -235,7 +235,7 @@ in
 
         # Use Let's Encrypt certificates. Note that this needs to set up a stripped
         # down nginx and opens port 80.
-        certificateScheme = _ "acme-nginx";
+        # certificateScheme = _ "acme-nginx"; # NOTE: no longer any effect
         enableManageSieve = _ true;
         virusScanning = _ false;
 
@@ -244,8 +244,19 @@ in
           alertAddress = _ "monitoring@${cfg.baseDomain}";
         };
       };
-      security.acme.acceptTerms = _ true;
-      security.acme.defaults.email = _ "security@${cfg.baseDomain}";
+
+      security.acme = {
+        acceptTerms = _ true;
+        defaults.email = _ "security@${cfg.baseDomain}";
+      };
+      services.nginx = {
+        enable = _ true;
+        virtualHosts.${config.mailserver.fqdn} = {
+          enableACME = _ true;
+        };
+      };
+
+      mailserver.x509.useACMEHost = _ config.mailserver.fqdn;
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.roundcube.enable {
@@ -271,7 +282,7 @@ in
         extraConfig = ''
           # starttls needed for authentication, so the fqdn required to match
           # the certificate
-          $config['smtp_server'] = "tls://${config.mailserver.fqdn}";
+          $config['smtp_server'] = "ssl://${config.mailserver.fqdn}";
           $config['imap_host'] = "ssl://${config.mailserver.fqdn}";
           $config['smtp_user'] = "%u";
           $config['smtp_pass'] = "%p";

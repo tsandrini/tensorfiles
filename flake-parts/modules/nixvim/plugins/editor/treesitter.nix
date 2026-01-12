@@ -41,7 +41,7 @@ in
           indent.enable = _ true;
           highlight.enable = _ true;
         };
-        folding = _ true;
+        folding.enable = _ true;
         nixvimInjections = _ true;
         nixGrammars = _ true;
         # grammarPackages = _ pkgs.vimPlugins.nvim-treesitter.allGrammars;

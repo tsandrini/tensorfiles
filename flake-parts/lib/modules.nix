@@ -211,7 +211,8 @@ rec {
           platforms = [ ];
           maintainers = [ ];
         };
-      } // args;
+      }
+      // args;
     in
     stdenv.mkDerivation finalArgs;
 }

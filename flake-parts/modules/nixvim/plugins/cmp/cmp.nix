@@ -196,8 +196,8 @@ in
             ];
 
             window = {
-              completion.__raw = ''cmp.config.window.bordered()'';
-              documentation.__raw = ''cmp.config.window.bordered()'';
+              completion.__raw = "cmp.config.window.bordered()";
+              documentation.__raw = "cmp.config.window.bordered()";
             };
           };
         };

@@ -153,8 +153,8 @@ in
             primary = _ true;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "mail.${defaultDomain}";
-            smtp.port = _ 587;
-            smtp.tls.useStartTls = _ true;
+            smtp.port = _ 465;
+            smtp.tls.useStartTls = _ false;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
             notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
@@ -180,8 +180,8 @@ in
             primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "mail.${defaultDomain}";
-            smtp.port = _ 587;
-            smtp.tls.useStartTls = _ true;
+            smtp.port = _ 465;
+            smtp.tls.useStartTls = _ false;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
             notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
@@ -207,8 +207,8 @@ in
             primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "mail.${defaultDomain}";
-            smtp.port = _ 587;
-            smtp.tls.useStartTls = _ true;
+            smtp.port = _ 465;
+            smtp.tls.useStartTls = _ false;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
             notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
@@ -234,8 +234,8 @@ in
             primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "mail.tsandrini.sh";
-            smtp.port = _ 587;
-            smtp.tls.useStartTls = _ true;
+            smtp.port = _ 465;
+            smtp.tls.useStartTls = _ false;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
             notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
@@ -261,8 +261,8 @@ in
             primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "mail.${defaultDomain}";
-            smtp.port = _ 587;
-            smtp.tls.useStartTls = _ true;
+            smtp.port = _ 465;
+            smtp.tls.useStartTls = _ false;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
             notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
@@ -288,8 +288,8 @@ in
             primary = _ false;
             realName = _ "Tomáš Sandrini";
             smtp.host = _ "mail.${defaultDomain}";
-            smtp.port = _ 587;
-            smtp.tls.useStartTls = _ true;
+            smtp.port = _ 465;
+            smtp.tls.useStartTls = _ false;
             thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
             neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
             notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");

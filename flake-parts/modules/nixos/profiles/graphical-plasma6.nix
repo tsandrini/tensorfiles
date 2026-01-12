@@ -56,7 +56,7 @@ in
 
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
-        glxinfo # Test utilities for OpenGL
+        mesa-demos # Test utilities for OpenGL
         vulkan-tools # Khronos official Vulkan Tools and Utilities
         wayland-utils # Wayland utilities (wayland-info)
         aha # ANSI HTML Adapter

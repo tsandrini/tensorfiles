@@ -197,49 +197,48 @@ in
                 allow_workspace_cycles = _ true;
               };
 
-              bind =
-                [
-                  "SUPER, Return, exec, kitty"
-                  "SUPER SHIFT, Q, killactive,"
-                  "SUPER, D, exec, anyrun"
+              bind = [
+                "SUPER, Return, exec, kitty"
+                "SUPER SHIFT, Q, killactive,"
+                "SUPER, D, exec, anyrun"
 
-                  "SUPER, T, togglefloating"
-                  "SUPER, R, togglesplit"
-                  "SUPER, Tab, workspace, previous"
-                  "SUPER, Space, fullscreen"
+                "SUPER, T, togglefloating"
+                "SUPER, R, togglesplit"
+                "SUPER, Tab, workspace, previous"
+                "SUPER, Space, fullscreen"
 
-                  "SUPER, h, movefocus, l"
-                  "SUPER, l, movefocus, r"
-                  "SUPER, k, movefocus, u"
-                  "SUPER, j, movefocus, d"
+                "SUPER, h, movefocus, l"
+                "SUPER, l, movefocus, r"
+                "SUPER, k, movefocus, u"
+                "SUPER, j, movefocus, d"
 
-                  "SUPER SHIFT, j, swapnext,"
-                  "SUPER SHIFT, k, swapnext, prev"
+                "SUPER SHIFT, j, swapnext,"
+                "SUPER SHIFT, k, swapnext, prev"
 
-                  "SUPER,B,layoutmsg,swapwithmaster master" # TODO debug
-                ]
-                ++ (map (x: "SUPER, ${toString x}, workspace, ${toString x}") [
-                  1
-                  2
-                  3
-                  4
-                  5
-                  6
-                  7
-                  8
-                  9
-                ])
-                ++ (map (x: "SUPER SHIFT, ${toString x}, movetoworkspace, ${toString x}") [
-                  1
-                  2
-                  3
-                  4
-                  5
-                  6
-                  7
-                  8
-                  9
-                ]);
+                "SUPER,B,layoutmsg,swapwithmaster master" # TODO debug
+              ]
+              ++ (map (x: "SUPER, ${toString x}, workspace, ${toString x}") [
+                1
+                2
+                3
+                4
+                5
+                6
+                7
+                8
+                9
+              ])
+              ++ (map (x: "SUPER SHIFT, ${toString x}, movetoworkspace, ${toString x}") [
+                1
+                2
+                3
+                4
+                5
+                6
+                7
+                8
+                9
+              ]);
 
               bindm = [
                 "SUPER, mouse:273, resizewindow"

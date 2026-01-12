@@ -73,7 +73,7 @@ in
         lzop # Fast file compressor
         p7zip # A new p7zip fork with additional codecs and improvements (forked from https://sourceforge.net/projects/p7zip/)
         rzip # Compression program
-        lha # LHa is an archiver and compressor using the LZSS and Huffman encoding compression algorithms
+        # lha # LHa is an archiver and compressor using the LZSS and Huffman encoding compression algorithms
         rar # Utility for RAR archives
         unrar # Utility for RAR archives # NOTE collision with rar
 

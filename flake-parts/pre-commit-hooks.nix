@@ -29,7 +29,7 @@
         # --- Nix ---
         deadnix.enable = true; # Find and remove unused code in .nix source files
         nil.enable = true; # Nix Language server, an incremental analysis assistant for writing in Nix.
-        nixfmt-rfc-style.enable = true; # An opinionated formatter for Nix
+        nixfmt.enable = true; # An opinionated formatter for Nix
         statix.enable = true; # Lints and suggestions for the nix programming language
 
         # --- Shell ---

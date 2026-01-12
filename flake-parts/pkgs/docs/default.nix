@@ -184,15 +184,14 @@ stdenv.mkDerivation {
   src = ./.;
   name = "tensorfiles-docs";
 
-  buildInput =
-    [
-      options-doc
-      lib-doc
-    ]
-    ++ (with READMEs; [
-      main
-      hosts."spinorbundle"
-    ]);
+  buildInput = [
+    options-doc
+    lib-doc
+  ]
+  ++ (with READMEs; [
+    main
+    hosts."spinorbundle"
+  ]);
 
   nativeBuildInputs = [
     (python3.withPackages (

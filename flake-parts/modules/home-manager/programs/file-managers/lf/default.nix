@@ -197,7 +197,8 @@ let
       paths = [
         script
         cfg.pkg
-      ] ++ buildInputs;
+      ]
+      ++ buildInputs;
       buildInputs = [ pkgs.makeWrapper ];
       postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
     };
@@ -219,7 +220,8 @@ let
       paths = [
         script
         cfg.pkg
-      ] ++ buildInputs;
+      ]
+      ++ buildInputs;
       buildInputs = [ pkgs.makeWrapper ];
       postBuild = "wrapProgram $out/bin/${name} --prefix PATH : $out/bin";
     };

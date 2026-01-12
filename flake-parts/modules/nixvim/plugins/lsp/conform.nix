@@ -111,7 +111,7 @@ in
               "isort"
             ];
             lua = [ "stylua" ];
-            nix = [ "nixfmt-rfc-style" ];
+            nix = [ "nixfmt" ];
             markdown = [
               [
                 "prettierd"
@@ -145,8 +145,8 @@ in
             alejandra = {
               command = _ "${lib.getExe pkgs.alejandra}";
             };
-            nixfmt-rfc-style = {
-              command = _ "${lib.getExe pkgs.nixfmt-rfc-style}";
+            nixfmt = {
+              command = _ "${lib.getExe pkgs.nixfmt}";
             };
             jq = {
               command = _ "${lib.getExe pkgs.jq}";

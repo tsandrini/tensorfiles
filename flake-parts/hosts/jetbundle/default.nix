@@ -47,10 +47,10 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    libva-utils
-    docker-compose
-    wireguard-tools
+  environment.systemPackages = [
+    pkgs.libva-utils
+    pkgs.docker-compose
+    pkgs.wireguard-tools
   ];
 
   # ----------------------------

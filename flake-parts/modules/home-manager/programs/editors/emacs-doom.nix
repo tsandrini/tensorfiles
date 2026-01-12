@@ -220,7 +220,7 @@ in
         #alejandra # The Uncompromising Nix Code Formatter
         statix # Lints and suggestions for the nix programming language
         deadnix # Find and remove unused code in .nix source files
-        nixfmt-rfc-style # An opinionated formatter for Nix
+        nixfmt # An opinionated formatter for Nix
       ];
 
       services.emacs = {

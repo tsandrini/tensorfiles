@@ -93,7 +93,7 @@ in
             # TODO not sure which package to install, maybe
             # vscode-extensions.julialang.language-julia ??
             # julials.enable = _ true; # julials for Julia
-            leanls.enable = _ true; # leanls for Lean"
+            # leanls.enable = _ true; # leanls for Lean"
             lua_ls.enable = _ true; # lua-ls for Lua
             nginx_language_server.enable = _ true; # nginx-language-server for `nginx.conf`
             nil_ls.enable = _ true; # nil for Nix
