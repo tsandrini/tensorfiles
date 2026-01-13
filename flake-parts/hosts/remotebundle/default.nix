@@ -461,7 +461,7 @@ in
 
       smtp = {
         enabled = true;
-        host = "mail.tsandrini.sh:587";
+        host = "mail.tsandrini.sh:465";
         user = "grafana-bot@tsandrini.sh";
         password = "$__file{${config.age.secrets."hosts/${hostName}/grafana-bot-mail-password".path}}";
         fromAddress = "grafana-bot@tsandrini.sh";

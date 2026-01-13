@@ -14,6 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
 {
+  config,
   pkgs,
   nixos-raspberrypi,
   ...
@@ -90,6 +91,15 @@
     }
   ];
 
+  # networking.firewall = {
+  #   allowedTCPPorts = [
+  #     80
+  #     443
+  #   ];
+  #   allowedUDPPorts = [
+  #   ];
+  # };
+
   networking = {
     interfaces.end0.ipv4.addresses = [
       {
@@ -98,10 +108,112 @@
       }
     ];
     defaultGateway = "10.10.0.1";
-
-    # # Make the Pi itself resolve via Pi-hole (which forwards to Unbound)
-    # nameservers = [ "127.0.0.1" ];
+    nameservers = [ "127.0.0.1" ];
   };
 
   # nix-mineral.enable = true;
+
+  # free up :53 (Pi-hole needs it; systemd-resolved otherwise grabs 127.0.0.53:53)
+  services.resolved.extraConfig = ''
+    DNSStubListener=no
+  '';
+
+  services.dnsmasq.enable = false;
+
+  services.unbound = {
+    enable = true;
+
+    settings = {
+      server = {
+        interface = [ "127.0.0.1" ];
+        port = 5335;
+        access-control = [ "127.0.0.1 allow" ];
+
+        # security hardening defaults
+        harden-glue = true;
+        harden-dnssec-stripped = true;
+        use-caps-for-id = false;
+        prefetch = true;
+        edns-buffer-size = 1232;
+        hide-identity = true;
+        hide-version = true;
+
+        # Keep RFC1918 / link-local from being leaked upstream
+        private-address = [
+          "10.0.0.0/8"
+          "172.16.0.0/12"
+          "192.168.0.0/16"
+          "169.254.0.0/16"
+        ];
+
+        # Root hints + trust anchor (for fully recursive operation)
+        root-hints = "${pkgs.dns-root-data}/root.hints";
+        auto-trust-anchor-file = "/var/lib/unbound/root.key";
+      };
+    };
+  };
+
+  services.pihole-ftl = {
+    enable = true;
+
+    openFirewallDNS = true;
+    openFirewallWebserver = true;
+
+    lists = [
+      {
+        enabled = true;
+        url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt";
+        type = "block";
+        description = "Big broom - Cleans the Internet and protects your privacy! Blocks Ads, Affiliate, Tracking, Metrics, Telemetry, Phishing, Malware, Scam, Fake, Cryptojacking and other Crap.";
+      }
+      {
+        enabled = true;
+        url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/tif.txt";
+        type = "block";
+        description = "A blocklist for blocking Malware, Cryptojacking, Scam, Spam and Phishing. Blocks domains known to spread malware, launch phishing attacks and host command-and-control servers.";
+      }
+      {
+        enabled = true;
+        url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/fake.txt";
+        type = "block";
+        description = "A blocklist for blocking fake stores, -streaming, rip-offs, cost traps and co.";
+      }
+      {
+        enabled = true;
+        url = "https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/popupads.txt";
+        type = "block";
+        description = "A blocklist for annoying and malicious pop-up ads.";
+      }
+    ];
+
+    settings = {
+      dns = {
+        interface = "end0";
+        listeningMode = "SINGLE";
+        upstreams = [ "127.0.0.1#${toString config.services.unbound.settings.server.port}" ];
+
+        domainNeeded = true;
+        expandHosts = true;
+
+        # hosts = [ "10.10.0.1 mikrobundle" "10.10.0.10 pupibundle" ];
+      };
+
+      webserver = {
+        port = "80r,443s";
+        serve_all = true;
+        interface.theme = "default-darker";
+      };
+
+      # webserver.api.pwhash = "…";
+    };
+  };
+
+  services.pihole-web = {
+    enable = true;
+    ports = [
+      "80r"
+      "443s"
+    ];
+    # hostName = "10.10.0.10";
+  };
 }
