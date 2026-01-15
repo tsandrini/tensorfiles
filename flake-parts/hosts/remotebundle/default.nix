@@ -614,6 +614,15 @@ in
               name = "PostgreSQL Database";
               options.path = ./grafana/dashboards/postgresql-database.json;
             }
+            # --- Pihole ---
+            {
+              name = "Pi-hole Exporter";
+              options.path = ./grafana/dashboards/pi-hole-exporter.json;
+            }
+            {
+              name = "Pi-hole UI";
+              options.path = ./grafana/dashboards/pi-hole-ui.json;
+            }
             # --- Logs ---
             {
               name = "Logs / App";
