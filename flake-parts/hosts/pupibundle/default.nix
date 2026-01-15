@@ -12,13 +12,20 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ inputs }:
+{ inputs, infraVars }:
 {
   config,
   pkgs,
   nixos-raspberrypi,
+  hostName,
   ...
 }:
+let
+  selfVars = infraVars.hosts."${hostName}";
+  prometheusExporters = selfVars.services.prometheus.exporters;
+
+  virtualHostsVar = infraVars.hosts."remotebundle".services.nginx.virtualHosts;
+in
 {
   # -----------------
   # | SPECIFICATION |
@@ -91,27 +98,43 @@
     }
   ];
 
-  # networking.firewall = {
-  #   allowedTCPPorts = [
-  #     80
-  #     443
-  #   ];
-  #   allowedUDPPorts = [
-  #   ];
-  # };
+  tensorfiles.networking.firewall.subnets-firewall = {
+    enable = true;
+    subnets = {
+      "${infraVars.common.networking.defaultSubnet}" = {
+        allowedTCPPorts = [
+          80
+          443
+          prometheusExporters.pihole.port
+        ];
+      };
+      "${infraVars.common.networking.intranetSubnet}" = {
+        allowedTCPPorts = [
+          prometheusExporters.pihole.port
+          80
+          443
+        ];
+      };
+    };
+  };
+
+  networking.firewall = {
+    allowedTCPPorts = [
+    ];
+    allowedUDPPorts = [
+    ];
+  };
 
   networking = {
     interfaces.end0.ipv4.addresses = [
       {
-        address = "10.10.0.10";
+        inherit (selfVars) address;
         prefixLength = 24;
       }
     ];
-    defaultGateway = "10.10.0.1";
+    inherit (infraVars.common.networking) defaultGateway;
     nameservers = [ "127.0.0.1" ];
   };
-
-  # nix-mineral.enable = true;
 
   # free up :53 (Pi-hole needs it; systemd-resolved otherwise grabs 127.0.0.53:53)
   services.resolved.extraConfig = ''
@@ -125,8 +148,16 @@
 
     settings = {
       server = {
+        local-zone = [
+          ''"home.tsandrini.sh." static''
+        ];
+
+        local-data = [
+          ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."remotebundle".wgAddress}"''
+        ];
+
         interface = [ "127.0.0.1" ];
-        port = 5335;
+        inherit (selfVars.services.unbound) port;
         access-control = [ "127.0.0.1 allow" ];
 
         # security hardening defaults
@@ -148,7 +179,7 @@
 
         # Root hints + trust anchor (for fully recursive operation)
         root-hints = "${pkgs.dns-root-data}/root.hints";
-        auto-trust-anchor-file = "/var/lib/unbound/root.key";
+        auto-trust-anchor-file = "/var/lib/unbound/root.key"; # DNSSEC
       };
     };
   };
@@ -199,7 +230,7 @@
       };
 
       webserver = {
-        port = "80r,443s";
+        port = "80";
         serve_all = true;
         interface.theme = "default-darker";
       };
@@ -210,10 +241,40 @@
 
   services.pihole-web = {
     enable = true;
-    ports = [
-      "80r"
-      "443s"
-    ];
-    # hostName = "10.10.0.10";
+    hostName = virtualHostsVar."intra-pihole".domain;
+    ports = [ "80" ];
+  };
+
+  # WARNING API: Failed to read /etc/pihole/versions (key: internal_error)
+  systemd.tmpfiles.rules = [
+    "f /etc/pihole/versions 0644 pihole pihole - -"
+  ];
+
+  # services.home-assistant = {
+  #   enable = true;
+  #   extraComponents = [
+  #     # Components required to complete the onboarding
+  #     "analytics"
+  #     "google_translate"
+  #     "met"
+  #     "radio_browser"
+  #     "shopping_list"
+  #     # Recommended for fast zlib compression
+  #     # https://www.home-assistant.io/integrations/isal
+  #     "isal"
+  #   ];
+  #   config = {
+  #     # Includes dependencies for a basic setup
+  #     # https://www.home-assistant.io/integrations/default_config/
+  #     default_config = { };
+  #   };
+  # };
+
+  services.prometheus.exporters = {
+    pihole = {
+      enable = true;
+      inherit (prometheusExporters.pihole) port;
+      piholeHostname = "localhost";
+    };
   };
 }

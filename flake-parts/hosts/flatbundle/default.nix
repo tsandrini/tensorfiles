@@ -47,6 +47,7 @@ in
     pkgs.docker-compose
     pkgs.wireguard-tools
     pkgs.claude-code
+    pkgs.codex
   ];
 
   # ----------------------------
@@ -60,13 +61,13 @@ in
   tensorfiles = {
     profiles = {
       graphical-plasma6.enable = true;
+
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
     };
 
     security.agenix.enable = true;
-    services.networking.ssh.enable = true;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
@@ -111,9 +112,9 @@ in
   programs.steam = {
     enable = true;
     platformOptimizations.enable = true;
-    extraPackages = with pkgs; [
-      gamescope
-      xwayland-run
+    extraPackages = [
+      pkgs.gamescope
+      pkgs.xwayland-run
     ];
   };
   hardware.graphics.enable32Bit = true;

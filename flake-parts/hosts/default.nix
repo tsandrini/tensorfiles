@@ -138,7 +138,7 @@ in
           inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi
         };
         hostImportArgs = {
-          inherit inputs;
+          inherit inputs infraVars;
         };
       }
     );

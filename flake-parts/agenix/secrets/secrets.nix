@@ -61,6 +61,9 @@ in
     remotebundle
   ]
   ++ [ tsandrini ];
+  "hosts/remotebundle/wedos-wapi-credentials.age".publicKeys = [
+    remotebundle
+  ];
   # mailserver
   "hosts/remotebundle/mailserver/t-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle

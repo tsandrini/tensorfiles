@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, infraVars }:
 {
   config,
   lib,
@@ -51,6 +51,19 @@ in
         interactiveShellInit = lib.mkBefore ''
           ${lib.getExe pkgs.microfetch}
         '';
+      };
+
+      services.openssh.openFirewall = false;
+      tensorfiles.networking.firewall.subnets-firewall = {
+        enable = true;
+        subnets = {
+          "${infraVars.common.networking.defaultSubnet}" = {
+            allowedTCPPorts = config.services.openssh.ports;
+          };
+          "${infraVars.common.networking.intranetSubnet}" = {
+            allowedTCPPorts = config.services.openssh.ports;
+          };
+        };
       };
 
       services.getty.autologinUser = _ "root";

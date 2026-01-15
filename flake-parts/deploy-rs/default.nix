@@ -40,12 +40,13 @@ let
     // opts;
 in
 {
-
   flake.deploy.nodes = {
     "remotebundle" = deployHost "remotebundle" "x86_64-linux" {
-      hostname = infraVars.hosts."remotebundle".publicAddress;
+      hostname = infraVars.hosts."remotebundle".wgAddress;
     };
-    "pupibundle" = deployHost "pupibundle" "aarch64-linux" { };
+    "pupibundle" = deployHost "pupibundle" "aarch64-linux" {
+      remoteBuild = true;
+    };
   };
 
   flake.checks = builtins.mapAttrs (

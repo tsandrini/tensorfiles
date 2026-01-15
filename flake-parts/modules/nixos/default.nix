@@ -29,6 +29,11 @@ in
     # -- misc --
     misc_nix = importApply ./misc/nix.nix { inherit inputs localFlake; };
 
+    # -- networking --
+    networking_firewall_subnets-firewall = importApply ./networking/firewall/subnets-firewall.nix {
+      inherit localFlake;
+    };
+
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_packages-base = importApply ./profiles/packages-base.nix { inherit localFlake; };
@@ -45,7 +50,7 @@ in
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
-    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
+    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake infraVars; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
     profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
       inherit localFlake infraVars;

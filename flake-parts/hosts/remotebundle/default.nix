@@ -51,6 +51,38 @@ let
 
   # --- prometheus exporters ---
   mailserverExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
+
+  certbotWedosHomeEnv = pkgs.python3.withPackages (ps: [
+    inputs.self.packages.${system}.certbot-dns-wedos
+    ps.certbot
+  ]);
+  certbotWedosCertDir = "/var/lib/certbot-wedos-home/config/live";
+
+  mkIntraVhost =
+    attrs:
+    {
+      listen = [
+        {
+          addr = selfVars.wgAddress;
+          port = 443;
+          ssl = true;
+        }
+        {
+          addr = selfVars.wgAddress;
+          port = 80;
+        }
+      ];
+      forceSSL = true;
+      sslCertificate = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/fullchain.pem";
+      sslCertificateKey = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/privkey.pem";
+
+      extraConfig = ''
+        allow 10.0.33.0/24;
+        allow 10.10.0.0/24;
+        deny all;
+      '';
+    }
+    // attrs;
 in
 {
   # -----------------
@@ -149,6 +181,29 @@ in
 
   nix-mineral.enable = true;
 
+  security.sudo.extraRules = [
+    {
+      users = [ "tsandrini" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
+  tensorfiles.networking.firewall.subnets-firewall = {
+    enable = true;
+    subnets = {
+      "${infraVars.common.networking.defaultSubnet}" = {
+        allowedTCPPorts = [ ];
+      };
+      "${infraVars.common.networking.intranetSubnet}" = {
+        allowedTCPPorts = [ ];
+      };
+    };
+  };
   networking.firewall = {
     allowedTCPPorts = [
       80
@@ -161,7 +216,7 @@ in
 
   networking.wireguard.interfaces = {
     wg-home-tunnel = {
-      ips = [ "10.0.33.13/32" ];
+      ips = [ "${selfVars.wgAddress}/32" ];
       listenPort = 51821;
       privateKeyFile = config.age.secrets."hosts/${hostName}/wg-home-tunnel-privkey".path;
 
@@ -299,7 +354,43 @@ in
         '';
       };
     };
+
+    # --- HOME intranet ---
+    virtualHosts."intra-default-sink" = {
+      serverName = "~^(.+)\\.home\\.tsandrini\\.sh$";
+
+      forceSSL = true;
+      sslCertificate = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/fullchain.pem";
+      sslCertificateKey = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/privkey.pem";
+
+      locations."= /unauthorized.html" = {
+        root = "/etc/nginx-static";
+        extraConfig = "internal;";
+      };
+
+      locations."/" = {
+        extraConfig = ''
+          error_page 403 /unauthorized.html;
+          return 403;
+        '';
+      };
+
+      extraConfig = ''
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
+        add_header Pragma "no-cache" always;
+        add_header Expires "0" always;
+      '';
+    };
+
+    virtualHosts."${virtualHostsVar."intra-pihole".domain}" = mkIntraVhost {
+      locations."/" = {
+        proxyWebsockets = true;
+        proxyPass = "http://${virtualHostsVar."intra-pihole".proxyEndpoint}";
+      };
+    };
   };
+
+  environment.etc."nginx-static/unauthorized.html".source = ./unauthorized.html;
 
   services.immich = {
     enable = true;
@@ -740,6 +831,16 @@ in
           ];
         }
         {
+          job_name = "pihole";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "pupibundle" "pihole")
+              ];
+            }
+          ];
+        }
+        {
           job_name = "nginxlog";
           static_configs = [
             {
@@ -807,6 +908,58 @@ in
     ];
   };
 
+  systemd.services.certbot-wedos-home = {
+    description = "Certbot DNS-01 (WEDOS) for ${nginxVars.intranetDomain} wildcard";
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+
+      StateDirectory = "certbot-wedos-home";
+      StateDirectoryMode = "0750";
+      LogsDirectory = "certbot-wedos-home";
+      LogsDirectoryMode = "0750";
+
+      User = "root";
+      Group = config.services.nginx.group;
+      UMask = "0027";
+      PrivateTmp = true;
+      NoNewPrivileges = true;
+
+      ExecStart = ''
+        ${certbotWedosHomeEnv}/bin/certbot certonly \
+          --non-interactive --agree-tos \
+          --email ${infraVars.common.contacts.securityEmail} \
+          --authenticator dns-wedos \
+          --dns-wedos-credentials ${config.age.secrets."hosts/${hostName}/wedos-wapi-credentials".path} \
+          --dns-wedos-propagation-seconds 450 \
+          -d ${nginxVars.intranetDomain} \
+          -d "*.${nginxVars.intranetDomain}" \
+          --config-dir /var/lib/certbot-wedos-home/config \
+          --work-dir /var/lib/certbot-wedos-home/work \
+          --logs-dir /var/log/certbot-wedos-home
+      '';
+    };
+  };
+
+  systemd.timers.certbot-wedos-home = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      RandomizedDelaySec = "1h";
+      Persistent = true;
+    };
+  };
+
+  systemd.tmpfiles.rules = [
+    # allow group traversal down the tree
+    "d /var/lib/certbot-wedos-home 0750 root ${config.services.nginx.group} - -"
+    "d /var/lib/certbot-wedos-home/config 0750 root ${config.services.nginx.group} - -"
+    "d /var/lib/certbot-wedos-home/config/live 0750 root ${config.services.nginx.group} - -"
+    "d /var/lib/certbot-wedos-home/config/archive 0750 root ${config.services.nginx.group} - -"
+  ];
+
   services.prometheus.exporters = {
     postgres = {
       enable = true;
@@ -857,6 +1010,11 @@ in
   };
 
   age.secrets = {
+    "hosts/${hostName}/wedos-wapi-credentials" = {
+      file = "${secretsPath}/hosts/${hostName}/wedos-wapi-credentials.age";
+      owner = config.systemd.services.certbot-wedos-home.serviceConfig.User;
+    };
+
     "hosts/${hostName}/grafana-bot-mail-password" = {
       file = "${secretsPath}/hosts/${hostName}/grafana-bot-mail-password.age";
       owner = "grafana";

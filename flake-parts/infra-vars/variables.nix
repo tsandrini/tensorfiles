@@ -24,8 +24,10 @@ _: rec {
     };
     networking = {
       defaultSubnet = "10.10.0.0/24";
+      intranetSubnet = "10.0.33.0/24";
       defaultGateway = "10.10.0.1";
       defaultNameservers = [
+        "10.10.0.10"
         "8.8.8.8"
         "8.8.4.4"
         "1.1.1.1"
@@ -60,6 +62,7 @@ _: rec {
       {
         inherit address;
         publicAddress = "37.205.15.242";
+        wgAddress = "10.0.33.13";
         users = {
           root = { };
           tsandrini = { };
@@ -156,9 +159,10 @@ _: rec {
             let
               inherit (common.services.prometheus.exporters.anubis) portRangeStart;
               primaryDomain = "tsandrini.sh";
+              intranetDomain = "home.${primaryDomain}";
             in
             {
-              inherit primaryDomain;
+              inherit primaryDomain intranetDomain;
               virtualHosts = {
                 "immutable-insights" = {
                   domain = "${primaryDomain}";
@@ -195,6 +199,10 @@ _: rec {
                     toString hosts."remotebundle".services.immich.port
                   }";
                 };
+                "intra-pihole" = {
+                  domain = "pihole.${intranetDomain}";
+                  proxyEndpoint = "${hosts."pupibundle".address}";
+                };
               };
             };
         };
@@ -211,9 +219,13 @@ _: rec {
           tsandrini = { };
         };
         services = {
+          unbound = {
+            port = 5335;
+          };
           prometheus = {
             exporters = {
               node.port = common.services.prometheus.exporters.node.defaultPort;
+              pihole.port = 9617;
             };
           };
         };

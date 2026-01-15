@@ -28,7 +28,7 @@
         # };
         my_cookies = pkgs.callPackage ./my_cookies.nix { };
         polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
-        argononed = pkgs.callPackage ./argononed { };
+        certbot-dns-wedos = pkgs.callPackage ./certbot-dns-wedos.nix { };
         # awatcher = pkgs.callPackage ./awatcher.nix { };
       };
     };
