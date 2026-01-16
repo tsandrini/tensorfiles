@@ -77,8 +77,8 @@ let
       sslCertificateKey = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/privkey.pem";
 
       extraConfig = ''
-        allow 10.0.33.0/24;
-        allow 10.10.0.0/24;
+        allow ${infraVars.common.networking.defaultSubnet};
+        allow ${infraVars.common.networking.intranetSubnet};
         deny all;
       '';
     }
@@ -225,14 +225,14 @@ in
           publicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
 
           allowedIPs = [
-            "10.10.0.0/24"
+            infraVars.common.networking.defaultSubnet
+            infraVars.common.networking.intranetSubnet
             "10.20.0.0/24"
-            "10.0.33.1/32"
             "10.0.0.0/24"
             "10.5.0.0/24"
           ];
 
-          endpoint = "[2a02:8308:298:c900::a]:51821";
+          endpoint = "vpn.tsandrini.sh:51821";
           persistentKeepalive = 25;
         }
       ];
