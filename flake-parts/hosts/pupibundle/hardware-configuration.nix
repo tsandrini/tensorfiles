@@ -104,7 +104,6 @@ in
 {
   hardware.enableRedistributableFirmware = true;
   boot.loader.raspberryPi.bootloader = "kernel";
-  boot.tmp.useTmpfs = true;
 
   hardware.i2c.enable = true;
   boot.kernelModules = [ "i2c-dev" ];
@@ -159,8 +158,20 @@ in
     wantedBy = [ "timers.target" ];
     timerConfig = {
       OnBootSec = "20s";
-      OnUnitActiveSec = "7s";
+      OnUnitActiveSec = "10s";
       AccuracySec = "2s";
     };
   };
+
+  # SSD optimizations
+  services.fstrim.enable = true;
+  boot.tmp.useTmpfs = true;
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 20;
+    priority = 100;
+  };
+
+  boot.kernel.sysctl."vm.swappiness" = 100;
 }
