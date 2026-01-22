@@ -23,7 +23,6 @@ let
   inherit (lib)
     types
     mkIf
-    optional
     mkMerge
     mkEnableOption
     mkOption
@@ -53,10 +52,9 @@ in
 
       clientUrl = mkOption {
         type = types.str;
-        # default = "http://localhost:3100/loki/api/v1/push";
-        default = "http://localhost:${
-          toString infraVars.hosts."remotebundle".services.loki.server.http_port
-        }/loki/api/v1/push";
+        default = "http://${
+          if hostName == "remotebundle" then "localhost" else infraVars.hosts."remotebundle".wgAddress
+        }:${toString infraVars.hosts."remotebundle".services.loki.server.http_port}/loki/api/v1/push";
         description = ''
           The URL of the Loki server to which Promtail will send logs.
         '';
@@ -74,13 +72,13 @@ in
               default = true;
             };
 
-          openFirewall = mkOption {
-            type = types.bool;
-            default = false;
-            description = ''
-              Whether to open the firewall for the Node Exporter port.
-            '';
-          };
+          # openFirewall = mkOption {
+          #   type = types.bool;
+          #   default = false;
+          #   description = ''
+          #     Whether to open the firewall for the Node Exporter port.
+          #   '';
+          # };
 
           port = mkOption {
             type = types.int;
@@ -143,7 +141,17 @@ in
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.prometheus.exporters.node.enable {
-      networking.firewall.allowedTCPPorts = optional cfg.prometheus.exporters.node.openFirewall config.services.prometheus.exporters.node.port;
+      tensorfiles.networking.firewall.subnets-firewall = {
+        enable = true;
+        subnets = {
+          "${infraVars.common.networking.defaultSubnet}" = {
+            allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
+          };
+          "${infraVars.common.networking.intranetSubnet}" = {
+            allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
+          };
+        };
+      };
 
       services.prometheus.exporters.node = {
         enable = _ true;
@@ -160,9 +168,6 @@ in
           "systemd"
         ];
         port = _ cfg.prometheus.exporters.node.port;
-        firewallRules = ''
-          ip saddr 10.0.0.0/8 tcp dport ${toString config.services.prometheus.exporters.rspamd.port} accept
-        '';
       };
     })
   ]);
