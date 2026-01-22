@@ -86,7 +86,7 @@ _: rec {
           loki = {
             server = {
               http_port = 3200;
-              http_addr = "localhost";
+              http_addr = "0.0.0.0";
             };
           };
           promtail = {
@@ -102,25 +102,16 @@ _: rec {
             };
             exporters = {
               node.port = common.services.prometheus.exporters.node.defaultPort;
-              postgres = {
-                port = 9187;
-              };
-              nginx = {
-                port = 9113;
-              };
-              nginxlog = {
-                port = 9117;
-              };
-              postfix = {
-                port = 9154;
-              };
+              postgres.port = 9187;
+              nginx.port = 9113;
+              loki.port = hosts."remotebundle".services.loki.server.http_port;
+              nginxlog.port = 9117;
+              postfix.port = 9154;
               rspamd = {
                 port = 7980;
                 targetPort = 11334;
               };
-              dovecot = {
-                port = 9166;
-              };
+              dovecot.port = 9166;
             };
           };
           postgresql = {
@@ -143,6 +134,10 @@ _: rec {
               "firefly-iii" = {
                 database = "firefly-iii";
                 user = "firefly-iii";
+              };
+              "hass" = {
+                database = "hass";
+                user = "hass";
               };
             };
           };
@@ -226,6 +221,7 @@ _: rec {
             exporters = {
               node.port = common.services.prometheus.exporters.node.defaultPort;
               pihole.port = 9617;
+              unbound.port = 9167;
             };
           };
         };

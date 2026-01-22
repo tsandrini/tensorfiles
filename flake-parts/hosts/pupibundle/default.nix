@@ -66,7 +66,6 @@ in
       # packages-extra.enable = true;
 
       with-base-monitoring-exports.enable = true;
-      with-base-monitoring-exports.prometheus.exporters.node.openFirewall = true;
     };
 
     services.networking.networkmanager.enable = false;
@@ -106,13 +105,15 @@ in
           80
           443
           prometheusExporters.pihole.port
+          prometheusExporters.unbound.port
         ];
       };
       "${infraVars.common.networking.intranetSubnet}" = {
         allowedTCPPorts = [
-          prometheusExporters.pihole.port
           80
           443
+          prometheusExporters.pihole.port
+          prometheusExporters.unbound.port
         ];
       };
     };
@@ -145,6 +146,7 @@ in
 
   services.unbound = {
     enable = true;
+    localControlSocketPath = "/run/unbound/unbound.ctl";
 
     settings = {
       server = {
@@ -168,6 +170,12 @@ in
         edns-buffer-size = 1232;
         hide-identity = true;
         hide-version = true;
+
+        # Logging
+        verbosity = 3;
+        log-queries = true;
+        log-replies = true;
+        log-local-actions = true;
 
         # Keep RFC1918 / link-local from being leaked upstream
         private-address = [
@@ -275,6 +283,13 @@ in
       enable = true;
       inherit (prometheusExporters.pihole) port;
       piholeHostname = "localhost";
+    };
+    unbound = {
+      enable = true;
+      inherit (config.services.unbound) group;
+      inherit (prometheusExporters.unbound) port;
+      unbound.host = "unix://${config.services.unbound.localControlSocketPath}";
+      # unbound.host = "tcp://localhost:${toString config.services.unbound.settings.server.port}";
     };
   };
 }

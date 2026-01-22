@@ -115,7 +115,6 @@ in
       packages-base.enable = true;
       # packages-extra.enable = true;
       with-base-monitoring-exports.enable = true;
-      with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
     };
 
     services.monit = {
@@ -197,10 +196,16 @@ in
     enable = true;
     subnets = {
       "${infraVars.common.networking.defaultSubnet}" = {
-        allowedTCPPorts = [ ];
+        allowedTCPPorts = [
+          config.services.postgresql.settings.port
+          config.services.loki.configuration.server.http_listen_port
+        ];
       };
       "${infraVars.common.networking.intranetSubnet}" = {
-        allowedTCPPorts = [ ];
+        allowedTCPPorts = [
+          config.services.postgresql.settings.port
+          config.services.loki.configuration.server.http_listen_port
+        ];
       };
     };
   };
@@ -632,6 +637,7 @@ in
             {
               name = "Loki & Promtail";
               options.path = ./grafana/dashboards/loki-and-promtail.json;
+              folder = "Logs & Loki";
             }
             {
               name = "Loki Metrics Dashboard";
@@ -850,11 +856,31 @@ in
           ];
         }
         {
+          job_name = "unbound";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "pupibundle" "unbound")
+              ];
+            }
+          ];
+        }
+        {
           job_name = "nginxlog";
           static_configs = [
             {
               targets = [
                 (mkTarget "remotebundle" "nginxlog")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "loki";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "loki")
               ];
             }
           ];
