@@ -623,10 +623,12 @@ in
             {
               name = "Pi-hole Exporter";
               options.path = ./grafana/dashboards/pi-hole-exporter.json;
+              folder = "DNS";
             }
             {
               name = "Pi-hole UI";
               options.path = ./grafana/dashboards/pi-hole-ui.json;
+              folder = "DNS";
             }
             # --- Logs ---
             {
