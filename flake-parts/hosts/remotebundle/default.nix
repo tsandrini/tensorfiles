@@ -619,7 +619,7 @@ in
               name = "PostgreSQL Database";
               options.path = ./grafana/dashboards/postgresql-database.json;
             }
-            # --- Pihole ---
+            # --- DNS ---
             {
               name = "Pi-hole Exporter";
               options.path = ./grafana/dashboards/pi-hole-exporter.json;
@@ -628,6 +628,11 @@ in
             {
               name = "Pi-hole UI";
               options.path = ./grafana/dashboards/pi-hole-ui.json;
+              folder = "DNS";
+            }
+            {
+              name = "Unbound";
+              options.path = ./grafana/dashboards/unbound.json;
               folder = "DNS";
             }
             # --- Logs ---
