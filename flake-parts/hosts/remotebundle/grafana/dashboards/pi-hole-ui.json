@@ -1414,7 +1414,7 @@
   "preload": false,
   "refresh": "1m",
   "schemaVersion": 42,
-  "tags": ["prometheus", "pihole"],
+  "tags": ["prometheus", "pihole", "dns"],
   "templating": {
     "list": [
       {
