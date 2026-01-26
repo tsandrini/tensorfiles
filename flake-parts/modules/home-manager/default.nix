@@ -46,7 +46,7 @@ in
     };
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake; };
-    profiles_graphical-dms-niri = importApply ./profiles/graphical-dms-niri {
+    profiles_graphical-dms-niri = importApply ./profiles/graphical-dms-niri.nix {
       inherit localFlake inputs;
     };
     profiles_graphical-xmonad = importApply ./profiles/graphical-xmonad.nix { inherit localFlake; };

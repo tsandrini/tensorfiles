@@ -51,6 +51,7 @@ in
   imports = [
     inputs.dms.homeModules.dank-material-shell
     inputs.dms.homeModules.niri
+    inputs.niri.homeModules.niri
   ];
 
   config = mkIf cfg.enable (mkMerge [
@@ -101,18 +102,11 @@ in
 
       programs.dank-material-shell = {
         enable = _ true;
-        niri.includes = {
-          enable = _ true;
+        niri = {
           enableSpawn = _ true; # Auto-start DMS with niri, if enabled
-          # filesToInclude = [
-          #   # Files under `$XDG_CONFIG_HOME/niri/dms` to be included into the new config
-          #   "alttab" # Please note that niri will throw an error if any of these files are missing.
-          #   "binds"
-          #   "colors"
-          #   "layout"
-          #   "outputs"
-          #   "wpblur"
-          # ];
+          includes = {
+            enable = _ true;
+          };
         };
 
         enableSystemMonitoring = _ true;

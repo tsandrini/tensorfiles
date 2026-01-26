@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, inputs }:
 {
   config,
   lib,
@@ -32,6 +32,10 @@ in
       TODO
     '';
   };
+
+  imports = [
+    inputs.dms.nixosModules.greeter
+  ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -103,8 +107,9 @@ in
         # kdePackages.itinerary
       ];
 
-      services.displayManager.dms-greeter = {
+      programs.dank-material-shell.greeter = {
         enable = _ true;
+        configHome = _ "/home/tsanrini"; # TODO probably find a better way to do this
         compositor.name = _ "niri";
       };
 

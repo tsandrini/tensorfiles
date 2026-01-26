@@ -42,7 +42,7 @@ in
       inherit localFlake inputs;
     };
     profiles_graphical-dms-greeter = importApply ./profiles/graphical-dms-greeter.nix {
-      inherit localFlake;
+      inherit localFlake inputs;
     };
     profiles_graphical-plasma5 = importApply ./profiles/graphical-plasma5.nix {
       inherit localFlake inputs;

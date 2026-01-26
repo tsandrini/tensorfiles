@@ -60,7 +60,7 @@ in
   # ---------------------
   tensorfiles = {
     profiles = {
-
+      graphical-dms-greeter.enable = true;
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
@@ -158,13 +158,10 @@ in
   };
 
   # Small QoL for Wayland apps (optional)
-  environment.sessionVariables = {
-    NIXOS_OZONE_WL = "1";
-  };
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
-
+      profiles.graphical-dms-niri.enable = true;
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
       services.keepassxc.enable = true;
