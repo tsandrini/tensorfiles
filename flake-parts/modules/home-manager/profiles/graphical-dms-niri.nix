@@ -106,10 +106,17 @@ in
 
       programs.dank-material-shell = {
         enable = _ true;
+
+        systemd = {
+          enable = true; # Systemd service for auto-start
+          restartIfChanged = true; # Auto-restart dms.service when dank-material-shell changes
+        };
+
         niri = {
-          enableSpawn = _ true; # Auto-start DMS with niri, if enabled
+          # enableSpawn = _ false; # Auto-start DMS with niri, if enabled
+          enableKeybinds = true;
           includes = {
-            enable = _ true;
+            enable = _ false;
           };
         };
 
@@ -121,7 +128,7 @@ in
         enableClipboardPaste = _ true;
       };
 
-      # systemd.user.services.niri-flake-polkit.enable = _ false; # use dms
+      systemd.user.services.niri-flake-polkit.enable = true;
     }
     # |----------------------------------------------------------------------| #
   ]);
