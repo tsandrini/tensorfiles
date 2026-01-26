@@ -41,6 +41,9 @@ in
     profiles_packages-graphical-extra = importApply ./profiles/packages-graphical-extra.nix {
       inherit localFlake inputs;
     };
+    profiles_graphical-dms-greeter = importApply ./profiles/graphical-dms-greeter.nix {
+      inherit localFlake;
+    };
     profiles_graphical-plasma5 = importApply ./profiles/graphical-plasma5.nix {
       inherit localFlake inputs;
     };

@@ -1,4 +1,4 @@
-# --- flake-parts/hosts/flatbundle/default.nix
+# --- flake-parts/hosts/jetbundle/default.nix
 #
 # Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -24,17 +24,22 @@ in
   # -----------------
   # | SPECIFICATION |
   # -----------------
-  # Model: Lenovo Thinkpad T14
+  # Model: Lenovo B51-80
 
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14
+    inputs.disko.nixosModules.disko
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
+    # Fingerprint sensor
+    # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
+    # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
     (inputs.nix-mineral + "/nix-mineral.nix")
 
+    ./disko.nix
     ./hardware-configuration.nix
     # ./nm-overrides.nix
   ];
@@ -46,9 +51,12 @@ in
     pkgs.libva-utils
     pkgs.docker-compose
     pkgs.wireguard-tools
-    pkgs.claude-code
-    pkgs.codex
   ];
+
+  # ----------------------------
+  # | ADDITIONAL USER PACKAGES |
+  # ----------------------------
+  # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -56,12 +64,12 @@ in
   tensorfiles = {
     profiles = {
       graphical-plasma6.enable = true;
-
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
     };
 
+    services.networking.ssh.enable = true;
     security.agenix.enable = true;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -88,8 +96,10 @@ in
   };
   # nix-mineral.enable = true;
 
+  # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
+  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -103,16 +113,17 @@ in
     '';
   };
 
-  # STEAM STUFF
-  services.pipewire.lowLatency.enable = true;
-  hardware.graphics.enable32Bit = true;
-  programs.steam = {
+  # services.udev.packages = with pkgs; [
+  #   via
+  #   vial
+  # ];
+
+  services.pipewire = {
     enable = true;
-    platformOptimizations.enable = true;
-    extraPackages = [
-      pkgs.gamescope
-      pkgs.xwayland-run
-    ];
+    alsa.enable = true;
+    pulse.enable = true;
+    jack.enable = true;
+    lowLatency.enable = true;
   };
 
   services.xl2tpd.enable = true;
@@ -121,12 +132,13 @@ in
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
 
+  services.pcscd.enable = true; # needed for gpg pinentry
+
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
+    storageDriver = "btrfs";
   };
-
-  services.tailscale.enable = true;
 
   networking.wireguard.enable = true;
   networking.firewall = {
@@ -152,11 +164,15 @@ in
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
+
       profiles.graphical-plasma.enable = true;
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
+      # programs.spicetify.enable = true;
+      # services.pywalfox-native.enable = true;
+      # services.activitywatch.enable = true;
       programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
     };
@@ -166,6 +182,8 @@ in
       tray.enable = true;
     };
 
+    home.username = "tsandrini";
+    home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
@@ -174,7 +192,6 @@ in
 
     home.packages = [
       pkgs-osu-lazer-bin.osu-lazer-bin
-      pkgs.olympus
     ];
   };
 }

@@ -1,4 +1,4 @@
-# --- flake-parts/hosts/spinorbundle/hardware-configuration.nix
+# --- flake-parts/hosts/jetbundle/hardware-configuration.nix
 #
 # Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -21,7 +21,7 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = [ pkgs.libva-utils ];
+  environment.systemPackages = with pkgs; [ libva-utils ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -39,10 +39,7 @@
     };
     kernelModules = [ "kvm-intel" ];
     extraModulePackages = [ ];
-    blacklistedKernelModules = [
-      "radeon"
-      "amdgpu"
-    ];
+    blacklistedKernelModules = [ ];
   };
 
   powerManagement = {
@@ -50,7 +47,61 @@
     cpuFreqGovernor = "performance";
   };
 
+  programs.gamemode.enable = true;
   services.fwupd.enable = true;
+
+  # Thinkpad x270 fingreprint reader
+  # Unfortunately the official services.fprintd option doesn't work and any
+  # custom tos drivers didn't work either. The only way to make it work was to
+  # use open-fprintd and python-validity services.
+  # systemd.units."open-fprintd-suspend".enable = true;
+  # systemd.units."open-fprintd-resume".enable = true;
+  # services.open-fprintd.enable = true;
+  # services.python-validity.enable = true;
+  # security.pam.services = {
+  #   sudo.fprintAuth = true;
+  #   # NOTE doesn't work unfortunately
+  #   # login.fprintAuth = true;
+  #   # sddm.fprintAuth = true;
+  #   # xscreensaver.fprintAuth = true;
+  #   # kwallet.fprintAuth = true;
+  # };
+  #
+
+  # BTRFS stuff
+  services.fstrim = {
+    enable = true;
+    interval = "weekly"; # the default
+  };
+
+  # Scrub btrfs to protect data integrity
+  services.btrfs.autoScrub.enable = true;
+
+  services.btrbk.instances."btrbk" = {
+    onCalendar = "*:0/10";
+    settings = {
+      snapshot_preserve = "4d"; # NOTE not enough space for multiple roots
+      snapshot_preserve_min = "2d";
+
+      target_preserve_min = "no";
+      target_preserve = "no";
+
+      preserve_day_of_week = "monday";
+      timestamp_format = "long-iso";
+      snapshot_create = "onchange";
+
+      volume."/" = {
+        subvolume = {
+          "home" = {
+            snapshot_dir = "/.snapshots/data/home";
+          };
+        };
+      };
+    };
+  };
+
+  # ensure snapshots_dir exists
+  systemd.tmpfiles.rules = [ "d /.snapshots/data/home 0755 root root - -" ];
 
   boot = {
     loader = {
@@ -65,7 +116,10 @@
         configurationLimit = 3;
       };
     };
-    # binfmt.emulatedSystems = [ "aarch64-linux" ];
+    binfmt.emulatedSystems = [
+      "aarch64-linux"
+      "armv7l-linux"
+    ];
     kernelPackages = pkgs.linuxPackages_latest;
   };
 
@@ -77,10 +131,10 @@
     graphics = {
       enable = true;
       extraPackages = [
-        pkgs.intel-media-driver
-        pkgs.intel-vaapi-driver
-        pkgs.libva-vdpau-driver
-        pkgs.libvdpau-va-gl
+        #intel-media-driver
+        #intel-vaapi-driver
+        #libva-vdpau-driver
+        #libvdpau-va-gl
       ];
     };
 

@@ -42,14 +42,9 @@
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    networkmanagerapplet # need this to configure L2TP ipsec
+  environment.systemPackages = [
+    pkgs.networkmanagerapplet # need this to configure L2TP ipsec
   ];
-
-  # ----------------------------
-  # | ADDITIONAL USER PACKAGES |
-  # ----------------------------
-  # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -63,8 +58,11 @@
     };
 
     security.agenix.enable = true;
-    # programs.shadow-nix.enable = true;
-    tasks.system-autoupgrade.enable = false;
+
+    # Use the `nh` garbage collect to also collect .direnv and XDG profiles
+    # roots instead of the default ones.
+    tasks.nix-garbage-collect.enable = false;
+    programs.nh.enable = true;
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -85,14 +83,8 @@
   };
   # nix-mineral.enable = true;
 
-  # Use the `nh` garbage collect to also collect .direnv and XDG profiles
-  # roots instead of the default ones.
-  tensorfiles.tasks.nix-garbage-collect.enable = false;
-  tensorfiles.programs.nh.enable = true;
-  # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
-  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -106,34 +98,18 @@
     '';
   };
 
+  # STEAM STUFF
+  services.pipewire.lowLatency.enable = true;
+  hardware.graphics.enable32Bit = true;
   programs.steam = {
     enable = true;
-    # extest.enable = true;
     platformOptimizations.enable = true;
-    extraPackages = with pkgs; [
-      gamescope
-      xwayland-run
+    extraPackages = [
+      pkgs.gamescope
+      pkgs.xwayland-run
     ];
   };
-  hardware.graphics.enable32Bit = true;
 
-  services = {
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      jack.enable = true;
-      lowLatency.enable = true;
-    };
-  };
-
-  services.openssh.enable = false;
-  services.fail2ban.enable = false;
-
-  networking.networkmanager.enable = true;
-
-  services.pcscd.enable = true; # # Needed for gpg pinetry
-  #
   # virtualisation.docker = {
   #   enable = true;
   #   autoPrune.enable = true;
@@ -156,21 +132,15 @@
     ];
   };
 
-  # If you intend to route all your traffic through the wireguard tunnel, the
-  # default configuration of the NixOS firewall will block the traffic because
-  # of rpfilter. You can either disable rpfilter altogether:
-  # networking.firewall.checkReversePath = false;
-
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-plasma.enable = true;
+      # profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
-      # programs.spicetify.enable = true;
-      # services.pywalfox-native.enable = true;
+      # programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
-      # services.activitywatch.enable = true;
     };
 
     services.syncthing = {
@@ -178,8 +148,6 @@
       tray.enable = true;
     };
 
-    home.username = "tsandrini";
-    home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";

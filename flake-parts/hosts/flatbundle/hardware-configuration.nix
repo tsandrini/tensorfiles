@@ -21,7 +21,7 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = with pkgs; [ libva-utils ];
+  environment.systemPackages = [ pkgs.libva-utils ];
 
   networking.useDHCP = lib.mkDefault true;
 

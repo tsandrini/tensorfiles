@@ -51,19 +51,16 @@ in
     pkgs.libva-utils
     pkgs.docker-compose
     pkgs.wireguard-tools
+    pkgs.claude-code
+    pkgs.codex
   ];
-
-  # ----------------------------
-  # | ADDITIONAL USER PACKAGES |
-  # ----------------------------
-  # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
     profiles = {
-      graphical-plasma6.enable = true;
+
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
@@ -113,17 +110,16 @@ in
     '';
   };
 
-  # services.udev.packages = with pkgs; [
-  #   via
-  #   vial
-  # ];
-
-  services.pipewire = {
+  # STEAM STUFF
+  services.pipewire.lowLatency.enable = true;
+  hardware.graphics.enable32Bit = true;
+  programs.steam = {
     enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    jack.enable = true;
-    lowLatency.enable = true;
+    platformOptimizations.enable = true;
+    extraPackages = [
+      pkgs.gamescope
+      pkgs.xwayland-run
+    ];
   };
 
   services.xl2tpd.enable = true;
@@ -137,7 +133,6 @@ in
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
-    storageDriver = "btrfs";
   };
 
   networking.wireguard.enable = true;
@@ -162,18 +157,16 @@ in
     ];
   };
 
+  # Small QoL for Wayland apps (optional)
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+  };
+
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
 
-      profiles.graphical-plasma.enable = true;
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
-
-      programs.pywal.enable = true;
-      # programs.spicetify.enable = true;
-      # services.pywalfox-native.enable = true;
-      # services.activitywatch.enable = true;
-      programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
     };
 
@@ -182,8 +175,6 @@ in
       tray.enable = true;
     };
 
-    home.username = "tsandrini";
-    home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";

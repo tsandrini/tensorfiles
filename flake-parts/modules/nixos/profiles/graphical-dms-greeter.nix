@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixos/profiles/graphical-plasma6.nix
+# --- flake-parts/modules/nixos/profiles/graphical-dms-greeter.nix
 #
 # Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -12,23 +12,22 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   config,
   lib,
   pkgs,
-  system,
   ...
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.profiles.graphical-plasma6;
+  cfg = config.tensorfiles.profiles.graphical-dms-greeter;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.graphical-plasma6 = {
+  options.tensorfiles.profiles.graphical-dms-greeter = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -64,45 +63,28 @@ in
         # -- KDE PACKAGES --
         kdePackages.ark # Graphical file compression/decompression utility
         haruna # Open source video player built with Qt/QML and libmpv
-        kdePackages.kate # Advanced text editor
+        # kdePackages.kate # Advanced text editor
         kdePackages.kcalc # Scientific calculator
         kdiff3 # Compares and merges 2 or 3 files or directories
         krename # A powerful batch renamer for KDE
         krusader # Norton/Total Commander clone for KDE
         kdePackages.filelight # Disk usage statistics
         kdePackages.kfind # File search utility by KDE
-        kdePackages.kweather
-        kdePackages.kweathercore
+        # kdePackages.kweather
+        # kdePackages.kweathercore
         kdePackages.quazip # Provides access to ZIP archives from Qt programs
-        kdePackages.ksshaskpass
-        kdePackages.accounts-qt # Qt library for accessing the online accounts database
-        kdePackages.calendarsupport
-        kdePackages.kaccounts-providers # Online account providers
-        kdePackages.kaccounts-integration # Online accounts integration
-        kdePackages.kdeplasma-addons
-        kdePackages.plasma-browser-integration
-        kdePackages.kaddressbook # KDE contact manager
-        kdePackages.merkuro # A calendar application using Akonadi to sync with external services
-        kdePackages.kcontacts # KContacts - Library for working with contact information
-        kdePackages.kpeople # A library that provides access to all contacts and the people who hold them
+        # kdePackages.ksshaskpass
+        # kdePackages.accounts-qt # Qt library for accessing the online accounts database
+        # kdePackages.calendarsupport
+        # kdePackages.kaccounts-providers # Online account providers
+        # kdePackages.kaccounts-integration # Online accounts integration
+        # kdePackages.kdeplasma-addons
+        # kdePackages.plasma-browser-integration
+        # kdePackages.kaddressbook # KDE contact manager
+        # kdePackages.merkuro # A calendar application using Akonadi to sync with external services
+        # kdePackages.kcontacts # KContacts - Library for working with contact information
+        # kdePackages.kpeople # A library that provides access to all contacts and the people who hold them
         kdePackages.kompare # Graphical File Differences Tool
-
-        kdePackages.kmail # Mail client
-        kdePackages.kmailtransport
-        kdePackages.kmail-account-wizard
-
-        kdePackages.akonadi
-        kdePackages.akonadi-calendar
-        kdePackages.akonadi-calendar-tools
-        kdePackages.akonadi-contacts
-        kdePackages.akonadi-import-wizard
-        kdePackages.akonadi-mime
-        # kdePackages.akonadi-notes
-        kdePackages.akonadi-search
-        kdePackages.akonadiconsole
-        kdePackages.kdepim-runtime
-        kdePackages.kdepim-addons
-        kdePackages.libkdepim
 
         krita # A free and open source painting application
         kdePackages.kdenlive # Video editor
@@ -111,35 +93,33 @@ in
         kdePackages.kolourpaint # Paint program
         # NOTE KNotes is unmaintained upstream,
         # kdePackages.knotes # Popup notes
-        kdePackages.kalarm # Personal alarm scheduler
+        # kdePackages.kalarm # Personal alarm scheduler
         # kdePackages.kamoso # A simple and friendly program to use your camera
         kdePackages.kruler # Screen ruler
-        kdePackages.kclock # Clock app for plasma mobile
+        # kdePackages.kclock # Clock app for plasma mobile
         okteta # A hex editor
         kdePackages.elisa # A simple media player for KDE
         kdePackages.kmag # A small Linux utility to magnify a part of the screen
         # kdePackages.itinerary
-
-        #kdePackages.bismuth # A dynamic tiling extension for KWin
-        # kdePackages.polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
-        inputs.self.packages.${system}.polonium-nightly
       ];
 
-      services.xserver.enable = _ true;
-      services.displayManager.sddm.enable = _ true;
-      services.desktopManager.plasma6.enable = _ true;
-      # services.xserver.displayManager.defaultSession = _ "plasma";
-      programs.kdeconnect.enable = _ true;
-      services.pcscd.enable = _ true; # needed for gpg pinentry
-
-      services.pipewire = {
+      services.displayManager.dms-greeter = {
         enable = _ true;
-        alsa.enable = _ true;
-        pulse.enable = _ true;
-        jack.enable = _ true;
+        compositor.name = _ "niri";
       };
 
-      programs.partition-manager.enable = _ true;
+      services.dbus.enable = _ true;
+      security.polkit.enable = _ true;
+      xdg.portal = {
+        enable = _ true;
+        extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+      };
+
+      environment.sessionVariables = {
+        NIXOS_OZONE_WL = _ "1";
+      };
+
+      programs.kdeconnect.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
   ]);
