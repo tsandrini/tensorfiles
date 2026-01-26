@@ -100,6 +100,10 @@ in
 
       fonts.fontconfig.enable = _ true;
 
+      programs.niri = {
+        enable = _ true;
+      };
+
       programs.dank-material-shell = {
         enable = _ true;
         niri = {
