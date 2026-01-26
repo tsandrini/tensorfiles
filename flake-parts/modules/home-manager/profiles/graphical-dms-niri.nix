@@ -51,7 +51,7 @@ in
   imports = [
     inputs.dms.homeModules.dank-material-shell
     inputs.dms.homeModules.niri
-    inputs.niri.homeModules.niri
+    # inputs.niri.homeModules.niri # NOTE: included in NixOS profile
   ];
 
   config = mkIf cfg.enable (mkMerge [
@@ -100,10 +100,6 @@ in
 
       fonts.fontconfig.enable = _ true;
 
-      programs.niri = {
-        enable = _ true;
-      };
-
       programs.dank-material-shell = {
         enable = _ true;
 
@@ -113,10 +109,12 @@ in
         };
 
         niri = {
-          # enableSpawn = _ false; # Auto-start DMS with niri, if enabled
+          enableSpawn = _ false; # Auto-start DMS with niri, if enabled
           enableKeybinds = true;
           includes = {
             enable = _ false;
+            originalFileName = "hm";
+            override = true;
           };
         };
 
@@ -128,7 +126,7 @@ in
         enableClipboardPaste = _ true;
       };
 
-      systemd.user.services.niri-flake-polkit.enable = true;
+      # systemd.user.services.niri-flake-polkit.enable = true;
     }
     # |----------------------------------------------------------------------| #
   ]);

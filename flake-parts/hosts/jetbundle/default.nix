@@ -60,7 +60,7 @@ in
   # ---------------------
   tensorfiles = {
     profiles = {
-      graphical-dms-greeter.enable = true;
+      graphical-dms-niri.enable = true;
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;

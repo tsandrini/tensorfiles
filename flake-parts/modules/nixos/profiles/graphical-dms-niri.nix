@@ -1,4 +1,4 @@
-# --- flake-parts/modules/nixos/profiles/graphical-dms-greeter.nix
+# --- flake-parts/modules/nixos/profiles/graphical-dms-niri.nix
 #
 # Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
@@ -23,11 +23,11 @@ let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
-  cfg = config.tensorfiles.profiles.graphical-dms-greeter;
+  cfg = config.tensorfiles.profiles.graphical-dms-niri;
   _ = mkOverrideAtProfileLevel;
 in
 {
-  options.tensorfiles.profiles.graphical-dms-greeter = {
+  options.tensorfiles.profiles.graphical-dms-niri = {
     enable = mkEnableOption ''
       TODO
     '';
@@ -35,6 +35,7 @@ in
 
   imports = [
     inputs.dms.nixosModules.greeter
+    inputs.niri.nixosModules.niri
   ];
 
   config = mkIf cfg.enable (mkMerge [
@@ -65,18 +66,18 @@ in
         aha # ANSI HTML Adapter
 
         # -- KDE PACKAGES --
-        kdePackages.ark # Graphical file compression/decompression utility
-        haruna # Open source video player built with Qt/QML and libmpv
+        # kdePackages.ark # Graphical file compression/decompression utility
+        # haruna # Open source video player built with Qt/QML and libmpv
         # kdePackages.kate # Advanced text editor
-        kdePackages.kcalc # Scientific calculator
-        kdiff3 # Compares and merges 2 or 3 files or directories
-        krename # A powerful batch renamer for KDE
-        krusader # Norton/Total Commander clone for KDE
-        kdePackages.filelight # Disk usage statistics
-        kdePackages.kfind # File search utility by KDE
+        # kdePackages.kcalc # Scientific calculator
+        # kdiff3 # Compares and merges 2 or 3 files or directories
+        # krename # A powerful batch renamer for KDE
+        # krusader # Norton/Total Commander clone for KDE
+        # kdePackages.filelight # Disk usage statistics
+        # kdePackages.kfind # File search utility by KDE
         # kdePackages.kweather
-        # kdePackages.kweathercore
-        kdePackages.quazip # Provides access to ZIP archives from Qt programs
+        # # kdePackages.kweathercore
+        # kdePackages.quazip # Provides access to ZIP archives from Qt programs
         # kdePackages.ksshaskpass
         # kdePackages.accounts-qt # Qt library for accessing the online accounts database
         # kdePackages.calendarsupport
@@ -88,36 +89,39 @@ in
         # kdePackages.merkuro # A calendar application using Akonadi to sync with external services
         # kdePackages.kcontacts # KContacts - Library for working with contact information
         # kdePackages.kpeople # A library that provides access to all contacts and the people who hold them
-        kdePackages.kompare # Graphical File Differences Tool
+        # kdePackages.kompare # Graphical File Differences Tool
 
-        krita # A free and open source painting application
-        kdePackages.kdenlive # Video editor
-        kdePackages.kcolorpicker # Qt based Color Picker with popup menu
-        kdePackages.kcolorchooser
-        kdePackages.kolourpaint # Paint program
+        # krita # A free and open source painting application
+        # kdePackages.kdenlive # Video editor
+        # kdePackages.kcolorpicker # Qt based Color Picker with popup menu
+        # kdePackages.kcolorchooser
+        # kdePackages.kolourpaint # Paint program
         # NOTE KNotes is unmaintained upstream,
         # kdePackages.knotes # Popup notes
         # kdePackages.kalarm # Personal alarm scheduler
         # kdePackages.kamoso # A simple and friendly program to use your camera
-        kdePackages.kruler # Screen ruler
+        # kdePackages.kruler # Screen ruler
         # kdePackages.kclock # Clock app for plasma mobile
-        okteta # A hex editor
-        kdePackages.elisa # A simple media player for KDE
-        kdePackages.kmag # A small Linux utility to magnify a part of the screen
+        # okteta # A hex editor
+        # kdePackages.elisa # A simple media player for KDE
+        # kdePackages.kmag # A small Linux utility to magnify a part of the screen
         # kdePackages.itinerary
       ];
 
       programs.dank-material-shell.greeter = {
         enable = _ true;
-        configHome = _ "/home/tsanrini"; # TODO probably find a better way to do this
+        configHome = _ "/home/tsandrini"; # TODO probably find a better way to do this
         compositor.name = _ "niri";
       };
 
+      programs.ssh.startAgent = _ false; # NOTE: using gnome agent
+      programs.niri.enable = _ true;
       services.dbus.enable = _ true;
       security.polkit.enable = _ true;
       xdg.portal = {
         enable = _ true;
         extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+        config.common.default = "*";
       };
 
       environment.sessionVariables = {
