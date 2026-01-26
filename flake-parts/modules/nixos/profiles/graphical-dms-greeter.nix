@@ -124,6 +124,14 @@ in
         NIXOS_OZONE_WL = _ "1";
       };
 
+      services.pcscd.enable = _ true; # needed for gpg pinentry
+      services.pipewire = {
+        enable = _ true;
+        alsa.enable = _ true;
+        pulse.enable = _ true;
+        jack.enable = _ true;
+      };
+
       programs.kdeconnect.enable = _ true;
     }
     # |----------------------------------------------------------------------| #

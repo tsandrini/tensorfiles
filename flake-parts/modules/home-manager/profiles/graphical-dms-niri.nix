@@ -117,7 +117,7 @@ in
         enableClipboardPaste = _ true;
       };
 
-      systemd.user.services.niri-flake-polkit.enable = _ false; # use dms
+      # systemd.user.services.niri-flake-polkit.enable = _ false; # use dms
     }
     # |----------------------------------------------------------------------| #
   ]);
