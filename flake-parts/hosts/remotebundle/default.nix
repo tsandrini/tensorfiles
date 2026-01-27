@@ -12,22 +12,77 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ inputs, secretsPath }:
+{
+  inputs,
+  secretsPath,
+  infraVars,
+}:
 {
   pkgs,
   config,
-  lib,
   system,
   hostName,
   ...
 }:
 let
-  domain = "tsandrini.sh";
-  grafanaDomain = "grafana.${domain}";
-  pgadminDomain = "pgadmin.${domain}";
-  # fireflyDomain = "firefly.${domain}";
-  forgejoDomain = "git.${domain}";
+  selfVars = infraVars.hosts."${hostName}";
   immutable-insights = inputs.immutable-insights.packages.${system}.default;
+
+  # --- database ---
+  postgresVars = selfVars.services.postgresql;
+  pgadminVars = selfVars.services.pgadmin;
+
+  # --- monitoring ---
+  monitoringVars = infraVars.hosts."remotebundle";
+  grafanaVars = monitoringVars.services.grafana;
+  lokiVars = monitoringVars.services.loki;
+  prometheusVars = monitoringVars.services.prometheus;
+  prometheusExporters = monitoringVars.services.prometheus.exporters;
+
+  # --- nginx ---
+  nginxVars = infraVars.hosts."remotebundle".services.nginx;
+  virtualHostsVar = nginxVars.virtualHosts;
+
+  # --- forgejo ---
+  forgejoVars = infraVars.hosts."remotebundle".services.forgejo;
+
+  # --- immich ---
+  immichVars = infraVars.hosts."remotebundle".services.immich;
+
+  # --- prometheus exporters ---
+  mailserverExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
+
+  certbotWedosHomeEnv = pkgs.python3.withPackages (ps: [
+    inputs.self.packages.${system}.certbot-dns-wedos
+    ps.certbot
+  ]);
+  certbotWedosCertDir = "/var/lib/certbot-wedos-home/config/live";
+
+  mkIntraVhost =
+    attrs:
+    {
+      listen = [
+        {
+          addr = selfVars.wgAddress;
+          port = 443;
+          ssl = true;
+        }
+        {
+          addr = selfVars.wgAddress;
+          port = 80;
+        }
+      ];
+      forceSSL = true;
+      sslCertificate = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/fullchain.pem";
+      sslCertificateKey = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/privkey.pem";
+
+      extraConfig = ''
+        allow ${infraVars.common.networking.defaultSubnet};
+        allow ${infraVars.common.networking.intranetSubnet};
+        deny all;
+      '';
+    }
+    // attrs;
 in
 {
   # -----------------
@@ -39,7 +94,7 @@ in
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    (inputs.vpsadminos + "/os/lib/nixos-container/vpsadminos.nix")
+    (inputs.vpsadminos + "/os/lib/nixos-container/unstable/vpsadminos.nix")
     (inputs.nix-mineral + "/nix-mineral.nix")
 
     ./nm-overrides.nix
@@ -48,7 +103,7 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [ ];
+  environment.systemPackages = [ ];
 
   # ---------------------
   # | ADDITIONAL CONFIG |
@@ -60,16 +115,11 @@ in
       packages-base.enable = true;
       # packages-extra.enable = true;
       with-base-monitoring-exports.enable = true;
-      with-base-monitoring-exports.prometheus.exporters.node.openFirewall = false;
     };
-
-    services.mailserver.enable = true;
-    services.mailserver.roundcube.enable = true;
-    services.mailserver.rspamd-ui.enable = true;
 
     services.monit = {
       enable = true;
-      alertAddress = "monitoring@${domain}";
+      alertAddress = "monitoring@tsandrini.sh";
       mailserver.enable = true;
       checks = {
         filesystem.root.enable = false;
@@ -82,12 +132,12 @@ in
         processes = {
           sshd = {
             enable = true;
-            port = 2222;
+            port = infraVars.common.services.openssh.defaultPort;
           };
           postfix.enable = true;
           dovecot = {
             enable = true;
-            fqdn = "mail.${domain}";
+            fqdn = "mail.tsandrini.sh";
           };
           rspamd.enable = true;
         };
@@ -110,18 +160,89 @@ in
     };
   };
 
+  # NAS
+  fileSystems."/mnt/NAS" = {
+    device = "172.16.131.12:/nas/5829";
+    fsType = "nfs";
+    options = [ "nofail" ];
+  };
+
+  # Mailserver
+  tensorfiles.services.mailserver = {
+    enable = true;
+    roundcube.enable = true;
+    rspamd-ui.enable = true;
+  };
+  mailserver.stateVersion = 3;
+  services.rspamd.locals."worker-controller.inc".text = ''
+    secure_ip = "0.0.0.0/0, ::/0";
+  '';
+
   nix-mineral.enable = true;
 
+  security.sudo.extraRules = [
+    {
+      users = [ "tsandrini" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
+  tensorfiles.networking.firewall.subnets-firewall = {
+    enable = true;
+    subnets = {
+      "${infraVars.common.networking.defaultSubnet}" = {
+        allowedTCPPorts = [
+          config.services.postgresql.settings.port
+          config.services.loki.configuration.server.http_listen_port
+        ];
+      };
+      "${infraVars.common.networking.intranetSubnet}" = {
+        allowedTCPPorts = [
+          config.services.postgresql.settings.port
+          config.services.loki.configuration.server.http_listen_port
+        ];
+      };
+    };
+  };
   networking.firewall = {
     allowedTCPPorts = [
       80
       443
     ];
+    allowedUDPPorts = [
+      config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
+    ];
   };
 
-  systemd.extraConfig = ''
-    DefaultTimeoutStartSec=900s
-  '';
+  networking.wireguard.interfaces = {
+    wg-home-tunnel = {
+      ips = [ "${selfVars.wgAddress}/32" ];
+      listenPort = 51821;
+      privateKeyFile = config.age.secrets."hosts/${hostName}/wg-home-tunnel-privkey".path;
+
+      peers = [
+        {
+          publicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
+
+          allowedIPs = [
+            infraVars.common.networking.defaultSubnet
+            infraVars.common.networking.intranetSubnet
+            "10.20.0.0/24"
+            "10.0.0.0/24"
+            "10.5.0.0/24"
+          ];
+
+          endpoint = "vpn.tsandrini.sh:51821";
+          persistentKeepalive = 25;
+        }
+      ];
+    };
+  };
 
   users.users.nginx.extraGroups = [
     config.users.groups.anubis.name
@@ -163,19 +284,16 @@ in
       };
     };
 
-    virtualHosts."${domain}" = {
+    virtualHosts."${nginxVars.primaryDomain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
         proxyPass = "http://unix:${config.services.anubis.instances.immutable-insights.settings.BIND}";
       };
-      # locations."/metrics" = {
-      #   proxyPass = "http://unix:${config.services.anubis.instances."".settings.METRICS_BIND}";
-      # };
     };
 
-    virtualHosts."upstream-${domain}" = {
-      serverName = domain;
+    virtualHosts."upstream-${nginxVars.primaryDomain}" = {
+      serverName = nginxVars.primaryDomain;
       listen = [ { addr = "unix:/run/nginx/nginx.sock"; } ];
 
       root = "${immutable-insights}/var/www";
@@ -193,7 +311,7 @@ in
       };
     };
 
-    virtualHosts."${grafanaDomain}" = {
+    virtualHosts."${virtualHostsVar."grafana".domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
@@ -202,16 +320,15 @@ in
       };
     };
 
-    virtualHosts."${pgadminDomain}" = {
+    virtualHosts."${virtualHostsVar."pgadmin".domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        # proxyPass = "http://localhost:${toString config.services.pgadmin.port}";
         proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
       };
     };
 
-    virtualHosts."${forgejoDomain}" = {
+    virtualHosts."${virtualHostsVar."forgejo".domain}" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
@@ -219,20 +336,104 @@ in
         proxyPass = "http://unix:${config.services.anubis.instances.forgejo.settings.BIND}";
       };
     };
+
+    virtualHosts."${virtualHostsVar."prometheus".domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      basicAuthFile = config.age.secrets."hosts/${hostName}/prometheus-ui-basic-auth-file".path;
+      locations."/" = {
+        proxyPass = "http://${virtualHostsVar."prometheus".proxyEndpoint}";
+      };
+    };
+
+    virtualHosts."${virtualHostsVar."immich".domain}" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://${virtualHostsVar."immich".proxyEndpoint}";
+        extraConfig = ''
+          client_max_body_size 50000M;
+          proxy_read_timeout   600s;
+          proxy_send_timeout   600s;
+          send_timeout         600s;
+        '';
+      };
+    };
+
+    # --- HOME intranet ---
+    virtualHosts."intra-default-sink" = {
+      serverName = "~^(.+)\\.home\\.tsandrini\\.sh$";
+
+      forceSSL = true;
+      sslCertificate = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/fullchain.pem";
+      sslCertificateKey = "${certbotWedosCertDir}/${nginxVars.intranetDomain}/privkey.pem";
+
+      locations."= /unauthorized.html" = {
+        root = "/etc/nginx-static";
+        extraConfig = "internal;";
+      };
+
+      locations."/" = {
+        extraConfig = ''
+          error_page 403 /unauthorized.html;
+          return 403;
+        '';
+      };
+
+      extraConfig = ''
+        add_header Cache-Control "no-store, no-cache, must-revalidate, max-age=0" always;
+        add_header Pragma "no-cache" always;
+        add_header Expires "0" always;
+      '';
+    };
+
+    virtualHosts."${virtualHostsVar."intra-pihole".domain}" = mkIntraVhost {
+      locations."/" = {
+        proxyWebsockets = true;
+        proxyPass = "http://${virtualHostsVar."intra-pihole".proxyEndpoint}";
+      };
+    };
   };
+
+  environment.etc."nginx-static/unauthorized.html".source = ./unauthorized.html;
+
+  services.immich = {
+    enable = true;
+    inherit (immichVars) port;
+    accelerationDevices = null;
+    database = {
+      enable = true;
+      createDB = false;
+      host = "/run/postgresql";
+      inherit (postgresVars.instances."immich") user;
+      name = postgresVars.instances."immich".database;
+    };
+  };
+
+  # HW acceleration
+  users.users."${config.services.immich.user}".extraGroups = [
+    "video"
+    "render"
+  ];
 
   services.forgejo = {
     enable = true;
+    package = pkgs.forgejo;
     database = {
       createDatabase = false;
       type = "postgres";
       socket = "/run/postgresql";
+      inherit (postgresVars.instances."forgejo") user;
+      name = postgresVars.instances."forgejo".database;
     };
     settings = {
       server = {
-        ROOT_URL = "https://${forgejoDomain}/";
-        DOMAIN = forgejoDomain;
-        SSH_PORT = 2222;
+        HTTP_PORT = forgejoVars.server.http_port;
+        HTTP_ADDR = forgejoVars.server.http_addr;
+
+        ROOT_URL = "https://${virtualHostsVar."forgejo".domain}/";
+        DOMAIN = virtualHostsVar."forgejo".domain;
+        SSH_PORT = infraVars.common.services.openssh.defaultPort;
         LANDING_PAGE = "explore";
       };
       service = {
@@ -246,9 +447,9 @@ in
       };
       mailer = {
         ENABLED = true;
-        PROTOCOL = "smtp"; # <--- Change protocol
+        PROTOCOL = "smtp";
         SMTP_ADDR = "localhost";
-        FROM = "git-bot@${domain}";
+        FROM = "git-bot@$tsandrini.sh";
       };
       DEFAULT = {
         APP_NAME = "tsandrini's git";
@@ -293,6 +494,7 @@ in
       settings = {
         SERVE_ROBOTS_TXT = true;
         OG_PASSTHROUGH = true;
+        METRICS_BIND_NETWORK = "tcp";
       };
     };
 
@@ -302,27 +504,31 @@ in
         group = "nginx";
         settings = {
           TARGET = "unix:///run/nginx/nginx.sock";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."immutable-insights".anubisMetricsPort}";
         };
       };
 
       forgejo = {
         enable = true;
         settings = {
-          TARGET = "http://${config.services.forgejo.settings.server.HTTP_ADDR}:${toString config.services.forgejo.settings.server.HTTP_PORT}";
+          TARGET = "http://${virtualHostsVar."forgejo".proxyEndpoint}";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."forgejo".anubisMetricsPort}";
         };
       };
 
       grafana = {
         enable = true;
         settings = {
-          TARGET = "http://${toString config.services.grafana.settings.server.http_addr}:${toString config.services.grafana.settings.server.http_port}";
+          TARGET = "http://${virtualHostsVar."grafana".proxyEndpoint}";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."grafana".anubisMetricsPort}";
         };
       };
 
       pgadmin = {
         enable = true;
         settings = {
-          TARGET = "http://localhost:${toString config.services.pgadmin.port}";
+          TARGET = "http://${virtualHostsVar."pgadmin".proxyEndpoint}";
+          METRICS_BIND = "localhost:${toString virtualHostsVar."pgadmin".anubisMetricsPort}";
         };
       };
 
@@ -341,32 +547,32 @@ in
     settings = {
       analytics.reporting_enabled = false;
       server = {
-        root_url = "https://${grafanaDomain}";
-        domain = "${grafanaDomain}";
+        inherit (grafanaVars.server) http_addr http_port;
+        inherit (virtualHostsVar."grafana") domain;
+
+        root_url = "https://${virtualHostsVar."grafana".domain}";
         enforce_domain = true;
         enable_gzip = true;
-        http_addr = "127.0.0.1";
-        http_port = 3001;
       };
 
       smtp = {
         enabled = true;
-        host = "mail.${domain}:587";
-        user = "grafana-bot@${domain}";
+        host = "mail.tsandrini.sh:465";
+        user = "grafana-bot@tsandrini.sh";
         password = "$__file{${config.age.secrets."hosts/${hostName}/grafana-bot-mail-password".path}}";
-        fromAddress = "grafana-bot@${domain}";
+        fromAddress = "grafana-bot@tsandrini.sh";
       };
 
       database = {
         type = "postgres";
-        name = "grafana";
         host = "/run/postgresql";
-        user = "grafana";
+        inherit (postgresVars.instances."grafana") user;
+        name = postgresVars.instances."grafana".database;
       };
       # NOTE enable again on init
       security.disable_initial_admin_creation = true;
 
-      security.admin_email = "t@${domain}";
+      security.admin_email = "t@tsandrini.sh";
       security.admin_password = "$__file{${
         config.age.secrets."hosts/${hostName}/grafana-admin-password".path
       }}";
@@ -377,14 +583,14 @@ in
           uid = "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd";
           name = "Prometheus";
           type = "prometheus";
-          url = "http://localhost:${toString config.services.prometheus.port}";
+          url = "http://localhost:${toString prometheusVars.server.http_port}";
         }
         {
           uid = "x2dSQip31bGxOYQBo3GtZdCtCz9Tbt1q";
           name = "Loki";
           type = "loki";
           access = "proxy";
-          url = "http://localhost:${toString config.services.loki.configuration.server.http_listen_port}";
+          url = "http://localhost:${toString lokiVars.server.http_port}";
         }
       ];
       dashboards.settings.providers =
@@ -406,14 +612,6 @@ in
               options.path = ./grafana/dashboards/node-exporter-full.json;
             }
             {
-              name = "Logs / App";
-              options.path = ./grafana/dashboards/logs-app.json;
-            }
-            {
-              name = "Prometheus 2.0 Overview";
-              options.path = ./grafana/dashboards/prometheus-2-0-overview.json;
-            }
-            {
               name = "NGINX by nginxinc";
               options.path = ./grafana/dashboards/nginx-by-nginxinc.json;
             }
@@ -421,9 +619,58 @@ in
               name = "PostgreSQL Database";
               options.path = ./grafana/dashboards/postgresql-database.json;
             }
+            # --- DNS ---
+            {
+              name = "Pi-hole Exporter";
+              options.path = ./grafana/dashboards/pi-hole-exporter.json;
+              folder = "DNS";
+            }
+            {
+              name = "Pi-hole UI";
+              options.path = ./grafana/dashboards/pi-hole-ui.json;
+              folder = "DNS";
+            }
+            {
+              name = "Unbound";
+              options.path = ./grafana/dashboards/unbound.json;
+              folder = "DNS";
+            }
+            # --- Logs ---
+            {
+              name = "Logs / App";
+              options.path = ./grafana/dashboards/logs-app.json;
+              folder = "Logs & Loki";
+            }
             {
               name = "Loki & Promtail";
               options.path = ./grafana/dashboards/loki-and-promtail.json;
+              folder = "Logs & Loki";
+            }
+            {
+              name = "Loki Metrics Dashboard";
+              options.path = ./grafana/dashboards/loki-metrics-dashboard.json;
+              folder = "Logs & Loki";
+            }
+            # --- Mailserver ---
+            {
+              name = "dovecot2 (old_stats) overview by tsandrini";
+              options.path = ./grafana/dashboards/dovecot2-old-stats-overview-by-tsandrini.json;
+              folder = "Mailserver";
+            }
+            {
+              name = "Postfix";
+              options.path = ./grafana/dashboards/postfix.json;
+              folder = "Mailserver";
+            }
+            {
+              name = "Postfix overview by tsandrini";
+              options.path = ./grafana/dashboards/postfix-overview-by-tsandrini.json;
+              folder = "Mailserver";
+            }
+            {
+              name = "Rspamd stat overview by tsandrini";
+              options.path = ./grafana/dashboards/rspamd-stat-overview-by-tsandrini.json;
+              folder = "Mailserver";
             }
           ];
     };
@@ -433,14 +680,16 @@ in
     enable = true;
     package = pkgs.postgresql_16;
     settings = {
+      inherit (postgresVars) port;
       password_encryption = "scram-sha-256";
     };
     authentication = ''
       # Allow grafana user to connect via local socket with peer auth (no password)
       local   all potgres                                             peer
-      local   all ${config.services.grafana.settings.database.user}   peer
-      local   all firefly-iii                                         peer
-      local   all ${config.services.forgejo.database.user}            peer
+      local   all ${postgresVars.instances."grafana".user}            peer
+      local   all ${postgresVars.instances."immich".user}             peer
+      local   all ${postgresVars.instances."forgejo".user}            peer
+      local   all ${postgresVars.instances."firefly-iii".user}        peer
 
       # Require SCRAM password for admin on local socket and TCP (IPv4 + IPv6)
       local   all             admin                                   scram-sha-256
@@ -452,9 +701,10 @@ in
       # host    all             all             all                     reject
     '';
     ensureDatabases = [
-      "firefly-iii"
-      config.services.grafana.settings.database.name
-      config.services.forgejo.database.name
+      postgresVars.instances."grafana".database
+      postgresVars.instances."immich".database
+      postgresVars.instances."forgejo".database
+      postgresVars.instances."firefly-iii".database
     ];
     ensureUsers = [
       {
@@ -467,25 +717,29 @@ in
         };
       }
       {
-        name = config.services.grafana.settings.database.user;
+        name = postgresVars.instances."grafana".user;
         ensureDBOwnership = true;
       }
       {
-        name = "firefly-iii";
+        name = postgresVars.instances."forgejo".user;
         ensureDBOwnership = true;
       }
       {
-        name = config.services.forgejo.database.user;
+        name = postgresVars.instances."firefly-iii".user;
+        ensureDBOwnership = true;
+      }
+      {
+        name = postgresVars.instances."immich".user;
         ensureDBOwnership = true;
       }
     ];
   };
 
-  systemd.services.postgresql.postStart = lib.mkAfter ''
-    $PSQL -f ${pkgs.writeText "postgresql-post-init.sql" ''
-      ALTER USER admin WITH PASSWORD 'SCRAM-SHA-256$4096:4ASEVqDlBNdjM7PKDkIYXg==$Y0n8toSrM6lgAzASCTCVq+UzxVEc3ANMCPYfEarQs88=:yVyYyjmUqUoLe26EXSQE4Zvo7B3me+3HcelupObpFf4=';
-    ''}
-  '';
+  # systemd.services.postgresql.postStart = ''
+  #   $PSQL -f ${pkgs.writeText "postgresql-post-init.sql" ''
+  #     ALTER USER admin WITH PASSWORD 'SCRAM-SHA-256$4096:4ASEVqDlBNdjM7PKDkIYXg==$Y0n8toSrM6lgAzASCTCVq+UzxVEc3ANMCPYfEarQs88=:yVyYyjmUqUoLe26EXSQE4Zvo7B3me+3HcelupObpFf4=';
+  #   ''}
+  # '';
 
   services.postgresqlBackup = {
     enable = true;
@@ -496,72 +750,296 @@ in
 
   services.pgadmin = {
     enable = true;
-    openFirewall = true;
+    inherit (pgadminVars) port;
     initialEmail = "t@tsandrini.sh";
     initialPasswordFile = config.age.secrets."hosts/${hostName}/pgadmin-admin-password".path;
   };
 
   services.prometheus = {
     enable = true;
-    port = 9001;
+    port = prometheusVars.server.http_port;
     globalConfig.scrape_interval = "15s";
-    scrapeConfigs = [
-      {
-        job_name = "NixOS-node-exporter";
-        static_configs = [
-          {
-            targets = [ "127.0.0.1:${toString config.services.prometheus.exporters.node.port}" ];
-          }
-        ];
+    scrapeConfigs =
+      let
+        mkTarget =
+          host: service:
+          "${infraVars.hosts.${host}.address}:${
+            toString infraVars.hosts.${host}.services.prometheus.exporters.${service}.port
+          }";
+        mkAnubisTarget =
+          host: virtualHost:
+          "${infraVars.hosts.${host}.address}:${
+            toString infraVars.hosts.${host}.services.nginx.virtualHosts.${virtualHost}.anubisMetricsPort
+          }";
+      in
+      [
+        {
+          job_name = "NixOS-node-exporter";
+          static_configs = [
+            {
+              # targets = [ "localhost:${toString config.services.prometheus.exporters.node.port}" ];
+              targets = [
+                (mkTarget "remotebundle" "node")
+                (mkTarget "pupibundle" "node")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "prometheus";
+          static_configs = [
+            {
+              targets = [ "localhost:${toString config.services.prometheus.port}" ];
+            }
+          ];
+        }
+        {
+          job_name = "postgres";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "postgres")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "nginx";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "nginx")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "postfix";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "postfix")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "rspamd";
+          honor_labels = true;
+          metrics_path = "/probe";
+          params = {
+            target = [
+              "http://${
+                infraVars.hosts."remotebundle".address
+              }:${toString mailserverExporters.rspamd.targetPort}/stat"
+            ];
+          };
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "rspamd")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "dovecot";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "dovecot")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "pihole";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "pupibundle" "pihole")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "unbound";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "pupibundle" "unbound")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "nginxlog";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "nginxlog")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "loki";
+          static_configs = [
+            {
+              targets = [
+                (mkTarget "remotebundle" "loki")
+              ];
+            }
+          ];
+        }
+        {
+          job_name = "anubis";
+          static_configs = [
+            {
+              targets = [
+                (mkAnubisTarget "remotebundle" "immutable-insights")
+                (mkAnubisTarget "remotebundle" "pgadmin")
+                (mkAnubisTarget "remotebundle" "grafana")
+                (mkAnubisTarget "remotebundle" "forgejo")
+              ];
+            }
+          ];
+        }
+      ];
+  };
+
+  services.loki.configuration.server = {
+    http_listen_address = lokiVars.server.http_addr;
+    http_listen_port = lokiVars.server.http_port;
+  };
+
+  services.dovecot2 = {
+    mailPlugins.globally.enable = [ "old_stats" ];
+    extraConfig = ''
+      service old-stats {
+        unix_listener old-stats {
+          user = ${config.services.dovecot2.user}
+          group = ${config.services.dovecot2.group}
+          mode = 0660
+        }
+        fifo_listener old-stats-mail {
+          mode = 0660
+          user = ${config.services.dovecot2.user}
+          group = ${config.services.dovecot2.group}
+        }
+        fifo_listener old-stats-user {
+          mode = 0660
+          user = ${config.services.dovecot2.user}
+          group = ${config.services.dovecot2.group}
+        }
       }
-      {
-        job_name = "${hostName}_prometheus";
-        static_configs = [
-          {
-            targets = [ "localhost:${toString config.services.prometheus.port}" ];
-          }
-        ];
+      plugin {
+        old_stats_refresh = 30 secs
+        old_stats_track_cmds = yes
       }
+    '';
+  };
+
+  services.rspamd = {
+    workers.controller.bindSockets = [
       {
-        job_name = "${hostName}_postgres";
-        static_configs = [
-          {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.postgres.port}" ];
-          }
-        ];
+        socket = "/run/rspamd/worker-controller.sock";
+        mode = "0666";
       }
-      {
-        job_name = "${hostName}_nginx";
-        static_configs = [
-          {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.nginx.port}" ];
-          }
-        ];
-      }
-      {
-        job_name = "${hostName}_nginxlog";
-        static_configs = [
-          {
-            targets = [ "localhost:${toString config.services.prometheus.exporters.nginxlog.port}" ];
-          }
-        ];
-      }
+      "0.0.0.0:${toString mailserverExporters.rspamd.targetPort}"
     ];
   };
+
+  systemd.services.certbot-wedos-home = {
+    description = "Certbot DNS-01 (WEDOS) for ${nginxVars.intranetDomain} wildcard";
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+
+      StateDirectory = "certbot-wedos-home";
+      StateDirectoryMode = "0750";
+      LogsDirectory = "certbot-wedos-home";
+      LogsDirectoryMode = "0750";
+
+      User = "root";
+      Group = config.services.nginx.group;
+      UMask = "0027";
+      PrivateTmp = true;
+      NoNewPrivileges = true;
+
+      ExecStart = ''
+        ${certbotWedosHomeEnv}/bin/certbot certonly \
+          --non-interactive --agree-tos \
+          --email ${infraVars.common.contacts.securityEmail} \
+          --authenticator dns-wedos \
+          --dns-wedos-credentials ${config.age.secrets."hosts/${hostName}/wedos-wapi-credentials".path} \
+          --dns-wedos-propagation-seconds 450 \
+          -d ${nginxVars.intranetDomain} \
+          -d "*.${nginxVars.intranetDomain}" \
+          --config-dir /var/lib/certbot-wedos-home/config \
+          --work-dir /var/lib/certbot-wedos-home/work \
+          --logs-dir /var/log/certbot-wedos-home
+      '';
+    };
+  };
+
+  systemd.timers.certbot-wedos-home = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnCalendar = "daily";
+      RandomizedDelaySec = "1h";
+      Persistent = true;
+    };
+  };
+
+  systemd.tmpfiles.rules = [
+    # allow group traversal down the tree
+    "d /var/lib/certbot-wedos-home 0750 root ${config.services.nginx.group} - -"
+    "d /var/lib/certbot-wedos-home/config 0750 root ${config.services.nginx.group} - -"
+    "d /var/lib/certbot-wedos-home/config/live 0750 root ${config.services.nginx.group} - -"
+    "d /var/lib/certbot-wedos-home/config/archive 0750 root ${config.services.nginx.group} - -"
+  ];
 
   services.prometheus.exporters = {
     postgres = {
       enable = true;
+      inherit (prometheusExporters.postgres) port;
       runAsLocalSuperUser = true;
     };
 
     nginx = {
       enable = true;
+      inherit (prometheusExporters.nginx) port;
       scrapeUri = "http://127.0.0.1/nginx_status";
+    };
+
+    postfix = {
+      enable = true;
+      inherit (prometheusExporters.postfix) port;
+      logfilePath = "/var/log/mail";
+    };
+
+    rspamd = {
+      enable = true;
+      inherit (prometheusExporters.rspamd) port;
+    };
+
+    dovecot = {
+      enable = true;
+      inherit (config.services.dovecot2) user group;
+      inherit (prometheusExporters.dovecot) port;
+      socketPath = "/var/run/dovecot2/old-stats";
+      scopes = [
+        "user"
+        "global"
+      ];
     };
 
     nginxlog = {
       enable = true;
+      inherit (prometheusExporters.nginxlog) port;
       inherit (config.services.nginx) group;
       settings.namespaces = [
         {
@@ -574,6 +1052,11 @@ in
   };
 
   age.secrets = {
+    "hosts/${hostName}/wedos-wapi-credentials" = {
+      file = "${secretsPath}/hosts/${hostName}/wedos-wapi-credentials.age";
+      owner = config.systemd.services.certbot-wedos-home.serviceConfig.User;
+    };
+
     "hosts/${hostName}/grafana-bot-mail-password" = {
       file = "${secretsPath}/hosts/${hostName}/grafana-bot-mail-password.age";
       owner = "grafana";
@@ -586,6 +1069,15 @@ in
 
     "hosts/${hostName}/pgadmin-admin-password" = {
       file = "${secretsPath}/hosts/${hostName}/pgadmin-admin-password.age";
+    };
+
+    "hosts/${hostName}/wg-home-tunnel-privkey" = {
+      file = "${secretsPath}/hosts/${hostName}/wg-home-tunnel-privkey.age";
+    };
+
+    "hosts/${hostName}/prometheus-ui-basic-auth-file" = {
+      file = "${secretsPath}/hosts/${hostName}/prometheus-ui-basic-auth-file.age";
+      owner = config.services.nginx.user;
     };
 
     # "hosts/${hostName}/firefly-iii-app-key" = {

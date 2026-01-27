@@ -1,0 +1,146 @@
+# --- flake-parts/modules/nixos/profiles/graphical-dms-niri.nix
+#
+# Author:  tsandrini <t@tsandrini.sh>
+# URL:     https://github.com/tsandrini/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ localFlake, inputs }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
+
+  cfg = config.tensorfiles.profiles.graphical-dms-niri;
+  _ = mkOverrideAtProfileLevel;
+in
+{
+  options.tensorfiles.profiles.graphical-dms-niri = {
+    enable = mkEnableOption ''
+      TODO
+    '';
+  };
+
+  imports = [
+    inputs.dms.nixosModules.greeter
+    inputs.niri.nixosModules.niri
+  ];
+
+  config = mkIf cfg.enable (mkMerge [
+    # |----------------------------------------------------------------------| #
+    {
+      tensorfiles = {
+        profiles.minimal.enable = _ true;
+        services.networking.networkmanager.enable = _ true;
+      };
+
+      networking.nftables.enable = _ true;
+      networking.firewall.enable = _ true;
+
+      environment.systemPackages = with pkgs; [
+        # -- GENERAL PACKAGES --
+        libnotify # A library that sends desktop notifications to a notification daemon
+        notify-desktop # Little application that lets you send desktop notifications with one command
+        wl-clipboard # Command-line copy/paste utilities for Wayland
+        maim # A command-line screenshot utility
+        xxdiff # Graphical file and directories comparator and merge tool
+        networkmanagerapplet # need this to configure L2TP ipsec
+
+        # -- UTILS NEEDED FOR INFO-CENTER --
+        clinfo # Print all known information about all available OpenCL platforms and devices in the system
+        mesa-demos # Test utilities for OpenGL
+        vulkan-tools # Khronos official Vulkan Tools and Utilities
+        wayland-utils # Wayland utilities (wayland-info)
+        aha # ANSI HTML Adapter
+
+        # -- KDE PACKAGES --
+        # kdePackages.ark # Graphical file compression/decompression utility
+        # haruna # Open source video player built with Qt/QML and libmpv
+        # kdePackages.kate # Advanced text editor
+        # kdePackages.kcalc # Scientific calculator
+        # kdiff3 # Compares and merges 2 or 3 files or directories
+        # krename # A powerful batch renamer for KDE
+        # krusader # Norton/Total Commander clone for KDE
+        # kdePackages.filelight # Disk usage statistics
+        # kdePackages.kfind # File search utility by KDE
+        # kdePackages.kweather
+        # # kdePackages.kweathercore
+        # kdePackages.quazip # Provides access to ZIP archives from Qt programs
+        # kdePackages.ksshaskpass
+        # kdePackages.accounts-qt # Qt library for accessing the online accounts database
+        # kdePackages.calendarsupport
+        # kdePackages.kaccounts-providers # Online account providers
+        # kdePackages.kaccounts-integration # Online accounts integration
+        # kdePackages.kdeplasma-addons
+        # kdePackages.plasma-browser-integration
+        # kdePackages.kaddressbook # KDE contact manager
+        # kdePackages.merkuro # A calendar application using Akonadi to sync with external services
+        # kdePackages.kcontacts # KContacts - Library for working with contact information
+        # kdePackages.kpeople # A library that provides access to all contacts and the people who hold them
+        # kdePackages.kompare # Graphical File Differences Tool
+
+        # krita # A free and open source painting application
+        # kdePackages.kdenlive # Video editor
+        # kdePackages.kcolorpicker # Qt based Color Picker with popup menu
+        # kdePackages.kcolorchooser
+        # kdePackages.kolourpaint # Paint program
+        # NOTE KNotes is unmaintained upstream,
+        # kdePackages.knotes # Popup notes
+        # kdePackages.kalarm # Personal alarm scheduler
+        # kdePackages.kamoso # A simple and friendly program to use your camera
+        # kdePackages.kruler # Screen ruler
+        # kdePackages.kclock # Clock app for plasma mobile
+        # okteta # A hex editor
+        # kdePackages.elisa # A simple media player for KDE
+        # kdePackages.kmag # A small Linux utility to magnify a part of the screen
+        # kdePackages.itinerary
+      ];
+
+      programs.dank-material-shell.greeter = {
+        enable = _ true;
+        configHome = _ "/home/tsandrini"; # TODO probably find a better way to do this
+        compositor.name = _ "niri";
+      };
+
+      programs.ssh.startAgent = _ false; # NOTE: using gnome agent
+      programs.niri.enable = _ true;
+      services.dbus.enable = _ true;
+      security.polkit.enable = _ true;
+      xdg.portal = {
+        enable = _ true;
+        extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+        config.common.default = "*";
+      };
+
+      environment.sessionVariables = {
+        NIXOS_OZONE_WL = _ "1";
+      };
+
+      services.pcscd.enable = _ true; # needed for gpg pinentry
+      services.pipewire = {
+        enable = _ true;
+        alsa.enable = _ true;
+        pulse.enable = _ true;
+        jack.enable = _ true;
+      };
+
+      programs.kdeconnect.enable = _ true;
+      systemd.user.services.niri-flake-polkit.enable = _ false;
+    }
+    # |----------------------------------------------------------------------| #
+  ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
+}

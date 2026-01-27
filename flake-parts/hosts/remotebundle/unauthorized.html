@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>403 — Intranet Only</title>
+
+    <style>
+      :root {
+        --bg0: #070a12;
+        --bg1: #0b1020;
+        --card: rgba(255, 255, 255, 0.06);
+        --card2: rgba(255, 255, 255, 0.1);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.65);
+        --faint: rgba(255, 255, 255, 0.4);
+        --red: #ff3b3b;
+        --red2: #ff6b6b;
+        --cyan: #46e3ff;
+        --lime: #82ff9b;
+        --shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+        --ring:
+          0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 0 6px rgba(255, 59, 59, 0.1);
+        --radius: 24px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Ubuntu,
+          Cantarell,
+          Noto Sans,
+          Helvetica Neue,
+          Arial,
+          "Apple Color Emoji",
+          "Segoe UI Emoji";
+        background:
+          radial-gradient(
+            1200px 800px at 20% 20%,
+            rgba(70, 227, 255, 0.1),
+            transparent 60%
+          ),
+          radial-gradient(
+            1000px 700px at 90% 30%,
+            rgba(255, 59, 59, 0.12),
+            transparent 55%
+          ),
+          radial-gradient(
+            800px 600px at 40% 95%,
+            rgba(130, 255, 155, 0.08),
+            transparent 55%
+          ),
+          linear-gradient(180deg, var(--bg0), var(--bg1));
+        color: var(--text);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .wrap {
+        width: min(980px, 100%);
+        display: grid;
+        gap: 18px;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        padding: 14px 18px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 99px;
+        background: var(--red);
+        box-shadow: 0 0 0 4px rgba(255, 59, 59, 0.12);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 18px;
+      }
+
+      @media (max-width: 860px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        border-radius: var(--radius);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.06),
+          rgba(255, 255, 255, 0.04)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .card-inner {
+        padding: 26px 26px 22px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 18px;
+        align-items: center;
+      }
+
+      @media (max-width: 520px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .stop {
+        width: 140px;
+        aspect-ratio: 1 / 1;
+        margin: 0 auto;
+        filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.55));
+      }
+
+      .title {
+        font-size: clamp(28px, 4vw, 44px);
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+
+      .subtitle {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .kbd {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(0, 0, 0, 0.25);
+        color: rgba(255, 255, 255, 0.85);
+        white-space: nowrap;
+      }
+
+      .actions {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.92);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        transition:
+          transform 120ms ease,
+          background 120ms ease,
+          border-color 120ms ease;
+        user-select: none;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.18);
+      }
+
+      .btn.primary {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 59, 59, 0.22),
+          rgba(255, 59, 59, 0.1)
+        );
+        border-color: rgba(255, 59, 59, 0.35);
+        box-shadow: var(--ring);
+      }
+
+      .btn svg {
+        opacity: 0.9;
+      }
+
+      .side {
+        padding: 22px;
+        display: grid;
+        gap: 14px;
+      }
+
+      .panel {
+        border-radius: 18px;
+        background: rgba(0, 0, 0, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 16px;
+      }
+
+      .panel h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        letter-spacing: 0.02em;
+        color: rgba(255, 255, 255, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .panel p,
+      .panel li {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.55;
+      }
+
+      ul {
+        margin: 10px 0 0;
+        padding: 0 0 0 16px;
+      }
+
+      code {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 12.5px;
+        color: rgba(255, 255, 255, 0.88);
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 2px 6px;
+        border-radius: 8px;
+        white-space: nowrap;
+      }
+
+      .math {
+        display: grid;
+        gap: 10px;
+      }
+
+      .formula {
+        font-family:
+          ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        font-size: 13px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: linear-gradient(
+          180deg,
+          rgba(70, 227, 255, 0.1),
+          rgba(255, 255, 255, 0.04)
+        );
+        border: 1px solid rgba(70, 227, 255, 0.22);
+        color: rgba(255, 255, 255, 0.9);
+        overflow-x: auto;
+      }
+
+      .foot {
+        text-align: center;
+        color: var(--faint);
+        font-size: 12px;
+        padding: 6px 0 0;
+      }
+
+      /* Stop sign SVG label text smoothing */
+      svg text {
+        font-family: inherit;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <div class="topbar">
+        <div class="pill">
+          <span class="dot"></span>
+          <span>403 — intranet only</span>
+        </div>
+        <div class="pill">
+          <span style="opacity: 0.8">host:</span>
+          <span class="kbd" id="host"></span>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="card">
+          <div class="card-inner">
+            <div class="hero">
+              <div class="stop" aria-hidden="true">
+                <!-- stop sign -->
+                <svg
+                  viewBox="0 0 200 200"
+                  width="140"
+                  height="140"
+                  role="img"
+                  aria-label="Stop"
+                >
+                  <defs>
+                    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                      <stop
+                        offset="0"
+                        stop-color="#ff6b6b"
+                        stop-opacity="0.95"
+                      />
+                      <stop
+                        offset="1"
+                        stop-color="#ff3b3b"
+                        stop-opacity="0.85"
+                      />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M76 12h48l34 34v48l-34 34H76L42 94V46z"
+                    fill="url(#g)"
+                    stroke="rgba(255,255,255,0.28)"
+                    stroke-width="4"
+                  />
+                  <path
+                    d="M76 26h48l24 24v48l-24 24H76L52 98V50z"
+                    fill="rgba(0,0,0,0.10)"
+                    stroke="rgba(255,255,255,0.16)"
+                    stroke-width="2"
+                  />
+                  <text
+                    x="100"
+                    y="90"
+                    text-anchor="middle"
+                    font-size="42"
+                    fill="rgba(255,255,255,0.92)"
+                  >
+                    STOP
+                  </text>
+                </svg>
+              </div>
+
+              <div>
+                <h1 class="title">Not here. Are you lost, puppy? 🥺</h1>
+                <p class="subtitle">
+                  This hostname lives on a private intranet. If you’re seeing
+                  this, you’re on the wrong side of the tunnel. Connect to
+                  WireGuard (or the local LAN) and try again.
+                </p>
+
+                <div class="actions">
+                  <a
+                    class="btn primary"
+                    href="https://home.tsandrini.sh"
+                    rel="noopener"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 10.5l8-7 8 7V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                    Back to the portal
+                  </a>
+
+                  <a
+                    class="btn"
+                    href="#"
+                    onclick="location.reload(); return false;"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M20 12a8 8 0 1 1-2.34-5.66"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                      <path
+                        d="M20 4v6h-6"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    Retry
+                  </a>
+
+                  <a
+                    class="btn"
+                    href="#"
+                    onclick="navigator.clipboard?.writeText(location.href); this.innerText='Copied ✓'; return false;"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M9 9h10v10H9z"
+                        stroke="currentColor"
+                        stroke-width="2"
+                      />
+                      <path
+                        d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      />
+                    </svg>
+                    Copy URL
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card side">
+          <div class="panel">
+            <h3>
+              Help 😭???
+              <span class="kbd">TL;DR</span>
+            </h3>
+            <ul>
+              <li>Turn on WireGuard and ensure DNS points to your Pi-hole.</li>
+              <li>Then refresh this page.</li>
+              <li>If you’re already on VPN, check split-horizon DNS.</li>
+            </ul>
+          </div>
+
+          <div class="panel math">
+            <h3>
+              Locally invariant network topology
+              <span class="kbd">(,,>﹏<,,)👉👈 </span>
+            </h3>
+            <div
+              class="formula"
+              role="img"
+              aria-label="Generalized Stokes theorem formula"
+            >
+              ∫<sub>∂M</sub> ω = ∫<sub>M</sub> dω
+            </div>
+            <p>
+              Outside the boundary you don't get to sneak and sniff the interior
+              you silly dummy!!! TwT
+            </p>
+          </div>
+
+          <div class="panel">
+            <h3>Debug hints</h3>
+            <p>
+              Check DNS with <code>dig +short $HOST A</code>. If it resolves to
+              a public IP, you’re not using the intranet resolver.
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <div class="foot">
+        If you think you should have access, you probably do — you’re just not
+        on the right network.
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("host").textContent =
+        location.host || "(unknown)";
+    </script>
+  </body>
+</html>

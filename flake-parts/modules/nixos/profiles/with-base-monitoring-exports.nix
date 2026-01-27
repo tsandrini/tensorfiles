@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake }:
+{ localFlake, infraVars }:
 {
   config,
   hostName,
@@ -23,7 +23,6 @@ let
   inherit (lib)
     types
     mkIf
-    optional
     mkMerge
     mkEnableOption
     mkOption
@@ -51,10 +50,11 @@ in
           default = true;
         };
 
-      # TODO: maybe create infraVars?
       clientUrl = mkOption {
         type = types.str;
-        default = "http://localhost:3100/loki/api/v1/push";
+        default = "http://${
+          if hostName == "remotebundle" then "localhost" else infraVars.hosts."remotebundle".wgAddress
+        }:${toString infraVars.hosts."remotebundle".services.loki.server.http_port}/loki/api/v1/push";
         description = ''
           The URL of the Loki server to which Promtail will send logs.
         '';
@@ -72,17 +72,17 @@ in
               default = true;
             };
 
-          openFirewall = mkOption {
-            type = types.bool;
-            default = true;
-            description = ''
-              Whether to open the firewall for the Node Exporter port.
-            '';
-          };
+          # openFirewall = mkOption {
+          #   type = types.bool;
+          #   default = false;
+          #   description = ''
+          #     Whether to open the firewall for the Node Exporter port.
+          #   '';
+          # };
 
           port = mkOption {
             type = types.int;
-            default = 9002;
+            default = infraVars.common.services.prometheus.exporters.node.defaultPort;
             description = ''
               The port on which the Node Exporter will listen for
               Prometheus scrape requests.
@@ -141,7 +141,17 @@ in
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.prometheus.exporters.node.enable {
-      networking.firewall.allowedTCPPorts = optional cfg.prometheus.exporters.node.openFirewall config.services.prometheus.exporters.node.port;
+      tensorfiles.networking.firewall.subnets-firewall = {
+        enable = true;
+        subnets = {
+          "${infraVars.common.networking.defaultSubnet}" = {
+            allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
+          };
+          "${infraVars.common.networking.intranetSubnet}" = {
+            allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
+          };
+        };
+      };
 
       services.prometheus.exporters.node = {
         enable = _ true;

@@ -18,6 +18,7 @@
   secretsPath,
 }:
 {
+  pkgs,
   config,
   lib,
   hostName,
@@ -155,6 +156,9 @@ in
           "grafana-bot@${defaultDomain}" = {
             aliases = [ ];
           };
+          "immich-bot@${defaultDomain}" = {
+            aliases = [ ];
+          };
           "git-bot@${defaultDomain}" = {
             aliases = [ ];
           };
@@ -211,7 +215,6 @@ in
     {
       mailserver = {
         enable = _ true;
-        stateVersion = _ 1;
         fqdn = _ "mail.${cfg.baseDomain}";
         domains = [ cfg.baseDomain ] ++ cfg.additionalDomains;
 
@@ -232,7 +235,7 @@ in
 
         # Use Let's Encrypt certificates. Note that this needs to set up a stripped
         # down nginx and opens port 80.
-        certificateScheme = _ "acme-nginx";
+        # certificateScheme = _ "acme-nginx"; # NOTE: no longer any effect
         enableManageSieve = _ true;
         virusScanning = _ false;
 
@@ -241,22 +244,49 @@ in
           alertAddress = _ "monitoring@${cfg.baseDomain}";
         };
       };
-      security.acme.acceptTerms = _ true;
-      security.acme.defaults.email = _ "security@${cfg.baseDomain}";
+
+      security.acme = {
+        acceptTerms = _ true;
+        defaults.email = _ "security@${cfg.baseDomain}";
+      };
+      services.nginx = {
+        enable = _ true;
+        virtualHosts.${config.mailserver.fqdn} = {
+          enableACME = _ true;
+        };
+      };
+
+      mailserver.x509.useACMEHost = _ config.mailserver.fqdn;
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.roundcube.enable {
       services.roundcube = {
         enable = _ true;
+        dicts = with pkgs.aspellDicts; [
+          en
+          en-computers
+          en-science
+          cs
+        ];
+        plugins = [
+          "emoticons"
+          "enigma"
+          "userinfo"
+          "zipdownload"
+          "markasjunk"
+          "jqueryui"
+        ];
         # this is the url of the vhost, not necessarily the same as the fqdn of
         # the mailserver
         hostName = _ "webmail.${cfg.baseDomain}";
         extraConfig = ''
           # starttls needed for authentication, so the fqdn required to match
           # the certificate
-          $config['smtp_server'] = "tls://${config.mailserver.fqdn}";
+          $config['smtp_server'] = "ssl://${config.mailserver.fqdn}";
+          $config['imap_host'] = "ssl://${config.mailserver.fqdn}";
           $config['smtp_user'] = "%u";
           $config['smtp_pass'] = "%p";
+
         '';
       };
       services.nginx.enable = _ true;

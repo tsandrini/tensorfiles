@@ -115,7 +115,7 @@ in
         # :lang latex & :lang org (latex previews)
         # texlive.combined.scheme-medium
         # :lang beancount
-        fava # HACK Momentarily broken on nixos-unstable
+        # fava # HACK Momentarily broken on nixos-unstable
         graphviz
         nodejs
 
@@ -126,7 +126,7 @@ in
         discount # Implementation of Markdown markup language in C
 
         dockfmt # Dockerfile format
-        dockerfile-language-server-nodejs # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
+        dockerfile-language-server # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
 
         ## :lang config (json, yaml, xml)
         nodePackages.vscode-json-languageserver # JSON language server
@@ -198,7 +198,7 @@ in
         black # The uncompromising Python code formatter
         pipenv # Python Development Workflow for Humans
         poetry # Python dependency management and packaging made easy
-        (python311.withPackages (
+        (python3.withPackages (
           ps: with ps; [
             grip
             pyflakes
@@ -220,7 +220,7 @@ in
         #alejandra # The Uncompromising Nix Code Formatter
         statix # Lints and suggestions for the nix programming language
         deadnix # Find and remove unused code in .nix source files
-        nixfmt-rfc-style # An opinionated formatter for Nix
+        nixfmt # An opinionated formatter for Nix
       ];
 
       services.emacs = {

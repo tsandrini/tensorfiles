@@ -17,7 +17,7 @@ let
   jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
-  pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIeZq4IufhkS27VvvYbeLVQG40BTN78d9AziJyroQeNE root@pupibundle";
+  pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINLvjzkKLhKbaRU/uf3A+pf25rir3y+6mvcbaAxt2DHP root@pupibundle";
 
   hosts = [
     spinorbundle
@@ -59,56 +59,85 @@ in
   "hosts/remotebundle/users/root/system-password.age".publicKeys = [ remotebundle ] ++ [ tsandrini ];
   "hosts/remotebundle/users/tsandrini/system-password.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
+  "hosts/remotebundle/wedos-wapi-credentials.age".publicKeys = [
+    remotebundle
+  ];
   # mailserver
   "hosts/remotebundle/mailserver/t-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/business-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/security-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/monitoring-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/shopping-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/newsletters-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/grafana-bot-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/mailserver/git-bot-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ];
+  "hosts/remotebundle/mailserver/immich-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
   # rspamd
   "hosts/remotebundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   # grafana
   "hosts/remotebundle/grafana-admin-password.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/grafana-bot-mail-password.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   # pgadmin
   "hosts/remotebundle/pgadmin-admin-password.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
   # firefly
   "hosts/remotebundle/firefly-iii-app-key.age".publicKeys = [
     remotebundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
+  "hosts/remotebundle/wg-home-tunnel-privkey.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/remotebundle/prometheus-ui-basic-auth-file.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
 
   # --- spinorbundle ---
   # --------------------
   "hosts/spinorbundle/users/root/system-password.age".publicKeys = [ spinorbundle ] ++ [ tsandrini ];
   "hosts/spinorbundle/users/tsandrini/system-password.age".publicKeys = [
     spinorbundle
-  ] ++ [ tsandrini ];
+  ]
+  ++ [ tsandrini ];
 }

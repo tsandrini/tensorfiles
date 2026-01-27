@@ -37,10 +37,10 @@ in
     {
       plugins.lspkind = {
         enable = _ true;
-        symbolMap = {
-          Copilot = _ " ";
-        };
-        extraOptions = {
+        settings = {
+          symbol_map = {
+            Copilot = _ " ";
+          };
           maxwidth = _ 50;
           ellipsis_char = _ "...";
         };

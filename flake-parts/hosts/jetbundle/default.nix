@@ -32,7 +32,6 @@ in
   imports = [
     inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
-    inputs.nix-index-database.nixosModules.nix-index
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
     # Fingerprint sensor
@@ -48,29 +47,27 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    libva-utils
-    networkmanagerapplet # need this to configure L2TP ipsec
-    docker-compose
-    wireguard-tools
+  environment.systemPackages = [
+    pkgs.libva-utils
+    pkgs.docker-compose
+    pkgs.wireguard-tools
+    pkgs.claude-code
+    pkgs.codex
   ];
-
-  # ----------------------------
-  # | ADDITIONAL USER PACKAGES |
-  # ----------------------------
-  # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    profiles.graphical-plasma6.enable = true;
-    profiles.packages-base.enable = true;
-    profiles.packages-extra.enable = true;
+    profiles = {
+      graphical-dms-niri.enable = true;
+      packages-base.enable = true;
+      packages-extra.enable = true;
+      packages-graphical-extra.enable = true;
+    };
 
     services.networking.ssh.enable = true;
     security.agenix.enable = true;
-    # programs.shadow-nix.enable = false;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
@@ -113,25 +110,18 @@ in
     '';
   };
 
-  programs.winbox.enable = true;
-  programs.nix-index-database.comma.enable = true;
-
-  # services.udev.packages = with pkgs; [
-  #   via
-  #   vial
-  # ];
-
-  services = {
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      jack.enable = true;
-      lowLatency.enable = true;
-    };
+  # STEAM STUFF
+  services.pipewire.lowLatency.enable = true;
+  hardware.graphics.enable32Bit = true;
+  programs.steam = {
+    enable = true;
+    platformOptimizations.enable = true;
+    extraPackages = [
+      pkgs.gamescope
+      pkgs.xwayland-run
+    ];
   };
 
-  networking.networkmanager.enableStrongSwan = true;
   services.xl2tpd.enable = true;
   services.strongswan = {
     enable = true;
@@ -143,7 +133,6 @@ in
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
-    storageDriver = "btrfs";
   };
 
   networking.wireguard.enable = true;
@@ -168,18 +157,13 @@ in
     ];
   };
 
+  # Small QoL for Wayland apps (optional)
+
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
-
-      profiles.graphical-plasma.enable = true;
+      profiles.graphical-dms-niri.enable = true;
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
-
-      programs.pywal.enable = true;
-      # programs.spicetify.enable = true;
-      # services.pywalfox-native.enable = true;
-      # services.activitywatch.enable = true;
-      programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
     };
 
@@ -188,53 +172,14 @@ in
       tray.enable = true;
     };
 
-    home.username = "tsandrini";
-    home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
     };
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
-    home.packages = with pkgs; [
-      # thunderbird # A full-featured e-mail client
-      # beeper # Universal chat app.
-      anki # Spaced repetition flashcard program
-      libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
-      texlive.combined.scheme-full # TeX Live environment
-      zotero # Collect, organize, cite, and share your research sources
-      lapack # openblas with just the LAPACK C and FORTRAN ABI
-      ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
-      zoom-us # Player for Z-Code, TADS and HUGO stories or games
-      vesktop # Alternate client for Discord with Vencord built-in
-      gnucash # Free software for double entry accounting
-
-      element-desktop # A feature-rich client for Matrix.org
-      slack # Desktop client for Slack
-      signal-desktop-bin # Private, simple, and secure messenger
-      # github-desktop # GitHub Desktop
-      obsidian # A knowledge base that works on top of a local folder of plain text Markdown files
-      virt-viewer # Viewer for remote virtual machines
-
-      vscode-fhs # Wrapped variant of vscode which launches in a FHS compatible environment.
-
-      # todoist # Todoist CLI Client
-      # todoist-electron # The official Todoist electron app
-
-      wireshark # Powerful network protocol analyzer
-      pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
-      mqttui # Terminal client for MQTT
-      mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
-      mqtt-explorer # An all-round MQTT client that provides a structured topic overview
-
-      spotify # Play music from the Spotify music service
-      mpv # General-purpose media player, fork of MPlayer and mplayer2
-      zathura # A highly customizable and functional PDF viewer
-
-      # (pkgs-osu-lazer-bin.osu-lazer-bin.override { nativeWayland = true; })
+    home.packages = [
       pkgs-osu-lazer-bin.osu-lazer-bin
-      # inputs.nix-gaming.packages.${system}.osu-lazer-bin
-      # inputs.self.packages.${system}.pywalfox-native
     ];
   };
 }

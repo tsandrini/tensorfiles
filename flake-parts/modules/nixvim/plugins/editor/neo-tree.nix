@@ -51,51 +51,52 @@ in
 
       plugins.neo-tree = {
         enable = _ true;
-        closeIfLastWindow = _ true;
-        addBlankLineAtTop = _ false;
-        enableGitStatus = _ true;
-        enableRefreshOnWrite = _ true;
-        enableDiagnostics = _ true;
-        sources = [
-          "filesystem"
-          "buffers"
-          "git_status"
-          "document_symbols"
-        ];
+        settings = {
+          closeIfLastWindow = _ true;
+          enableDiagnostics = _ true;
+          enableGitStatus = _ true;
+          addBlankLineAtTop = _ false;
+          sources = [
+            "filesystem"
+            "buffers"
+            "git_status"
+            "document_symbols"
+          ];
 
-        filesystem = {
-          bindToCwd = _ false;
-          useLibuvFileWatcher = _ true;
-          followCurrentFile = {
-            enabled = _ true;
+          enableRefreshOnWrite = _ true;
+          filesystem = {
+            bindToCwd = _ false;
+            useLibuvFileWatcher = _ true;
+            followCurrentFile = {
+              enabled = _ true;
+            };
           };
-        };
+          window = {
+            mappings = {
+              "l" = "open";
+              "h" = "close_node";
+            };
+          };
 
-        window = {
-          mappings = {
-            "l" = "open";
-            "h" = "close_node";
-          };
-        };
-
-        defaultComponentConfigs = {
-          indent = {
-            withExpanders = _ true;
-            expanderCollapsed = _ "";
-            expanderExpanded = _ " ";
-            expanderHighlight = _ "NeoTreeExpander";
-          };
-          gitStatus = {
-            symbols = {
-              added = _ " ";
-              conflict = _ "󰩌 ";
-              deleted = _ "󱂥";
-              ignored = _ " ";
-              modified = _ " ";
-              renamed = _ "󰑕";
-              staged = _ "󰩍";
-              unstaged = _ "";
-              untracked = _ "";
+          defaultComponentConfigs = {
+            indent = {
+              withExpanders = _ true;
+              expanderCollapsed = _ "";
+              expanderExpanded = _ " ";
+              expanderHighlight = _ "NeoTreeExpander";
+            };
+            gitStatus = {
+              symbols = {
+                added = _ " ";
+                conflict = _ "󰩌 ";
+                deleted = _ "󱂥";
+                ignored = _ " ";
+                modified = _ " ";
+                renamed = _ "󰑕";
+                staged = _ "󰩍";
+                unstaged = _ "";
+                untracked = _ "";
+              };
             };
           };
         };

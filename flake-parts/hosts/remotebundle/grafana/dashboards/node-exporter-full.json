@@ -15463,7 +15463,7 @@
   "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
-  "tags": ["linux"],
+  "tags": ["linux", "prometheus"],
   "templating": {
     "list": [
       {

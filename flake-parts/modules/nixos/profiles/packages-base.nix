@@ -60,8 +60,6 @@ in
         iotop # A tool to find out the processes doing the most IO
 
         # -- ARCHIVING UTILS --
-        # rar # Utility for RAR archives
-        # unrar # Utility for RAR archives # NOTE collision with rar
         unzip # An extraction utility for archives compressed in .zip format
         zip # Compressor/archiver for creating and modifying zipfiles
         xz # A general-purpose data compression software, successor of LZMA
@@ -74,7 +72,6 @@ in
         # -- NIX UTILS --
         nix-health # Check the health of your Nix setup
         nix-fast-build # Combine the power of nix-eval-jobs with nix-output-monitor to speed-up your evaluation and building process
-        nix-prefetch-scripts # Collection of all the nix-prefetch-* scripts which may be used to obtain source hashes
         nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
         deploy-rs # Multi-profile Nix-flake deploy tool
         disko # Declarative disk partitioning and formatting using nix

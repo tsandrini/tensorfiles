@@ -22,7 +22,7 @@ let
   inherit (lib) mkOption types;
   inherit (inputs.flake-parts.lib) importApply mkPerSystemOption;
 
-  mkNixvimConfiguration =
+  mkNixvimConfig =
     name: pkgs:
     {
       extraSpecialArgs ? { },
@@ -34,12 +34,11 @@ let
       module =
         { ... }:
         {
-          imports =
-            [
-              (importApply ./${name} configImportArgs)
-            ]
-            ++ extraModules
-            ++ (lib.attrValues config.flake.nixvimModules);
+          imports = [
+            (importApply ./${name} configImportArgs)
+          ]
+          ++ extraModules
+          ++ (lib.attrValues config.flake.nixvimModules);
         };
     };
 in
@@ -65,11 +64,11 @@ in
       in
       {
         nixvimConfigurations = {
-          vanilla-config = mkNixvimConfiguration "vanilla-config" pkgs { };
-          base-config = mkNixvimConfiguration "base-config" pkgs { };
-          minimal-config = mkNixvimConfiguration "minimal-config" pkgs { };
-          graphical-config = mkNixvimConfiguration "graphical-config" pkgs { };
-          ide-config = mkNixvimConfiguration "ide-config" pkgs { };
+          vanilla-config = mkNixvimConfig "vanilla-config" pkgs { };
+          base-config = mkNixvimConfig "base-config" pkgs { };
+          minimal-config = mkNixvimConfig "minimal-config" pkgs { };
+          graphical-config = mkNixvimConfig "graphical-config" pkgs { };
+          ide-config = mkNixvimConfig "ide-config" pkgs { };
         };
 
         packages = {
@@ -86,27 +85,11 @@ in
           nvim-vanilla-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."vanilla-config";
           nvim-base-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."base-config";
 
-          # NOTE Telescope-frecency produces
-          # ERROR: [Telescope-Frecency] Imported 0 entries from oldfiles.
-          # when ran in a pure environment unfortunately.
-          nvim-minimal-config = mkTestDerivationFromNixvimModule (
-            config.nixvimConfigurations."minimal-config"
-            // {
-              module.plugins.telescope.extensions.frecency.enable = false;
-            }
-          );
-          nvim-graphical-config = mkTestDerivationFromNixvimModule (
-            config.nixvimConfigurations."graphical-config"
-            // {
-              module.plugins.telescope.extensions.frecency.enable = false;
-            }
-          );
-          nvim-ide-config = mkTestDerivationFromNixvimModule (
-            config.nixvimConfigurations."ide-config"
-            // {
-              module.plugins.telescope.extensions.frecency.enable = false;
-            }
-          );
+          nvim-minimal-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."minimal-config";
+          nvim-graphical-config =
+            mkTestDerivationFromNixvimModule
+              config.nixvimConfigurations."graphical-config";
+          nvim-ide-config = mkTestDerivationFromNixvimModule config.nixvimConfigurations."ide-config";
         };
       };
   };

@@ -1,0 +1,197 @@
+# --- flake-parts/hosts/jetbundle/default.nix
+#
+# Author:  tsandrini <t@tsandrini.sh>
+# URL:     https://github.com/tsandrini/tensorfiles
+# License: MIT
+#
+# 888                                                .d888 d8b 888
+# 888                                               d88P"  Y8P 888
+# 888                                               888        888
+# 888888 .d88b.  88888b.  .d8888b   .d88b.  888d888 888888 888 888  .d88b.  .d8888b
+# 888   d8P  Y8b 888 "88b 88K      d88""88b 888P"   888    888 888 d8P  Y8b 88K
+# 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
+# Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
+#  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
+{ inputs }:
+{ pkgs, system, ... }:
+let
+  pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in
+{
+  # -----------------
+  # | SPECIFICATION |
+  # -----------------
+  # Model: Lenovo B51-80
+
+  # --------------------------
+  # | ROLES & MODULES & etc. |
+  # --------------------------
+  imports = [
+    inputs.disko.nixosModules.disko
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
+    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    inputs.nix-gaming.nixosModules.platformOptimizations
+    # Fingerprint sensor
+    # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
+    # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
+    (inputs.nix-mineral + "/nix-mineral.nix")
+
+    ./disko.nix
+    ./hardware-configuration.nix
+    # ./nm-overrides.nix
+  ];
+
+  # ------------------------------
+  # | ADDITIONAL SYSTEM PACKAGES |
+  # ------------------------------
+  environment.systemPackages = [
+    pkgs.libva-utils
+    pkgs.docker-compose
+    pkgs.wireguard-tools
+  ];
+
+  # ----------------------------
+  # | ADDITIONAL USER PACKAGES |
+  # ----------------------------
+  # home-manager.users.${user} = {home.packages = with pkgs; [];};
+
+  # ---------------------
+  # | ADDITIONAL CONFIG |
+  # ---------------------
+  tensorfiles = {
+    profiles = {
+      graphical-plasma6.enable = true;
+      packages-base.enable = true;
+      packages-extra.enable = true;
+      packages-graphical-extra.enable = true;
+    };
+
+    services.networking.ssh.enable = true;
+    security.agenix.enable = true;
+
+    # Use the `nh` garbage collect to also collect .direnv and XDG profiles
+    # roots instead of the default ones.
+    tasks.nix-garbage-collect.enable = false;
+    programs.nh.enable = true;
+
+    system.users.usersSettings."root" = {
+      agenixPassword.enable = true;
+    };
+    system.users.usersSettings."tsandrini" = {
+      isSudoer = true;
+      isNixTrusted = true;
+      agenixPassword.enable = true;
+      extraGroups = [
+        "video"
+        "camera"
+        "audio"
+        "networkmanager"
+        "input"
+        "docker"
+      ];
+    };
+  };
+  # nix-mineral.enable = true;
+
+  # TODO maybe use github:tsandrini/tensorfiles instead?
+  programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
+
+  # programs.shadow-client.forceDriver = "iHD";
+  programs.fish.enable = true;
+  users.defaultUserShell = pkgs.bash;
+
+  programs.bash = {
+    interactiveShellInit = ''
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+      then
+        shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
+        exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
+      fi
+    '';
+  };
+
+  # services.udev.packages = with pkgs; [
+  #   via
+  #   vial
+  # ];
+
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    jack.enable = true;
+    lowLatency.enable = true;
+  };
+
+  services.xl2tpd.enable = true;
+  services.strongswan = {
+    enable = true;
+    secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
+  };
+
+  services.pcscd.enable = true; # needed for gpg pinentry
+
+  virtualisation.docker = {
+    enable = true;
+    autoPrune.enable = true;
+    storageDriver = "btrfs";
+  };
+
+  networking.wireguard.enable = true;
+  networking.firewall = {
+    allowedUDPPorts = [
+      # WG
+      51820
+      51821
+      # Dev ports
+      8000
+      8080
+      5173
+    ];
+    allowedTCPPorts = [
+      # WG
+      51820
+      51821
+      # Dev ports
+      8000
+      8080
+      5173
+    ];
+  };
+
+  home-manager.users."tsandrini" = {
+    tensorfiles.hm = {
+
+      profiles.graphical-plasma.enable = true;
+      profiles.accounts.tsandrini.enable = true;
+      security.agenix.enable = true;
+
+      programs.pywal.enable = true;
+      # programs.spicetify.enable = true;
+      # services.pywalfox-native.enable = true;
+      # services.activitywatch.enable = true;
+      programs.editors.emacs-doom.enable = true;
+      services.keepassxc.enable = true;
+    };
+
+    services.syncthing = {
+      enable = true;
+      tray.enable = true;
+    };
+
+    home.username = "tsandrini";
+    home.homeDirectory = "/home/tsandrini";
+    home.sessionVariables = {
+      DEFAULT_USERNAME = "tsandrini";
+      DEFAULT_MAIL = "t@tsandrini.sh";
+    };
+    programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
+
+    home.packages = [
+      pkgs-osu-lazer-bin.osu-lazer-bin
+    ];
+  };
+}

@@ -45,20 +45,23 @@ in
     {
       plugins.lspsaga = {
         enable = _ true;
-        lightbulb = {
-          enable = _ false;
-          virtualText = _ false;
-        };
-        hover = {
-          openCmd = _ "!firefox";
-        };
         # ui.border = "${opts.border}";
-        scrollPreview = {
-          scrollDown = _ "<c-d>";
-          scrollUp = _ "<c-u>";
-        };
-        symbolInWinbar = {
-          enable = _ true; # Breadcrumbs
+
+        settings = {
+          symbolInWinbar = {
+            enable = _ true; # Breadcrumbs
+          };
+          scrollPreview = {
+            scrollDown = _ "<c-d>";
+            scrollUp = _ "<c-u>";
+          };
+          lightbulb = {
+            enable = _ false;
+            virtualText = _ false;
+          };
+          hover = {
+            openCmd = _ "!firefox";
+          };
         };
       };
     }

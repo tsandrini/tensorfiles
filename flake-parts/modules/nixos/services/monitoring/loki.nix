@@ -43,16 +43,16 @@ in
         enable = _ true;
         configuration = {
           server = {
-            http_listen_port = 3100;
-            http_listen_address = "0.0.0.0"; # Listen on all interfaces
+            http_listen_port = _ 3100;
+            http_listen_address = _ "0.0.0.0"; # Listen on all interfaces
           };
-          auth_enabled = false;
+          auth_enabled = _ false;
 
           common = {
-            instance_addr = "127.0.0.1";
+            instance_addr = _ "127.0.0.1";
             ring = {
               kvstore = {
-                store = "inmemory"; # Use inmemory instead of Consul
+                store = _ "inmemory"; # Use inmemory instead of Consul
               };
             };
           };

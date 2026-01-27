@@ -20,7 +20,8 @@
 }:
 let
   inherit (inputs.flake-parts.lib) importApply;
-  inherit (config.agenix) secretsPath;
+  # inherit (config.agenix) secretsPath;
+  inherit (config) infraVars;
   localFlake = self;
 in
 {
@@ -28,10 +29,21 @@ in
     # -- misc --
     misc_nix = importApply ./misc/nix.nix { inherit inputs localFlake; };
 
+    # -- networking --
+    networking_firewall_subnets-firewall = importApply ./networking/firewall/subnets-firewall.nix {
+      inherit localFlake;
+    };
+
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_packages-base = importApply ./profiles/packages-base.nix { inherit localFlake; };
     profiles_packages-extra = importApply ./profiles/packages-extra.nix { inherit localFlake; };
+    profiles_packages-graphical-extra = importApply ./profiles/packages-graphical-extra.nix {
+      inherit localFlake inputs;
+    };
+    profiles_graphical-dms-niri = importApply ./profiles/graphical-dms-niri.nix {
+      inherit localFlake inputs;
+    };
     profiles_graphical-plasma5 = importApply ./profiles/graphical-plasma5.nix {
       inherit localFlake inputs;
     };
@@ -41,10 +53,10 @@ in
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
-    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
+    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake infraVars; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
     profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
-      inherit localFlake;
+      inherit localFlake infraVars;
     };
 
     # -- programs --
@@ -57,7 +69,9 @@ in
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {
       inherit localFlake;
     };
-    services_networking_ssh = importApply ./services/networking/ssh.nix { inherit localFlake; };
+    services_networking_ssh = importApply ./services/networking/ssh.nix {
+      inherit localFlake infraVars;
+    };
     services_x11_desktop-managers_startx-home-manager =
       importApply ./services/x11/desktop-managers/startx-home-manager.nix
         { inherit localFlake; };

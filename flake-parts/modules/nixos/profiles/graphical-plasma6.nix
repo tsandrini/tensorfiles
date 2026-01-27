@@ -52,10 +52,11 @@ in
         wl-clipboard # Command-line copy/paste utilities for Wayland
         maim # A command-line screenshot utility
         xxdiff # Graphical file and directories comparator and merge tool
+        networkmanagerapplet # need this to configure L2TP ipsec
 
         # -- UTILS NEEDED FOR INFO-CENTER --
         clinfo # Print all known information about all available OpenCL platforms and devices in the system
-        glxinfo # Test utilities for OpenGL
+        mesa-demos # Test utilities for OpenGL
         vulkan-tools # Khronos official Vulkan Tools and Utilities
         wayland-utils # Wayland utilities (wayland-info)
         aha # ANSI HTML Adapter
@@ -69,6 +70,7 @@ in
         krename # A powerful batch renamer for KDE
         krusader # Norton/Total Commander clone for KDE
         kdePackages.filelight # Disk usage statistics
+        kdePackages.kfind # File search utility by KDE
         kdePackages.kweather
         kdePackages.kweathercore
         kdePackages.quazip # Provides access to ZIP archives from Qt programs
@@ -128,6 +130,14 @@ in
       services.desktopManager.plasma6.enable = _ true;
       # services.xserver.displayManager.defaultSession = _ "plasma";
       programs.kdeconnect.enable = _ true;
+      services.pcscd.enable = _ true; # needed for gpg pinentry
+
+      services.pipewire = {
+        enable = _ true;
+        alsa.enable = _ true;
+        pulse.enable = _ true;
+        jack.enable = _ true;
+      };
 
       programs.partition-manager.enable = _ true;
     }

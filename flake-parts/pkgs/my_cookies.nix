@@ -16,17 +16,20 @@
 with python3.pkgs;
 buildPythonApplication rec {
   pname = "my_cookies";
-  version = "0.1.3";
+  version = "0.1.5";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-3e5j0HFOXUyUo6YVUKQnbaxvAUtDoRTzGqW8HUfzrQ8=";
+    hash = "sha256-EJc9Nd+xJCm+qhg8umsXnjkwhClbKwmOEQSaoq1WKgo=";
   };
+  pyproject = true;
 
   propagatedBuildInputs = [
     setuptools
     browser-cookie3
+    click
   ];
+  build-system = [ setuptools ];
 
   # No tests included
   doCheck = false;

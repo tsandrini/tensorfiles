@@ -266,18 +266,19 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages =
-        [ cfg.pkg ]
-        ++ (
-          if plasmaCheck then
-            [
-              wal-switch
-              kdewallpaperset
-              kdegencolorscheme
-            ]
-          else
-            [ ]
-        );
+      home.packages = [
+        cfg.pkg
+      ]
+      ++ (
+        if plasmaCheck then
+          [
+            wal-switch
+            kdewallpaperset
+            kdegencolorscheme
+          ]
+        else
+          [ ]
+      );
 
       # TODO add a conditional for Xorg vs Wayland
       systemd.user.tmpfiles.rules = [

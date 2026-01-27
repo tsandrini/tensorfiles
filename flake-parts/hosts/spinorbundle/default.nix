@@ -13,13 +13,7 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
-{ pkgs, system, ... }:
-let
-  pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
-    inherit system;
-    config.allowUnfree = true;
-  };
-in
+{ pkgs, ... }:
 {
   # -----------------
   # | SPECIFICATION |
@@ -33,7 +27,6 @@ in
     inputs.disko.nixosModules.disko
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
-    inputs.nix-index-database.nixosModules.nix-index
     (inputs.nix-mineral + "/nix-mineral.nix")
 
     # TODO fails with The option `programs.steam.extraCompatPackages' in
@@ -49,28 +42,27 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = with pkgs; [
-    networkmanagerapplet # need this to configure L2TP ipsec
-    # docker-compose
-    # wireguard-tools
+  environment.systemPackages = [
+    pkgs.networkmanagerapplet # need this to configure L2TP ipsec
   ];
-
-  # ----------------------------
-  # | ADDITIONAL USER PACKAGES |
-  # ----------------------------
-  # home-manager.users.${user} = {home.packages = with pkgs; [];};
 
   # ---------------------
   # | ADDITIONAL CONFIG |
   # ---------------------
   tensorfiles = {
-    profiles.graphical-plasma6.enable = true;
-    profiles.packages-base.enable = true;
-    profiles.packages-extra.enable = true;
+    profiles = {
+      graphical-plasma6.enable = true;
+      packages-base.enable = true;
+      packages-extra.enable = true;
+      # packages-graphical-extra.enable = true;
+    };
 
     security.agenix.enable = true;
-    # programs.shadow-nix.enable = true;
-    tasks.system-autoupgrade.enable = false;
+
+    # Use the `nh` garbage collect to also collect .direnv and XDG profiles
+    # roots instead of the default ones.
+    tasks.nix-garbage-collect.enable = false;
+    programs.nh.enable = true;
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -91,14 +83,8 @@ in
   };
   # nix-mineral.enable = true;
 
-  # Use the `nh` garbage collect to also collect .direnv and XDG profiles
-  # roots instead of the default ones.
-  tensorfiles.tasks.nix-garbage-collect.enable = false;
-  tensorfiles.programs.nh.enable = true;
-  # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
-  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -112,46 +98,18 @@ in
     '';
   };
 
-  programs.winbox.enable = true;
-  programs.nix-index-database.comma.enable = true;
-
-  programs.gamemode = {
-    enable = true;
-    settings = {
-      custom = {
-        start = "${pkgs.libnotify}/bin/notify-send 'GameMode started'";
-        end = "${pkgs.libnotify}/bin/notify-send 'GameMode stopped'";
-      };
-    };
-  };
+  # STEAM STUFF
+  services.pipewire.lowLatency.enable = true;
+  hardware.graphics.enable32Bit = true;
   programs.steam = {
     enable = true;
-    # extest.enable = true;
     platformOptimizations.enable = true;
-    extraPackages = with pkgs; [
-      gamescope
-      xwayland-run
+    extraPackages = [
+      pkgs.gamescope
+      pkgs.xwayland-run
     ];
   };
-  hardware.graphics.enable32Bit = true;
 
-  services = {
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      pulse.enable = true;
-      jack.enable = true;
-      lowLatency.enable = true;
-    };
-  };
-
-  services.openssh.enable = false;
-  services.fail2ban.enable = false;
-
-  networking.networkmanager.enable = true;
-
-  services.pcscd.enable = true; # # Needed for gpg pinetry
-  #
   # virtualisation.docker = {
   #   enable = true;
   #   autoPrune.enable = true;
@@ -174,21 +132,15 @@ in
     ];
   };
 
-  # If you intend to route all your traffic through the wireguard tunnel, the
-  # default configuration of the NixOS firewall will block the traffic because
-  # of rpfilter. You can either disable rpfilter altogether:
-  # networking.firewall.checkReversePath = false;
-
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-plasma.enable = true;
+      # profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
-      # programs.spicetify.enable = true;
-      # services.pywalfox-native.enable = true;
+      # programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
-      # services.activitywatch.enable = true;
     };
 
     services.syncthing = {
@@ -196,46 +148,14 @@ in
       tray.enable = true;
     };
 
-    home.username = "tsandrini";
-    home.homeDirectory = "/home/tsandrini";
     home.sessionVariables = {
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
     };
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
-    home.packages = with pkgs; [
-      thunderbird # A full-featured e-mail client
-      # beeper # Universal chat app.
-      anki # Spaced repetition flashcard program
-      libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
-      # texlive.combined.scheme-full # TeX Live environment
-      zotero # Collect, organize, cite, and share your research sources
-      lapack # openblas with just the LAPACK C and FORTRAN ABI
-      ungoogled-chromium # An open source web browser from Google, with dependencies on Google web services removed
-      # zoom-us # Player for Z-Code, TADS and HUGO stories or games
-      # vesktop # Alternate client for Discord with Vencord built-in
-
-      # slack # Desktop client for Slack
-      # signal-desktop-bin # Private, simple, and secure messenger
-
-      # todoist # Todoist CLI Client
-      # todoist-electron # The official Todoist electron app
-
-      wireshark # Powerful network protocol analyzer
-      # pgadmin4-desktopmode # Administration and development platform for PostgreSQL. Desktop Mode
-      # mqttui # Terminal client for MQTT
-      # mqttx # Powerful cross-platform MQTT 5.0 Desktop, CLI, and WebSocket client tools
-      mqtt-explorer # An all-round MQTT client that provides a structured topic overview
-
-      spotify # Play music from the Spotify music service
-      mpv # General-purpose media player, fork of MPlayer and mplayer2
-      zathura # A highly customizable and functional PDF viewer
-
-      (pkgs-osu-lazer-bin.osu-lazer-bin.override { nativeWayland = true; })
-      # inputs.nix-gaming.packages.${system}.osu-stable
-      # inputs.nix-gaming.packages.${system}.osu-lazer-bin
-      # inputs.self.packages.${system}.pywalfox-native
+    home.packages = [
+      #
     ];
   };
 }

@@ -21,7 +21,7 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = with pkgs; [ libva-utils ];
+  environment.systemPackages = [ pkgs.libva-utils ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -101,8 +101,8 @@
       enable = true;
       extraPackages = [
         #intel-media-driver
-        #vaapiIntel
-        #vaapiVdpau
+        #intel-vaapi-driver
+        #libva-vdpau-driver
         #libvdpau-va-gl
       ];
     };
@@ -113,6 +113,6 @@
   };
   # Hardware hybrid decoding
   nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
   };
 }

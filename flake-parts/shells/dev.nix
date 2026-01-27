@@ -19,7 +19,7 @@
   statix,
   deadnix,
   nix-output-monitor,
-  nixfmt-rfc-style,
+  nixfmt,
   commitizen,
   cz-cli,
   # fh, # TODO error[E0425]: cannot find function `parse` in module `crate::ffi`
@@ -54,13 +54,14 @@ mkShell {
   packages =
     (lib.attrValues scripts)
     ++ (lib.optional (dev-process != null) dev-process)
+    ++ (lib.optional (pre-commit != null) pre-commit.settings.enabledPackages)
     ++ [
       # -- NIX UTILS --
       nil # Yet another language server for Nix
       statix # Lints and suggestions for the nix programming language
       deadnix # Find and remove unused code in .nix source files
       nix-output-monitor # Processes output of Nix commands to show helpful and pretty information
-      nixfmt-rfc-style # An opinionated formatter for Nix
+      nixfmt # An opinionated formatter for Nix
 
       # -- GIT RELATED UTILS --
       commitizen # Tool to create committing rules for projects, auto bump versions, and generate changelogs
@@ -87,7 +88,7 @@ mkShell {
 
   shellHook = ''
     ${lib.concatLines (lib.mapAttrsToList (name: value: "export ${name}=${value}") env)}
-    ${lib.optionalString (pre-commit != null) pre-commit.installationScript}
+    ${lib.optionalString (pre-commit != null) pre-commit.settings.shellHook}
 
     # Welcome splash text
     echo ""; echo -e "\e[1;37;42mWelcome to the tensorfiles devshell!\e[0m"; echo ""

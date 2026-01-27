@@ -55,7 +55,7 @@ in
     };
   };
 
-  imports = with inputs; [ impermanence.nixosModules.home-manager.impermanence ];
+  # imports = [ inputs.impermanence.nixosModules.impermanence ];
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #

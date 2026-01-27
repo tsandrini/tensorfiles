@@ -28,7 +28,6 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = [ "defaults" ];
               };
             };
             swap = {
@@ -45,41 +44,10 @@
                 name = "crypted";
                 settings.allowDiscards = true;
                 content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/root" = {
-                      mountpoint = "/";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                      ];
-                    };
-                    "/home" = {
-                      mountpoint = "/home";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                      ];
-                    };
-                    "/nix" = {
-                      mountpoint = "/nix";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                      ];
-                    };
-                    "/var/log" = {
-                      mountpoint = "/var/log";
-                      mountOptions = [
-                        "compress=zstd"
-                        "noatime"
-                        "nosuid"
-                        "nodev"
-                        "noexec"
-                      ];
-                    };
-                  };
+                  type = "filesystem";
+                  format = "ext4";
+                  mountpoint = "/";
+                  mountOptions = [ "noatime" ];
                 };
               };
             };

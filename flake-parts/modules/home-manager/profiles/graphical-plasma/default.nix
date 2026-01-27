@@ -82,12 +82,10 @@ in
         };
       };
 
-      home.packages =
-        with pkgs;
-        [
-          neovide # This is a simple graphical user interface for Neovim
-        ]
-        ++ (optional cfg.include-nvim localFlake.packages.${system}.nvim-ide-config);
+      home.packages = [
+        pkgs.neovide # This is a simple graphical user interface for Neovim
+      ]
+      ++ (optional cfg.include-nvim localFlake.packages.${system}.nvim-ide-config);
 
       services.flameshot = {
         enable = _ true;

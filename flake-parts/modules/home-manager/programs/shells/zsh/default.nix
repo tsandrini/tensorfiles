@@ -270,20 +270,21 @@ in
       home.file."${config.xdg.cacheHome}/oh-my-zsh/.keep".enable = false;
 
       home.persistence."${impermanence.persistentRoot}${config.home.homeDirectory}" = {
-        files =
-          [ ".zsh_history" ]
-          ++ (optional cfg.oh-my-zsh.enable (pathToRelative "${config.xdg.cacheHome}/oh-my-zsh"))
-          ++ (
-            if cfg.p10k.enable then
-              [
-                (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh")
-                (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh.zwc")
-                (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh")
-                (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh.zwc")
-              ]
-            else
-              [ ]
-          );
+        files = [
+          ".zsh_history"
+        ]
+        ++ (optional cfg.oh-my-zsh.enable (pathToRelative "${config.xdg.cacheHome}/oh-my-zsh"))
+        ++ (
+          if cfg.p10k.enable then
+            [
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-dump-${config.home.username}.zsh.zwc")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh")
+              (pathToRelative "${config.xdg.cacheHome}/p10k-instant-prompt-${config.home.username}.zsh.zwc")
+            ]
+          else
+            [ ]
+        );
         directories = optional cfg.p10k.enable (
           pathToRelative "${config.xdg.cacheHome}/p10k-${config.home.username}"
         );

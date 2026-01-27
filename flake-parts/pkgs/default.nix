@@ -19,7 +19,7 @@
     {
       packages = {
         # pywalfox-native = pkgs.callPackage ./pywalfox-native.nix { };
-        # docs = pkgs.callPackage ./docs {
+        # docs = pkg,.callPackage ./docs {
         #   inherit
         #     lib
         #     inputs
@@ -28,6 +28,7 @@
         # };
         my_cookies = pkgs.callPackage ./my_cookies.nix { };
         polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
+        certbot-dns-wedos = pkgs.callPackage ./certbot-dns-wedos.nix { };
         # awatcher = pkgs.callPackage ./awatcher.nix { };
       };
     };

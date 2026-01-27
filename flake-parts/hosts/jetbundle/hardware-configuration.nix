@@ -21,7 +21,7 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = with pkgs; [ libva-utils ];
+  environment.systemPackages = [ pkgs.libva-utils ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -68,40 +68,10 @@
   # };
   #
 
-  # BTRFS stuff
   services.fstrim = {
     enable = true;
     interval = "weekly"; # the default
   };
-
-  # Scrub btrfs to protect data integrity
-  services.btrfs.autoScrub.enable = true;
-
-  services.btrbk.instances."btrbk" = {
-    onCalendar = "*:0/10";
-    settings = {
-      snapshot_preserve = "4d"; # NOTE not enough space for multiple roots
-      snapshot_preserve_min = "2d";
-
-      target_preserve_min = "no";
-      target_preserve = "no";
-
-      preserve_day_of_week = "monday";
-      timestamp_format = "long-iso";
-      snapshot_create = "onchange";
-
-      volume."/" = {
-        subvolume = {
-          "home" = {
-            snapshot_dir = "/.snapshots/data/home";
-          };
-        };
-      };
-    };
-  };
-
-  # ensure snapshots_dir exists
-  systemd.tmpfiles.rules = [ "d /.snapshots/data/home 0755 root root - -" ];
 
   boot = {
     loader = {
@@ -132,8 +102,8 @@
       enable = true;
       extraPackages = [
         #intel-media-driver
-        #vaapiIntel
-        #vaapiVdpau
+        #intel-vaapi-driver
+        #libva-vdpau-driver
         #libvdpau-va-gl
       ];
     };
@@ -144,6 +114,6 @@
   };
   # Hardware hybrid decoding
   nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
   };
 }

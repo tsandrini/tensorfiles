@@ -169,7 +169,7 @@
 - **flake**: update CI & remove impurities
 - **flake**: rewrite -> flake-parts-builder
 - **emacs-doom**: disable emacs service
-- **codeformat**: replace alejandra with nixfmt-rfc-style
+- **codeformat**: replace alejandra with nixfmt
 - **plasma**: rename plasma to plasma5 to prevent conflicts
 - **hosts/homes**: clean specialArgs and reduce global module context
 - **hm-modules**: localize module dependencies

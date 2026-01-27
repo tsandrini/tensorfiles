@@ -33,70 +33,65 @@ in
     {
       programs.git = {
         enable = _ true;
-        delta = {
-          enable = _ true;
-          options = {
-            navigate = _ true;
-            syntax-theme = _ "Nord";
+        settings = {
+          user = {
+            github.user = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (
+              _ config.home.sessionVariables.DEFAULT_USERNAME
+            );
+            name = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (
+              _ config.home.sessionVariables.DEFAULT_USERNAME
+            );
+            email = mkIf (config.home.sessionVariables.DEFAULT_MAIL != null) (
+              _ config.home.sessionVariables.DEFAULT_MAIL
+            );
           };
-        };
-        userName = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (
-          _ config.home.sessionVariables.DEFAULT_USERNAME
-        );
-        userEmail = mkIf (config.home.sessionVariables.DEFAULT_MAIL != null) (
-          _ config.home.sessionVariables.DEFAULT_MAIL
-        );
-        extraConfig = {
-          github.user = mkIf (config.home.sessionVariables.DEFAULT_USERNAME != null) (
-            _ config.home.sessionVariables.DEFAULT_USERNAME
-          );
-        };
-        aliases = {
-          b = _ "branch";
-          bb = _ "!for k in `git branch -a | grep -v \"HEAD -> \" | sed s/^..//`;do echo -e `git log -1 --pretty=format:\"%Cgreen%ci %Cblue%cr%Creset\" \"$k\" --`\\\\t\"$k\";done | sort";
-          bl = _ "branch";
-          bd = _ "branch -d";
-          bdf = _ "branch -D";
-          f = _ "fetch";
-          fo = _ "fetch origin";
-          c = _ "commit";
-          ca = _ "commit -a";
-          ch = _ "checkout";
-          chb = _ "checkout -b";
-          chr = _ "checkout --";
-          chra = _ "checkout -- .";
-          cl = _ "clone";
-          ph = _ "push";
-          phu = _ "push --set-upstream";
-          phuo = _ "push --set-upstream origin";
-          phuof = _ "push --set-upstream --force origin";
-          phuf = _ "push --set-upstream --force";
-          phf = _ "push --force";
-          pl = _ "pull";
-          plf = _ "pull --force";
-          plo = _ "pull origin";
-          plof = _ "pull origin --force";
-          a = _ "add";
-          aa = _ "add *";
-          r = _ "reset HEAD";
-          ra = _ "reset HEAD *";
-          s = _ "status";
-          sh = _ "stash";
-          sha = _ "stash apply";
-          rmc = _ "rm --cached";
-          m = _ "merge";
-          mf = _ "merge --force";
-          i = _ "init";
-          d = _ "diff";
-          l = _ "log";
-          commit-stats = _ "!git log --pretty=format:'%s' | cut -d \" \" -f 1 | sort | uniq -c | sort -nr";
-          ext-stats = _ "!git ls-files | xargs wc -l | awk -F ' +|\\\\.|/' '{ sumlines[$NF] += $2 } END { for (ext in sumlines) print ext, sumlines[ext] }' | sort -k2nr";
-          authors = _ "!git log --format='%aN <%aE>' | awk '{arr[$0]++} END{for (i in arr){print arr[i], i;}}' | sort -rn | cut -d\\  -f2-";
-          authors-by-loc = _ "!git ls-files | xargs -n1 git blame --line-porcelain | sed -n 's/^author //p' | sort -f | uniq -ic | sort -nr";
-          authors-by-commits = _ "shortlog -s -n --all --no-merges";
-          lg1 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
-          lg2 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
-          lg3 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'";
+          aliases = {
+            b = _ "branch";
+            bb = _ "!for k in `git branch -a | grep -v \"HEAD -> \" | sed s/^..//`;do echo -e `git log -1 --pretty=format:\"%Cgreen%ci %Cblue%cr%Creset\" \"$k\" --`\\\\t\"$k\";done | sort";
+            bl = _ "branch";
+            bd = _ "branch -d";
+            bdf = _ "branch -D";
+            f = _ "fetch";
+            fo = _ "fetch origin";
+            c = _ "commit";
+            ca = _ "commit -a";
+            ch = _ "checkout";
+            chb = _ "checkout -b";
+            chr = _ "checkout --";
+            chra = _ "checkout -- .";
+            cl = _ "clone";
+            ph = _ "push";
+            phu = _ "push --set-upstream";
+            phuo = _ "push --set-upstream origin";
+            phuof = _ "push --set-upstream --force origin";
+            phuf = _ "push --set-upstream --force";
+            phf = _ "push --force";
+            pl = _ "pull";
+            plf = _ "pull --force";
+            plo = _ "pull origin";
+            plof = _ "pull origin --force";
+            a = _ "add";
+            aa = _ "add *";
+            r = _ "reset HEAD";
+            ra = _ "reset HEAD *";
+            s = _ "status";
+            sh = _ "stash";
+            sha = _ "stash apply";
+            rmc = _ "rm --cached";
+            m = _ "merge";
+            mf = _ "merge --force";
+            i = _ "init";
+            d = _ "diff";
+            l = _ "log";
+            commit-stats = _ "!git log --pretty=format:'%s' | cut -d \" \" -f 1 | sort | uniq -c | sort -nr";
+            ext-stats = _ "!git ls-files | xargs wc -l | awk -F ' +|\\\\.|/' '{ sumlines[$NF] += $2 } END { for (ext in sumlines) print ext, sumlines[ext] }' | sort -k2nr";
+            authors = _ "!git log --format='%aN <%aE>' | awk '{arr[$0]++} END{for (i in arr){print arr[i], i;}}' | sort -rn | cut -d\\  -f2-";
+            authors-by-loc = _ "!git ls-files | xargs -n1 git blame --line-porcelain | sed -n 's/^author //p' | sort -f | uniq -ic | sort -nr";
+            authors-by-commits = _ "shortlog -s -n --all --no-merges";
+            lg1 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'";
+            lg2 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'";
+            lg3 = _ "log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'";
+          };
         };
       };
     }
