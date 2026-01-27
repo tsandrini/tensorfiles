@@ -137,6 +137,7 @@ in
       };
 
       programs.kdeconnect.enable = _ true;
+      systemd.user.services.niri-flake-polkit.enable = _ false;
     }
     # |----------------------------------------------------------------------| #
   ]);

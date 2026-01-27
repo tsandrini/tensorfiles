@@ -82,6 +82,7 @@ in
         enable = _ true;
         settings = {
           General.showStartupLaunchMessage = _ false;
+          General.useGrimAdapter = _ true;
         };
       };
 
@@ -110,7 +111,7 @@ in
 
         niri = {
           enableSpawn = _ false; # Auto-start DMS with niri, if enabled
-          enableKeybinds = true;
+          enableKeybinds = _ true;
           includes = {
             enable = _ false;
             originalFileName = "hm";
@@ -126,7 +127,6 @@ in
         enableClipboardPaste = _ true;
       };
 
-      # systemd.user.services.niri-flake-polkit.enable = true;
     }
     # |----------------------------------------------------------------------| #
   ]);

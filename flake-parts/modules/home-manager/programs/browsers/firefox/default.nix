@@ -128,7 +128,6 @@ in
           type = types.lines;
           default = ''
             // PREF: disable login manager
-            // haha
             user_pref("signon.rememberSignons", false);
 
             // PREF: disable address and credit card manager
