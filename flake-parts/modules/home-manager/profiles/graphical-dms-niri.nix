@@ -33,6 +33,34 @@ let
   cfg = config.tensorfiles.hm.profiles.graphical-dms-niri;
   _ = mkOverrideAtHmProfileLevel;
 
+  toggleEdp = pkgs.writeShellScriptBin "toggle-edp" ''
+    set -euo pipefail
+
+    EDP="eDP-1"
+
+    # Extract the block for eDP-1 (from its "Output ..." header until the next "Output ..." or EOF)
+    block="$(
+      niri msg outputs \
+        | awk -v edp="(''${EDP})" '
+            $0 ~ "^Output " {
+              in_block = ($0 ~ edp)
+            }
+            in_block { print }
+          '
+    )"
+
+    # If we didn't find the block at all, bail out (or you could default to "on").
+    if [ -z "$block" ]; then
+      exit 0
+    fi
+
+    if echo "$block" | grep -q "^[[:space:]]*Disabled[[:space:]]*$"; then
+      niri msg output "$EDP" on
+    else
+      niri msg output "$EDP" off
+    fi
+  '';
+
   dmsToWal = pkgs.writeShellApplication {
     name = "dms-to-wal";
     runtimeInputs = [
@@ -226,6 +254,8 @@ in
         pkgs.kdePackages.dolphin
 
         pkgs.matugen
+
+        toggleEdp
       ]
       ++ (optional cfg.include-nvim localFlake.packages.${system}.nvim-ide-config);
 
@@ -477,6 +507,10 @@ in
                 "10"
                 ""
               ];
+
+              # Toggle laptop display
+              "XF86Display".action = a.spawn [ "toggle-edp" ];
+              "Mod+F7".action = a.spawn [ "toggle-edp" ];
             };
         };
       };
