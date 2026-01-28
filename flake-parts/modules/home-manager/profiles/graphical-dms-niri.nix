@@ -91,18 +91,39 @@ let
       # Pywalfox: DMS doc expects this to exist; many setups read colors.json directly too.
       cp -f "$COLORS_JSON" "$PYWALFOX_JSON"
 
-      # Terminal escape sequences (OSC 4,10,11,12)
-      # (also avoid "color"+number concat bugs by tostring)
-      jq -r '
-        def osc4(i;c): "\u001b]4;\(i);\(c)\u001b\\";
-        def osc10(c): "\u001b]10;\(c)\u001b\\";
-        def osc11(c): "\u001b]11;\(c)\u001b\\";
-        def osc12(c): "\u001b]12;\(c)\u001b\\";
-        (range(0;16) | osc4(.; .colors["color"+(.|tostring)]))
-        , osc10(.special.foreground)
-        , osc11(.special.background)
-        , osc12(.special.cursor)
-      ' "$COLORS_JSON" > "$SEQUENCES"
+      # Terminal escape sequences (OSC). One-line blob, like pywal produces.
+      # Use ST terminator (\033\) like your example.
+      bg="$(jq -r '.special.background' "$COLORS_JSON")"
+      fg="$(jq -r '.special.foreground' "$COLORS_JSON")"
+      cur="$(jq -r '.special.cursor' "$COLORS_JSON")"
+
+      seq=""
+
+      # 16 base colors
+      for i in $(seq 0 15); do
+        c="$(jq -r --arg k "color$i" '.colors[$k]' "$COLORS_JSON")"
+        seq="''${seq}\033]4;''${i};''${c}\033\\"
+      done
+
+      # Foreground/background/cursor
+      seq="''${seq}\033]10;''${fg}\033\\"
+      seq="''${seq}\033]11;''${bg}\033\\"
+      seq="''${seq}\033]12;''${cur}\033\\"
+
+      # A few extra OSC codes that pywal often includes (safe; helps some apps)
+      # 13: mouse fg, 17: highlight bg, 19: highlight fg (values reused like typical wal)
+      seq="''${seq}\033]13;''${fg}\033\\"
+      seq="''${seq}\033]17;''${fg}\033\\"
+      seq="''${seq}\033]19;''${bg}\033\\"
+
+      # 232..255 ramp endpoints (pywal writes a couple; harmless)
+      seq="''${seq}\033]4;232;''${bg}\033\\"
+      seq="''${seq}\033]4;256;''${fg}\033\\"
+
+      # Some builds also emit this final code; keep it for compatibility
+      seq="''${seq}\033]708;''${bg}\033\\"
+
+      printf '%b' "$seq" > "$SEQUENCES"
     '';
   };
 in
