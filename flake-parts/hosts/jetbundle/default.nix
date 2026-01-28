@@ -162,6 +162,8 @@ in
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-dms-niri.enable = true;
+      programs.pywal.enable = true;
+
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
       services.keepassxc.enable = true;

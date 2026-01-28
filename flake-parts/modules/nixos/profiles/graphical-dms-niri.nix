@@ -115,17 +115,28 @@ in
       };
 
       programs.ssh.startAgent = _ false; # NOTE: using gnome agent
-      programs.niri.enable = _ true;
+      programs.niri = {
+        enable = _ true;
+        package = _ pkgs.niri-unstable;
+      };
+
       services.dbus.enable = _ true;
       security.polkit.enable = _ true;
+      programs.dconf.enable = _ true;
+
       xdg.portal = {
         enable = _ true;
-        extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
+        extraPortals = [
+          pkgs.xdg-desktop-portal-wlr
+          pkgs.xdg-desktop-portal-gtk
+        ];
         config.common.default = "*";
       };
 
       environment.sessionVariables = {
         NIXOS_OZONE_WL = _ "1";
+        #DISPLAY = ":0";
+        #QT_QPA_PLATFORM = "wayland";
       };
 
       services.pcscd.enable = _ true; # needed for gpg pinentry

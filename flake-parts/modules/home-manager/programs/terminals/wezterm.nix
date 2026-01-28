@@ -53,7 +53,7 @@ in
           local modal = wezterm.plugin.require("https://github.com/MLFlexer/modal.wezterm")
 
           ${
-            if pywalCheck then
+            if (pywalCheck && false) then # TODO
               ''
                 wezterm.add_to_config_reload_watch_list("~/.cache/wal")
                 config.color_scheme_dirs = {"~/.cache/wal"}
@@ -61,6 +61,27 @@ in
             else
               ""
           }
+
+          local ok, json = pcall(wezterm.read_file, "~/.cache/wal/colors.json")
+          if ok and json then
+            local data = wezterm.json_parse(json)
+            if data and data.colors and data.special then
+              config.colors = {
+                foreground = data.special.foreground,
+                background = data.special.background,
+                cursor_bg  = data.special.cursor,
+                cursor_fg  = data.special.background,
+                ansi = {
+                  data.colors.color0, data.colors.color1, data.colors.color2, data.colors.color3,
+                  data.colors.color4, data.colors.color5, data.colors.color6, data.colors.color7,
+                },
+                brights = {
+                  data.colors.color8, data.colors.color9, data.colors.color10, data.colors.color11,
+                  data.colors.color12, data.colors.color13, data.colors.color14, data.colors.color15,
+                },
+              }
+            end
+          end
 
           config.default_cursor_style = 'BlinkingBar'
           config.enable_scroll_bar = true

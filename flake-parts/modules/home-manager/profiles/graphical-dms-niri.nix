@@ -32,6 +32,79 @@ let
 
   cfg = config.tensorfiles.hm.profiles.graphical-dms-niri;
   _ = mkOverrideAtHmProfileLevel;
+
+  dmsToWal = pkgs.writeShellApplication {
+    name = "dms-to-wal";
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.coreutils
+    ];
+    text = ''
+      set -euo pipefail
+
+      CACHE_HOME="''${XDG_CACHE_HOME:-$HOME/.cache}"
+      DMS_COLORS="$CACHE_HOME/DankMaterialShell/dms-colors.json"
+      DMS_CACHE="$CACHE_HOME/DankMaterialShell/cache.json"
+
+      WAL_DIR="$CACHE_HOME/wal"
+      COLORS_JSON="$WAL_DIR/colors.json"
+      PYWALFOX_JSON="$WAL_DIR/dank-pywalfox.json"
+      SEQUENCES="$WAL_DIR/sequences"
+
+      mkdir -p "$WAL_DIR"
+
+      if [[ ! -r "$DMS_COLORS" ]]; then
+        echo "dms-to-wal: missing DMS colors at $DMS_COLORS" >&2
+        exit 0
+      fi
+
+      # Try to discover the current wallpaper path (for pywalfox compatibility).
+      # Best-effort: if not found, set to empty string (still better than missing key).
+      wallpaper=""
+      if [[ -r "$DMS_CACHE" ]]; then
+        wallpaper="$(jq -r '
+          .wallpaper
+          // .currentWallpaper
+          // .current_wallpaper
+          // .lastWallpaper
+          // empty
+        ' "$DMS_CACHE" 2>/dev/null || true)"
+      fi
+
+      # Generate a pywal-ish colors.json from DMS palette
+      # Important: capture original input as $dms so reduce doesn't lose access.
+      jq --arg wallpaper "$wallpaper" '
+        . as $dms
+        | def c($i): ($dms.dank16["color"+($i|tostring)].default // $dms.dank16["color"+($i|tostring)].dark // null);
+
+        {
+          wallpaper: $wallpaper,
+          special: {
+            background: $dms.colors.dark.background,
+            foreground: $dms.colors.dark.on_background,
+            cursor:     $dms.colors.dark.on_background
+          },
+          colors: (reduce range(0;16) as $i ({}; . + {("color"+($i|tostring)): c($i)}))
+        }
+      ' "$DMS_COLORS" > "$COLORS_JSON"
+
+      # Pywalfox: DMS doc expects this to exist; many setups read colors.json directly too.
+      cp -f "$COLORS_JSON" "$PYWALFOX_JSON"
+
+      # Terminal escape sequences (OSC 4,10,11,12)
+      # (also avoid "color"+number concat bugs by tostring)
+      jq -r '
+        def osc4(i;c): "\u001b]4;\(i);\(c)\u001b\\";
+        def osc10(c): "\u001b]10;\(c)\u001b\\";
+        def osc11(c): "\u001b]11;\(c)\u001b\\";
+        def osc12(c): "\u001b]12;\(c)\u001b\\";
+        (range(0;16) | osc4(.; .colors["color"+(.|tostring)]))
+        , osc10(.special.foreground)
+        , osc11(.special.background)
+        , osc12(.special.cursor)
+      ' "$COLORS_JSON" > "$SEQUENCES"
+    '';
+  };
 in
 {
   options.tensorfiles.hm.profiles.graphical-dms-niri = {
@@ -51,7 +124,6 @@ in
   imports = [
     inputs.dms.homeModules.dank-material-shell
     inputs.dms.homeModules.niri
-    # inputs.niri.homeModules.niri # NOTE: included in NixOS profile
   ];
 
   config = mkIf cfg.enable (mkMerge [
@@ -73,16 +145,79 @@ in
         };
       };
 
+      # Run once each login (so ~/.cache/wal exists even before the first palette change),
+      # and also whenever DMS regenerates dms-colors.json.
+      systemd.user.services.dms-to-wal = {
+        Unit = {
+          Description = "Generate pywal artifacts from DMS palette";
+          # optional but nice:
+          After = [ "graphical-session.target" ];
+          PartOf = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = "${lib.getExe dmsToWal}";
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+
+      systemd.user.paths.dms-to-wal = {
+        Unit = {
+          Description = "Watch DMS palette and refresh pywal artifacts";
+        };
+        Path = {
+          PathChanged = "%h/.cache/DankMaterialShell/dms-colors.json";
+          Unit = "dms-to-wal.service";
+        };
+        Install = {
+          WantedBy = [ "default.target" ];
+        };
+      };
+
       home.packages = [
         pkgs.neovide # This is a simple graphical user interface for Neovim
+        pkgs.nerd-fonts.jetbrains-mono
+        pkgs.nerd-fonts.symbols-only
+        pkgs.noto-fonts
+        pkgs.noto-fonts-color-emoji
+        pkgs.hicolor-icon-theme
+        pkgs.adwaita-icon-theme
+        pkgs.papirus-icon-theme
+        pkgs.kdePackages.breeze-icons
+
+        pkgs.nautilus
+        pkgs.gvfs
+        pkgs.udiskie
+        pkgs.file-roller
+        pkgs.loupe
+        pkgs.mpv
+        pkgs.vlc
+        pkgs.pavucontrol
+        pkgs.blueman
+        pkgs.kdePackages.qt6ct
+
+        pkgs.kdePackages.gwenview
+        pkgs.qimgv
+        pkgs.imv
+        pkgs.kdePackages.ark
+        pkgs.kdePackages.dolphin
+
+        pkgs.matugen
       ]
       ++ (optional cfg.include-nvim localFlake.packages.${system}.nvim-ide-config);
 
       services.flameshot = {
         enable = _ true;
+        package = pkgs.flameshot.override {
+          enableWlrSupport = true;
+        };
         settings = {
-          General.showStartupLaunchMessage = _ false;
-          General.useGrimAdapter = _ true;
+          General = {
+            showStartupLaunchMessage = false;
+            useGrimAdapter = true;
+          };
         };
       };
 
@@ -97,25 +232,256 @@ in
         TERMINAL = _ "wezterm";
         IDE = _ "nvim";
         EMAIL = _ "thunderbird";
+        QT_QPA_PLATFORMTHEME = "qt6ct";
       };
 
       fonts.fontconfig.enable = _ true;
 
+      gtk = {
+        enable = true;
+
+        theme = {
+          name = "adw-gtk3-dark";
+          package = pkgs.adw-gtk3;
+        };
+
+        # Optional but recommended: make icons consistent too
+        iconTheme = {
+          name = "Papirus-Dark";
+          package = pkgs.papirus-icon-theme;
+        };
+      };
+
+      programs.niri = {
+        package = pkgs.niri-unstable;
+
+        settings = {
+          prefer-no-csd = true;
+          screenshot-path = "~/FiberBundle/Images/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"; # TODO
+          workspaces = {
+            "01" = {
+              name = "1";
+            };
+            "02" = {
+              name = "2";
+            };
+            "03" = {
+              name = "3";
+            };
+            "04" = {
+              name = "4";
+            };
+            "05" = {
+              name = "5";
+            };
+            "06" = {
+              name = "6";
+            };
+            "07" = {
+              name = "7";
+            };
+            "08" = {
+              name = "8";
+            };
+          };
+
+          # 1) remove DMS "run" spawn; DMS already spawns via enableSpawn=true
+          spawn-at-startup = [
+            # kdeconnect tray indicator
+            { argv = [ "kdeconnect-indicator" ]; }
+          ];
+
+          binds =
+            let
+              a = config.lib.niri.actions;
+              mod = "Mod";
+              dms =
+                cmd:
+                a.spawn (
+                  [
+                    "dms"
+                    "ipc"
+                    "call"
+                  ]
+                  ++ cmd
+                );
+            in
+            {
+              # DMS spotlight
+              "${mod}+Space".action = dms [
+                "spotlight"
+                "toggle"
+              ];
+
+              # Terminal
+              "${mod}+Return".action = a.spawn config.home.sessionVariables.TERMINAL;
+
+              # Toggle between last visited workspaces
+              "${mod}+Tab".action = a.focus-workspace-previous;
+
+              # Workspace up/down
+              "${mod}+Up".action = a.focus-workspace-up;
+              "${mod}+Down".action = a.focus-workspace-down;
+              "${mod}+K".action = a.focus-workspace-up;
+              "${mod}+J".action = a.focus-workspace-down;
+
+              # Columns left/right
+              "${mod}+Left".action = a.focus-column-left;
+              "${mod}+Right".action = a.focus-column-right;
+              "${mod}+H".action = a.focus-column-left;
+              "${mod}+L".action = a.focus-column-right;
+
+              # Move stuff (optional; keep if you like)
+              "${mod}+Shift+Left".action = a.move-column-left;
+              "${mod}+Shift+Right".action = a.move-column-right;
+              "${mod}+Shift+Up".action = a.move-window-up;
+              "${mod}+Shift+Down".action = a.move-window-down;
+              "${mod}+Shift+K".action = a.move-window-up;
+              "${mod}+Shift+J".action = a.move-window-down;
+
+              # Workspaces 1..9
+              "${mod}+1".action = a.focus-workspace 1;
+              "${mod}+2".action = a.focus-workspace 2;
+              "${mod}+3".action = a.focus-workspace 3;
+              "${mod}+4".action = a.focus-workspace 4;
+              "${mod}+5".action = a.focus-workspace 5;
+              "${mod}+6".action = a.focus-workspace 6;
+              "${mod}+7".action = a.focus-workspace 7;
+              "${mod}+8".action = a.focus-workspace 8;
+              "${mod}+9".action = a.focus-workspace 9;
+
+              # "Fullscreen but keep bars" -> maximize column
+              "${mod}+F".action = a.maximize-column;
+
+              # DMS toggles
+              "${mod}+V".action = dms [
+                "clipboard"
+                "toggle"
+              ];
+              "${mod}+P".action = dms [
+                "notepad"
+                "toggle"
+              ];
+              "${mod}+N".action = dms [
+                "notifications"
+                "toggle"
+              ];
+              "${mod}+Shift+L".action = dms [
+                "lock"
+                "lock"
+              ];
+
+              # Close + overview
+              "${mod}+Q".action = a.close-window;
+              "${mod}+W".action = a.toggle-overview;
+
+              # PrintScreen -> DMS-native niri screenshot (uses DMS_SCREENSHOT_EDITOR)
+              "Print".action = a.spawn [
+                "flameshot"
+                "gui"
+              ];
+              "Ctrl+Print".action = a.spawn [
+                "flameshot"
+                "gui"
+              ];
+              "Alt+Print".action = a.spawn [
+                "flameshot"
+                "gui"
+              ];
+
+              # --- Media keys via DMS IPC ---
+              "XF86AudioRaiseVolume" = {
+                action = dms [
+                  "audio"
+                  "increment"
+                  "5"
+                ];
+                allow-when-locked = true;
+              };
+              "XF86AudioLowerVolume" = {
+                action = dms [
+                  "audio"
+                  "decrement"
+                  "5"
+                ];
+                allow-when-locked = true;
+              };
+              "XF86AudioMute" = {
+                action = dms [
+                  "audio"
+                  "mute"
+                ];
+                allow-when-locked = true;
+              };
+              "XF86AudioMicMute" = {
+                action = dms [
+                  "audio"
+                  "micmute"
+                ];
+                allow-when-locked = true;
+              };
+
+              # Media playback via DMS (MPRIS)
+              "XF86AudioPlay".action = dms [
+                "mpris"
+                "playPause"
+              ];
+              "XF86AudioPause".action = dms [
+                "mpris"
+                "pause"
+              ];
+              "XF86AudioNext".action = dms [
+                "mpris"
+                "next"
+              ];
+              "XF86AudioPrev".action = dms [
+                "mpris"
+                "previous"
+              ];
+              "XF86AudioStop".action = dms [
+                "mpris"
+                "stop"
+              ];
+
+              # Brightness via DMS IPC
+              "XF86MonBrightnessUp".action = dms [
+                "brightness"
+                "increment"
+                "10"
+                ""
+              ];
+              "XF86MonBrightnessDown".action = dms [
+                "brightness"
+                "decrement"
+                "10"
+                ""
+              ];
+            };
+        };
+      };
+
       programs.dank-material-shell = {
         enable = _ true;
-
         systemd = {
-          enable = true; # Systemd service for auto-start
-          restartIfChanged = true; # Auto-restart dms.service when dank-material-shell changes
+          enable = _ false;
+          restartIfChanged = _ true;
         };
 
         niri = {
-          enableSpawn = _ false; # Auto-start DMS with niri, if enabled
-          enableKeybinds = _ true;
+          enableSpawn = _ true;
+          enableKeybinds = _ false;
           includes = {
-            enable = _ false;
-            originalFileName = "hm";
-            override = true;
+            enable = _ true;
+            override = _ true;
+            filesToInclude = [
+              "alttab"
+              "binds"
+              "cursor"
+              "colors"
+              "layout"
+              "outputs"
+              "wpblur"
+            ];
           };
         };
 
@@ -126,7 +492,6 @@ in
         enableCalendarEvents = _ true;
         enableClipboardPaste = _ true;
       };
-
     }
     # |----------------------------------------------------------------------| #
   ]);

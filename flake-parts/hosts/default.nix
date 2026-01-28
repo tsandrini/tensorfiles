@@ -115,6 +115,7 @@ in
         extraOverlays = sharedOverlays ++ [
           inputs.emacs-overlay.overlays.default
           inputs.nur.overlays.default
+          inputs.niri.overlays.niri
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
