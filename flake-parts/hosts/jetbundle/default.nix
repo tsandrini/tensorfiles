@@ -61,6 +61,7 @@ in
   tensorfiles = {
     profiles = {
       graphical-dms-niri.enable = true;
+
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
@@ -156,8 +157,6 @@ in
       5173
     ];
   };
-
-  # Small QoL for Wayland apps (optional)
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {

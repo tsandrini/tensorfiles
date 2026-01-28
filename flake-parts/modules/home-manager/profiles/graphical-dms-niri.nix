@@ -296,7 +296,6 @@ in
           package = pkgs.adw-gtk3;
         };
 
-        # Optional but recommended: make icons consistent too
         iconTheme = {
           name = "Papirus-Dark";
           package = pkgs.papirus-icon-theme;
@@ -336,9 +335,19 @@ in
             };
           };
 
-          # 1) remove DMS "run" spawn; DMS already spawns via enableSpawn=true
+          input = {
+            keyboard = {
+              xkb = {
+                layout = "us,cz";
+                variant = ",qwerty";
+                options = "grp:alt_caps_toggle";
+              };
+
+              track-layout = "global";
+            };
+          };
+
           spawn-at-startup = [
-            # kdeconnect tray indicator
             { argv = [ "kdeconnect-indicator" ]; }
           ];
 
@@ -358,37 +367,31 @@ in
                 );
             in
             {
-              # DMS spotlight
-              "${mod}+Space".action = dms [
-                "spotlight"
-                "toggle"
-              ];
-
-              # Terminal
-              "${mod}+Return".action = a.spawn config.home.sessionVariables.TERMINAL;
-
-              # Toggle between last visited workspaces
-              "${mod}+Tab".action = a.focus-workspace-previous;
-
-              # Workspace up/down
-              "${mod}+Up".action = a.focus-workspace-up;
-              "${mod}+Down".action = a.focus-workspace-down;
-              "${mod}+K".action = a.focus-workspace-up;
-              "${mod}+J".action = a.focus-workspace-down;
-
-              # Columns left/right
-              "${mod}+Left".action = a.focus-column-left;
-              "${mod}+Right".action = a.focus-column-right;
+              # --- Columns ---
               "${mod}+H".action = a.focus-column-left;
+              "${mod}+J".action = a.focus-window-down;
+              "${mod}+K".action = a.focus-window-up;
               "${mod}+L".action = a.focus-column-right;
 
-              # Move stuff (optional; keep if you like)
-              "${mod}+Shift+Left".action = a.move-column-left;
-              "${mod}+Shift+Right".action = a.move-column-right;
-              "${mod}+Shift+Up".action = a.move-window-up;
-              "${mod}+Shift+Down".action = a.move-window-down;
-              "${mod}+Shift+K".action = a.move-window-up;
+              "${mod}+Left".action = a.focus-column-left;
+              "${mod}+Down".action = a.focus-window-down;
+              "${mod}+Up".action = a.focus-window-up;
+              "${mod}+Right".action = a.focus-column-right;
+
+              # --- Workspaces ---
+              "${mod}+U".action = a.focus-workspace-down;
+              "${mod}+I".action = a.focus-workspace-up;
+
+              # --- Moving stuff ---
+              "${mod}+Shift+H".action = a.move-column-left;
               "${mod}+Shift+J".action = a.move-window-down;
+              "${mod}+Shift+K".action = a.move-window-up;
+              "${mod}+Shift+L".action = a.move-column-right;
+
+              "${mod}+Shift+Left".action = a.move-column-left;
+              "${mod}+Shift+Down".action = a.move-window-down;
+              "${mod}+Shift+Up".action = a.move-window-up;
+              "${mod}+Shift+Right".action = a.move-column-right;
 
               # Workspaces 1..9
               "${mod}+1".action = a.focus-workspace 1;
@@ -401,8 +404,15 @@ in
               "${mod}+8".action = a.focus-workspace 8;
               "${mod}+9".action = a.focus-workspace 9;
 
-              # "Fullscreen but keep bars" -> maximize column
               "${mod}+F".action = a.maximize-column;
+
+              # --- Apps ---
+              "${mod}+Space".action = dms [
+                "spotlight"
+                "toggle"
+              ];
+              "${mod}+Return".action = a.spawn config.home.sessionVariables.TERMINAL;
+              "${mod}+Tab".action = a.focus-workspace-previous;
 
               # DMS toggles
               "${mod}+V".action = dms [
@@ -417,16 +427,14 @@ in
                 "notifications"
                 "toggle"
               ];
-              "${mod}+Shift+L".action = dms [
+              "Ctrl+Alt+L".action = dms [
                 "lock"
                 "lock"
               ];
 
-              # Close + overview
               "${mod}+Q".action = a.close-window;
               "${mod}+W".action = a.toggle-overview;
 
-              # PrintScreen -> DMS-native niri screenshot (uses DMS_SCREENSHOT_EDITOR)
               "Print".action = a.spawn [
                 "flameshot"
                 "gui"
@@ -494,7 +502,6 @@ in
                 "stop"
               ];
 
-              # Brightness via DMS IPC
               "XF86MonBrightnessUp".action = dms [
                 "brightness"
                 "increment"
@@ -508,7 +515,7 @@ in
                 ""
               ];
 
-              # Toggle laptop display
+              # NOTE: just a quickfix when I need to leave and just pull cords out
               "XF86Display".action = a.spawn [ "toggle-edp" ];
               "Mod+F7".action = a.spawn [ "toggle-edp" ];
             };

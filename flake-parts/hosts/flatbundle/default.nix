@@ -55,7 +55,7 @@ in
   # ---------------------
   tensorfiles = {
     profiles = {
-      graphical-plasma6.enable = true;
+      graphical-dms-niri.enable = true;
 
       packages-base.enable = true;
       packages-extra.enable = true;
@@ -152,11 +152,11 @@ in
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
-      profiles.graphical-plasma.enable = true;
+      profiles.graphical-dms-niri.enable = true;
+      programs.pywal.enable = true;
+
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
-
-      programs.pywal.enable = true;
       programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
     };

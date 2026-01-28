@@ -44,8 +44,9 @@
 
   powerManagement = {
     enable = true;
-    cpuFreqGovernor = "performance";
+    # cpuFreqGovernor = "schedutil";
   };
+  services.power-profiles-daemon.enable = true;
 
   programs.gamemode.enable = true;
   services.fwupd.enable = true;
