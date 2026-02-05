@@ -21,7 +21,9 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = [ pkgs.libva-utils ];
+  environment.systemPackages = [
+    pkgs.libva-utils
+  ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -68,10 +70,20 @@
     enable = true;
     # cpuFreqGovernor = "schedutil";
   };
-  services.power-profiles-daemon.enable = true;
 
   programs.gamemode.enable = true;
   services.fwupd.enable = true;
+
+  services.fprintd = {
+    enable = true;
+    # tod.enable = true;
+    # tod.driver = pkgs.libfprint-2-tod1-vfs0090;
+  };
+
+  services.fstrim = {
+    enable = true;
+    interval = "weekly"; # the default
+  };
 
   boot = {
     loader = {

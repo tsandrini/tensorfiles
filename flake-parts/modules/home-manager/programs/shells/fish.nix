@@ -193,11 +193,11 @@ in
     })
     # |----------------------------------------------------------------------| #
     (mkIf ((isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable) {
-      programs.fish.interactiveShellInit = mkBefore ''
-        # Import colorscheme from 'wal' asynchronously
-        set -l wal_seq (cat ${config.xdg.cacheHome}/wal/sequences)""
-        echo -e $wal_seq &
-      '';
+      # programs.fish.interactiveShellInit = mkBefore ''
+      #   # Import colorscheme from 'wal' asynchronously
+      #   set -l wal_seq (cat ${config.xdg.cacheHome}/wal/sequences)""
+      #   echo -e $wal_seq &
+      # '';
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.shellAliases.catToBat {

@@ -21,10 +21,10 @@
 }:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
-  # inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.packages-graphical-extra;
-  # _ = mkOverrideAtProfileLevel;
+  _ = mkOverrideAtProfileLevel;
 in
 {
   options.tensorfiles.profiles.packages-graphical-extra = {
@@ -85,11 +85,14 @@ in
         # lapack # openblas with just the LAPACK C and FORTRAN ABI
 
         # github-desktop # GitHub Desktop
-        winbox4 # Graphical configuration utility for RouterOS-based devices
+        # winbox4 # Graphical configuration utility for RouterOS-based devices
         hoppscotch # Open source API development ecosystem
       ];
 
-      programs.winbox.enable = true;
+      programs.winbox = {
+        enable = _ true;
+        package = _ pkgs.winbox4;
+      };
       programs.nix-index-database.comma.enable = true;
     }
     # |----------------------------------------------------------------------| #

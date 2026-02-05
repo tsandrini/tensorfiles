@@ -55,8 +55,18 @@ in
           ${
             if pywalCheck then # TODO
               ''
-                wezterm.add_to_config_reload_watch_list("~/.cache/wal")
-                config.color_scheme_dirs = {"~/.cache/wal"}
+                local home = wezterm.home_dir
+                local wal_dir = home .. "/.cache/wal"
+
+                -- wezterm.add_to_config_reload_watch_list(wal_dir)
+                -- config.color_scheme_dirs = { wal_dir }
+
+                local scheme_path = wezterm.config_dir .. "/colors/dank-theme.toml"
+                local colors, _meta = wezterm.color.load_scheme(scheme_path)
+                config.colors = colors
+                config.color_scheme = "dank-theme"
+
+                wezterm.add_to_config_reload_watch_list(scheme_path)
               ''
             else
               ""
