@@ -130,7 +130,6 @@ in
   };
 
   services.tailscale.enable = true;
-
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [

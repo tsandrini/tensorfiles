@@ -69,7 +69,6 @@ in
       packages-graphical-extra.enable = true;
     };
 
-    services.networking.ssh.enable = true;
     security.agenix.enable = true;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -96,10 +95,8 @@ in
   };
   # nix-mineral.enable = true;
 
-  # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
-  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -131,13 +128,12 @@ in
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
 
-  services.pcscd.enable = true; # needed for gpg pinentry
-
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
   };
 
+  services.tailscale.enable = true;
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
@@ -164,6 +160,7 @@ in
     tensorfiles.hm = {
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;
+      services.pywalfox-native.enable = true;
 
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
