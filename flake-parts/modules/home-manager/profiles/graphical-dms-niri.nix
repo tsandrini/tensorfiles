@@ -33,34 +33,6 @@ let
   cfg = config.tensorfiles.hm.profiles.graphical-dms-niri;
   _ = mkOverrideAtHmProfileLevel;
 
-  toggleEdp = pkgs.writeShellScriptBin "toggle-edp" ''
-    set -euo pipefail
-
-    EDP="eDP-1"
-
-    # Extract the block for eDP-1 (from its "Output ..." header until the next "Output ..." or EOF)
-    block="$(
-      niri msg outputs \
-        | awk -v edp="(''${EDP})" '
-            $0 ~ "^Output " {
-              in_block = ($0 ~ edp)
-            }
-            in_block { print }
-          '
-    )"
-
-    # If we didn't find the block at all, bail out (or you could default to "on").
-    if [ -z "$block" ]; then
-      exit 0
-    fi
-
-    if echo "$block" | grep -q "^[[:space:]]*Disabled[[:space:]]*$"; then
-      niri msg output "$EDP" on
-    else
-      niri msg output "$EDP" off
-    fi
-  '';
-
 in
 {
   options.tensorfiles.hm.profiles.graphical-dms-niri = {
@@ -79,7 +51,7 @@ in
 
   imports = [
     inputs.dms.homeModules.dank-material-shell
-    inputs.dms.homeModules.niri
+    # inputs.dms.homeModules.niri
   ];
 
   config = mkIf cfg.enable (mkMerge [
@@ -97,6 +69,11 @@ in
 
           thunderbird.enable = _ true;
 
+          niri-flake = {
+            enable = _ true;
+            binds.dms.enable = _ true;
+            binds.flameshot.enable = _ true;
+          };
           dsearch.enable = _ true;
         };
       };
@@ -171,22 +148,10 @@ in
         pkgs.blueman # GTK-based Bluetooth Manager
         pkgs.matugen # Material you color generation tool
 
-        toggleEdp
+        # pkgs.python3Packages.aiohttp-oauthlib # NOTE: required for calendar integration
+
       ]
       ++ (optional cfg.include-nvim localFlake.packages.${system}.nvim-ide-config);
-
-      services.flameshot = {
-        enable = _ true;
-        package = pkgs.flameshot.override {
-          enableWlrSupport = true;
-        };
-        settings = {
-          General = {
-            showStartupLaunchMessage = false;
-            useGrimAdapter = true;
-          };
-        };
-      };
 
       home.shellAliases = {
         "graphical-nvim" = _ (getExe localFlake.packages.${system}.nvim-graphical-config);
@@ -230,244 +195,6 @@ in
       services.kdeconnect = {
         enable = _ true;
         indicator = _ true;
-      };
-
-      programs.niri = {
-        package = _ pkgs.niri-unstable;
-        settings = {
-          prefer-no-csd = true;
-          workspaces = {
-            "01" = {
-              name = "1";
-            };
-            "02" = {
-              name = "2";
-            };
-            "03" = {
-              name = "3";
-            };
-            "04" = {
-              name = "4";
-            };
-            "05" = {
-              name = "5";
-            };
-            "06" = {
-              name = "6";
-            };
-            "07" = {
-              name = "7";
-            };
-            "08" = {
-              name = "8";
-            };
-          };
-
-          input = {
-            keyboard = {
-              xkb = {
-                layout = "us,cz";
-                variant = ",qwerty";
-                options = "grp:alt_caps_toggle";
-              };
-
-              track-layout = "global";
-            };
-          };
-
-          binds =
-            let
-              a = config.lib.niri.actions;
-              mod = "Mod";
-              dms =
-                cmd:
-                a.spawn (
-                  [
-                    "dms"
-                    "ipc"
-                    "call"
-                  ]
-                  ++ cmd
-                );
-            in
-            {
-              # --- Columns ---
-              "${mod}+H".action = a.focus-column-left;
-              "${mod}+J".action = a.focus-window-down;
-              "${mod}+K".action = a.focus-window-up;
-              "${mod}+L".action = a.focus-column-right;
-
-              "${mod}+MouseBack".action = a.focus-column-left;
-              "${mod}+MouseForward".action = a.focus-column-right;
-
-              # --- Workspaces ---
-              "${mod}+U".action = a.focus-workspace-down;
-              "${mod}+I".action = a.focus-workspace-up;
-
-              "${mod}+WheelScrollDown" = {
-                action = a.focus-workspace-down;
-                cooldown-ms = 150;
-              };
-              "${mod}+WheelScrollUp" = {
-                action = a.focus-workspace-up;
-                cooldown-ms = 150;
-              };
-
-              # --- Moving stuff ---
-              "${mod}+Shift+H".action = a.move-column-left;
-              "${mod}+Shift+J".action = a.move-window-down;
-              "${mod}+Shift+K".action = a.move-window-up;
-              "${mod}+Shift+L".action = a.move-column-right;
-
-              # --- Resizing windowws ----
-              "${mod}+Left".action = a.set-column-width "-10%";
-              "${mod}+Right".action = a.set-column-width "+10%";
-              "${mod}+Up".action = a.set-window-height "-10%";
-              "${mod}+Down".action = a.set-window-height "+10%";
-
-              # Workspaces 1..9
-              "${mod}+1".action = a.focus-workspace 1;
-              "${mod}+2".action = a.focus-workspace 2;
-              "${mod}+3".action = a.focus-workspace 3;
-              "${mod}+4".action = a.focus-workspace 4;
-              "${mod}+5".action = a.focus-workspace 5;
-              "${mod}+6".action = a.focus-workspace 6;
-              "${mod}+7".action = a.focus-workspace 7;
-              "${mod}+8".action = a.focus-workspace 8;
-              "${mod}+9".action = a.focus-workspace 9;
-
-              # "${mod}+F".action = a.maximize-column;
-              "${mod}+F".action = a.maximize-column;
-              "${mod}+T".action = a.toggle-window-floating;
-              "${mod}+R".action = a.switch-preset-column-width;
-              "${mod}+Comma".action = a.consume-or-expel-window-right;
-
-              # --- Apps ---
-              "${mod}+Space".action = dms [
-                "spotlight"
-                "toggle"
-              ];
-              "${mod}+Return".action = a.spawn config.home.sessionVariables.TERMINAL;
-              "${mod}+Tab".action = a.focus-workspace-previous;
-
-              # DMS toggles
-              "${mod}+V".action = dms [
-                "clipboard"
-                "toggle"
-              ];
-              "${mod}+M".action = dms [
-                "processlist"
-                "toggle"
-              ];
-              "Ctrl+Alt+Q".action = dms [
-                "powermenu"
-                "toggle"
-              ];
-              "${mod}+P".action = dms [
-                "notepad"
-                "toggle"
-              ];
-              "${mod}+Shift+Q".action = dms [
-                ""
-                "toggle"
-              ];
-              "${mod}+N".action = dms [
-                "notifications"
-                "toggle"
-              ];
-              "Ctrl+Alt+L".action = dms [
-                "lock"
-                "lock"
-              ];
-
-              "${mod}+Q".action = a.close-window;
-              "${mod}+W".action = a.toggle-overview;
-
-              "Print".action = a.spawn [
-                "flameshot"
-                "gui"
-              ];
-              "Ctrl+Print".action = a.spawn [
-                "flameshot"
-                "gui"
-              ];
-              "Alt+Print".action = a.spawn [
-                "flameshot"
-                "gui"
-              ];
-
-              # --- Media keys via DMS IPC ---
-              "XF86AudioRaiseVolume" = {
-                action = dms [
-                  "audio"
-                  "increment"
-                  "5"
-                ];
-                allow-when-locked = true;
-              };
-              "XF86AudioLowerVolume" = {
-                action = dms [
-                  "audio"
-                  "decrement"
-                  "5"
-                ];
-                allow-when-locked = true;
-              };
-              "XF86AudioMute" = {
-                action = dms [
-                  "audio"
-                  "mute"
-                ];
-                allow-when-locked = true;
-              };
-              "XF86AudioMicMute" = {
-                action = dms [
-                  "audio"
-                  "micmute"
-                ];
-                allow-when-locked = true;
-              };
-
-              # Media playback via DMS (MPRIS)
-              "XF86AudioPlay".action = dms [
-                "mpris"
-                "playPause"
-              ];
-              "XF86AudioPause".action = dms [
-                "mpris"
-                "pause"
-              ];
-              "XF86AudioNext".action = dms [
-                "mpris"
-                "next"
-              ];
-              "XF86AudioPrev".action = dms [
-                "mpris"
-                "previous"
-              ];
-              "XF86AudioStop".action = dms [
-                "mpris"
-                "stop"
-              ];
-
-              "XF86MonBrightnessUp".action = dms [
-                "brightness"
-                "increment"
-                "10"
-                ""
-              ];
-              "XF86MonBrightnessDown".action = dms [
-                "brightness"
-                "decrement"
-                "10"
-                ""
-              ];
-
-              # NOTE: just a quickfix when I need to leave and just pull cords out
-              "XF86Display".action = a.spawn [ "toggle-edp" ];
-              "Mod+F7".action = a.spawn [ "toggle-edp" ];
-            };
-        };
       };
 
       # TODO move this elsewhere
@@ -540,12 +267,12 @@ in
       programs.dank-material-shell = {
         enable = _ true;
         systemd = {
-          enable = _ true;
+          enable = _ false;
           restartIfChanged = _ true;
         };
 
         niri = {
-          enableSpawn = _ false;
+          enableSpawn = _ true;
           enableKeybinds = _ false;
           includes = {
             enable = _ true;

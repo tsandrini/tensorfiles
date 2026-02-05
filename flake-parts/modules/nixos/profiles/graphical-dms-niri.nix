@@ -49,25 +49,25 @@ in
       networking.nftables.enable = _ true;
       networking.firewall.enable = _ true;
 
-      environment.systemPackages = with pkgs; [
+      environment.systemPackages = [
         # -- GENERAL PACKAGES --
-        libnotify # A library that sends desktop notifications to a notification daemon
-        notify-desktop # Little application that lets you send desktop notifications with one command
-        wl-clipboard # Command-line copy/paste utilities for Wayland
-        maim # A command-line screenshot utility
-        xxdiff # Graphical file and directories comparator and merge tool
-        networkmanagerapplet # need this to configure L2TP ipsec
+        pkgs.libnotify # A library that sends desktop notifications to a notification daemon
+        pkgs.notify-desktop # Little application that lets you send desktop notifications with one command
+        pkgs.wl-clipboard # Command-line copy/paste utilities for Wayland
+        pkgs.maim # A command-line screenshot utility
+        pkgs.xxdiff # Graphical file and directories comparator and merge tool
+        pkgs.networkmanagerapplet # need this to configure L2TP ipsec
 
         # -- UTILS NEEDED FOR INFO-CENTER --
-        clinfo # Print all known information about all available OpenCL platforms and devices in the system
-        mesa-demos # Test utilities for OpenGL
-        vulkan-tools # Khronos official Vulkan Tools and Utilities
-        wayland-utils # Wayland utilities (wayland-info)
-        aha # ANSI HTML Adapter
+        pkgs.clinfo # Print all known information about all available OpenCL platforms and devices in the system
+        pkgs.mesa-demos # Test utilities for OpenGL
+        pkgs.vulkan-tools # Khronos official Vulkan Tools and Utilities
+        pkgs.wayland-utils # Wayland utilities (wayland-info)
+        pkgs.aha # ANSI HTML Adapter
 
         # -- DMS + NIRI stuff --
-        i2c-tools # Set of I2C tools for Linux
-        seahorse # Application for managing encryption keys and passwords in the GnomeKeyring
+        pkgs.i2c-tools # Set of I2C tools for Linux
+        pkgs.seahorse # Application for managing encryption keys and passwords in the GnomeKeyring
         # xwayland-satellite # Xwayland outside your Wayland compositor
       ];
 
@@ -106,10 +106,9 @@ in
           pkgs.xdg-desktop-portal-gtk # Desktop integration portals for sandboxed apps
           pkgs.xdg-desktop-portal-gnome # Backend implementation for xdg-desktop-portal for the GNOME desktop environment
         ];
-        # pick wlr first, fall back to gtk for the misc stuff
         config.common.default = [
-          "gnome"
           "wlr"
+          "gtk"
         ];
       };
 
