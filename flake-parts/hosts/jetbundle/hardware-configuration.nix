@@ -46,8 +46,6 @@
     enable = true;
     # cpuFreqGovernor = "schedutil";
   };
-  services.power-profiles-daemon.enable = true;
-  services.upower.enable = true;
 
   programs.gamemode.enable = true;
   services.fwupd.enable = true;
