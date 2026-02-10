@@ -47,7 +47,7 @@ in
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_graphical-plasma = importApply ./profiles/graphical-plasma { inherit localFlake; };
     profiles_graphical-dms-niri = importApply ./profiles/graphical-dms-niri.nix {
-      inherit localFlake inputs;
+      inherit localFlake;
     };
     profiles_graphical-xmonad = importApply ./profiles/graphical-xmonad.nix { inherit localFlake; };
     profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
@@ -66,6 +66,9 @@ in
     programs_file-managers_lf = importApply ./programs/file-managers/lf { inherit localFlake; };
     programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix { inherit localFlake; };
     programs_git = importApply ./programs/git.nix { inherit localFlake; };
+    programs_dank-material-shell = importApply ./programs/dank-material-shell.nix {
+      inherit localFlake inputs;
+    };
     programs_delta = importApply ./programs/delta.nix { inherit localFlake; };
     programs_dsearch = importApply ./programs/dsearch.nix { inherit localFlake inputs; };
     programs_gpg = importApply ./programs/gpg.nix { inherit localFlake; };
