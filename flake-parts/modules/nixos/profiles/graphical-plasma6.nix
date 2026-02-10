@@ -136,6 +136,7 @@ in
       services.power-profiles-daemon.enable = _ true;
       services.upower.enable = _ true;
 
+      # AUDIO stuff
       services.pipewire = {
         enable = _ true;
         alsa.enable = _ true;

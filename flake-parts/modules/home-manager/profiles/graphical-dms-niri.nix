@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   pkgs,
   config,
@@ -29,10 +29,10 @@ let
     optional
     ;
   inherit (localFlake.lib.modules) mkOverrideAtHmProfileLevel;
+  inherit (localFlake.lib.options) mkPywalEnableOption;
 
   cfg = config.tensorfiles.hm.profiles.graphical-dms-niri;
   _ = mkOverrideAtHmProfileLevel;
-
 in
 {
   options.tensorfiles.hm.profiles.graphical-dms-niri = {
@@ -47,12 +47,11 @@ in
       // {
         default = true;
       };
-  };
 
-  imports = [
-    inputs.dms.homeModules.dank-material-shell
-    # inputs.dms.homeModules.niri
-  ];
+    pywal = {
+      enable = mkPywalEnableOption;
+    };
+  };
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
@@ -73,6 +72,10 @@ in
             enable = _ true;
             binds.dms.enable = _ true;
             binds.flameshot.enable = _ true;
+          };
+          dank-material-shell = {
+            enable = _ true;
+            niri-flake.enable = _ true;
           };
           dsearch.enable = _ true;
         };
@@ -164,7 +167,7 @@ in
         TERMINAL = _ "wezterm";
         IDE = _ "nvim";
         EMAIL = _ "thunderbird";
-        QT_QPA_PLATFORMTHEME = "qt6ct";
+        QT_QPA_PLATFORMTHEME = _ "qt6ct";
       };
 
       fonts.fontconfig.enable = _ true;
@@ -173,13 +176,13 @@ in
         enable = _ true;
 
         theme = {
-          name = "adw-gtk3-dark";
-          package = pkgs.adw-gtk3;
+          name = _ "adw-gtk3-dark";
+          package = _ pkgs.adw-gtk3;
         };
 
         iconTheme = {
-          name = "Papirus-Dark";
-          package = pkgs.papirus-icon-theme;
+          name = _ "Papirus-Dark";
+          package = _ pkgs.papirus-icon-theme;
         };
       };
 
@@ -198,10 +201,6 @@ in
       };
 
       # TODO move this elsewhere
-      systemd.user.tmpfiles.rules = [
-        "d %h/.cache/wal 0700 - - -"
-        "L+ %h/.cache/wal/colors.json - - - - %h/.cache/wal/dank-pywalfox.json"
-      ];
 
       xdg.mimeApps.defaultApplications = {
         "application/pdf" = [ "org.gnome.Evince.desktop" ];
@@ -262,39 +261,6 @@ in
         "text/x-nix" = [ "neovide.desktop" ];
         "application/xml" = [ "neovide.desktop" ];
         "text/xml" = [ "neovide.desktop" ];
-      };
-
-      programs.dank-material-shell = {
-        enable = _ true;
-        systemd = {
-          enable = _ false;
-          restartIfChanged = _ true;
-        };
-
-        niri = {
-          enableSpawn = _ true;
-          enableKeybinds = _ false;
-          includes = {
-            enable = _ true;
-            override = _ true;
-            filesToInclude = [
-              "alttab"
-              "binds"
-              "cursor"
-              "colors"
-              "layout"
-              "outputs"
-              "wpblur"
-            ];
-          };
-        };
-
-        enableSystemMonitoring = _ true;
-        enableVPN = _ true;
-        enableDynamicTheming = _ true;
-        enableAudioWavelength = _ true;
-        enableCalendarEvents = _ true;
-        enableClipboardPaste = _ true;
       };
     }
     # |----------------------------------------------------------------------| #

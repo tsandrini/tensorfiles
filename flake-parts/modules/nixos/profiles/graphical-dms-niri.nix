@@ -83,6 +83,7 @@ in
       };
 
       programs.ssh.startAgent = _ false; # NOTE: using gnome agent
+
       # NOTE: It's required to have the niri executable in $PATH to populate
       # the wayland-sessions for the dms-greeter. Niri itself will then
       # load any configuration provided by HM without any issues, but we
@@ -117,12 +118,11 @@ in
         QT_QPA_PLATFORMTHEME = _ "gtk3";
         XDG_CURRENT_DESKTOP = _ "niri";
         XDG_SESSION_DESKTOP = _ "niri";
-        #DISPLAY = ":0";
-        #QT_QPA_PLATFORM = "wayland";
       };
 
       hardware.i2c.enable = _ true; # Required to control brightness of external monitors
 
+      # Power management and additional power statistics
       services.power-profiles-daemon.enable = _ true;
       services.upower.enable = _ true;
 
@@ -132,6 +132,7 @@ in
       security.pam.services.login.enableGnomeKeyring = _ true;
 
       services.pcscd.enable = _ true; # needed for gpg pinentry
+
       # AUDIO stuff
       services.pipewire = {
         enable = _ true;
@@ -141,7 +142,7 @@ in
       };
       security.rtkit.enable = _ true; # realtime audio scheduling
 
-      programs.kdeconnect.enable = _ true;
+      programs.kdeconnect.enable = _ true; # Required to expose ports
       systemd.user.services.niri-flake-polkit.enable = _ false;
     }
     # |----------------------------------------------------------------------| #
