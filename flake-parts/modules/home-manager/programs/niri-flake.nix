@@ -48,7 +48,6 @@ let
           '
     )"
 
-    # If we didn't find the block at all, bail out (or you could default to "on").
     if [ -z "$block" ]; then
       exit 0
     fi
@@ -204,8 +203,14 @@ in
               "${cfg.binds.mod}+W".action = _ a.toggle-overview;
               "${cfg.binds.mod}+Return".action = _ (a.spawn config.home.sessionVariables.TERMINAL);
 
-              "XF86Display".action = _ (a.spawn [ "toggle-edp" ]);
-              "Mod+F7".action = _ (a.spawn [ "toggle-edp" ]);
+              "XF86Display" = {
+                action = _ (a.spawn [ "toggle-edp" ]);
+                allow-when-locked = _ true;
+              };
+              "Mod+F7" = {
+                action = _ (a.spawn [ "toggle-edp" ]);
+                allow-when-locked = _ true;
+              };
             };
         };
       };
