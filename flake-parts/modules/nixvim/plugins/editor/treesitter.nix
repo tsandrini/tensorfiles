@@ -37,19 +37,20 @@ in
     {
       plugins.treesitter = {
         enable = _ true;
-        settings = {
-          indent.enable = _ true;
-          highlight.enable = _ true;
-        };
+        indent.enable = _ true;
+        highlight.enable = _ false;
         folding.enable = _ true;
         nixvimInjections = _ true;
         nixGrammars = _ true;
-        # grammarPackages = _ pkgs.vimPlugins.nvim-treesitter.allGrammars;
       };
 
       plugins.treesitter-context = {
         enable = _ true;
       };
+
+      # plugins.treesitter-refactor = {
+      #   enable = _ true;
+      # };
 
       # plugins.treesitter-textobjects = {
       #   enable = _ true;
