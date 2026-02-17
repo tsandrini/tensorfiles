@@ -106,14 +106,99 @@ in
             r_language_server.package = _ pkgs.rPackages.languageserver;
             sqls.enable = _ true; # sqls for SQL
             terraformls.enable = _ true; # terraformls for Terraform
-            ts_ls.enable = true;
             # typst_lsp.enable = _ true; # typst-lsp for the Typst language
             tinymist.enable = _ true; # tinymist for typst
             texlab.enable = _ true; # texlab for LaTeX
-            # volar.enable = _ true; # volar for Vue, replaces vuels
-            vue_ls.enable = _ true;
-            # vuels.enable = _ true; # vuels for Vue
-            # vuels.package = _ pkgs.nodePackages_latest.vls;
+
+            vue_ls = {
+              enable = _ true;
+              extraOptions.init_options = {
+                vue = {
+                  hybridMode = _ false;
+                };
+                tracing = _ true;
+              };
+              settings = {
+                typescript = {
+                  inlayHints = {
+                    enumMemberValues = {
+                      enabled = false;
+                    };
+                    functionLikeReturnTypes = {
+                      enabled = false;
+                    };
+                    propertyDeclarationTypes = {
+                      enabled = false;
+                    };
+                    parameterTypes = {
+                      enabled = false;
+                      suppressWhenArgumentMatchesName = true;
+                    };
+                    variableTypes = {
+                      enabled = false;
+                    };
+                  };
+                };
+              };
+            };
+
+            vtsls = {
+              enable = _ true;
+              filetypes = [
+                "vue"
+                "javascript"
+                "javascriptreact"
+                "javascript.jsx"
+                "typescript"
+                "typescriptreact"
+                "typescript.tsx"
+              ];
+              settings = {
+                vtsls.tsserver.globalPlugins = [
+                  {
+                    name = "@vue/typescript-plugin";
+                    location = "${lib.getBin pkgs.vue-language-server}/lib/language-tools/packages/language-server";
+                    languages = [ "vue" ];
+                  }
+                ];
+              };
+            };
+
+            ts_ls = {
+              enable = _ true;
+              filetypes = [
+                "vue"
+                "javascript"
+                "javascriptreact"
+                "javascript.jsx"
+                "typescript"
+                "typescriptreact"
+                "typescript.tsx"
+              ];
+              extraOptions.init_options.plugins = lib.mkForce [
+                {
+                  name = "@vue/typescript-plugin";
+                  location = "${lib.getBin pkgs.vue-language-server}/lib/language-tools/packages/language-server";
+                  languages = [ "vue" ];
+                  configNamespace = "typescript";
+                }
+              ];
+              settings = {
+                typescript = {
+                  inlayHints = {
+                    includeInlayParameterNameHints = "all";
+                    includeInlayParameterNameHintsWhenArgumentMatchesName = false;
+                    includeInlayFunctionParameterTypeHints = false;
+                    includeInlayVariableTypeHints = false;
+                    includeInlayVariableTypeHintsWhenTypeMatchesName = false;
+                    includeInlayPropertyDeclarationTypeHints = false;
+                    includeInlayFunctionLikeReturnTypeHints = false;
+                    includeInlayEnumMemberValueHints = false;
+                  };
+                };
+              };
+            };
+
             zls.enable = _ true; # zls for Zig
             # rust-analyzer = {
             #   enable = _ true;
