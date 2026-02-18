@@ -29,6 +29,18 @@
         my_cookies = pkgs.callPackage ./my_cookies.nix { };
         polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
         certbot-dns-wedos = pkgs.callPackage ./certbot-dns-wedos.nix { };
+        cc-switcher = pkgs.writeShellApplication {
+          name = "cc-switcher";
+          runtimeInputs = [
+            pkgs.jq
+            pkgs.coreutils
+            pkgs.gnugrep
+            pkgs.gawk
+            pkgs.procps
+          ];
+
+          text = builtins.readFile ./cc-switcher.sh;
+        };
         # awatcher = pkgs.callPackage ./awatcher.nix { };
       };
     };
