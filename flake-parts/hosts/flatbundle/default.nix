@@ -176,6 +176,7 @@ in
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
     home.packages = [
+      inputs.self.packages.${system}.cc-switcher
       pkgs-osu-lazer-bin.osu-lazer-bin
       pkgs.olympus
     ];
