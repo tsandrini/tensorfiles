@@ -44,11 +44,15 @@
 
   powerManagement = {
     enable = true;
-    cpuFreqGovernor = "performance";
+    # cpuFreqGovernor = "schedutil";
   };
 
   programs.gamemode.enable = true;
   services.fwupd.enable = true;
+
+  services.fprintd = {
+    enable = true;
+  };
 
   # Thinkpad x270 fingreprint reader
   # Unfortunately the official services.fprintd option doesn't work and any

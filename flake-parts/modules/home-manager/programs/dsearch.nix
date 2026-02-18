@@ -84,6 +84,21 @@ in
               ];
             }
             {
+              path = config.home.sessionVariables.DOWNLOADS_DIR;
+              max_depth = 3;
+              exclude_hidden = true;
+              exclude_dirs = [
+                ".git"
+                "target"
+                "dist"
+                "node_modules"
+                ".direnv"
+                ".devenv"
+                "venv"
+                "target"
+              ];
+            }
+            {
               path = config.home.sessionVariables.MISC_DATA_DIR;
               max_depth = 6;
               exclude_hidden = true;

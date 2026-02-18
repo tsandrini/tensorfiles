@@ -132,6 +132,11 @@ in
       programs.kdeconnect.enable = _ true;
       services.pcscd.enable = _ true; # needed for gpg pinentry
 
+      # Power management and additional power statistics
+      services.power-profiles-daemon.enable = _ true;
+      services.upower.enable = _ true;
+
+      # AUDIO stuff
       services.pipewire = {
         enable = _ true;
         alsa.enable = _ true;

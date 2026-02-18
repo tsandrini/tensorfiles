@@ -29,11 +29,6 @@
     inputs.nix-gaming.nixosModules.platformOptimizations
     (inputs.nix-mineral + "/nix-mineral.nix")
 
-    # TODO fails with The option `programs.steam.extraCompatPackages' in
-    # `/nix/store/nra828scc8qs92b9pxra5csqzffb6hpl-source/nixos/modules/programs/steam.nix'
-    # is already declared in
-    # `/nix/store/cqapfi5bvhzvarrbi2h1qrf2dav5r1nd-source/flake.nix#nixosModules.steamCompat'.
-    # nix-gaming.nixosModules.steamCompat
     ./hardware-configuration.nix
     ./disko.nix
     ./nm-overrides.nix
@@ -43,7 +38,7 @@
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = [
-    pkgs.networkmanagerapplet # need this to configure L2TP ipsec
+    pkgs.libva-utils # Collection of utilities and examples for VA-API
   ];
 
   # ---------------------
@@ -110,22 +105,23 @@
     ];
   };
 
-  # virtualisation.docker = {
-  #   enable = true;
-  #   autoPrune.enable = true;
-  #   storageDriver = "btrfs";
-  # };
-
-  # NOTE for wireguard
-  # networking.wireguard.enable = true;
+  services.tailscale.enable = true;
+  networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
+      # WG
       51820
+      51821
+      # Dev ports
       8000
       8080
       5173
     ];
     allowedTCPPorts = [
+      # WG
+      51820
+      51821
+      # Dev ports
       8000
       8080
       5173
@@ -135,11 +131,9 @@
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-plasma.enable = true;
-      # profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
 
       programs.pywal.enable = true;
-      # programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
     };
 

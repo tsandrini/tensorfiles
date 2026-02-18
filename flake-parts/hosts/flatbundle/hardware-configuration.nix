@@ -21,7 +21,9 @@
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
-  environment.systemPackages = [ pkgs.libva-utils ];
+  environment.systemPackages = [
+    pkgs.libva-utils
+  ];
 
   networking.useDHCP = lib.mkDefault true;
 
@@ -66,11 +68,20 @@
 
   powerManagement = {
     enable = true;
-    cpuFreqGovernor = "performance";
+    # cpuFreqGovernor = "schedutil";
   };
 
   programs.gamemode.enable = true;
   services.fwupd.enable = true;
+
+  services.fprintd = {
+    enable = true;
+  };
+
+  services.fstrim = {
+    enable = true;
+    interval = "weekly"; # the default
+  };
 
   boot = {
     loader = {

@@ -48,11 +48,13 @@ in
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = [
-    pkgs.libva-utils
-    pkgs.docker-compose
-    pkgs.wireguard-tools
-    pkgs.claude-code
-    pkgs.codex
+    pkgs.libva-utils # Collection of utilities and examples for VA-API
+    pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
+    pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
+    pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
+    pkgs.codex # Lightweight coding agent that runs in your terminal
+    pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
+    pkgs.bitwarden-cli # Secure and free password manager for all of your devices
   ];
 
   # ---------------------
@@ -61,12 +63,12 @@ in
   tensorfiles = {
     profiles = {
       graphical-dms-niri.enable = true;
+
       packages-base.enable = true;
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
     };
 
-    services.networking.ssh.enable = true;
     security.agenix.enable = true;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -93,10 +95,8 @@ in
   };
   # nix-mineral.enable = true;
 
-  # TODO maybe use github:tsandrini/tensorfiles instead?
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
-  # programs.shadow-client.forceDriver = "iHD";
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
 
@@ -128,13 +128,12 @@ in
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
 
-  services.pcscd.enable = true; # needed for gpg pinentry
-
   virtualisation.docker = {
     enable = true;
     autoPrune.enable = true;
   };
 
+  services.tailscale.enable = true;
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
@@ -157,11 +156,12 @@ in
     ];
   };
 
-  # Small QoL for Wayland apps (optional)
-
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-dms-niri.enable = true;
+      programs.pywal.enable = true;
+      services.pywalfox-native.enable = true;
+
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
       services.keepassxc.enable = true;

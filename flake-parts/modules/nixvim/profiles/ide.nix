@@ -60,6 +60,33 @@ in
 
       plugins.direnv.enable = _ true;
       plugins.crates.enable = _ true;
+
+      colorschemes.nightfox.enable = false;
+      colorschemes.base16.enable = _ true;
+
+      # TODO
+      extraConfigLuaPost = ''
+        local path = vim.fn.stdpath("config") .. "/lua/plugins/dankcolors.lua"
+
+        local function apply_dms_theme()
+          local ok, spec = pcall(dofile, path)
+          if not ok then return end
+
+          -- DMS writes a Lazy-style spec table; we just want to run its config()
+          local entry = spec and spec[1]
+          if entry and type(entry.config) == "function" then
+            pcall(entry.config)
+          end
+        end
+
+        -- Run once after startup to ensure plugins are available
+        vim.api.nvim_create_autocmd("VimEnter", {
+          once = true,
+          callback = function()
+            vim.schedule(apply_dms_theme)
+          end,
+        })
+      '';
     }
     # |----------------------------------------------------------------------| #
   ]);

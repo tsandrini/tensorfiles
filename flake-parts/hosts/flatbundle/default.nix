@@ -43,11 +43,13 @@ in
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
   environment.systemPackages = [
-    pkgs.libva-utils
-    pkgs.docker-compose
-    pkgs.wireguard-tools
-    pkgs.claude-code
-    pkgs.codex
+    pkgs.libva-utils # Collection of utilities and examples for VA-API
+    pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
+    pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
+    pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
+    pkgs.codex # Lightweight coding agent that runs in your terminal
+    pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
+    pkgs.bitwarden-cli # Secure and free password manager for all of your devices
   ];
 
   # ---------------------
@@ -55,7 +57,7 @@ in
   # ---------------------
   tensorfiles = {
     profiles = {
-      graphical-plasma6.enable = true;
+      graphical-dms-niri.enable = true;
 
       packages-base.enable = true;
       packages-extra.enable = true;
@@ -89,6 +91,7 @@ in
   # nix-mineral.enable = true;
 
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
+  programs.nh.clean.enable = false; # NOTE We have enough space buddy
 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
@@ -127,7 +130,6 @@ in
   };
 
   services.tailscale.enable = true;
-
   networking.wireguard.enable = true;
   networking.firewall = {
     allowedUDPPorts = [
@@ -152,11 +154,12 @@ in
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
-      profiles.graphical-plasma.enable = true;
+      profiles.graphical-dms-niri.enable = true;
+      programs.pywal.enable = true;
+      services.pywalfox-native.enable = true;
+
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
-
-      programs.pywal.enable = true;
       programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
     };
@@ -173,6 +176,7 @@ in
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
     home.packages = [
+      inputs.self.packages.${system}.cc-switcher
       pkgs-osu-lazer-bin.osu-lazer-bin
       pkgs.olympus
     ];

@@ -49,64 +49,32 @@ in
       networking.nftables.enable = _ true;
       networking.firewall.enable = _ true;
 
-      environment.systemPackages = with pkgs; [
+      environment.systemPackages = [
         # -- GENERAL PACKAGES --
-        libnotify # A library that sends desktop notifications to a notification daemon
-        notify-desktop # Little application that lets you send desktop notifications with one command
-        wl-clipboard # Command-line copy/paste utilities for Wayland
-        maim # A command-line screenshot utility
-        xxdiff # Graphical file and directories comparator and merge tool
-        networkmanagerapplet # need this to configure L2TP ipsec
+        pkgs.libnotify # A library that sends desktop notifications to a notification daemon
+        pkgs.notify-desktop # Little application that lets you send desktop notifications with one command
+        pkgs.wl-clipboard # Command-line copy/paste utilities for Wayland
+        pkgs.maim # A command-line screenshot utility
+        pkgs.xxdiff # Graphical file and directories comparator and merge tool
+        pkgs.networkmanagerapplet # need this to configure L2TP ipsec
 
         # -- UTILS NEEDED FOR INFO-CENTER --
-        clinfo # Print all known information about all available OpenCL platforms and devices in the system
-        mesa-demos # Test utilities for OpenGL
-        vulkan-tools # Khronos official Vulkan Tools and Utilities
-        wayland-utils # Wayland utilities (wayland-info)
-        aha # ANSI HTML Adapter
+        pkgs.clinfo # Print all known information about all available OpenCL platforms and devices in the system
+        pkgs.mesa-demos # Test utilities for OpenGL
+        pkgs.vulkan-tools # Khronos official Vulkan Tools and Utilities
+        pkgs.wayland-utils # Wayland utilities (wayland-info)
+        pkgs.aha # ANSI HTML Adapter
 
-        # -- KDE PACKAGES --
-        # kdePackages.ark # Graphical file compression/decompression utility
-        # haruna # Open source video player built with Qt/QML and libmpv
-        # kdePackages.kate # Advanced text editor
-        # kdePackages.kcalc # Scientific calculator
-        # kdiff3 # Compares and merges 2 or 3 files or directories
-        # krename # A powerful batch renamer for KDE
-        # krusader # Norton/Total Commander clone for KDE
-        # kdePackages.filelight # Disk usage statistics
-        # kdePackages.kfind # File search utility by KDE
-        # kdePackages.kweather
-        # # kdePackages.kweathercore
-        # kdePackages.quazip # Provides access to ZIP archives from Qt programs
-        # kdePackages.ksshaskpass
-        # kdePackages.accounts-qt # Qt library for accessing the online accounts database
-        # kdePackages.calendarsupport
-        # kdePackages.kaccounts-providers # Online account providers
-        # kdePackages.kaccounts-integration # Online accounts integration
-        # kdePackages.kdeplasma-addons
-        # kdePackages.plasma-browser-integration
-        # kdePackages.kaddressbook # KDE contact manager
-        # kdePackages.merkuro # A calendar application using Akonadi to sync with external services
-        # kdePackages.kcontacts # KContacts - Library for working with contact information
-        # kdePackages.kpeople # A library that provides access to all contacts and the people who hold them
-        # kdePackages.kompare # Graphical File Differences Tool
-
-        # krita # A free and open source painting application
-        # kdePackages.kdenlive # Video editor
-        # kdePackages.kcolorpicker # Qt based Color Picker with popup menu
-        # kdePackages.kcolorchooser
-        # kdePackages.kolourpaint # Paint program
-        # NOTE KNotes is unmaintained upstream,
-        # kdePackages.knotes # Popup notes
-        # kdePackages.kalarm # Personal alarm scheduler
-        # kdePackages.kamoso # A simple and friendly program to use your camera
-        # kdePackages.kruler # Screen ruler
-        # kdePackages.kclock # Clock app for plasma mobile
-        # okteta # A hex editor
-        # kdePackages.elisa # A simple media player for KDE
-        # kdePackages.kmag # A small Linux utility to magnify a part of the screen
-        # kdePackages.itinerary
+        # -- DMS + NIRI stuff --
+        pkgs.i2c-tools # Set of I2C tools for Linux
+        pkgs.seahorse # Application for managing encryption keys and passwords in the GnomeKeyring
+        # xwayland-satellite # Xwayland outside your Wayland compositor
       ];
+
+      programs.xwayland = {
+        enable = _ true;
+        package = _ pkgs.xwayland-satellite;
+      };
 
       programs.dank-material-shell.greeter = {
         enable = _ true;
@@ -115,28 +83,66 @@ in
       };
 
       programs.ssh.startAgent = _ false; # NOTE: using gnome agent
-      programs.niri.enable = _ true;
+
+      # NOTE: It's required to have the niri executable in $PATH to populate
+      # the wayland-sessions for the dms-greeter. Niri itself will then
+      # load any configuration provided by HM without any issues, but we
+      # have to traverse from NixOS -> HM somehow.
+      programs.niri = {
+        enable = _ true;
+        package = _ pkgs.niri-unstable;
+      };
+
+      services.accounts-daemon.enable = _ true; # Required to persist user info
       services.dbus.enable = _ true;
       security.polkit.enable = _ true;
+      programs.dconf.enable = _ true;
+      services.udisks2.enable = _ true; # udisks2, a DBus service that allows applications to query and manipulate storage devices.
+      services.gvfs.enable = _ true; # GVfs, a userspace virtual filesystem.
+
       xdg.portal = {
         enable = _ true;
-        extraPortals = [ pkgs.xdg-desktop-portal-wlr ];
-        config.common.default = "*";
+        extraPortals = [
+          pkgs.xdg-desktop-portal-wlr # xdg-desktop-portal backend for wlroots
+          pkgs.xdg-desktop-portal-gtk # Desktop integration portals for sandboxed apps
+          pkgs.xdg-desktop-portal-gnome # Backend implementation for xdg-desktop-portal for the GNOME desktop environment
+        ];
+        config.common.default = [
+          "wlr"
+          "gtk"
+        ];
       };
 
       environment.sessionVariables = {
         NIXOS_OZONE_WL = _ "1";
+        QT_QPA_PLATFORMTHEME = _ "gtk3";
+        XDG_CURRENT_DESKTOP = _ "niri";
+        XDG_SESSION_DESKTOP = _ "niri";
       };
 
+      hardware.i2c.enable = _ true; # Required to control brightness of external monitors
+
+      # Power management and additional power statistics
+      services.power-profiles-daemon.enable = _ true;
+      services.upower.enable = _ true;
+
+      # Pass various secret management to gnome keyring and autounlock after login
+      services.gnome.gnome-keyring.enable = _ true; # provides Secret Service + keyring daemon
+      security.pam.services.greetd.enableGnomeKeyring = _ true;
+      security.pam.services.login.enableGnomeKeyring = _ true;
+
       services.pcscd.enable = _ true; # needed for gpg pinentry
+
+      # AUDIO stuff
       services.pipewire = {
         enable = _ true;
         alsa.enable = _ true;
         pulse.enable = _ true;
         jack.enable = _ true;
       };
+      security.rtkit.enable = _ true; # realtime audio scheduling
 
-      programs.kdeconnect.enable = _ true;
+      programs.kdeconnect.enable = _ true; # Required to expose ports
       systemd.user.services.niri-flake-polkit.enable = _ false;
     }
     # |----------------------------------------------------------------------| #

@@ -37,16 +37,61 @@ let
   cfg = config.tensorfiles.networking.firewall.subnets-firewall;
   _ = mkOverrideAtModuleLevel;
 
+  policyType = types.submodule (_: {
+    options = {
+      allowedTCPPorts = mkOption {
+        type = types.listOf types.port;
+        default = [ ];
+      };
+      allowedUDPPorts = mkOption {
+        type = types.listOf types.port;
+        default = [ ];
+      };
+
+      allowedTCPPortRanges = mkOption {
+        type = types.listOf (
+          types.submodule (_: {
+            options = {
+              from = mkOption { type = types.port; };
+              to = mkOption { type = types.port; };
+            };
+          })
+        );
+        default = [ ];
+      };
+
+      allowedUDPPortRanges = mkOption {
+        type = types.listOf (
+          types.submodule (_: {
+            options = {
+              from = mkOption { type = types.port; };
+              to = mkOption { type = types.port; };
+            };
+          })
+        );
+        default = [ ];
+      };
+    };
+  });
+
   isV6 = cidr: hasInfix ":" cidr;
 
-  subnetsV4 = filterAttrs (cidr: _: !isV6 cidr) cfg.subnets;
-  subnetsV6 = filterAttrs (cidr: _: isV6 cidr) cfg.subnets;
+  defaultSubnetsRendered = builtins.listToAttrs (
+    map (cidr: {
+      name = cidr;
+      value = cfg.defaultSubnets;
+    }) cfg.defaultSubnetsList
+  );
+
+  effectiveSubnets = defaultSubnetsRendered // cfg.subnets;
+
+  subnetsV4 = filterAttrs (cidr: _: !isV6 cidr) effectiveSubnets;
+  subnetsV6 = filterAttrs (cidr: _: isV6 cidr) effectiveSubnets;
 
   # ----- helpers to collect unions across *all* subnets (v4+v6) -----
-  allPolicies = attrValues cfg.subnets;
+  allPolicies = attrValues effectiveSubnets;
 
   unionPorts = protoKey: unique (flatten (map (p: p.${protoKey}) allPolicies));
-
   unionRanges = rangeKey: unique (flatten (map (p: p.${rangeKey}) allPolicies));
 
   allTcpPorts = unionPorts "allowedTCPPorts";
@@ -56,12 +101,9 @@ let
 
   # ----- iptables rendering -----
   iptActionTcp4 = if cfg.defaultAction == "reject" then "REJECT --reject-with tcp-reset" else "DROP";
-
   iptActionUdp4 =
     if cfg.defaultAction == "reject" then "REJECT --reject-with icmp-port-unreachable" else "DROP";
-
   iptActionTcp6 = if cfg.defaultAction == "reject" then "REJECT --reject-with tcp-reset" else "DROP";
-
   iptActionUdp6 =
     if cfg.defaultAction == "reject" then "REJECT --reject-with icmp6-port-unreachable" else "DROP";
 
@@ -224,49 +266,78 @@ in
       description = "What to do with non-allowlisted traffic for the declared ports/ranges.";
     };
 
+    # passthrough to NixOS networking.firewall allowed* ports/ranges
+    nixosPassthrough = mkOption {
+      type = policyType;
+      default = { };
+      description = ''
+        Pass-through for NixOS `networking.firewall.allowed*` options (global, non-subnet-scoped).
+        Useful to keep all firewall declarations under this module.
+      '';
+      example = {
+        allowedTCPPorts = [
+          22
+          443
+        ];
+        allowedUDPPorts = [ 53 ];
+        allowedTCPPortRanges = [
+          {
+            from = 8000;
+            to = 8080;
+          }
+        ];
+      };
+    };
+
+    defaultSubnetsList = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      description = ''
+        List of CIDRs that should automatically receive the policy defined in
+        `defaultSubnets`. These are materialized into `subnets` at eval time,
+        and any explicitly defined `subnets.<cidr>` entry overrides the default.
+      '';
+      example = [
+        "10.5.0.0/24"
+        "10.0.33.13/32"
+        "10.0.0.0/24"
+      ];
+    };
+
+    defaultSubnets = mkOption {
+      type = policyType;
+      default = { };
+      description = ''
+        The policy applied to every CIDR in `defaultSubnetsList`.
+        (Same schema as a single `subnets.<cidr>` entry.)
+      '';
+      example = {
+        allowedTCPPorts = [
+          22
+          2222
+        ];
+        allowedUDPPorts = [
+          80
+          443
+        ];
+        allowedTCPPortRanges = [
+          {
+            from = 8000;
+            to = 8080;
+          }
+        ];
+      };
+    };
+
     subnets = mkOption {
-      type = types.attrsOf (
-        types.submodule (_: {
-          options = {
-            allowedTCPPorts = mkOption {
-              type = types.listOf types.port;
-              default = [ ];
-            };
-            allowedUDPPorts = mkOption {
-              type = types.listOf types.port;
-              default = [ ];
-            };
-
-            allowedTCPPortRanges = mkOption {
-              type = types.listOf (
-                types.submodule (_: {
-                  options = {
-                    from = mkOption { type = types.port; };
-                    to = mkOption { type = types.port; };
-                  };
-                })
-              );
-              default = [ ];
-            };
-
-            allowedUDPPortRanges = mkOption {
-              type = types.listOf (
-                types.submodule (_: {
-                  options = {
-                    from = mkOption { type = types.port; };
-                    to = mkOption { type = types.port; };
-                  };
-                })
-              );
-              default = [ ];
-            };
-          };
-        })
-      );
+      type = types.attrsOf policyType;
       default = { };
       description = ''
         Attrset keyed by CIDR (IPv4 or IPv6). Each entry defines ports (and port ranges)
         that are reachable *only* from that CIDR.
+
+        Note: defaults from `defaultSubnetsList/defaultSubnets` are merged in automatically,
+        and explicit entries here override those defaults on key collision.
       '';
       example = {
         "10.10.0.0/24" = {
@@ -289,6 +360,17 @@ in
       networking.firewall.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
+    {
+      networking.firewall = {
+        inherit (cfg.nixosPassthrough)
+          allowedTCPPorts
+          allowedUDPPorts
+          allowedTCPPortRanges
+          allowedUDPPortRanges
+          ;
+      };
+    }
+    # |----------------------------------------------------------------------| #
     (mkIf (!config.networking.nftables.enable) {
       networking.firewall.extraCommands = lib.mkAfter iptablesBlock;
       networking.firewall.extraStopCommands = lib.mkAfter iptablesStopBlock;
@@ -300,7 +382,7 @@ in
         ${lib.concatMapStringsSep "\n" (
           cidr:
           let
-            pol = cfg.subnets.${cidr};
+            pol = effectiveSubnets.${cidr};
             tcpPorts = pol.allowedTCPPorts or [ ];
             udpPorts = pol.allowedUDPPorts or [ ];
             tcpRanges = pol.allowedTCPPortRanges or [ ];
@@ -327,9 +409,11 @@ in
               insert rule inet nixos-fw input-allow ${saddr} ${cidr} udp dport ${mkPortSet udpPorts udpRanges} accept
             ''}
           ''
-        ) (lib.attrNames cfg.subnets)}
+        ) (lib.attrNames effectiveSubnets)}
       '';
     })
     # |----------------------------------------------------------------------| #
   ]);
+
+  meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
 }

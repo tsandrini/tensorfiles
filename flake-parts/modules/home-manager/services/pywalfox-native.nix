@@ -20,32 +20,67 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
-
-  # pywalfox-wrapper = pkgs.writeShellScriptBin "pywalfox-wrapper" ''
-  #   ${pywalfox-native}/bin/pywalfox start
-  # '';
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    getExe
+    mkPackageOption
+    ;
 
   cfg = config.tensorfiles.hm.services.pywalfox-native;
+
+  pywalfoxUpdateHandleSocket = pkgs.writeShellScript "pywalfox-update-handle-socket" ''
+    set -euo pipefail
+
+    # TODO: Not sure why, but thunderbird creates a stale socket and the client
+    # is then unable to send the update commands to the native messaging hosts
+    # so I temporarily just delete it
+    sock=/tmp/pywalfox_socket
+    if [ ! -S "$sock" ]; then
+      rm -f $sock 2>/dev/null
+    fi
+
+    exec ${getExe cfg.package} update
+  '';
 in
 {
   options.tensorfiles.hm.services.pywalfox-native = {
-    enable = mkEnableOption ''
-      Enables NixOS module that configures/handles terminals.kitty colorscheme generator.
-    '';
+    enable = mkEnableOption "Enable pywalfox-native helpers";
+    package = mkPackageOption pkgs "pywalfox-native" { };
   };
 
-  # TODO
   config = mkIf cfg.enable (mkMerge [
-    # |----------------------------------------------------------------------| #
     {
-      home.packages = with pkgs; [ pywalfox-native ];
+      home.packages = [ cfg.package ];
 
-      # home.file.".mozilla/native-messaging-hosts/pywalfox.json".text = replaceStrings [ "<path>" ] [
-      #   "${pywalfox-wrapper}/bin/pywalfox-wrapper"
-      # ] (readFile "${pywalfox-native}/lib/python3.11/site-packages/pywalfox/assets/manifest.json");
+      systemd.user.services.pywalfox-update = {
+        Unit = {
+          Description = "Update Pywalfox theme";
+          PartOf = [ "graphical-session.target" ];
+          After = [ "graphical-session.target" ];
+        };
+        Service = {
+          Type = "oneshot";
+          ExecStart = pywalfoxUpdateHandleSocket;
+          PrivateTmp = false;
+        };
+      };
+
+      systemd.user.paths.pywalfox-update = {
+        Unit = {
+          Description = "Run pywalfox update when wal colors.json changes";
+          PartOf = [ "graphical-session.target" ];
+        };
+        Path = {
+          PathChanged = "%h/.cache/wal/colors.json";
+          Unit = "pywalfox-update.service";
+        };
+        Install = {
+          WantedBy = [ "graphical-session.target" ];
+        };
+      };
     }
-    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];

@@ -38,7 +38,9 @@ in
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
     profiles_graphical = importApply ./profiles/graphical.nix { inherit localFlake; };
-    profiles_ide = importApply ./profiles/ide.nix { inherit localFlake; };
+    profiles_ide = importApply ./profiles/ide.nix {
+      inherit localFlake;
+    };
 
     plugins_git_neogit = importApply ./plugins/git/neogit.nix { inherit localFlake; };
 
