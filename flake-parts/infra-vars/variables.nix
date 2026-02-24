@@ -194,6 +194,9 @@ _: rec {
                     toString hosts."remotebundle".services.immich.port
                   }";
                 };
+                "emil" = {
+                  domain = "emil.${primaryDomain}";
+                };
                 "intra-pihole" = {
                   domain = "pihole.${intranetDomain}";
                   proxyEndpoint = "${hosts."pupibundle".address}";

@@ -209,6 +209,7 @@ in
       };
     };
   };
+
   networking.firewall = {
     allowedTCPPorts = [
       80
@@ -356,6 +357,42 @@ in
           proxy_read_timeout   600s;
           proxy_send_timeout   600s;
           send_timeout         600s;
+        '';
+      };
+    };
+
+    virtualHosts."${virtualHostsVar."emil".domain}" = {
+      enableACME = true;
+      forceSSL = true;
+
+      locations."= /" = {
+        return = ''
+          200 '<!doctype html><html><head>
+          <meta name=viewport content="width=device-width,initial-scale=1">
+          <title>emil</title>
+
+          <meta property="og:title" content="emil">
+          <meta property="og:description" content="video">
+          <meta property="og:type" content="video.other">
+          <meta property="og:video" content="https://${virtualHostsVar."emil".domain}/emil.mp4">
+          <meta property="og:video:type" content="video/mp4">
+          <meta property="og:url" content="https://${virtualHostsVar."emil".domain}/">
+
+          </head><body>
+          <video controls autoplay playsinline style="max-width:100%;height:auto">
+            <source src="/emil.mp4" type="video/mp4">
+          </video></body></html>'
+        '';
+        extraConfig = ''
+          default_type text/html;
+        '';
+      };
+
+      locations."= /emil.mp4" = {
+        alias = pkgs.copyPathToStore ./emil.mp4;
+        extraConfig = ''
+          types { video/mp4 mp4; }
+          add_header X-Emil-Location mp4 always;
         '';
       };
     };
