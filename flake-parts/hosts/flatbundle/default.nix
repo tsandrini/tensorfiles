@@ -19,6 +19,10 @@ let
     inherit system;
     config.allowUnfree = true;
   };
+  pkgs-claude-code = import inputs.nixpkgs-claude-code {
+    inherit system;
+    config.allowUnfree = true;
+  };
 in
 {
   # -----------------
@@ -46,8 +50,9 @@ in
     pkgs.libva-utils # Collection of utilities and examples for VA-API
     pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
     pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
-    pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
     pkgs.codex # Lightweight coding agent that runs in your terminal
+    # pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
+    pkgs-claude-code.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
     pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
     pkgs.bitwarden-cli # Secure and free password manager for all of your devices
   ];
@@ -152,6 +157,8 @@ in
     ];
   };
 
+  services.keybase.enable = true;
+
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
       profiles.graphical-dms-niri.enable = true;
@@ -179,6 +186,8 @@ in
       inputs.self.packages.${system}.cc-switcher
       pkgs-osu-lazer-bin.osu-lazer-bin
       pkgs.olympus
+      pkgs.keybase-gui # Keybase official GUI
+      pkgs.kbfs # Keybase filesystem
     ];
   };
 }

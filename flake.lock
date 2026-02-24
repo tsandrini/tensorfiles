@@ -774,11 +774,11 @@
         "systems": "systems_5"
       },
       "locked": {
-        "lastModified": 1759773747,
-        "narHash": "sha256-g4r72uPHa3ea14ZqzFhFAih3ykacQLw5sOdRmxDW0lM=",
+        "lastModified": 1771695284,
+        "narHash": "sha256-ZfLvviImDapoMWg3lRpVdRdFunUA6YxXzNup5lLXi5g=",
         "owner": "tsandrini",
         "repo": "immutable-insights",
-        "rev": "445b64a82f4059d40480daefaa146feabcf2653d",
+        "rev": "d0a9aa5afe39c180cacc4e274b3dcd6f8230d24a",
         "type": "github"
       },
       "original": {
@@ -1204,6 +1204,21 @@
       "original": {
         "owner": "NixOS",
         "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-claude-code": {
+      "locked": {
+        "lastModified": 1771427549,
+        "narHash": "sha256-Zobak8JB1Sieb5T546YUxoo+jvvGCLbB14fiGUWD24E=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "283b500bd2150544112f820e8f34a7b5140a95e5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -1804,6 +1819,7 @@
         "nixos-mailserver": "nixos-mailserver",
         "nixos-raspberrypi": "nixos-raspberrypi",
         "nixpkgs": "nixpkgs_14",
+        "nixpkgs-claude-code": "nixpkgs-claude-code",
         "nixpkgs-osu-lazer-bin": "nixpkgs-osu-lazer-bin",
         "nixpkgs-wayland": "nixpkgs-wayland",
         "nixvim": "nixvim",
