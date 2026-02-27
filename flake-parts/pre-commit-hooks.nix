@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs, ... }:
 {
-  imports = with inputs; [ pre-commit-hooks.flakeModule ];
+  imports = [ inputs.pre-commit-hooks.flakeModule ];
 
   perSystem = _: {
     pre-commit.settings = {
@@ -22,7 +22,8 @@
         "flake.lock" # NOTE: prettier thinks this is json >.< prettier baka!!!
         "p10k.zsh"
         "flake-parts/modules/home-manager/programs/file-managers/lf/icons"
-        "flake-parts/hosts/remotebundle/emil.mp4"
+        "flake-parts/pkgs/intranet-unauthorized/index.html"
+        "flake-parts/pkgs/intranet-unauthorized/assets/emil.mp4"
         "etc/"
       ];
 
