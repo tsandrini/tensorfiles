@@ -43,11 +43,15 @@
         editorconfig-checker.enable = true; # .editorconfig file checker
         typos.enable = true; # Source code spell checker
         prettier.enable = true; # Prettier is an opinionated code formatter
+        # check-json.enable = true;
+        check-toml.enable = true;
         # jsonfmt.enable = true; # Formatter for JSON files
 
         # --- fs utils ---
+        check-symlinks.enable = true; # Check for broken symlinks
         check-added-large-files.enable = true;
         check-executables-have-shebangs.enable = true;
+        check-shebang-scripts-are-executable.enable = true;
         end-of-file-fixer.enable = true;
         mixed-line-endings.enable = true;
         trim-trailing-whitespace.enable = true;
