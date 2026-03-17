@@ -593,12 +593,13 @@ in
         name = postgresVars.instances."grafana".database;
       };
       # NOTE enable again on init
-      security.disable_initial_admin_creation = true;
+      security = {
+        disable_initial_admin_creation = true;
 
-      security.admin_email = "t@tsandrini.sh";
-      security.admin_password = "$__file{${
-        config.age.secrets."hosts/${hostName}/grafana-admin-password".path
-      }}";
+        admin_email = "t@tsandrini.sh";
+        admin_password = "$__file{${config.age.secrets."hosts/${hostName}/grafana-admin-password".path}}";
+        secret_key = "$__file{${config.age.secrets."hosts/${hostName}/grafana-secret-key".path}}";
+      };
     };
     provision = {
       datasources.settings.datasources = [
@@ -1034,6 +1035,11 @@ in
 
     "hosts/${hostName}/grafana-admin-password" = {
       file = "${secretsPath}/hosts/${hostName}/grafana-admin-password.age";
+      owner = "grafana";
+    };
+
+    "hosts/${hostName}/grafana-secret-key" = {
+      file = "${secretsPath}/hosts/${hostName}/grafana-secret-key.age";
       owner = "grafana";
     };
 

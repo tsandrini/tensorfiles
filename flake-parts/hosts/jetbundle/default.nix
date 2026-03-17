@@ -53,8 +53,10 @@ in
     pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
     pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
     pkgs.codex # Lightweight coding agent that runs in your terminal
-    pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
-    pkgs.bitwarden-cli # Secure and free password manager for all of your devices
+
+    # TODO: electron 39 brokey temporarily
+    # pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
+    # pkgs.bitwarden-cli # Secure and free password manager for all of your devices
   ];
 
   # ---------------------

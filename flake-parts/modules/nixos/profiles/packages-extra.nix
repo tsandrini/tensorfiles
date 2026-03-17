@@ -44,7 +44,8 @@ in
         binutils # Tools for manipulating binaries (linker, assembler, etc.) (wrapper script)
         calcurse # A calendar and scheduling application for the command line
         w3m # A text-mode web browser
-        neofetch # A fast, highly customizable system info script
+        # neofetch # A fast, highly customizable system info script # NOTE: DEPRECATED
+        fastfetch # Actively maintained, feature-rich and performance oriented, neofetch like system information tool
         cmake # Cross-platform, open-source build system generator
         gnumake # A tool to control the generation of non-source files from sources
 

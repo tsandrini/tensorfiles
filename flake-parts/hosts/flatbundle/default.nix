@@ -53,8 +53,14 @@ in
     pkgs.codex # Lightweight coding agent that runs in your terminal
     # pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
     pkgs-claude-code.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
-    pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
-    pkgs.bitwarden-cli # Secure and free password manager for all of your devices
+    pkgs.python3Packages.playwright # Python version of the Playwright testing and automation library
+    pkgs.playwright # Framework for Web Testing and Automation
+    pkgs.playwright-mcp # Playwright MCP server
+    pkgs.playwright-test # Framework for Web Testing and Automation
+
+    # TODO: electron 39 brokey temporarily
+    # pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
+    # pkgs.bitwarden-cli # Secure and free password manager for all of your devices
   ];
 
   # ---------------------

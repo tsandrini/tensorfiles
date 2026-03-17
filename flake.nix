@@ -89,6 +89,10 @@
       url = "github:kawre/leetcode.nvim";
       flake = false;
     };
+    nvim-base46 = {
+      url = "github:AvengeMedia/base46";
+      flake = false;
+    };
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";

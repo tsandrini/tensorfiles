@@ -55,7 +55,7 @@
     zoom-us # Player for Z-Code, TADS and HUGO stories or games
 
     slack # Desktop client for Slack
-    signal-desktop-bin # Private, simple, and secure messenger
+    signal-desktop # Private, simple, and secure messenger
 
     # todoist # Todoist CLI Client
     # todoist-electron # The official Todoist electron app
@@ -76,7 +76,8 @@
     vim # The most popular clone of the VI editor
     calcurse # A calendar and scheduling application for the command line
     w3m # A text-mode web browser
-    neofetch # A fast, highly customizable system info script
+    # neofetch # A fast, highly customizable system info script # NOTE: DEPRECATED
+    fastfetch # Actively maintained, feature-rich and performance oriented, neofetch like system information tool
 
     # ARCHIVING UTILS --
     atool # Archive command line helper

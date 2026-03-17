@@ -41,6 +41,8 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # NOTE: This fixes a check build time issue where project-nvim
+      # tries to search for history inside $HOME (which doesn't work inside a sandbox)
       plugins.project-nvim = {
         enable = _ true;
         enableTelescope = _ telescopeCheck;

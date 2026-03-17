@@ -103,7 +103,7 @@ let
 in
 {
   hardware.enableRedistributableFirmware = true;
-  boot.loader.raspberryPi.bootloader = "kernel";
+  boot.loader.raspberry-pi.bootloader = "kernel";
 
   hardware.i2c.enable = true;
   boot.kernelModules = [ "i2c-dev" ];

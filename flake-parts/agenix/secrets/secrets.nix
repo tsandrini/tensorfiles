@@ -110,6 +110,10 @@ in
     remotebundle
   ]
   ++ [ tsandrini ];
+  "hosts/remotebundle/grafana-secret-key.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
   "hosts/remotebundle/grafana-bot-mail-password.age".publicKeys = [
     remotebundle
   ]

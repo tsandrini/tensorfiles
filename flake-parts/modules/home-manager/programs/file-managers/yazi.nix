@@ -39,6 +39,7 @@ in
         enableNushellIntegration = _ (
           isModuleLoadedAndEnabled config "tensorfiles.hm.programs.shells.nushell"
         );
+        shellWrapperName = _ "y";
         settings = {
           mgr = {
             sort_by = _ "natural";
