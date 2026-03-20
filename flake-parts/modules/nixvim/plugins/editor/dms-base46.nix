@@ -54,11 +54,20 @@ in
 
       extraConfigLuaPost = ''
         vim.opt.runtimepath:append(vim.fn.stdpath("config"))
+
+        local function try_dms()
+          local paths = vim.fn.globpath(vim.o.runtimepath, "colors/dms.lua", false, true)
+          if #paths > 0 then
+            return pcall(vim.cmd.colorscheme, "dms")
+          end
+          return false
+        end
+
         vim.api.nvim_create_autocmd("VimEnter", {
           once = true,
           callback = function()
             vim.schedule(function()
-              vim.cmd.colorscheme("dms")
+              try_dms()
             end)
           end,
         })
