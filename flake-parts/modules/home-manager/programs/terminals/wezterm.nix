@@ -58,8 +58,24 @@ in
                 local scheme_path = wezterm.config_dir .. "/colors/dank-theme.toml"
                 local colors, _meta = wezterm.color.load_scheme(scheme_path)
                 config.colors = colors
-                config.color_scheme_dirs = { wezterm.config_dir .. "/colors" }
-                config.color_scheme = "dank-theme"
+
+                -- Poll for color changes instead of using file watchers to avoid
+                -- triggering a full config reload (which re-runs plugin.require
+                -- and causes multi-minute freezes with many open windows).
+                local last_content = ""
+                wezterm.on("update-status", function(window, pane)
+                  local f = io.open(scheme_path, "r")
+                  if not f then return end
+                  local content = f:read("*a")
+                  f:close()
+                  if content ~= last_content then
+                    last_content = content
+                    local ok, new_colors = pcall(wezterm.color.load_scheme, scheme_path)
+                    if ok then
+                      window:set_config_overrides({ colors = new_colors })
+                    end
+                  end
+                end)
               ''
             else
               ""
