@@ -67,6 +67,26 @@ with builtins;
     };
 
   /*
+    Creates an enableOption targeted for the integration with the dms
+    dank-material-shell ecosystem, colorscheme and bindigs
+
+    *Type*: `Option`
+  */
+  mkDankMaterialShellEnableOption =
+    mkEnableOption ''
+      Whether to enable the integration with the dms shell
+
+      Note that the code will get execute only if
+
+      1. dank-material-shell.enable = true;
+      2. tensorfiles.hm.programs.dank-material-shell module is loaded
+      3. tensorfiles.hm.programs.dank-material-shell.enable = true;
+    ''
+    // {
+      default = true;
+    };
+
+  /*
     Creates an enableOption targeted for the management of the agenix
     security system.
 

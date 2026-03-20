@@ -86,6 +86,7 @@ in
       inherit localFlake;
     };
     programs_terminals_kitty = importApply ./programs/terminals/kitty.nix { inherit localFlake; };
+    programs_terminals_ghostty = importApply ./programs/terminals/ghostty.nix { inherit localFlake; };
     programs_terminals_wezterm = importApply ./programs/terminals/wezterm.nix {
       inherit localFlake;
     };
