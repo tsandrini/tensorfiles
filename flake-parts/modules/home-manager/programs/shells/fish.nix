@@ -189,6 +189,12 @@ in
     (mkIf cfg.withFzf {
       programs.fzf = {
         enable = _ true;
+        changeDirWidgetCommand = _ "${getExe pkgs.fd} --type d --hidden --follow --exclude .git";
+        changeDirWidgetOptions = _ [
+          "--preview '${getExe pkgs.eza} --icons --group-directories-first -la {}'"
+        ];
+        fileWidgetCommand = _ "${getExe pkgs.fd} --type f --hidden --follow --exclude .git";
+        fileWidgetOptions = _ [ "--preview '${getExe pkgs.bat} -n --color=always --line-range :500 {}'" ];
       };
     })
     # |----------------------------------------------------------------------| #
