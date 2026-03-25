@@ -19,6 +19,10 @@ let
     inherit system;
     config.allowUnfree = true;
   };
+  # pkgs-claude-code = import inputs.nixpkgs-claude-code {
+  #   inherit system;
+  #   config.allowUnfree = true;
+  # };
 in
 {
   # -----------------
@@ -45,11 +49,14 @@ in
   environment.systemPackages = [
     pkgs.libva-utils # Collection of utilities and examples for VA-API
     pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
-    pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
-    pkgs.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
-    pkgs.codex # Lightweight coding agent that runs in your terminal
-    pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
-    pkgs.bitwarden-cli # Secure and free password manager for all of your devices
+    # pkgs.python3Packages.playwright # Python version of the Playwright testing and automation library
+    # pkgs.playwright # Framework for Web Testing and Automation
+    # pkgs.playwright-mcp # Playwright MCP server
+    # pkgs.playwright-test # Framework for Web Testing and Automation
+
+    # TODO: electron 39 brokey temporarily
+    # pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
+    # pkgs.bitwarden-cli # Secure and free password manager for all of your devices
   ];
 
   # ---------------------
@@ -152,7 +159,13 @@ in
     ];
   };
 
+  services.keybase.enable = true;
+
   home-manager.users."tsandrini" = {
+    imports = [
+      inputs.mcp-servers-nix.homeManagerModules.default
+    ];
+
     tensorfiles.hm = {
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;
@@ -175,10 +188,40 @@ in
     };
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
+    programs.mcp.enable = true;
+
+    mcp-servers.programs = {
+      playwright.enable = true;
+      nixos.enable = true;
+      time.enable = true;
+      fetch.enable = true;
+      github.enable = true;
+    };
+
+    programs.claude-code = {
+      enable = true;
+      package = pkgs.llm-agents.claude-code;
+      enableMcpIntegration = true;
+    };
+
     home.packages = [
-      inputs.self.packages.${system}.cc-switcher
       pkgs-osu-lazer-bin.osu-lazer-bin
       pkgs.olympus
+      pkgs.keybase-gui # Keybase official GUI
+      pkgs.kbfs # Keybase filesystem
+
+      # --- LLM garbage ---
+      inputs.self.packages.${system}.cc-switcher
+      # pkgs.llm-agents.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
+      pkgs.llm-agents.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
+      pkgs.llm-agents.auto-claude # Autonomous multi-agent coding framework powered by Claude AI
+      # pkgs.llm-agents.cc-switch-cli # CLI version of CC Switch - All-in-One Assistant for Claude Code, Codex & Gemini CLI
+      pkgs.llm-agents.claude-plugins # CLI tool for managing Claude Code plugins
+      pkgs.llm-agents.claudebox # Sandboxed environment for Claude Code
+      pkgs.llm-agents.skills-installer # Install agent skills across multiple AI coding clients
+      pkgs.llm-agents.sandbox-runtime # Lightweight sandboxing tool for enforcing filesystem and network restrictions
+      pkgs.llm-agents.ccusage # Usage analysis tool for Claude Code
+      pkgs.llm-agents.agent-browser # Headless browser automation CLI for AI agents
     ];
   };
 }

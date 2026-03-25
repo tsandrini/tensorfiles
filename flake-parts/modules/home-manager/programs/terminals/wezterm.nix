@@ -53,20 +53,29 @@ in
           local modal = wezterm.plugin.require("https://github.com/MLFlexer/modal.wezterm")
 
           ${
-            if pywalCheck then # TODO
+            if pywalCheck then
               ''
-                local home = wezterm.home_dir
-                local wal_dir = home .. "/.cache/wal"
-
-                -- wezterm.add_to_config_reload_watch_list(wal_dir)
-                -- config.color_scheme_dirs = { wal_dir }
-
                 local scheme_path = wezterm.config_dir .. "/colors/dank-theme.toml"
                 local colors, _meta = wezterm.color.load_scheme(scheme_path)
                 config.colors = colors
-                config.color_scheme = "dank-theme"
 
-                wezterm.add_to_config_reload_watch_list(scheme_path)
+                -- Poll for color changes instead of using file watchers to avoid
+                -- triggering a full config reload (which re-runs plugin.require
+                -- and causes multi-minute freezes with many open windows).
+                local last_content = ""
+                wezterm.on("update-status", function(window, pane)
+                  local f = io.open(scheme_path, "r")
+                  if not f then return end
+                  local content = f:read("*a")
+                  f:close()
+                  if content ~= last_content then
+                    last_content = content
+                    local ok, new_colors = pcall(wezterm.color.load_scheme, scheme_path)
+                    if ok then
+                      window:set_config_overrides({ colors = new_colors })
+                    end
+                  end
+                end)
               ''
             else
               ""

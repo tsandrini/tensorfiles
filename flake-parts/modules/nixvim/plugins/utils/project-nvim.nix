@@ -41,15 +41,43 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      # NOTE: This fixes a check build time issue where project-nvim
+      # tries to search for history inside $HOME (which doesn't work inside a sandbox)
       plugins.project-nvim = {
         enable = _ true;
         enableTelescope = _ telescopeCheck;
         # NOTE DEFAULT produces too many false positives
         # settings.patterns = [ ".git" "_darcs" ".hg" ".bzr" ".svn" "Makefile" "package.json" ];
-        settings.patterns = [
-          ".git"
-          ".projectfile"
-        ];
+        settings = {
+          disable_on = {
+            ft = [
+              "NvimTree"
+              "TelescopePrompt"
+              "TelescopeResults"
+              "alpha"
+              "checkhealth"
+              "lazy"
+              "log"
+              "ministarter"
+              "neo-tree"
+              "notify"
+              "nvim-pack"
+              "packer"
+              "qf"
+            ];
+            bt = [
+              "help"
+              "nofile"
+              "nowrite"
+              "terminal"
+            ];
+          };
+
+          patterns = [
+            ".git"
+            ".projectfile"
+          ];
+        };
       };
     }
     # |----------------------------------------------------------------------| #

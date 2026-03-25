@@ -59,7 +59,7 @@ in
 
         # --- SOCIALS ---
         element-desktop # A feature-rich client for Matrix.org
-        signal-desktop-bin # Private, simple, and secure messenger
+        signal-desktop # Private, simple, and secure messenger
         slack # Desktop client for Slack
         zoom-us # Player for Z-Code, TADS and HUGO stories or games
         # beeper # Universal chat app.

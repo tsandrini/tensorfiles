@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs, ... }:
 {
-  imports = with inputs; [ pre-commit-hooks.flakeModule ];
+  imports = [ inputs.pre-commit-hooks.flakeModule ];
 
   perSystem = _: {
     pre-commit.settings = {
@@ -22,6 +22,8 @@
         "flake.lock" # NOTE: prettier thinks this is json >.< prettier baka!!!
         "p10k.zsh"
         "flake-parts/modules/home-manager/programs/file-managers/lf/icons"
+        "flake-parts/pkgs/intranet-unauthorized/index.html"
+        "flake-parts/pkgs/intranet-unauthorized/assets/emil.mp4"
         "etc/"
       ];
 
@@ -41,11 +43,15 @@
         editorconfig-checker.enable = true; # .editorconfig file checker
         typos.enable = true; # Source code spell checker
         prettier.enable = true; # Prettier is an opinionated code formatter
+        # check-json.enable = true;
+        check-toml.enable = true;
         # jsonfmt.enable = true; # Formatter for JSON files
 
         # --- fs utils ---
+        check-symlinks.enable = true; # Check for broken symlinks
         check-added-large-files.enable = true;
         check-executables-have-shebangs.enable = true;
+        check-shebang-scripts-are-executable.enable = true;
         end-of-file-fixer.enable = true;
         mixed-line-endings.enable = true;
         trim-trailing-whitespace.enable = true;

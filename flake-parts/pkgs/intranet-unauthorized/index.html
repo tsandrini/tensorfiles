@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>403 — Intranet Only</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body>
+  <!-- floating paw prints -->
+  <div class="paws" aria-hidden="true">
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+    <div class="paw"></div>
+  </div>
+
+  <div class="wrap">
+    <!-- top bar -->
+    <div class="topbar">
+      <div class="pill">
+        <span class="dot"></span>
+        <span>403 — intranet only</span>
+      </div>
+      <div class="pill">
+        <span style="opacity: 0.75">host:</span>
+        <span class="kbd" id="js-host">—</span>
+      </div>
+    </div>
+
+    <!-- main grid -->
+    <div class="grid">
+      <!-- left column -->
+      <div style="display: grid; gap: 16px; align-content: start">
+        <!-- hero card -->
+        <section class="card">
+          <div class="card-inner">
+            <div class="hero">
+              <!-- paw icon -->
+              <div class="paw-icon" aria-hidden="true">
+                <svg viewBox="0 0 120 120" width="110" height="110" role="img" aria-label="Paw print">
+                  <defs>
+                    <linearGradient id="paw-grad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0" stop-color="#ff8ec4" />
+                      <stop offset="1" stop-color="#c4a1ff" />
+                    </linearGradient>
+                  </defs>
+                  <!-- main pad -->
+                  <ellipse cx="60" cy="76" rx="26" ry="28" fill="url(#paw-grad)" opacity="0.85" />
+                  <!-- toes -->
+                  <circle cx="34" cy="40" r="13" fill="url(#paw-grad)" opacity="0.75" />
+                  <circle cx="86" cy="40" r="13" fill="url(#paw-grad)" opacity="0.75" />
+                  <circle cx="22" cy="62" r="11" fill="url(#paw-grad)" opacity="0.7" />
+                  <circle cx="98" cy="62" r="11" fill="url(#paw-grad)" opacity="0.7" />
+                </svg>
+              </div>
+
+              <div>
+                <h1 class="title">Whoops! Wrong side of the fence, pup~</h1>
+                <p class="subtitle">
+                  This domain lives on a private intranet behind WireGuard.
+                  You're sniffing around from outside the tunnel!
+                  Connect to the VPN (or the local LAN) and try again.
+                </p>
+
+                <div class="actions">
+                  <a class="btn primary" href="https://home.tsandrini.sh" rel="noopener">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                      <path d="M4 10.5l8-7 8 7V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z" stroke="currentColor"
+                        stroke-width="2" stroke-linejoin="round" />
+                    </svg>
+                    Back to the portal
+                  </a>
+
+                  <a class="btn" href="#" onclick="location.reload(); return false;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                      <path d="M20 12a8 8 0 1 1-2.34-5.66" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" />
+                      <path d="M20 4v6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Retry
+                  </a>
+
+                  <a class="btn" href="#"
+                    onclick="navigator.clipboard?.writeText(location.href); this.querySelector('span').textContent='Copied!'; return false;">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+                      <path d="M9 9h10v10H9z" stroke="currentColor" stroke-width="2" />
+                      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    <span>Copy URL</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- bunny card -->
+        <section class="card bunny-section">
+          <div class="card-inner">
+            <div class="bunny-header">
+              <h2>meanwhile, have a bunny</h2>
+              <span class="bunny-badge">emotional support</span>
+            </div>
+            <video class="bunny-video" src="assets/emil.mp4" autoplay loop muted playsinline preload="metadata"
+              aria-label="A cute bunny video to make you feel better"></video>
+            <p class="bunny-caption">bnuuy says: it's okay, you'll get in eventually~</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- right column / sidebar -->
+      <aside class="side">
+        <!-- help -->
+        <div class="panel panel-help">
+          <h3>
+            halp!! how do i get in?!
+            <span class="kbd">TwT</span>
+          </h3>
+          <p>
+            You need to be connected to the WireGuard VPN or on the local
+            network. If you're a friend who should have access, poke me and
+            I'll get you set up!
+          </p>
+        </div>
+
+        <!-- steps -->
+        <div class="panel panel-steps">
+          <h3>
+            quick fix checklist
+            <span class="kbd">(,,>&thinsp;﹏&thinsp;<,,)< /span>
+          </h3>
+          <ol class="steps">
+            <li>Enable your WireGuard tunnel</li>
+            <li>Make sure DNS points to the intranet resolver (Pi-hole)</li>
+            <li>Refresh this page</li>
+            <li>If still stuck, check split-horizon DNS config</li>
+          </ol>
+        </div>
+
+        <!-- debug -->
+        <div class="panel panel-debug">
+          <h3>debug hints</h3>
+          <p>
+            Run <code>dig +short $HOST A</code> — if it resolves to a
+            public IP, your DNS isn't going through the intranet resolver.
+          </p>
+          <p style="margin-top: 8px">
+            Try <code>wg show</code> to verify your tunnel is up,
+            and <code>ping 10.x.x.1</code> to check gateway reachability.
+          </p>
+        </div>
+
+        <!-- diagnostics -->
+        <div class="panel panel-diag">
+          <h3>
+            diagnostics
+            <span class="kbd">auto</span>
+          </h3>
+          <table class="diag-table">
+            <tr>
+              <td>host</td>
+              <td id="js-diag-host">—</td>
+            </tr>
+            <tr>
+              <td>path</td>
+              <td id="js-diag-path">—</td>
+            </tr>
+            <tr>
+              <td>protocol</td>
+              <td id="js-diag-proto">—</td>
+            </tr>
+            <tr>
+              <td>referrer</td>
+              <td id="js-diag-ref">—</td>
+            </tr>
+            <tr>
+              <td>viewport</td>
+              <td id="js-diag-vp">—</td>
+            </tr>
+            <tr>
+              <td>timestamp</td>
+              <td id="js-diag-ts">—</td>
+            </tr>
+            <tr>
+              <td>user-agent</td>
+              <td id="js-diag-ua">—</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- stokes meme -->
+        <div class="panel panel-debug">
+          <h3>
+            locally invariant network topology
+            <span class="kbd">nerdy</span>
+          </h3>
+          <div class="formula" role="img" aria-label="Generalized Stokes theorem">
+            &int;<sub>&part;M</sub> &omega; = &int;<sub>M</sub> d&omega;
+          </div>
+          <p style="margin-top: 8px">
+            Outside the boundary you don't get to peek at the interior,
+            silly pup!
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- footer -->
+    <div class="foot">
+      If you think you should have access, you probably do — you're just
+      not on the right network yet.
+      <br />
+      made with <span class="heart">&hearts;</span> and too many paw prints
+    </div>
+  </div>
+
+  <script>
+    /* populate diagnostic info */
+    var h = location.host || "(unknown)";
+    document.getElementById("js-host").textContent = h;
+    document.getElementById("js-diag-host").textContent = h;
+    document.getElementById("js-diag-path").textContent = location.pathname || "/";
+    document.getElementById("js-diag-proto").textContent = location.protocol.replace(":", "");
+    document.getElementById("js-diag-ref").textContent = document.referrer || "(direct)";
+    document.getElementById("js-diag-vp").textContent =
+      window.innerWidth + " x " + window.innerHeight;
+    document.getElementById("js-diag-ts").textContent = new Date().toISOString();
+    document.getElementById("js-diag-ua").textContent = navigator.userAgent;
+  </script>
+</body>
+
+</html>

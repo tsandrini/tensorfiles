@@ -100,7 +100,9 @@ in
             ocamllsp.enable = _ true; # ocamllsp for OCaml
             ocamllsp.package = _ pkgs.ocamlPackages.ocaml-lsp;
             phpactor.enable = _ true; # phpactor for PHP
-            pyright.enable = _ true;
+            # pyright.enable = _ true;
+            basedpyright.enable = _ true; # Type checker for the Python language
+            ruff.enable = _ true; # Extremely fast Python linter and code formatter
             ruby_lsp.enable = _ true; # ruby-lsp for Ruby
             r_language_server.enable = _ true; # r-language-server for R
             r_language_server.package = _ pkgs.rPackages.languageserver;

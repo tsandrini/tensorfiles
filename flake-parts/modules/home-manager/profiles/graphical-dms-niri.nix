@@ -63,6 +63,7 @@ in
         programs = {
           newsboat.enable = _ true;
           terminals.wezterm.enable = _ true;
+          terminals.ghostty.enable = _ true;
           browsers.firefox.enable = _ true;
           browsers.firefox.userjs.betterfox.enable = _ true;
 
@@ -164,7 +165,7 @@ in
       home.sessionVariables = {
         # Default programs
         BROWSER = _ "firefox";
-        TERMINAL = _ "wezterm";
+        TERMINAL = _ "ghostty";
         IDE = _ "nvim";
         EMAIL = _ "thunderbird";
         QT_QPA_PLATFORMTHEME = _ "qt6ct";

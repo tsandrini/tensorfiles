@@ -108,7 +108,8 @@ in
             ];
             python = [
               "black"
-              "isort"
+              "ruff"
+              # "isort"
             ];
             lua = [ "stylua" ];
             nix = [ "nixfmt" ];
@@ -138,6 +139,9 @@ in
           formatters = {
             black = {
               command = _ "${lib.getExe pkgs.black}";
+            };
+            ruff = {
+              command = _ "${lib.getExe pkgs.ruff}";
             };
             isort = {
               command = _ "${lib.getExe pkgs.isort}";

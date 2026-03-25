@@ -38,7 +38,7 @@ in
       plugins.treesitter = {
         enable = _ true;
         indent.enable = _ true;
-        highlight.enable = _ false;
+        highlight.enable = _ true;
         folding.enable = _ true;
         nixvimInjections = _ true;
         nixGrammars = _ true;

@@ -45,7 +45,7 @@ in
               _ config.home.sessionVariables.DEFAULT_MAIL
             );
           };
-          aliases = {
+          alias = {
             b = _ "branch";
             bb = _ "!for k in `git branch -a | grep -v \"HEAD -> \" | sed s/^..//`;do echo -e `git log -1 --pretty=format:\"%Cgreen%ci %Cblue%cr%Creset\" \"$k\" --`\\\\t\"$k\";done | sort";
             bl = _ "branch";

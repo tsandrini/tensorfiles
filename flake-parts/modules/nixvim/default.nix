@@ -58,6 +58,9 @@ in
       inherit localFlake;
     };
     plugins_editor_image = importApply ./plugins/editor/image.nix { inherit localFlake; };
+    plugins_editor_dms-base46 = importApply ./plugins/editor/dms-base46.nix {
+      inherit localFlake inputs;
+    };
     plugins_editor_nvim-ufo = importApply ./plugins/editor/nvim-ufo.nix { inherit localFlake; };
     plugins_editor_leetcode = importApply ./plugins/editor/leetcode.nix {
       inherit (inputs) leetcode-nvim;
