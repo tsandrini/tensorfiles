@@ -99,6 +99,14 @@ in
       programs.ssh = {
         enable = _ true;
         enableDefaultConfig = _ true;
+
+        # NOTE: Override TERM for all SSH connections to avoid issues with
+        # remote servers that lack the ghostty terminfo entry (xterm-ghostty).
+        # This preserves the full xterm-ghostty features locally while
+        # ensuring compatibility over SSH.
+        matchBlocks."*".setEnv = {
+          TERM = _ "xterm-256color";
+        };
       };
 
       programs.keychain = {
