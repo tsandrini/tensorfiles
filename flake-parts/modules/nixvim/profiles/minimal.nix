@@ -48,6 +48,7 @@ in
           utils.project-nvim.enable = _ true;
 
           git.neogit.enable = _ true;
+          git.blame.enable = _ true;
 
           editor.neo-tree.enable = _ true;
           editor.treesitter.enable = _ true;

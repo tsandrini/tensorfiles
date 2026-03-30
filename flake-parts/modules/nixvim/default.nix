@@ -43,6 +43,7 @@ in
     };
 
     plugins_git_neogit = importApply ./plugins/git/neogit.nix { inherit localFlake; };
+    plugins_git_blame = importApply ./plugins/git/blame.nix { inherit localFlake; };
 
     plugins_utils_hop = importApply ./plugins/utils/hop.nix { inherit localFlake; };
     plugins_utils_faster = importApply ./plugins/utils/faster.nix { inherit localFlake; };
