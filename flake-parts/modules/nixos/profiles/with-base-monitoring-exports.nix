@@ -142,14 +142,8 @@ in
     # |----------------------------------------------------------------------| #
     (mkIf cfg.prometheus.exporters.node.enable {
       tensorfiles.networking.firewall.subnets-firewall = {
-        enable = true;
-        subnets = {
-          "${infraVars.common.networking.defaultSubnet}" = {
-            allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
-          };
-          "${infraVars.common.networking.intranetSubnet}" = {
-            allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
-          };
+        defaultSubnets = {
+          allowedTCPPorts = [ cfg.prometheus.exporters.node.port ];
         };
       };
 
