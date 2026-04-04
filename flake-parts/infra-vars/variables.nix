@@ -26,6 +26,10 @@ _: rec {
       defaultSubnet = "10.10.0.0/24";
       intranetSubnet = "10.0.33.0/24";
       defaultGateway = "10.10.0.1";
+      defaultFirewallSubnets = [
+        common.networking.defaultSubnet
+        common.networking.intranetSubnet
+      ];
       defaultNameservers = [
         "10.10.0.10"
         "8.8.8.8"
