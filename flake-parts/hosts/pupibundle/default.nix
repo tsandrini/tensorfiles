@@ -62,9 +62,6 @@ in
   tensorfiles = {
     profiles = {
       headless.enable = true;
-      packages-base.enable = true;
-      # packages-extra.enable = true;
-
       with-base-monitoring-exports.enable = true;
     };
 
