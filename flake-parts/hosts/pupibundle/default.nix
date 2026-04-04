@@ -98,32 +98,19 @@ in
   ];
 
   tensorfiles.networking.firewall.subnets-firewall = {
-    enable = true;
-    subnets = {
-      "${infraVars.common.networking.defaultSubnet}" = {
-        allowedTCPPorts = [
-          80
-          443
-          prometheusExporters.pihole.port
-          prometheusExporters.unbound.port
-        ];
-      };
-      "${infraVars.common.networking.intranetSubnet}" = {
-        allowedTCPPorts = [
-          80
-          443
-          prometheusExporters.pihole.port
-          prometheusExporters.unbound.port
-        ];
-      };
+    nixosPassthrough = {
+      allowedTCPPorts = [
+        #
+      ];
     };
-  };
-
-  networking.firewall = {
-    allowedTCPPorts = [
-    ];
-    allowedUDPPorts = [
-    ];
+    defaultSubnets = {
+      allowedTCPPorts = [
+        80
+        443
+        prometheusExporters.pihole.port
+        prometheusExporters.unbound.port
+      ];
+    };
   };
 
   networking = {

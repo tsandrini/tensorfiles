@@ -62,7 +62,7 @@ in
 
       services.openssh.openFirewall = false;
       tensorfiles.networking.firewall.subnets-firewall = {
-        enable = true;
+        enable = _ true;
         defaultSubnetsList = infraVars.common.networking.defaultFirewallSubnets;
         defaultSubnets = {
           allowedTCPPorts = config.services.openssh.ports;

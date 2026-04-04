@@ -78,6 +78,34 @@
   };
   # nix-mineral.enable = true;
 
+  tensorfiles.networking.firewall.subnets-firewall = {
+    nixosPassthrough = {
+      allowedTCPPorts = [
+        #
+      ];
+    };
+    defaultSubnets = {
+      allowedTCPPorts = [
+        # WG
+        51820
+        51821
+        # Dev ports
+        8000
+        8080
+        5173
+      ];
+      allowedUDPPorts = [
+        # WG
+        51820
+        51821
+        # Dev ports
+        8000
+        8080
+        5173
+      ];
+    };
+  };
+
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
 
   programs.fish.enable = true;
@@ -107,26 +135,6 @@
 
   services.tailscale.enable = true;
   networking.wireguard.enable = true;
-  networking.firewall = {
-    allowedUDPPorts = [
-      # WG
-      51820
-      51821
-      # Dev ports
-      8000
-      8080
-      5173
-    ];
-    allowedTCPPorts = [
-      # WG
-      51820
-      51821
-      # Dev ports
-      8000
-      8080
-      5173
-    ];
-  };
 
   home-manager.users."tsandrini" = {
     tensorfiles.hm = {
