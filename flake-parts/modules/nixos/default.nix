@@ -82,6 +82,7 @@ in
     services_monit = importApply ./services/monit.nix {
       inherit localFlake;
     };
+    services_fail2ban = importApply ./services/fail2ban.nix { inherit localFlake; };
     services_monitoring_loki = importApply ./services/monitoring/loki.nix {
       inherit localFlake;
     };
