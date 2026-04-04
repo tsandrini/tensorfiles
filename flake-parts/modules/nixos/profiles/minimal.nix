@@ -57,19 +57,26 @@ in
       };
 
       time.timeZone = _ "Europe/Prague";
-      i18n.defaultLocale = _ "en_US.UTF-8";
 
-      i18n.extraLocaleSettings = {
-        LANGUAGE = "en_US.UTF-8";
-        LC_ADDRESS = _ "cs_CZ.UTF-8";
-        LC_IDENTIFICATION = _ "cs_CZ.UTF-8";
-        LC_MEASUREMENT = _ "cs_CZ.UTF-8";
-        LC_MONETARY = _ "cs_CZ.UTF-8";
-        LC_NAME = _ "cs_CZ.UTF-8";
-        LC_NUMERIC = _ "cs_CZ.UTF-8";
-        LC_PAPER = _ "cs_CZ.UTF-8";
-        LC_TELEPHONE = _ "cs_CZ.UTF-8";
-        LC_TIME = _ "cs_CZ.UTF-8";
+      i18n = {
+        defaultLocale = _ "en_US.UTF-8";
+        supportedLocales = [
+          "en_US.UTF-8/UTF-8"
+          "cs_CZ.UTF-8/UTF-8"
+          "it_IT.UTF-8/UTF-8"
+        ];
+        extraLocaleSettings = {
+          LANGUAGE = "en_US.UTF-8";
+          LC_ADDRESS = _ "cs_CZ.UTF-8";
+          LC_IDENTIFICATION = _ "cs_CZ.UTF-8";
+          LC_MEASUREMENT = _ "cs_CZ.UTF-8";
+          LC_MONETARY = _ "cs_CZ.UTF-8";
+          LC_NAME = _ "cs_CZ.UTF-8";
+          LC_NUMERIC = _ "cs_CZ.UTF-8";
+          LC_PAPER = _ "cs_CZ.UTF-8";
+          LC_TELEPHONE = _ "cs_CZ.UTF-8";
+          LC_TIME = _ "cs_CZ.UTF-8";
+        };
       };
 
       console = {
@@ -77,21 +84,6 @@ in
         useXkbConfig = _ true;
         font = _ "${pkgs.terminus_font}/share/consolefonts/ter-132n.psf.gz";
       };
-
-      # NOTE: We only set the defaults, end configurations can enable/disable
-      # them as needed.
-      services.fail2ban = {
-        maxretry = _ 6;
-        bantime = _ "11m";
-        bantime-increment = {
-          enable = _ true;
-          rndtime = _ "7m";
-          overalljails = _ true;
-        };
-      };
-      networking.firewall.pingLimit = _ (
-        if config.networking.nftables.enable then "2/second" else "--limit 1/minute --limit-burst 5"
-      );
     }
     # |----------------------------------------------------------------------| #
   ]);
