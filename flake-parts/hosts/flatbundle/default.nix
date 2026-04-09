@@ -13,7 +13,11 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
-{ pkgs, system, ... }:
+{
+  pkgs,
+  system,
+  ...
+}:
 let
   pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
     inherit system;
@@ -167,8 +171,6 @@ in
   services.tailscale.enable = true;
   networking.wireguard.enable = true;
 
-  services.keybase.enable = true;
-
   home-manager.users."tsandrini" = {
     imports = [
       inputs.mcp-servers-nix.homeManagerModules.default
@@ -200,10 +202,12 @@ in
 
     mcp-servers.programs = {
       playwright.enable = true;
+      playwright.args = [ "--headless" ];
       nixos.enable = true;
       time.enable = true;
       fetch.enable = true;
-      github.enable = true;
+      # everything.enable = true;
+      # github.enable = true;
     };
 
     programs.claude-code = {
