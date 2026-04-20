@@ -43,11 +43,13 @@ in
     };
 
     plugins_git_neogit = importApply ./plugins/git/neogit.nix { inherit localFlake; };
+    plugins_git_blame = importApply ./plugins/git/blame.nix { inherit localFlake; };
 
     plugins_utils_hop = importApply ./plugins/utils/hop.nix { inherit localFlake; };
     plugins_utils_faster = importApply ./plugins/utils/faster.nix { inherit localFlake; };
     plugins_utils_orgmode = importApply ./plugins/utils/orgmode.nix { inherit localFlake; };
     plugins_utils_project-nvim = importApply ./plugins/utils/project-nvim.nix { inherit localFlake; };
+    plugins_utils_projections = importApply ./plugins/utils/projections.nix { inherit localFlake; };
     plugins_utils_telescope = importApply ./plugins/utils/telescope.nix { inherit localFlake; };
     plugins_utils_which-key = importApply ./plugins/utils/which-key.nix { inherit localFlake; };
     plugins_utils_markdown-preview = importApply ./plugins/utils/markdown-preview.nix {

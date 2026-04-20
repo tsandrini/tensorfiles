@@ -53,8 +53,8 @@ in
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;
     };
-    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake infraVars; };
-    profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake; };
+    profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
+    profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake infraVars; };
     profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
       inherit localFlake infraVars;
     };
@@ -82,6 +82,7 @@ in
     services_monit = importApply ./services/monit.nix {
       inherit localFlake;
     };
+    services_fail2ban = importApply ./services/fail2ban.nix { inherit localFlake; };
     services_monitoring_loki = importApply ./services/monitoring/loki.nix {
       inherit localFlake;
     };

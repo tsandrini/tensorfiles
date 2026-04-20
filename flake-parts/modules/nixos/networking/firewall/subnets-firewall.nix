@@ -30,6 +30,7 @@ let
     filterAttrs
     hasInfix
     lists
+    zipAttrsWith
     ;
 
   inherit (localFlake.lib.modules) mkOverrideAtModuleLevel;
@@ -83,7 +84,18 @@ let
     }) cfg.defaultSubnetsList
   );
 
-  effectiveSubnets = defaultSubnetsRendered // cfg.subnets;
+  effectiveSubnets =
+    zipAttrsWith
+      (_: policies: {
+        allowedTCPPorts = unique (flatten (map (p: p.allowedTCPPorts) policies));
+        allowedUDPPorts = unique (flatten (map (p: p.allowedUDPPorts) policies));
+        allowedTCPPortRanges = unique (flatten (map (p: p.allowedTCPPortRanges) policies));
+        allowedUDPPortRanges = unique (flatten (map (p: p.allowedUDPPortRanges) policies));
+      })
+      [
+        defaultSubnetsRendered
+        cfg.subnets
+      ];
 
   subnetsV4 = filterAttrs (cidr: _: !isV6 cidr) effectiveSubnets;
   subnetsV6 = filterAttrs (cidr: _: isV6 cidr) effectiveSubnets;

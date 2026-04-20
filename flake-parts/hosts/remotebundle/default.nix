@@ -108,8 +108,6 @@ in
   tensorfiles = {
     profiles = {
       headless.enable = true;
-      packages-base.enable = true;
-      # packages-extra.enable = true;
       with-base-monitoring-exports.enable = true;
     };
 
@@ -156,6 +154,24 @@ in
     };
   };
 
+  tensorfiles.networking.firewall.subnets-firewall = {
+    nixosPassthrough = {
+      allowedTCPPorts = [
+        80
+        443
+      ];
+      allowedUDPPorts = [
+        config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
+      ];
+    };
+    defaultSubnets = {
+      allowedTCPPorts = [
+        config.services.postgresql.settings.port
+        config.services.loki.configuration.server.http_listen_port
+      ];
+    };
+  };
+
   # NAS
   fileSystems."/mnt/NAS" = {
     device = "172.16.131.12:/nas/5829";
@@ -187,34 +203,6 @@ in
       ];
     }
   ];
-
-  tensorfiles.networking.firewall.subnets-firewall = {
-    enable = true;
-    subnets = {
-      "${infraVars.common.networking.defaultSubnet}" = {
-        allowedTCPPorts = [
-          config.services.postgresql.settings.port
-          config.services.loki.configuration.server.http_listen_port
-        ];
-      };
-      "${infraVars.common.networking.intranetSubnet}" = {
-        allowedTCPPorts = [
-          config.services.postgresql.settings.port
-          config.services.loki.configuration.server.http_listen_port
-        ];
-      };
-    };
-  };
-
-  networking.firewall = {
-    allowedTCPPorts = [
-      80
-      443
-    ];
-    allowedUDPPorts = [
-      config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
-    ];
-  };
 
   networking.wireguard.interfaces = {
     wg-home-tunnel = {

@@ -45,9 +45,13 @@ in
           utils.faster.enable = _ true;
           utils.which-key.enable = _ true;
           utils.orgmode.enable = _ true;
-          utils.project-nvim.enable = _ true;
+          # project.nvim is concurrent and isn't built to
+          # handle a ton of neovim instances open, projections is better
+          # utils.project-nvim.enable = _ true;
+          utils.projections.enable = _ true;
 
           git.neogit.enable = _ true;
+          git.blame.enable = _ true;
 
           editor.neo-tree.enable = _ true;
           editor.treesitter.enable = _ true;

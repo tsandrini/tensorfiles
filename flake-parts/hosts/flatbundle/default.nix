@@ -13,7 +13,11 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
-{ pkgs, system, ... }:
+{
+  pkgs,
+  system,
+  ...
+}:
 let
   pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
     inherit system;
@@ -97,6 +101,34 @@ in
   };
   # nix-mineral.enable = true;
 
+  tensorfiles.networking.firewall.subnets-firewall = {
+    nixosPassthrough = {
+      allowedTCPPorts = [
+        #
+      ];
+    };
+    defaultSubnets = {
+      allowedTCPPorts = [
+        # WG
+        51820
+        51821
+        # Dev ports
+        8000
+        8080
+        5173
+      ];
+      allowedUDPPorts = [
+        # WG
+        51820
+        51821
+        # Dev ports
+        8000
+        8080
+        5173
+      ];
+    };
+  };
+
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
   programs.nh.clean.enable = false; # NOTE We have enough space buddy
 
@@ -138,28 +170,6 @@ in
 
   services.tailscale.enable = true;
   networking.wireguard.enable = true;
-  networking.firewall = {
-    allowedUDPPorts = [
-      # WG
-      51820
-      51821
-      # Dev ports
-      8000
-      8080
-      5173
-    ];
-    allowedTCPPorts = [
-      # WG
-      51820
-      51821
-      # Dev ports
-      8000
-      8080
-      5173
-    ];
-  };
-
-  services.keybase.enable = true;
 
   home-manager.users."tsandrini" = {
     imports = [
@@ -192,10 +202,12 @@ in
 
     mcp-servers.programs = {
       playwright.enable = true;
+      playwright.args = [ "--headless" ];
       nixos.enable = true;
       time.enable = true;
       fetch.enable = true;
-      github.enable = true;
+      # everything.enable = true;
+      # github.enable = true;
     };
 
     programs.claude-code = {

@@ -12,7 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, infraVars }:
+{ localFlake }:
 {
   config,
   lib,
@@ -20,7 +20,12 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    getExe
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.headless;
@@ -45,35 +50,42 @@ in
 
         services.networking.networkmanager.enable = _ true;
         services.networking.ssh.enable = _ true;
+        services.fail2ban.enable = _ true;
       };
 
       programs.bash = {
         interactiveShellInit = lib.mkBefore ''
-          ${lib.getExe pkgs.microfetch}
+          ${getExe pkgs.microfetch}
+          last -x --fulltimes --limit 30
         '';
       };
 
       services.openssh.openFirewall = false;
+
       tensorfiles.networking.firewall.subnets-firewall = {
-        enable = true;
-        subnets = {
-          "${infraVars.common.networking.defaultSubnet}" = {
-            allowedTCPPorts = config.services.openssh.ports;
-          };
-          "${infraVars.common.networking.intranetSubnet}" = {
-            allowedTCPPorts = config.services.openssh.ports;
-          };
+        defaultSubnets = {
+          allowedTCPPorts = config.services.openssh.ports;
         };
       };
 
       services.getty.autologinUser = _ "root";
 
-      services.fail2ban.enable = _ true;
       networking.nftables.enable = _ true;
-      networking.firewall.enable = _ true;
+      networking.firewall = {
+        enable = _ true;
+        pingLimit = _ (
+          if config.networking.nftables.enable then "2/second" else "--limit 1/minute --limit-burst 5"
+        );
+      };
 
-      services.rsyslogd.enable = _ true;
-      services.journald.forwardToSyslog = _ true;
+      # NOTE: rsyslog is intentionally not enabled. journald handles log
+      # storage and rotation natively, and Promtail reads from the journal
+      # directly. rsyslog would only produce duplicate text log files on
+      # disk (~530MB closure cost).
+      services.journald.extraConfig = _ ''
+        SystemMaxUse=100M
+        MaxRetentionSec=7day
+      '';
       services.logrotate.enable = _ true;
     }
     # |----------------------------------------------------------------------| #
