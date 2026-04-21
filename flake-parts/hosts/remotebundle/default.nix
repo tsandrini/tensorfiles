@@ -296,6 +296,12 @@ in
       };
     };
 
+    virtualHosts."www.${nginxVars.primaryDomain}" = {
+      enableACME = true;
+      forceSSL = true;
+      globalRedirect = nginxVars.primaryDomain;
+    };
+
     virtualHosts."upstream-${nginxVars.primaryDomain}" = {
       serverName = nginxVars.primaryDomain;
       listen = [ { addr = "unix:/run/nginx/nginx.sock"; } ];
