@@ -171,6 +171,14 @@ in
   services.tailscale.enable = true;
   networking.wireguard.enable = true;
 
+  services.udev.packages = [
+    pkgs.qmk
+    pkgs.qmk-udev-rules
+    pkgs.qmk_hid
+    pkgs.via
+    pkgs.vial
+  ];
+
   home-manager.users."tsandrini" = {
     imports = [
       inputs.mcp-servers-nix.homeManagerModules.default
