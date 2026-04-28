@@ -133,7 +133,7 @@ in
               xkb = {
                 layout = _ "us,cz";
                 variant = _ ",qwerty";
-                options = _ "grp:alt_caps_toggle";
+                options = _ "grp:alt_shift_toggle";
               };
 
               track-layout = _ "global";
