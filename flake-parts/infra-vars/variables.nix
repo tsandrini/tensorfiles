@@ -72,6 +72,19 @@ _: rec {
           tsandrini = { };
         };
         services = {
+          mailserver = rec {
+            primaryDomain = "tsandrini.sh";
+            fqdn = "mail.${primaryDomain}";
+            domains = [
+              primaryDomain
+              "tsandrini.cz"
+              "tsandrini.eu"
+              "tsandrini.tech"
+            ];
+            securityEmail = "security@${primaryDomain}";
+            monitoringEmail = "monitoring@${primaryDomain}";
+          };
+
           immich = {
             port = 2283;
           };
@@ -197,6 +210,14 @@ _: rec {
                   proxyEndpoint = "${hosts."remotebundle".address}:${
                     toString hosts."remotebundle".services.immich.port
                   }";
+                };
+                "roundcube" = {
+                  domain = "webmail.${primaryDomain}";
+                  proxyEndpoint = null;
+                };
+                "rspamd" = {
+                  domain = "rspamd.${primaryDomain}";
+                  proxyEndpoint = "unix:/run/rspamd/worker-controller.sock:/";
                 };
                 "emil" = {
                   domain = "emil.${primaryDomain}";

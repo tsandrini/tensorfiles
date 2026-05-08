@@ -46,7 +46,7 @@ in
     (importApply ./parts/forgejo.nix { inherit infraVars; })
     (importApply ./parts/immich.nix { inherit infraVars; })
     (importApply ./parts/monitoring.nix { inherit secretsPath infraVars; })
-    (importApply ./parts/mailserver.nix { inherit infraVars; })
+    (importApply ./parts/mailserver.nix { inherit infraVars inputs secretsPath; })
     # (importApply ./parts/firefly.nix { inherit secretsPath infraVars; })
   ];
 
