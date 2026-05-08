@@ -152,7 +152,12 @@ in
         extraOverlays = sharedOverlays;
         extraModules = sharedModules;
         hostImportArgs = {
-          inherit inputs secretsPath infraVars;
+          inherit
+            inputs
+            secretsPath
+            infraVars
+            importApply
+            ;
         };
       }
     );
