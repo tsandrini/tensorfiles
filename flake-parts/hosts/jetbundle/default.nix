@@ -49,7 +49,7 @@ in
   environment.systemPackages = [
     pkgs.libva-utils # Collection of utilities and examples for VA-API
     pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
-    pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
+    # pkgs.wireguard-tools # Tools for the WireGuard secure network tunnel
 
     # TODO: electron 39 brokey temporarily
     # pkgs.bitwarden-desktop # Secure and free password manager for all of your devices
@@ -92,6 +92,7 @@ in
       ];
     };
   };
+
   nix-mineral = {
     enable = true;
     preset = [
@@ -191,14 +192,33 @@ in
     };
     programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
 
+    programs.mcp.enable = true;
+
+    mcp-servers.programs = {
+      playwright.enable = true;
+      playwright.args = [ "--headless" ];
+      nixos.enable = true;
+      time.enable = true;
+      fetch.enable = true;
+      # everything.enable = true;
+      # github.enable = true;
+    };
+
+    programs.claude-code = {
+      enable = true;
+      package = pkgs.llm-agents.claude-code;
+      enableMcpIntegration = true;
+    };
+
     home.packages = [
       pkgs-osu-lazer-bin.osu-lazer-bin
 
       # --- LLM garbage ---
-      pkgs.llm-agents.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
+      inputs.self.packages.${system}.cc-switcher
+      # pkgs.llm-agents.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
       pkgs.llm-agents.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
       pkgs.llm-agents.auto-claude # Autonomous multi-agent coding framework powered by Claude AI
-      pkgs.llm-agents.cc-switch-cli # CLI version of CC Switch - All-in-One Assistant for Claude Code, Codex & Gemini CLI
+      # pkgs.llm-agents.cc-switch-cli # CLI version of CC Switch - All-in-One Assistant for Claude Code, Codex & Gemini CLI
       pkgs.llm-agents.claude-plugins # CLI tool for managing Claude Code plugins
       pkgs.llm-agents.claudebox # Sandboxed environment for Claude Code
       pkgs.llm-agents.skills-installer # Install agent skills across multiple AI coding clients

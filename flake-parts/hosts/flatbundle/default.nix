@@ -98,6 +98,7 @@ in
       ];
     };
   };
+
   nix-mineral = {
     enable = true;
     preset = [
