@@ -82,49 +82,42 @@ in
           notify_on_error = _ true;
           notify_no_formatters = _ true;
           formatters_by_ft = {
-            html = [
-              [
-                "prettierd"
-                "prettier"
-              ]
-            ];
-            css = [
-              [
-                "prettierd"
-                "prettier"
-              ]
-            ];
-            javascript = [
-              [
-                "prettierd"
-                "prettier"
-              ]
-            ];
-            typescript = [
-              [
-                "prettierd"
-                "prettier"
-              ]
-            ];
+            html = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
+            css = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
+            javascript = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
+            typescript = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
             python = [
-              "black"
-              "ruff"
-              # "isort"
+              "ruff_organize_imports"
+              "ruff_format"
             ];
             lua = [ "stylua" ];
             nix = [ "nixfmt" ];
-            markdown = [
-              [
-                "prettierd"
-                "prettier"
-              ]
-            ];
-            yaml = [
-              [
-                "prettierd"
-                "prettier"
-              ]
-            ];
+            markdown = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
+            yaml = {
+              __unkeyed-1 = "prettierd";
+              __unkeyed-2 = "prettier";
+              stop_after_first = true;
+            };
             terraform = [ "terraform_fmt" ];
             bicep = [ "bicep" ];
             bash = [
@@ -137,14 +130,11 @@ in
           };
 
           formatters = {
-            black = {
-              command = _ "${lib.getExe pkgs.black}";
-            };
-            ruff = {
+            ruff_format = {
               command = _ "${lib.getExe pkgs.ruff}";
             };
-            isort = {
-              command = _ "${lib.getExe pkgs.isort}";
+            ruff_organize_imports = {
+              command = _ "${lib.getExe pkgs.ruff}";
             };
             alejandra = {
               command = _ "${lib.getExe pkgs.alejandra}";
