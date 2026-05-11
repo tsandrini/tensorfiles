@@ -171,6 +171,10 @@ in
   networking.wireguard.enable = true;
 
   home-manager.users."tsandrini" = {
+    imports = [
+      inputs.mcp-servers-nix.homeManagerModules.default
+    ];
+
     tensorfiles.hm = {
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;
