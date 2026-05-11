@@ -86,7 +86,7 @@ in
               enable = _ true; # haskell language server
             };
             html.enable = _ true; # HTML language server from `vscode-langservers-extracted`
-            htmx.enable = _ true; # htmx for HTMX
+            # htmx.enable = _ true; # htmx for HTMX
             # idris2-lsp.enable = _ true; # Idris 2 Language Server
             # intelephense.enable = _ true; # NOTE unfree
             jsonls.enable = _ true; # jsonls for JSON
