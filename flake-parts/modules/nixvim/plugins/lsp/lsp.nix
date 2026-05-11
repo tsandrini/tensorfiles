@@ -288,15 +288,18 @@ in
       };
 
       extraConfigLua = ''
+        local _diag_vt = {
+          spacing = 4,
+          source = "if_many",
+          prefix = "●",
+        }
+        local _diag_vl = {
+          current_line = true,
+        }
+
         vim.diagnostic.config({
-          virtual_text = {
-            spacing = 4,
-            source = "if_many",
-            prefix = "●",
-          },
-          virtual_lines = {
-            current_line = true,
-          },
+          virtual_text = _diag_vt,
+          virtual_lines = _diag_vl,
           signs = true,
           underline = true,
           severity_sort = true,
@@ -306,7 +309,29 @@ in
             source = "if_many",
           },
         })
+
+        local _diag_inline = true
+        vim.api.nvim_create_user_command("DiagnosticInlineToggle", function()
+          _diag_inline = not _diag_inline
+          vim.diagnostic.config({
+            virtual_text = _diag_inline and _diag_vt or false,
+            virtual_lines = _diag_inline and _diag_vl or false,
+          })
+          vim.notify("Diagnostic inline: " .. (_diag_inline and "ON" or "OFF"))
+        end, { desc = "Toggle inline diagnostic virtual_text + virtual_lines" })
       '';
+
+      keymaps = [
+        {
+          mode = "n";
+          key = "<leader>td";
+          action = "<cmd>DiagnosticInlineToggle<CR>";
+          options = {
+            silent = true;
+            desc = "Toggle inline diagnostic text";
+          };
+        }
+      ];
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.withKeymaps {
@@ -385,6 +410,7 @@ in
         #   };
         # };
       };
+
     })
     # |----------------------------------------------------------------------| #
   ]);

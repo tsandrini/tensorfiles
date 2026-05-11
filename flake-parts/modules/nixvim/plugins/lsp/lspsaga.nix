@@ -196,7 +196,7 @@ in
         }
         {
           mode = "n";
-          key = "<leader>t";
+          key = "<leader>T";
           action = "<cmd>Lspsaga term_toggle<CR>";
           options = {
             silent = true;
