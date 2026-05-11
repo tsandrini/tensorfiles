@@ -13,7 +13,12 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake, infraVars }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
   inherit (lib)
     mkIf
@@ -70,16 +75,6 @@ in
       services.openssh = {
         enable = _ true;
         ports = _ [ infraVars.common.services.openssh.defaultPort ];
-        banner = mkBefore ''
-          =====================================================================
-          Welcome, you should note that this host is completely
-          built/rebuilt/managed using the nix ecosystem and any manual changes
-          will most probably be lost. If you are unsure about what you are
-          doing, please refer to the tensorfiles documentation.
-
-          Thank you and happy computing.
-          =====================================================================
-        '';
         settings = {
           # Additional security hardenings
           AllowAgentForwarding = _ false;
@@ -92,6 +87,18 @@ in
           PermitRootLogin = _ "no";
           StrictModes = _ true;
           # TCPKeepAlive = _ false; # TODO: not sure
+          Banner = builtins.toString (
+            pkgs.writeText "ssh-banner" ''
+              =====================================================================
+              Welcome, you should note that this host is completely
+              built/rebuilt/managed using the nix ecosystem and any manual changes
+              will most probably be lost. If you are unsure about what you are
+              doing, please refer to the tensorfiles documentation.
+
+              Thank you and happy computing.
+              =====================================================================
+            ''
+          );
         };
       };
     }

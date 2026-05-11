@@ -41,10 +41,9 @@ in
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
-    (inputs.nix-mineral + "/nix-mineral.nix")
+    inputs.nix-mineral.nixosModules.nix-mineral
 
     ./hardware-configuration.nix
-    # ./nm-overrides.nix
   ];
 
   # ------------------------------
@@ -99,7 +98,13 @@ in
       ];
     };
   };
-  # nix-mineral.enable = true;
+  nix-mineral = {
+    enable = true;
+    preset = [
+      "compatibility"
+      "performance"
+    ];
+  };
 
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {

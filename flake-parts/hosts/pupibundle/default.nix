@@ -36,8 +36,7 @@ in
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    # (inputs.nix-mineral + "/nix-mineral.nix")
-    # ./nm-overrides.nix
+    # inputs.nix-mineral.nixosModules.nix-mineral
     inputs.disko.nixosModules.disko
 
     ./hardware-configuration.nix

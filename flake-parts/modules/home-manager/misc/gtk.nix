@@ -36,10 +36,11 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      home.packages = with pkgs; [ dconf ];
+      home.packages = [ pkgs.dconf ];
 
       gtk = {
         enable = _ true;
+        gtk4.theme = _ config.gtk.theme;
         theme = {
           name = _ "Arc-Dark";
           package = _ pkgs.arc-theme;

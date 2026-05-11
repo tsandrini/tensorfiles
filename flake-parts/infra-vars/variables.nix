@@ -41,9 +41,6 @@ _: rec {
       openssh = {
         defaultPort = 2222;
       };
-      promtail = {
-        defaultPort = 3031;
-      };
       prometheus = {
         defaultPort = 9090;
         exporters = {
@@ -106,12 +103,6 @@ _: rec {
               http_addr = "0.0.0.0";
             };
           };
-          promtail = {
-            server = {
-              http_port = 3031;
-              grpc_port = 0;
-            };
-          };
           prometheus = {
             server = {
               http_port = 9090;
@@ -124,10 +115,7 @@ _: rec {
               loki.port = hosts."remotebundle".services.loki.server.http_port;
               nginxlog.port = 9117;
               postfix.port = 9154;
-              rspamd = {
-                port = 7980;
-                targetPort = 11334;
-              };
+              rspamd.port = 11334;
               dovecot.port = 9166;
             };
           };

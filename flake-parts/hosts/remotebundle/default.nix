@@ -37,9 +37,7 @@ in
   # --------------------------
   imports = [
     (inputs.vpsadminos + "/os/lib/nixos-container/unstable/vpsadminos.nix")
-    (inputs.nix-mineral + "/nix-mineral.nix")
-
-    ./nm-overrides.nix
+    inputs.nix-mineral.nixosModules.nix-mineral
 
     (importApply ./parts/nginx-proxy.nix { inherit inputs secretsPath infraVars; })
     (importApply ./parts/postgres.nix { inherit secretsPath infraVars; })
@@ -91,7 +89,13 @@ in
     };
   };
 
-  nix-mineral.enable = true;
+  nix-mineral = {
+    enable = true;
+    settings = {
+      network.ip-forwarding = true;
+      kernel.cpu-mitigations = "smt-on";
+    };
+  };
 
   # NAS
   fileSystems."/mnt/NAS" = {

@@ -129,7 +129,7 @@ in
         dockerfile-language-server # A language server for Dockerfiles powered by Node.js, TypeScript, and VSCode technologies
 
         ## :lang config (json, yaml, xml)
-        nodePackages.vscode-json-languageserver # JSON language server
+        vscode-json-languageserver # JSON language server
         yaml-language-server # Language Server for YAML Files
         yamlfmt # An extensible command line tool or library to format yaml files.
         libxml2 # XML parsing library for C
@@ -141,9 +141,9 @@ in
 
         ## :lang web
         html-tidy # A HTML validator and `tidier'
-        nodePackages.js-beautify # beautifier.io for node
+        js-beautify # beautifier.io for node
         stylelint # Mighty CSS linter that helps you avoid errors and enforce conventions
-        nodePackages.eslint
+        eslint
 
         ## :lang ansible
         ansible # Radically simple IT automation
@@ -163,7 +163,7 @@ in
         ## :lang sh
         shfmt # A shell parser and formatter
         shellcheck # Shell script analysis tool
-        nodePackages.bash-language-server # A language server for Bash
+        bash-language-server # A language server for Bash
 
         ## :lang haskell
         ghc

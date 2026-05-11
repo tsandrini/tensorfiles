@@ -196,6 +196,8 @@ in
     {
       programs.firefox = {
         enable = _ true;
+        configPath = _ "${config.xdg.configHome}/mozilla/firefox";
+
         package = pkgs.firefox.override {
           # trace: warning: The cfg.enableTridactylNative argument
           # `firefox.override` is deprecated, please add `pkgs.tridactyl-native`

@@ -36,9 +36,6 @@ let
 
   # --- database ---
   postgresVars = selfVars.services.postgresql;
-
-  # --- prometheus exporters ---
-  mailserverExporters = infraVars.hosts."remotebundle".services.prometheus.exporters;
 in
 {
   # --------------------------
@@ -276,15 +273,7 @@ in
         }
         {
           job_name = "rspamd";
-          honor_labels = true;
-          metrics_path = "/probe";
-          params = {
-            target = [
-              "http://${
-                infraVars.hosts."remotebundle".address
-              }:${toString mailserverExporters.rspamd.targetPort}/stat"
-            ];
-          };
+          metrics_path = "/metrics";
           static_configs = [
             {
               targets = [

@@ -61,14 +61,22 @@ in
       let
         inherit (inputs.nixvim.lib.${system}.check) mkTestDerivationFromNixvimModule;
         inherit (inputs.nixvim.legacyPackages.${system}) makeNixvimWithModule;
+
+        nixvimPkgs = import inputs.nixpkgs {
+          inherit system;
+          inherit (pkgs) overlays;
+          config = pkgs.config // {
+            allowUnfree = true;
+          };
+        };
       in
       {
         nixvimConfigurations = {
-          vanilla-config = mkNixvimConfig "vanilla-config" pkgs { };
-          base-config = mkNixvimConfig "base-config" pkgs { };
-          minimal-config = mkNixvimConfig "minimal-config" pkgs { };
-          graphical-config = mkNixvimConfig "graphical-config" pkgs { };
-          ide-config = mkNixvimConfig "ide-config" pkgs { };
+          vanilla-config = mkNixvimConfig "vanilla-config" nixvimPkgs { };
+          base-config = mkNixvimConfig "base-config" nixvimPkgs { };
+          minimal-config = mkNixvimConfig "minimal-config" nixvimPkgs { };
+          graphical-config = mkNixvimConfig "graphical-config" nixvimPkgs { };
+          ide-config = mkNixvimConfig "ide-config" nixvimPkgs { };
         };
 
         packages = {

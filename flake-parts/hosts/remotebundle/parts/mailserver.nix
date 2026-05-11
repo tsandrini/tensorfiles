@@ -118,31 +118,32 @@ in
     secure_ip = "0.0.0.0/0, ::/0";
   '';
 
-  services.dovecot2 = {
-    mailPlugins.globally.enable = [ "old_stats" ];
-    extraConfig = ''
-      service old-stats {
-        unix_listener old-stats {
-          user = ${config.services.dovecot2.user}
-          group = ${config.services.dovecot2.group}
-          mode = 0660
-        }
-        fifo_listener old-stats-mail {
-          mode = 0660
-          user = ${config.services.dovecot2.user}
-          group = ${config.services.dovecot2.group}
-        }
-        fifo_listener old-stats-user {
-          mode = 0660
-          user = ${config.services.dovecot2.user}
-          group = ${config.services.dovecot2.group}
-        }
+  services.dovecot2.settings = {
+    mail_plugins.old_stats = true;
+    service = [
+      {
+        _section.name = "old-stats";
+        "unix_listener old-stats" = {
+          user = config.services.dovecot2.settings.default_internal_user;
+          group = config.services.dovecot2.settings.default_internal_group;
+          mode = "0660";
+        };
+        "fifo_listener old-stats-mail" = {
+          mode = "0660";
+          user = config.services.dovecot2.settings.default_internal_user;
+          group = config.services.dovecot2.settings.default_internal_group;
+        };
+        "fifo_listener old-stats-user" = {
+          mode = "0660";
+          user = config.services.dovecot2.settings.default_internal_user;
+          group = config.services.dovecot2.settings.default_internal_group;
+        };
       }
-      plugin {
-        old_stats_refresh = 30 secs
-        old_stats_track_cmds = yes
-      }
-    '';
+    ];
+    plugin = {
+      old_stats_refresh = "30 secs";
+      old_stats_track_cmds = true;
+    };
   };
 
   services.rspamd = {
@@ -151,7 +152,7 @@ in
         socket = "/run/rspamd/worker-controller.sock";
         mode = "0666";
       }
-      "0.0.0.0:${toString mailserverExporters.rspamd.targetPort}"
+      "0.0.0.0:${toString mailserverExporters.rspamd.port}"
     ];
   };
 
@@ -216,7 +217,7 @@ in
       alertAddress = infraVars.common.contacts.monitoringEmail;
     };
 
-    loginAccounts = {
+    accounts = {
       "${mailserverVars.securityEmail}" = {
         hashedPasswordFile = mkAccountPath "security-at-tsandrini-dot-sh";
         aliases = [
@@ -300,14 +301,10 @@ in
       logfilePath = "/var/log/mail";
     };
 
-    rspamd = {
-      enable = true;
-      inherit (prometheusExporters.rspamd) port;
-    };
-
     dovecot = {
       enable = true;
-      inherit (config.services.dovecot2) user group;
+      user = config.services.dovecot2.settings.default_internal_user;
+      group = config.services.dovecot2.settings.default_internal_group;
       inherit (prometheusExporters.dovecot) port;
       socketPath = "/var/run/dovecot2/old-stats";
       scopes = [

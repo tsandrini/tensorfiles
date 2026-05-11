@@ -41,10 +41,10 @@ in
       and reporting for this server.
     '';
 
-    promtail = {
+    alloy = {
       enable =
         mkEnableOption ''
-          Enables the Promtail service.
+          Enables the Grafana Alloy service for log forwarding to Loki.
         ''
         // {
           default = true;
@@ -56,7 +56,7 @@ in
           if hostName == "remotebundle" then "localhost" else infraVars.hosts."remotebundle".wgAddress
         }:${toString infraVars.hosts."remotebundle".services.loki.server.http_port}/loki/api/v1/push";
         description = ''
-          The URL of the Loki server to which Promtail will send logs.
+          The URL of the Loki server to which Alloy will send logs.
         '';
       };
     };
@@ -96,48 +96,41 @@ in
 
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.promtail.enable {
-      services.promtail = {
-        enable = _ true;
-        configuration = {
-          server = {
-            # 0 disables the servers
-            http_listen_port = _ 0;
-            grpc_listen_port = _ 0;
-          };
-          positions = {
-            filename = _ "/tmp/promtail-positions.yaml";
-          };
-          clients = [
-            {
-              url = cfg.promtail.clientUrl;
-            }
-          ];
-          scrape_configs = [
-            {
-              job_name = "journal";
-              journal = {
-                max_age = "12h"; # How far back to read from the journal on startup.
-                labels = {
-                  job = "systemd-journal";
-                  host = hostName;
-                  app_group = "NixOS";
-                };
-              };
-              relabel_configs = [
-                {
-                  source_labels = [ "__journal__systemd_unit" ];
-                  target_label = "systemd_unit";
-                }
-                {
-                  source_labels = [ "__journal__syslog_identifier" ];
-                  target_label = "syslog_identifier";
-                }
-              ];
-            }
-          ];
-        };
-      };
+    (mkIf cfg.alloy.enable {
+      services.alloy.enable = _ true;
+
+      environment.etc."alloy/config.alloy".text = ''
+        loki.relabel "journal" {
+          forward_to = []
+
+          rule {
+            source_labels = ["__journal__systemd_unit"]
+            target_label  = "systemd_unit"
+          }
+
+          rule {
+            source_labels = ["__journal__syslog_identifier"]
+            target_label  = "syslog_identifier"
+          }
+        }
+
+        loki.source.journal "journal" {
+          max_age       = "12h"
+          relabel_rules = loki.relabel.journal.rules
+          forward_to    = [loki.write.default.receiver]
+          labels        = {
+            job       = "systemd-journal",
+            host      = "${hostName}",
+            app_group = "NixOS",
+          }
+        }
+
+        loki.write "default" {
+          endpoint {
+            url = "${cfg.alloy.clientUrl}"
+          }
+        }
+      '';
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.prometheus.exporters.node.enable {

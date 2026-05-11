@@ -176,6 +176,7 @@ in
       gtk = {
         enable = _ true;
 
+        gtk4.theme = config.gtk.theme;
         theme = {
           name = _ "adw-gtk3-dark";
           package = _ pkgs.adw-gtk3;
