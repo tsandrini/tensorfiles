@@ -81,6 +81,14 @@ in
         }
         {
           mode = "n";
+          key = "<leader>W";
+          action = ":noautocmd write<CR>";
+          options = {
+            desc = "Save file without formatting.";
+          };
+        }
+        {
+          mode = "n";
           key = "<leader>q";
           action = ":q<CR>";
           options = {
