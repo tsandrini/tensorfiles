@@ -49,8 +49,10 @@ in
       ];
 
       plugins = {
+        # Superseded by native `vim.diagnostic.config({ virtual_lines = ... })`
+        # on Neovim 0.11+; kept available but disabled to allow `virtual_text`.
         lsp-lines = {
-          enable = _ true;
+          enable = _ false;
         };
 
         lsp-format = {
@@ -101,8 +103,60 @@ in
             ocamllsp.package = _ pkgs.ocamlPackages.ocaml-lsp;
             phpactor.enable = _ true; # phpactor for PHP
             # pyright.enable = _ true;
-            basedpyright.enable = _ true; # Type checker for the Python language
-            ruff.enable = _ true; # Extremely fast Python linter and code formatter
+            basedpyright = {
+              enable = _ true; # Type checker for the Python language
+              # Defaults applied only when a project lacks pyrightconfig.json
+              # or `[tool.basedpyright]` in pyproject.toml. Tuned to be quiet on
+              # gradually-typed code; ruff owns lint-style checks.
+              settings = {
+                basedpyright.analysis = {
+                  typeCheckingMode = _ "standard";
+                  diagnosticMode = _ "openFilesOnly";
+                  autoSearchPaths = _ true;
+                  useLibraryCodeForTypes = _ true;
+                  inlayHints = {
+                    callArgumentNames = _ true;
+                    functionReturnTypes = _ true;
+                    variableTypes = _ true;
+                    genericTypes = _ false;
+                  };
+                  diagnosticSeverityOverrides = {
+                    # Owned by ruff
+                    reportUnusedImport = _ "none";
+                    reportUnusedVariable = _ "none";
+                    # Too noisy on partially-typed codebases
+                    reportMissingTypeStubs = _ "none";
+                    reportUnknownMemberType = _ "none";
+                    reportUnknownVariableType = _ "none";
+                    reportUnknownArgumentType = _ "none";
+                    reportUnknownParameterType = _ "none";
+                    reportUnknownLambdaType = _ "none";
+                    reportAny = _ "none";
+                    reportImplicitOverride = _ "none";
+                    reportUnannotatedClassAttribute = _ "none";
+                  };
+                };
+              };
+            };
+            ruff = {
+              enable = _ true; # Extremely fast Python linter and code formatter
+              # `filesystemFirst` so a project's pyproject.toml / ruff.toml
+              # wins over these LSP-level defaults.
+              settings = {
+                configurationPreference = _ "filesystemFirst";
+                lint = {
+                  select = [
+                    "E"
+                    "F"
+                    "I"
+                    "B"
+                    "UP"
+                    "SIM"
+                  ];
+                  ignore = [ "E501" ];
+                };
+              };
+            };
             ruby_lsp.enable = _ true; # ruby-lsp for Ruby
             r_language_server.enable = _ true; # r-language-server for R
             r_language_server.package = _ pkgs.rPackages.languageserver;
@@ -233,29 +287,26 @@ in
         };
       };
 
-      # extraConfigLua = ''
-      #   local _border = "rounded"
-      #
-      #   vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-      #     vim.lsp.handlers.hover, {
-      #       border = _border
-      #     }
-      #   )
-      #
-      #   vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-      #     vim.lsp.handlers.signature_help, {
-      #       border = _border
-      #     }
-      #   )
-      #
-      #   vim.diagnostic.config{
-      #     float={border=_border}
-      #   };
-      #
-      #   require('lspconfig.ui.windows').default_options = {
-      #     border = _border
-      #   }
-      # '';
+      extraConfigLua = ''
+        vim.diagnostic.config({
+          virtual_text = {
+            spacing = 4,
+            source = "if_many",
+            prefix = "●",
+          },
+          virtual_lines = {
+            current_line = true,
+          },
+          signs = true,
+          underline = true,
+          severity_sort = true,
+          update_in_insert = false,
+          float = {
+            border = "rounded",
+            source = "if_many",
+          },
+        })
+      '';
     }
     # |----------------------------------------------------------------------| #
     (mkIf cfg.withKeymaps {
