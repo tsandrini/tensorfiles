@@ -235,6 +235,7 @@ in
       pkgs.olympus
       pkgs.keybase-gui # Keybase official GUI
       pkgs.kbfs # Keybase filesystem
+      pkgs.teams-for-linux # Unofficial Microsoft Teams client for Linux
 
       # --- LLM garbage ---
       inputs.self.packages.${system}.cc-switcher
