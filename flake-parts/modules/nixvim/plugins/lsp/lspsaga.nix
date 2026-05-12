@@ -203,6 +203,24 @@ in
             desc = "LSP Terminal toggle.";
           };
         }
+        {
+          mode = "n";
+          key = "<leader>cI";
+          action = "<cmd>Lspsaga incoming_calls<CR>";
+          options = {
+            silent = true;
+            desc = "LSP Incoming calls.";
+          };
+        }
+        {
+          mode = "n";
+          key = "<leader>cO";
+          action = "<cmd>Lspsaga outgoing_calls<CR>";
+          options = {
+            silent = true;
+            desc = "LSP Outgoing calls.";
+          };
+        }
       ];
     })
     # |----------------------------------------------------------------------| #
