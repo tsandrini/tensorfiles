@@ -45,10 +45,12 @@ in
     {
       plugins.lspsaga = {
         enable = _ true;
-        # ui.border = "${opts.border}";
 
         settings = {
-          symbolInWinbar = {
+          ui = {
+            border = _ "rounded";
+          };
+          symbolsInWinbar = {
             enable = _ true; # Breadcrumbs
           };
           scrollPreview = {
@@ -57,10 +59,26 @@ in
           };
           lightbulb = {
             enable = _ false;
-            virtualText = _ false;
+            sign = _ false; # avoid signcolumn flicker
+            virtualText = _ true;
           };
           hover = {
             openCmd = _ "!firefox";
+          };
+          outline = {
+            autoPreview = _ true; # preview symbol source on hover in outline
+            autoClose = _ true;
+            closeAfterJump = _ false;
+          };
+          codeAction = {
+            showServerName = _ true;
+            extendGitsigns = _ true;
+          };
+          rename = {
+            autoSave = _ true;
+          };
+          beacon = {
+            enable = _ true;
           };
         };
       };
@@ -147,15 +165,6 @@ in
           options = {
             silent = true;
             desc = "LSP Peek type definition.";
-          };
-        }
-        {
-          mode = "n";
-          key = "<C-k>";
-          action = "<cmd>Lspsaga hover_doc<CR>";
-          options = {
-            silent = true;
-            desc = "LSP Hover.";
           };
         }
         {

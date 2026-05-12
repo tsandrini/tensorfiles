@@ -140,6 +140,15 @@ in
             };
             ruff = {
               enable = _ true; # Extremely fast Python linter and code formatter
+              # Force UTF-16 so ruff agrees with basedpyright (which is UTF-16
+              # only). Without this, every position-translating LSP call on a
+              # buffer attached to both clients emits a WARN — historically
+              # ballooned ~/.local/state/nvim/lsp.log into the GB range.
+              extraOptions.on_init = lib.nixvim.mkRaw ''
+                function(client)
+                  client.offset_encoding = 'utf-16'
+                end
+              '';
               # `filesystemFirst` so a project's pyproject.toml / ruff.toml
               # wins over these LSP-level defaults.
               settings = {
