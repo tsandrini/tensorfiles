@@ -92,6 +92,7 @@ in
     plugins_lsp_sniprun = importApply ./plugins/lsp/sniprun.nix { inherit localFlake; };
     plugins_lsp_fidget = importApply ./plugins/lsp/fidget.nix { inherit localFlake; };
     plugins_lsp_lsp = importApply ./plugins/lsp/lsp.nix { inherit localFlake; };
+    plugins_lsp_none-ls = importApply ./plugins/lsp/none-ls.nix { inherit localFlake; };
     plugins_lsp_lspsaga = importApply ./plugins/lsp/lspsaga.nix { inherit localFlake; };
     plugins_lsp_trouble = importApply ./plugins/lsp/trouble.nix { inherit localFlake; };
     plugins_lsp_otter = importApply ./plugins/lsp/otter.nix { inherit localFlake; };

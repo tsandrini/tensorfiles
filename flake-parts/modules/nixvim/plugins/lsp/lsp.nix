@@ -98,7 +98,50 @@ in
             # leanls.enable = _ true; # leanls for Lean"
             lua_ls.enable = _ true; # lua-ls for Lua
             nginx_language_server.enable = _ true; # nginx-language-server for `nginx.conf`
-            nil_ls.enable = _ true; # nil for Nix
+            # Two Nix LSPs run in parallel:
+            #   - nil:  fast incremental single-file analysis, dead-code hints,
+            #           formatting via nixfmt.
+            #   - nixd: real libexpr evaluation — gives completion / hover /
+            #           goto for NixOS, home-manager and flake-parts options
+            #           pinned via the `options.*.expr` block below.
+            # statix + deadnix are wired through none-ls separately and own
+            # lint-style diagnostics, so we don't try to silence those here.
+            nil_ls = {
+              enable = _ true;
+              settings.nil = {
+                formatting.command = _ [ "${lib.getExe pkgs.nixfmt}" ];
+                nix.flake = {
+                  autoArchive = _ true;
+                  autoEvalInputs = _ false; # heavy; let nixd handle deep evaluation
+                  nixpkgsInputName = _ "nixpkgs";
+                };
+              };
+            };
+            nixd =
+              let
+                # NOTE Live working tree, not the store snapshot — nixd must
+                # reflect unsaved edits, so `toString localFlake` (which would
+                # bake the build-time /nix/store path) is wrong here.
+                flakeRoot = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
+              in
+              {
+                enable = _ true;
+                settings.nixd = {
+                  nixpkgs.expr = _ ''import (builtins.getFlake "${flakeRoot}").inputs.nixpkgs { }'';
+                  formatting.command = _ [ "${lib.getExe pkgs.nixfmt}" ];
+                  options = {
+                    # Pin completion against this host. Opening a file that's
+                    # specific to another host will still hover/complete against
+                    # flatbundle's option tree — acceptable tradeoff; switch the
+                    # attr if you do most of your work on another machine.
+                    nixos.expr = _ ''(builtins.getFlake "${flakeRoot}").nixosConfigurations.flatbundle.options'';
+                    home-manager.expr = _ ''(builtins.getFlake "${flakeRoot}").homeConfigurations."tsandrini@jetbundle".options'';
+                  };
+                  # We never use `with`; silence the lint so it doesn't add
+                  # noise on the rare incoming patch that happens to use it.
+                  diagnostic.suppress = _ [ "sema-escaping-with" ];
+                };
+              };
             ocamllsp.enable = _ true; # ocamllsp for OCaml
             ocamllsp.package = _ pkgs.ocamlPackages.ocaml-lsp;
             phpactor.enable = _ true; # phpactor for PHP

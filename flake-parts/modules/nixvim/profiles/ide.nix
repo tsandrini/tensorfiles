@@ -56,6 +56,7 @@ in
           lsp.fidget.enable = _ true;
           lsp.trouble.enable = _ true;
           lsp.otter.enable = _ true;
+          lsp.none-ls.enable = _ true; # statix + deadnix for Nix lints
         };
       };
 
