@@ -98,30 +98,21 @@ in
             # leanls.enable = _ true; # leanls for Lean"
             lua_ls.enable = _ true; # lua-ls for Lua
             nginx_language_server.enable = _ true; # nginx-language-server for `nginx.conf`
-            # Two Nix LSPs run in parallel:
-            #   - nil:  fast incremental single-file analysis, dead-code hints,
-            #           formatting via nixfmt.
-            #   - nixd: real libexpr evaluation — gives completion / hover /
-            #           goto for NixOS, home-manager and flake-parts options
-            #           pinned via the `options.*.expr` block below.
-            # statix + deadnix are wired through none-ls separately and own
-            # lint-style diagnostics, so we don't try to silence those here.
+            # nil: fast single-file; nixd: real eval for option completion.
             nil_ls = {
               enable = _ true;
               settings.nil = {
                 formatting.command = _ [ "${lib.getExe pkgs.nixfmt}" ];
                 nix.flake = {
                   autoArchive = _ true;
-                  autoEvalInputs = _ false; # heavy; let nixd handle deep evaluation
+                  autoEvalInputs = _ false; # NOTE owned by nixd
                   nixpkgsInputName = _ "nixpkgs";
                 };
               };
             };
             nixd =
               let
-                # NOTE Live working tree, not the store snapshot — nixd must
-                # reflect unsaved edits, so `toString localFlake` (which would
-                # bake the build-time /nix/store path) is wrong here.
+                # NOTE live working tree; `toString localFlake` would freeze to the build-time store path
                 flakeRoot = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
               in
               {
@@ -130,15 +121,10 @@ in
                   nixpkgs.expr = _ ''import (builtins.getFlake "${flakeRoot}").inputs.nixpkgs { }'';
                   formatting.command = _ [ "${lib.getExe pkgs.nixfmt}" ];
                   options = {
-                    # Pin completion against this host. Opening a file that's
-                    # specific to another host will still hover/complete against
-                    # flatbundle's option tree — acceptable tradeoff; switch the
-                    # attr if you do most of your work on another machine.
+                    # NOTE pinned to flatbundle; other hosts hover against this tree
                     nixos.expr = _ ''(builtins.getFlake "${flakeRoot}").nixosConfigurations.flatbundle.options'';
                     home-manager.expr = _ ''(builtins.getFlake "${flakeRoot}").homeConfigurations."tsandrini@jetbundle".options'';
                   };
-                  # We never use `with`; silence the lint so it doesn't add
-                  # noise on the rare incoming patch that happens to use it.
                   diagnostic.suppress = _ [ "sema-escaping-with" ];
                 };
               };

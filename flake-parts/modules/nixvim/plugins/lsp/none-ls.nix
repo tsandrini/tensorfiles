@@ -35,24 +35,10 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
-      # none-ls hosts external linters/formatters that don't ship as LSPs —
-      # exposed to nvim through the standard LSP diagnostic/code-action APIs.
-      # Used here purely for Nix static analysis: nixfmt (via conform) handles
-      # layout, nil/nixd handle semantics, and the two sources below own the
-      # lint side:
-      #
-      #   - deadnix: unused let-bindings, unused lambda params, dead branches.
-      #   - statix:  stylistic anti-patterns + redundancy lints. Wired both
-      #              as a diagnostic source and as code_actions so the
-      #              fixable ones (e.g. manual-inherit, redundant-pattern-bind)
-      #              show up under `<leader>ca`.
-      #
-      # We intentionally do not register any formatter sources here — conform
-      # is the single formatter dispatcher, and none-ls's lsp-format auto-wire
-      # would otherwise race with it.
+      # NOTE deadnix + statix only; conform owns formatting
       plugins.none-ls = {
         enable = _ true;
-        enableLspFormat = _ false;
+        enableLspFormat = _ false; # NOTE avoid racing with conform
         sources = {
           diagnostics = {
             deadnix.enable = _ true;

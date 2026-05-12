@@ -48,6 +48,15 @@ in
         enable = _ true;
         settings = {
           auto_close = _ true;
+          # NOTE drop otter synthetic buffers; host buffer already gets forwarded diagnostics
+          modes.diagnostics.filter = lib.nixvim.mkRaw ''
+            function(items)
+              return vim.tbl_filter(function(item)
+                local name = item.filename or ""
+                return not name:match("%.otter%.")
+              end, items)
+            end
+          '';
         };
       };
     }
