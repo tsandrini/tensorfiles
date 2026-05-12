@@ -319,6 +319,24 @@ in
           })
           vim.notify("Diagnostic inline: " .. (_diag_inline and "ON" or "OFF"))
         end, { desc = "Toggle inline diagnostic virtual_text + virtual_lines" })
+
+        vim.api.nvim_create_user_command("InlayHintToggle", function()
+          local enabled = vim.lsp.inlay_hint.is_enabled({})
+          vim.lsp.inlay_hint.enable(not enabled)
+          vim.notify("Inlay hints: " .. (not enabled and "ON" or "OFF"))
+        end, { desc = "Toggle LSP inlay hints" })
+
+        vim.api.nvim_create_user_command("SignatureHelpToggle", function()
+          local existing = vim.b.lsp_floating_preview
+          if existing and vim.api.nvim_win_is_valid(existing) then
+            vim.api.nvim_win_close(existing, true)
+            vim.b.lsp_floating_preview = nil
+            return
+          end
+          vim.lsp.buf.signature_help({
+            close_events = { "InsertLeave", "BufHidden", "BufWinLeave" },
+          })
+        end, { desc = "Toggle LSP signature help popup" })
       '';
 
       keymaps = [
@@ -329,6 +347,24 @@ in
           options = {
             silent = true;
             desc = "Toggle inline diagnostic text";
+          };
+        }
+        {
+          mode = "n";
+          key = "<leader>ti";
+          action = "<cmd>InlayHintToggle<CR>";
+          options = {
+            silent = true;
+            desc = "Toggle LSP inlay hints";
+          };
+        }
+        {
+          mode = "i";
+          key = "<C-s>";
+          action = "<cmd>SignatureHelpToggle<CR>";
+          options = {
+            silent = true;
+            desc = "LSP signature help (toggle).";
           };
         }
       ];
