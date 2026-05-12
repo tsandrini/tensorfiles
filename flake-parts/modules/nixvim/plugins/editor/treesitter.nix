@@ -52,35 +52,37 @@ in
       #   enable = _ true;
       # };
 
-      # plugins.treesitter-textobjects = {
-      #   enable = _ true;
-      #   select = {
-      #     enable = _ true;
-      #     lookahead = _ true;
-      #     keymaps = {
-      #       "aa" = _ "@parameter.outer";
-      #       "ia" = _ "@parameter.inner";
-      #       "af" = _ "@function.outer";
-      #       "if" = _ "@function.inner";
-      #       "ac" = _ "@class.outer";
-      #       "ic" = _ "@class.inner";
-      #       "ii" = _ "@conditional.inner";
-      #       "ai" = _ "@conditional.outer";
-      #       "il" = _ "@loop.inner";
-      #       "al" = _ "@loop.outer";
-      #       "at" = _ "@comment.outer";
-      #     };
-      #   };
-      #   # swap = {
-      #   #   enable = true;
-      #   #   swapNext = {
-      #   #     "<leader>a" = "@parameters.inner";
-      #   #   };
-      #   #   swapPrevious = {
-      #   #     "<leader>A" = "@parameter.outer";
-      #   #   };
-      #   # };
-      # };
+      plugins.treesitter-textobjects = {
+        enable = _ true;
+        settings = {
+          select = {
+            enable = _ true;
+            lookahead = _ true;
+            keymaps = {
+              "aa" = _ "@parameter.outer";
+              "ia" = _ "@parameter.inner";
+              "af" = _ "@function.outer";
+              "if" = _ "@function.inner";
+              "ac" = _ "@class.outer";
+              "ic" = _ "@class.inner";
+              "ii" = _ "@conditional.inner";
+              "ai" = _ "@conditional.outer";
+              "il" = _ "@loop.inner";
+              "al" = _ "@loop.outer";
+              "at" = _ "@comment.outer";
+            };
+          };
+        };
+        # swap = {
+        #   enable = true;
+        #   swapNext = {
+        #     "<leader>a" = "@parameters.inner";
+        #   };
+        #   swapPrevious = {
+        #     "<leader>A" = "@parameter.outer";
+        #   };
+        # };
+      };
     }
     # |----------------------------------------------------------------------| #
   ]);
