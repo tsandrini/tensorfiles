@@ -179,11 +179,10 @@ in
               folder = "Logs & Loki";
             }
             # --- Mailserver ---
-            {
-              name = "dovecot2 (old_stats) overview by tsandrini";
-              options.path = ../grafana/dashboards/dovecot2-old-stats-overview-by-tsandrini.json;
-              folder = "Mailserver";
-            }
+            # NOTE: the old `dovecot2 (old_stats) overview` dashboard was removed —
+            # its panels reference metric names from the dead Dovecot old_stats
+            # schema and no longer match the 2.4 statistics output. A new dashboard
+            # tailored to 2.4's metric naming is TODO.
             {
               name = "Postfix";
               options.path = ../grafana/dashboards/postfix.json;

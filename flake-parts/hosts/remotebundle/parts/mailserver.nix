@@ -118,32 +118,43 @@ in
     secure_ip = "0.0.0.0/0, ::/0";
   '';
 
+  # NOTE: dovecot 2.4 removed the `old_stats` plugin and the `plugin {}` section
+  # entirely. Metrics are now produced by the new statistics subsystem and exposed
+  # via a native OpenMetrics endpoint. See:
+  # https://doc.dovecot.org/2.4.0/core/config/statistics.html
   services.dovecot2.settings = {
-    mail_plugins.old_stats = true;
     service = [
       {
-        _section.name = "old-stats";
-        "unix_listener old-stats" = {
-          user = config.services.dovecot2.settings.default_internal_user;
-          group = config.services.dovecot2.settings.default_internal_group;
-          mode = "0660";
-        };
-        "fifo_listener old-stats-mail" = {
-          mode = "0660";
-          user = config.services.dovecot2.settings.default_internal_user;
-          group = config.services.dovecot2.settings.default_internal_group;
-        };
-        "fifo_listener old-stats-user" = {
-          mode = "0660";
-          user = config.services.dovecot2.settings.default_internal_user;
-          group = config.services.dovecot2.settings.default_internal_group;
+        _section.name = "stats";
+        "inet_listener http" = {
+          inherit (prometheusExporters.dovecot) port;
         };
       }
     ];
-    plugin = {
-      old_stats_refresh = "30 secs";
-      old_stats_track_cmds = true;
-    };
+    metric = [
+      {
+        _section.name = "auth_success";
+        filter = "event=auth_request_finished AND success=yes";
+      }
+      {
+        _section.name = "auth_failure";
+        filter = "event=auth_request_finished AND success=no";
+      }
+      {
+        _section.name = "imap_command";
+        filter = "event=imap_command_finished";
+        "group_by cmd_name" = { };
+        "group_by tagged_reply_state" = { };
+      }
+      {
+        _section.name = "smtp_transaction";
+        filter = "event=smtp_server_transaction_finished";
+      }
+      {
+        _section.name = "mail_delivery";
+        filter = "event=mail_delivery_finished";
+      }
+    ];
   };
 
   services.rspamd = {
@@ -301,17 +312,10 @@ in
       logfilePath = "/var/log/mail";
     };
 
-    dovecot = {
-      enable = true;
-      user = config.services.dovecot2.settings.default_internal_user;
-      group = config.services.dovecot2.settings.default_internal_group;
-      inherit (prometheusExporters.dovecot) port;
-      socketPath = "/var/run/dovecot2/old-stats";
-      scopes = [
-        "user"
-        "global"
-      ];
-    };
+    # NOTE: the legacy `kumina/dovecot_exporter` (services.prometheus.exporters.dovecot)
+    # is dropped — it only speaks the dead `old-stats` UNIX socket protocol. Dovecot
+    # 2.4 now exposes OpenMetrics natively via the `service stats` http listener
+    # configured above; prometheus scrapes that directly on the same port.
   };
 
   age.secrets = {
