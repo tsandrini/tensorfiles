@@ -32,7 +32,7 @@ in
   imports = [
     inputs.disko.nixosModules.disko
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-x270
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    # inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
@@ -145,7 +145,7 @@ in
   };
 
   # STEAM STUFF
-  services.pipewire.lowLatency.enable = true;
+  # services.pipewire.lowLatency.enable = true;
   hardware.graphics.enable32Bit = true;
   programs.steam = {
     enable = true;

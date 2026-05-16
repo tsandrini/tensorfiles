@@ -39,7 +39,8 @@ in
   # --------------------------
   imports = [
     inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14
-    inputs.nix-gaming.nixosModules.pipewireLowLatency
+    # NOTE: T14 chip cant handle this
+    # inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
     inputs.nix-mineral.nixosModules.nix-mineral
 
@@ -151,8 +152,6 @@ in
     '';
   };
 
-  # STEAM STUFF
-  services.pipewire.lowLatency.enable = true;
   hardware.graphics.enable32Bit = true;
   programs.steam = {
     enable = true;
