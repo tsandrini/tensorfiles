@@ -62,6 +62,24 @@ let
       }
       // attrs
     );
+
+  # NOTE: HTTP/3 advertised to clients via Alt-Svc; ma=86400 is the cache
+  # lifetime — see RFC 7838. Toggling h3 off later would strand clients with
+  # this hint until it expires, so keep h3 on once enabled.
+  mkPublicVhost =
+    attrs:
+    (
+      {
+        enableACME = true;
+        forceSSL = true;
+        quic = true;
+        http3 = true;
+        extraConfig = ''
+          add_header Alt-Svc 'h3=":443"; ma=86400' always;
+        '';
+      }
+      // attrs
+    );
 in
 {
   # --------------------------
@@ -81,7 +99,7 @@ in
         443
       ];
       allowedUDPPorts = [
-        #
+        443 # HTTP/3 / QUIC
       ];
     };
     defaultSubnets = {
@@ -122,6 +140,10 @@ in
     recommendedOptimisation = true;
     recommendedTlsSettings = true;
 
+    # NOTE: needed so QUIC connection IDs stay routed to the right worker
+    # across reloads and multi-worker setups.
+    enableQuicBPF = true;
+
     commonHttpConfig = ''
       # Define rate limiting zones
       limit_req_zone $binary_remote_addr zone=req_limit_per_ip:10m rate=5r/s;
@@ -150,17 +172,13 @@ in
       };
     };
 
-    virtualHosts."${nginxVars.primaryDomain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."${nginxVars.primaryDomain}" = mkPublicVhost {
       locations."/" = {
         proxyPass = "http://unix:${config.services.anubis.instances.immutable-insights.settings.BIND}";
       };
     };
 
-    virtualHosts."www.${nginxVars.primaryDomain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."www.${nginxVars.primaryDomain}" = mkPublicVhost {
       globalRedirect = nginxVars.primaryDomain;
     };
 
@@ -183,44 +201,34 @@ in
       };
     };
 
-    virtualHosts."${virtualHostsVar."grafana".domain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."${virtualHostsVar."grafana".domain}" = mkPublicVhost {
       locations."/" = {
         proxyWebsockets = true;
         proxyPass = "http://unix:${config.services.anubis.instances.grafana.settings.BIND}";
       };
     };
 
-    virtualHosts."${virtualHostsVar."pgadmin".domain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."${virtualHostsVar."pgadmin".domain}" = mkPublicVhost {
       locations."/" = {
         proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
       };
     };
 
-    virtualHosts."${virtualHostsVar."forgejo".domain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."${virtualHostsVar."forgejo".domain}" = mkPublicVhost {
       locations."/" = {
         proxyWebsockets = true;
         proxyPass = "http://unix:${config.services.anubis.instances.forgejo.settings.BIND}";
       };
     };
 
-    virtualHosts."${virtualHostsVar."prometheus".domain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."${virtualHostsVar."prometheus".domain}" = mkPublicVhost {
       basicAuthFile = config.age.secrets."hosts/${hostName}/prometheus-ui-basic-auth-file".path;
       locations."/" = {
         proxyPass = "http://${virtualHostsVar."prometheus".proxyEndpoint}";
       };
     };
 
-    virtualHosts."${virtualHostsVar."immich".domain}" = {
-      enableACME = true;
-      forceSSL = true;
+    virtualHosts."${virtualHostsVar."immich".domain}" = mkPublicVhost {
       locations."/" = {
         proxyPass = "http://${virtualHostsVar."immich".proxyEndpoint}";
         extraConfig = ''
