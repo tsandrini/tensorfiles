@@ -236,6 +236,7 @@ in
       pkgs.keybase-gui # Keybase official GUI
       pkgs.kbfs # Keybase filesystem
       pkgs.teams-for-linux # Unofficial Microsoft Teams client for Linux
+      pkgs.prismlauncher # Free, open source launcher for Minecraft
 
       # --- LLM garbage ---
       inputs.self.packages.${system}.cc-switcher
