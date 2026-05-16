@@ -32,6 +32,71 @@ let
   cfg = config.tensorfiles.hm.programs.niri-flake;
   _ = mkOverrideAtHmModuleLevel;
 
+  screenshot = pkgs.writeShellScriptBin "screenshot" ''
+    set -euo pipefail
+    export PATH=${
+      lib.makeBinPath [
+        pkgs.grim
+        pkgs.slurp
+        pkgs.satty
+        pkgs.jq
+        pkgs.wl-clipboard
+        pkgs.niri-unstable
+        pkgs.coreutils
+      ]
+    }:$PATH
+
+    mode="region"
+    delay="0"
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        --delay)
+          delay="$2"
+          shift 2
+          ;;
+        region | full | output)
+          mode="$1"
+          shift
+          ;;
+        *)
+          echo "usage: screenshot [--delay SECONDS] region|full|output" >&2
+          exit 2
+          ;;
+      esac
+    done
+
+    out_dir="''${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+    mkdir -p "$out_dir"
+    out_file="$out_dir/satty-$(date +%Y%m%d-%H%M%S).png"
+
+    # NOTE: delay lets launchers (DMS spotlight, rofi, ...) fully dismiss
+    # before grim/slurp paint over the screen.
+    [ "$delay" = "0" ] || sleep "$delay"
+
+    capture() {
+      case "$1" in
+        region)
+          geom="$(slurp)" || exit 0
+          [ -n "$geom" ] || exit 0
+          grim -g "$geom" -
+          ;;
+        full)
+          grim -
+          ;;
+        output)
+          grim -o "$(niri msg --json focused-output | jq -r '.name')" -
+          ;;
+      esac
+    }
+
+    capture "$mode" | satty \
+      --filename - \
+      --output-filename "$out_file" \
+      --early-exit \
+      --copy-command wl-copy \
+      --actions-on-enter save-to-clipboard
+  '';
+
   toggleEdp = pkgs.writeShellScriptBin "toggle-edp" ''
     set -euo pipefail
 
@@ -76,8 +141,8 @@ in
         enable = mkEnableOption "Enables various default DMS keybinds";
       };
 
-      flameshot = {
-        enable = mkEnableOption "Enables flameshot as the screenshot backend for niri";
+      screenshot = {
+        enable = mkEnableOption "Enables grim + slurp + satty as the screenshot stack for niri";
       };
     };
   };
@@ -338,44 +403,89 @@ in
         };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf cfg.binds.flameshot.enable {
-      services.flameshot = {
-        enable = _ true;
-        package = pkgs.flameshot.override {
-          enableWlrSupport = true;
+    (mkIf cfg.binds.screenshot.enable {
+      home.packages = [ screenshot ];
+
+      xdg.desktopEntries = {
+        screenshot-region = {
+          name = "Screenshot (Region)";
+          genericName = "Screenshot";
+          comment = "Select a region and annotate it with satty";
+          exec = "screenshot --delay 0.4 region";
+          icon = "applets-screenshooter";
+          terminal = false;
+          categories = [
+            "Graphics"
+            "Utility"
+          ];
+          mimeType = [ ];
         };
-        settings = _ {
-          General = {
-            showStartupLaunchMessage = false;
-            useGrimAdapter = true;
-          };
+        screenshot-full = {
+          name = "Screenshot (Full)";
+          genericName = "Screenshot";
+          comment = "Capture the entire compositor and annotate it with satty";
+          exec = "screenshot --delay 0.4 full";
+          icon = "applets-screenshooter";
+          terminal = false;
+          categories = [
+            "Graphics"
+            "Utility"
+          ];
+          mimeType = [ ];
+        };
+        screenshot-output = {
+          name = "Screenshot (Focused Output)";
+          genericName = "Screenshot";
+          comment = "Capture the focused output and annotate it with satty";
+          exec = "screenshot --delay 0.4 output";
+          icon = "applets-screenshooter";
+          terminal = false;
+          categories = [
+            "Graphics"
+            "Utility"
+          ];
+          mimeType = [ ];
         };
       };
 
-      programs.niri.settings.binds =
-        let
-          a = config.lib.niri.actions;
-        in
-        {
-          "Print".action = _ (
-            a.spawn [
-              "flameshot"
-              "gui"
-            ]
-          );
-          "Ctrl+Print".action = _ (
-            a.spawn [
-              "flameshot"
-              "gui"
-            ]
-          );
-          "Alt+Print".action = _ (
-            a.spawn [
-              "flameshot"
-              "gui"
-            ]
-          );
-        };
+      programs.niri.settings = {
+        # NOTE: satty registers as com.gabm.satty — keep it floating so the
+        # annotation UI doesn't get tiled into the scrolling layout.
+        window-rules = [
+          {
+            matches = [ { app-id = "^com\\.gabm\\.satty$"; } ];
+            open-floating = _ true;
+          }
+        ];
+
+        binds =
+          let
+            a = config.lib.niri.actions;
+          in
+          {
+            # Region select → satty
+            "Print".action = _ (
+              a.spawn [
+                "screenshot"
+                "region"
+              ]
+            );
+            # Full compositor → satty
+            "Ctrl+Print".action = _ (
+              a.spawn [
+                "screenshot"
+                "full"
+              ]
+            );
+            # Focused output → satty
+            "Alt+Print".action = _ (
+              a.spawn [
+                "screenshot"
+                "output"
+              ]
+            );
+          };
+      };
     })
     # |----------------------------------------------------------------------| #
   ]);

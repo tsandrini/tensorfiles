@@ -72,7 +72,7 @@ in
           niri-flake = {
             enable = _ true;
             binds.dms.enable = _ true;
-            binds.flameshot.enable = _ true;
+            binds.screenshot.enable = _ true;
           };
           dank-material-shell = {
             enable = _ true;
