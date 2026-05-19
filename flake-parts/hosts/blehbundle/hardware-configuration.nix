@@ -56,6 +56,8 @@
     tmp.cleanOnBoot = true;
   };
 
+  services.qemuGuest.enable = true;
+
   # NOTE: SSD-backed; lets disko's discard hints actually free blocks
   services.fstrim.enable = true;
 
@@ -67,11 +69,23 @@
   };
 
   # IPv4 via DHCP on the public iface (Netcup hands it out automatically).
-  # IPv6: Netcup does NOT do SLAAC/DHCPv6 — must be configured statically once
-  # the /64 from SCP is known. Add e.g.:
-  #   networking.interfaces.<iface>.ipv6.addresses = [{ address = "<base>::1"; prefixLength = 64; }];
-  #   networking.defaultGateway6 = { address = "fe80::1"; interface = "<iface>"; };
-  networking.useDHCP = lib.mkDefault true;
+  # IPv6: Netcup routes 2a03:4000:19:24e::/64 to this VM but does NOT do
+  # SLAAC/DHCPv6 — both the address and the link-local default gateway must
+  # be configured statically.
+  networking = {
+    useDHCP = lib.mkDefault true;
+
+    interfaces.ens3.ipv6.addresses = [
+      {
+        address = "2a03:4000:19:24e::1";
+        prefixLength = 64;
+      }
+    ];
+    defaultGateway6 = {
+      address = "fe80::1";
+      interface = "ens3";
+    };
+  };
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
 }

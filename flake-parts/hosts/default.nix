@@ -169,6 +169,8 @@ in
         hostImportArgs = {
           inherit
             inputs
+            infraVars
+            secretsPath
             ;
         };
       }

@@ -18,6 +18,7 @@ let
   spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
   pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINLvjzkKLhKbaRU/uf3A+pf25rir3y+6mvcbaAxt2DHP root@pupibundle";
+  blehbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUem9jyfHkEN3DRNuS896ai1+Pu/vxiQrXoZw0cHxGH root@blehbundle";
 
   hosts = [
     spinorbundle
@@ -25,6 +26,7 @@ let
     remotebundle
     flatbundle
     pupibundle
+    blehbundle
   ];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
@@ -43,6 +45,13 @@ in
   # --------------------
   "hosts/pupibundle/users/root/system-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
   "hosts/pupibundle/users/tsandrini/system-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+
+  # --- blehbundle ---
+  # --------------------
+  "hosts/blehbundle/wg-home-tunnel-privkey.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
 
   # --- flatbundle ---
   # --------------------

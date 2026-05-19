@@ -226,7 +226,7 @@ _: rec {
       {
         inherit address;
         publicAddress = "46.38.255.68";
-        wgAddress = "10.0.33.14";
+        wgAddress = "10.0.33.15";
         users = {
           root = { };
           tsandrini = { };

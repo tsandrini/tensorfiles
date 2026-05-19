@@ -14,10 +14,17 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 {
   inputs,
+  infraVars,
+  secretsPath,
 }:
 {
+  config,
+  hostName,
   ...
 }:
+let
+  selfVars = infraVars.hosts."${hostName}";
+in
 {
   # -----------------
   # | SPECIFICATION |
@@ -63,11 +70,10 @@
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
       allowedTCPPorts = [
-        22
-        2222
+        #
       ];
       allowedUDPPorts = [
-        # config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
+        config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
       ];
     };
     defaultSubnets = {
@@ -79,10 +85,11 @@
 
   nix-mineral = {
     enable = true;
+    preset = "performance";
     settings = {
       network.ip-forwarding = true;
-      kernel.cpu-mitigations = "smt-on";
     };
+    extras.system.minimize-swapping = true;
   };
 
   security.sudo.extraRules = [
@@ -97,38 +104,39 @@
     }
   ];
 
-  # networking.wireguard.interfaces = {
-  #   wg-home-tunnel = {
-  #     ips = [ "${selfVars.wgAddress}/32" ];
-  #     listenPort = 51821;
-  #     privateKeyFile = config.age.secrets."hosts/${hostName}/wg-home-tunnel-privkey".path;
-  #
-  #     peers = [
-  #       {
-  #         publicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
-  #
-  #         allowedIPs = [
-  #           infraVars.common.networking.defaultSubnet
-  #           infraVars.common.networking.intranetSubnet
-  #           "10.20.0.0/24"
-  #           "10.0.0.0/24"
-  #           "10.5.0.0/24"
-  #         ];
-  #
-  #         endpoint = "vpn.tsandrini.sh:51821";
-  #         persistentKeepalive = 25;
-  #       }
-  #     ];
-  #   };
-  # };
-  #
-  # services.prometheus.exporters = {
-  #   #
-  # };
-  #
-  # age.secrets = {
-  #   "hosts/${hostName}/wg-home-tunnel-privkey" = {
-  #     file = "${secretsPath}/hosts/${hostName}/wg-home-tunnel-privkey.age";
-  #   };
-  # };
+  networking.wireguard.interfaces = {
+    wg-home-tunnel = {
+      ips = [ "${selfVars.wgAddress}/32" ];
+      listenPort = 51821;
+      privateKeyFile = config.age.secrets."hosts/${hostName}/wg-home-tunnel-privkey".path;
+
+      peers = [
+        {
+          publicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
+
+          allowedIPs = [
+            infraVars.common.networking.defaultSubnet
+            infraVars.common.networking.intranetSubnet
+            "10.20.0.0/24"
+            "10.0.0.0/24"
+            "10.5.0.0/24"
+          ];
+
+          # endpoint = "vpn.tsandrini.sh:51821";
+          endpoint = "[2a02:8308:298:c900::a]:51821";
+          persistentKeepalive = 25;
+        }
+      ];
+    };
+  };
+
+  services.prometheus.exporters = {
+    #
+  };
+
+  age.secrets = {
+    "hosts/${hostName}/wg-home-tunnel-privkey" = {
+      file = "${secretsPath}/hosts/${hostName}/wg-home-tunnel-privkey.age";
+    };
+  };
 }

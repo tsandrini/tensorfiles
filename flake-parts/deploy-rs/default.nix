@@ -45,7 +45,7 @@ in
       hostname = infraVars.hosts."remotebundle".wgAddress;
     };
     "blehbundle" = deployHost "blehbundle" "x86_64-linux" {
-      hostname = infraVars.hosts."blehbundle".publicAddress;
+      hostname = infraVars.hosts."blehbundle".wgAddress;
     };
     "pupibundle" = deployHost "pupibundle" "aarch64-linux" {
       remoteBuild = true;
