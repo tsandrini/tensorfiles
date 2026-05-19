@@ -56,6 +56,18 @@ in
         };
       };
     };
+    blehbundle = {
+      users = {
+        root = {
+          sshKey = null;
+          authorizedKeys = [ ];
+        };
+        tsandrini = {
+          sshKey = null;
+          authorizedKeys = [ tsandrini ];
+        };
+      };
+    };
     pupibundle = {
       users = {
         root = {

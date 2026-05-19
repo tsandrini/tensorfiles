@@ -161,6 +161,18 @@ in
         };
       }
     );
+    blehbundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "blehbundle" {
+        extraOverlays = sharedOverlays;
+        extraModules = sharedModules;
+        hostImportArgs = {
+          inherit
+            inputs
+            ;
+        };
+      }
+    );
     spinorbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "spinorbundle" {

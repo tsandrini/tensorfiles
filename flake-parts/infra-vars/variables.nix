@@ -219,6 +219,27 @@ _: rec {
         };
       };
     # ----------------------------------
+    "blehbundle" =
+      let
+        address = "localhost";
+      in
+      {
+        inherit address;
+        publicAddress = "46.38.255.68";
+        wgAddress = "10.0.33.14";
+        users = {
+          root = { };
+          tsandrini = { };
+        };
+        services = {
+          prometheus = {
+            exporters = {
+              node.port = common.services.prometheus.exporters.node.defaultPort;
+            };
+          };
+        };
+      };
+    # ----------------------------------
     "pupibundle" =
       let
         address = "10.10.0.10";
