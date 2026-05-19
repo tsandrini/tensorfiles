@@ -246,6 +246,7 @@ in
 
               # --- Windows and columns manipulation ---
               "${cfg.binds.mod}+F".action = _ a.maximize-column;
+              "${cfg.binds.mod}+Shift+F".action = _ a.fullscreen-window;
               "${cfg.binds.mod}+T".action = _ a.toggle-window-floating;
               "${cfg.binds.mod}+R".action = _ a.switch-preset-column-width;
               "${cfg.binds.mod}+Comma".action = _ a.consume-or-expel-window-right;
