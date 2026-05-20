@@ -47,17 +47,6 @@ let
   #    `connector` which Sinytra Connector beta.14 doesn't register on
   #    dedicated 1.21.1 servers (sinytra/Connector#1428). Server crashes
   #    on the dep check unless removed.
-  #
-  # NOTE: this used to symlink the jars via `cp -as ${src}/. $out/`. That
-  # produces symlink targets with a `/./` segment in their path (e.g.
-  # `/nix/store/...-serverpack/mods/./CrashAssistant-*.jar`). NeoForge's
-  # JarInJar selector tries to load each mod's `META-INF/jarjar/*.jar` via
-  # a `jij:` URI built from the outer jar path; with `/./` in there, mixin
-  # config resources inside the embedded jar can't be opened and
-  # `MixinInitialisationError: Error initialising mixin config
-  # crash_assistant.mixins.json` fires during boot, with FML calling
-  # System.exit(0). Copying the jars instead avoids the symlink path
-  # entirely.
   aeronauticsServerMods =
     let
       excludedMods = [
@@ -75,31 +64,6 @@ let
       ${lib.concatMapStringsSep "\n" (m: "cp -L ${m} $out/") extraMods}
     '';
 
-  # NOTE: temporarily commented out to verify that the mods=files= fix above
-  # is the ONLY thing needed (i.e. that plain nix-minecraft + neoforgeServers
-  # works once `mods/` is a real writable directory). Restore if the test fails.
-  /*
-    serverStarterJar = pkgs.fetchurl {
-      url = "https://github.com/neoforged/ServerStarterJar/releases/download/0.1.34/server.jar";
-      hash = "sha256-H2tc/eUQ69HeNfoVqLHjgooheIJ1CIEPtzfPc4eAhLI=";
-    };
-
-    neoforgePkg = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
-
-    aeronauticsServerPkg =
-      pkgs.runCommand "aeronautics-neoforge-ssj"
-        {
-          meta.mainProgram = "minecraft-server";
-        }
-        ''
-          mkdir -p $out/bin
-          cat > $out/bin/minecraft-server <<EOF
-          #!${pkgs.runtimeShell}
-          exec ${pkgs.jdk21_headless}/bin/java "\$@" -jar ${serverStarterJar} nogui
-          EOF
-          chmod +x $out/bin/minecraft-server
-        '';
-  */
 in
 {
   # -----------------
@@ -226,7 +190,6 @@ in
       # NeoForge 21.1.228 — matches variables.txt MODLOADER_VERSION in the
       # serverpack.
       package = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
-      # package = aeronauticsServerPkg;   # SSJ-wrapped variant (commented out for the simplification test)
 
       # Aikar-style G1GC flags tuned for Create-heavy packs. 5 GiB heap leaves
       # ~3 GiB for OS + JVM metaspace + Netty/native off-heap surges during
@@ -276,28 +239,15 @@ in
         simulation-distance = 10;
       };
 
-      symlinks = {
-        # NOTE: SSJ-related symlinks (run.sh, user_jvm_args.txt, libraries,
-        # server.jar) were commented out for the simplification test. Restore
-        # together with `aeronauticsServerPkg` above if plain neoforgeServers
-        # turns out to need them.
-      };
-
       files = {
         "config" = "${aeronauticsServerpack}/config";
         "defaultconfigs" = "${aeronauticsServerpack}/defaultconfigs";
 
-        # `mods/` MUST be a real directory of real files in the data dir.
-        # When it's a symlink to /nix/store (the previous `symlinks=` approach),
-        # `Path.toRealPath()` on each mod jar resolves to a /nix/store path,
-        # and NeoForge's JarInJar selector fails to open mixin-config resources
-        # inside JiJ-embedded jars (e.g. `crash_assistant.mixins.json` inside
-        # `META-INF/jarjar/crash_assistant-neoforge.jar`) — likely because JiJ
-        # needs a writable path for its in-process FS extraction. The failure
-        # surfaces as `MixinInitialisationError` and FML calls `System.exit(0)`
-        # without writing a crash report, matching the silent exit-0 we saw.
-        # `files=` does `cp -r --dereference` into the data dir on every start
-        # (~700 MB), which is slow but matches the proven /opt/aoc-manual layout.
+        # `mods` MUST go through `files=` (real dir copy), not `symlinks=`.
+        # NeoForge JarInJar resolves each jar via `Path.toRealPath()`; if that
+        # lands in /nix/store, mixin configs inside JiJ-embedded jars can't be
+        # opened and FML aborts with `MixinInitialisationError` + System.exit(0).
+        # `files=` does `cp -r --dereference` (~700 MB) on every start.
         "mods" = aeronauticsServerMods;
       };
 
