@@ -31,6 +31,7 @@
   disko,
   rc2nix,
   cachix,
+  packwiz,
   nixos-anywhere,
   markdownlint-cli,
   writeShellScriptBin,
@@ -84,6 +85,7 @@ mkShell {
       nix-fast-build # Combine the power of nix-eval-jobs with nix-output-monitor to speed-up your evaluation and building process
       deploy-rs # Multi-profile Nix-flake deploy tool
       nixos-anywhere # Install nixos everywhere via ssh
+      packwiz # Command line tool for editing and distributing Minecraft modpacks, using a git-friendly TOML format
     ];
 
   shellHook = ''

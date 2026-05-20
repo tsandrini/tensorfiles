@@ -164,7 +164,9 @@ in
     blehbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "blehbundle" {
-        extraOverlays = sharedOverlays;
+        extraOverlays = sharedOverlays ++ [
+          inputs.nix-minecraft.overlay
+        ];
         extraModules = sharedModules;
         hostImportArgs = {
           inherit

@@ -1,1 +1,8 @@
 !.gitignore
+
+# packwiz scratch — never commit raw CurseForge zips
+tmp/
+
+# The modpack ships .toml.bak config defaults which packwiz needs at install
+# time, but the repo-root .gitignore catches *.bak. Re-include inside packwiz/.
+!packwiz/**/*.bak
