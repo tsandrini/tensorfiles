@@ -47,6 +47,17 @@ let
   #    `connector` which Sinytra Connector beta.14 doesn't register on
   #    dedicated 1.21.1 servers (sinytra/Connector#1428). Server crashes
   #    on the dep check unless removed.
+  #
+  # NOTE: this used to symlink the jars via `cp -as ${src}/. $out/`. That
+  # produces symlink targets with a `/./` segment in their path (e.g.
+  # `/nix/store/...-serverpack/mods/./CrashAssistant-*.jar`). NeoForge's
+  # JarInJar selector tries to load each mod's `META-INF/jarjar/*.jar` via
+  # a `jij:` URI built from the outer jar path; with `/./` in there, mixin
+  # config resources inside the embedded jar can't be opened and
+  # `MixinInitialisationError: Error initialising mixin config
+  # crash_assistant.mixins.json` fires during boot, with FML calling
+  # System.exit(0). Copying the jars instead avoids the symlink path
+  # entirely.
   aeronauticsServerMods =
     let
       excludedMods = [
@@ -58,11 +69,58 @@ let
     in
     pkgs.runCommand "aeronautics-server-mods" { } ''
       mkdir -p $out
-      cp -as ${aeronauticsServerpack}/mods/. $out/
+      cp -L ${aeronauticsServerpack}/mods/*.jar $out/
       chmod u+w -R $out
       ${lib.concatMapStringsSep "\n" (pat: "rm -f $out/${pat}") excludedMods}
       ${lib.concatMapStringsSep "\n" (m: "cp -L ${m} $out/") extraMods}
     '';
+
+  # ServerStarterJar — NeoForged's in-process bootstrap launcher used by the
+  # upstream CurseForge serverpack `start.sh`. Pinned to 0.1.34 (same version
+  # that the manual `/opt/aoc-manual` baseline downloaded and proved working).
+  # See https://github.com/neoforged/ServerStarterJar
+  serverStarterJar = pkgs.fetchurl {
+    url = "https://github.com/neoforged/ServerStarterJar/releases/download/0.1.34/server.jar";
+    hash = "sha256-H2tc/eUQ69HeNfoVqLHjgooheIJ1CIEPtzfPc4eAhLI=";
+  };
+
+  neoforgePkg = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
+
+  # Custom launcher package for `services.minecraft-servers.servers.aeronautics`.
+  # Replaces nix-minecraft's default invocation (`java @unix_args.txt`) with a
+  # ServerStarterJar-driven launch (`java -jar server.jar nogui`).
+  #
+  # Why this matters: `java @unix_args.txt` initialises
+  # `java.nio.file.spi.FileSystemProvider.installedProviders` at JVM startup,
+  # before BootstrapLauncher has loaded the NeoForge module path. NeoForge's
+  # `JarJarFileSystems` (JiJ) provider therefore never appears in the cached
+  # provider list, and JiJ-packed mods (e.g. Sinytra Connector beta.14) get
+  # silently rejected as "not a valid mod file" — FML then aborts mod loading
+  # with a clean `exit 0` after `mixin/INFO: Compatibility level set to JAVA_21`,
+  # no crash report.
+  #
+  # SSJ does the module-layer setup in-process and explicitly calls
+  # `loadInstalledProviders()` + `SET_installedProviders` so JiJ becomes visible.
+  # See Main.java around the "Clear installed providers so the JiJ provider can
+  # be found" comment in github.com/neoforged/ServerStarterJar.
+  #
+  # SSJ reads `run.sh` from CWD to derive the launch args, then resolves
+  # `libraries/...` paths relative to CWD too — so we symlink the NeoForge
+  # runtime (run.sh, user_jvm_args.txt, libraries/) and SSJ itself into the
+  # server data dir via nix-minecraft's `symlinks` option below.
+  aeronauticsServerPkg =
+    pkgs.runCommand "aeronautics-neoforge-ssj"
+      {
+        meta.mainProgram = "minecraft-server";
+      }
+      ''
+        mkdir -p $out/bin
+        cat > $out/bin/minecraft-server <<EOF
+        #!${pkgs.runtimeShell}
+        exec ${pkgs.jdk21_headless}/bin/java "\$@" -jar ${serverStarterJar} nogui
+        EOF
+        chmod +x $out/bin/minecraft-server
+      '';
 in
 {
   # -----------------
@@ -178,72 +236,17 @@ in
     };
   };
 
-  services.prometheus.exporters = {
-    #
-  };
-
   services.minecraft-servers = {
     enable = true;
     eula = true;
 
-    # NOTE: This is just for testing, I have verified that a vanilla server
-    # with this setup works without any issues, so we can safely eliminate
-    # that the problem would be with serverProperties or jvmOpts
-    servers.vanilla = {
-      enable = false;
-      autoStart = true;
-
-      package = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
-
-      # Aikar-style G1GC flags tuned for Create-heavy packs. 5 GiB heap leaves
-      # ~3 GiB for OS + JVM metaspace + Netty/native off-heap surges during
-      # world-gen on the 8 GiB box. Dropped AlwaysPreTouch (was OOM-killing
-      # the JVM during chunk-gen on first boot).
-      jvmOpts = builtins.concatStringsSep " " [
-        "-Xms5G"
-        "-Xmx5G"
-        "-XX:+UseG1GC"
-        "-XX:+ParallelRefProcEnabled"
-        "-XX:MaxGCPauseMillis=200"
-        "-XX:+UnlockExperimentalVMOptions"
-        "-XX:+DisableExplicitGC"
-        "-XX:G1NewSizePercent=30"
-        "-XX:G1MaxNewSizePercent=40"
-        "-XX:G1HeapRegionSize=8M"
-        "-XX:G1ReservePercent=20"
-        "-XX:G1HeapWastePercent=5"
-        "-XX:G1MixedGCCountTarget=4"
-        "-XX:InitiatingHeapOccupancyPercent=15"
-        "-XX:G1MixedGCLiveThresholdPercent=90"
-        "-XX:G1RSetUpdatingPauseTimePercent=5"
-        "-XX:SurvivorRatio=32"
-        "-XX:+PerfDisableSharedMem"
-        "-XX:MaxTenuringThreshold=1"
-        "-Dlog4j2.formatMsgNoLookups=true"
-      ];
-
-      serverProperties = {
-        server-port = 25565;
-        difficulty = "normal";
-        gamemode = "survival";
-        max-players = 8;
-        motd = "Aoc Aeronautics — phase 1";
-        white-list = false; # flip on once we expose publicly
-        online-mode = true;
-        spawn-protection = 0;
-        view-distance = 8;
-        simulation-distance = 6;
-      };
-
-    };
-
-    servers.aeronautics = {
+    servers.lt-aoc-aeronautics = {
       enable = true;
       autoStart = true;
 
-      # NeoForge 21.1.228 — matches variables.txt MODLOADER_VERSION in the
-      # serverpack.
-      package = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
+      # NeoForge 21.1.228 wrapped to launch via ServerStarterJar instead of
+      # `java @unix_args.txt`. See `aeronauticsServerPkg` above for the why.
+      package = aeronauticsServerPkg;
 
       # Aikar-style G1GC flags tuned for Create-heavy packs. 5 GiB heap leaves
       # ~3 GiB for OS + JVM metaspace + Netty/native off-heap surges during
@@ -272,29 +275,60 @@ in
         "-Dlog4j2.formatMsgNoLookups=true"
       ];
 
+      whitelist = {
+        "tsandrini" = "73cdb8a9-a7fc-49be-89d9-ad3924b71b44";
+        "A_Tarkus" = "f8bde3b3-839b-45f7-91ef-3e070d22041a";
+        "TenMarky" = "53e7d569-b7be-4595-95ea-e6fb9123efa9";
+        "zenmaya" = "e32e9504-8b66-48b5-a1ac-a8484894ceaf";
+        "Sarianille" = "f8686022-6a6e-4e61-bf86-d5891676a599";
+      };
+
       serverProperties = {
         server-port = 25565;
         difficulty = "normal";
         gamemode = "survival";
         max-players = 8;
-        motd = "Aoc Aeronautics — phase 1";
-        white-list = false; # flip on once we expose publicly
+        motd = "Henlo punťíííkuu, strčím ti prst do nosu :3 hi hi";
+        white-list = true;
         online-mode = true;
         spawn-protection = 0;
-        view-distance = 8;
-        simulation-distance = 6;
+        view-distance = 10;
+        simulation-distance = 10;
       };
 
       symlinks = {
-        "mods" = aeronauticsServerMods;
+        # ServerStarterJar reads `run.sh` from CWD and resolves relative paths
+        # (`libraries/...`, `user_jvm_args.txt`) against CWD as well, so we
+        # mirror the NeoForge runtime + SSJ jar into the server data dir.
+        "run.sh" = "${neoforgePkg}/run.sh";
+        "user_jvm_args.txt" = "${neoforgePkg}/user_jvm_args.txt";
+        "libraries" = "${neoforgePkg}/libraries";
+        "server.jar" = serverStarterJar;
       };
 
       files = {
         "config" = "${aeronauticsServerpack}/config";
         "defaultconfigs" = "${aeronauticsServerpack}/defaultconfigs";
+
+        # `mods/` MUST be a real directory of real files in the data dir.
+        # When it's a symlink to /nix/store (the previous `symlinks=` approach),
+        # `Path.toRealPath()` on each mod jar resolves to a /nix/store path,
+        # and NeoForge's JarInJar selector fails to open mixin-config resources
+        # inside JiJ-embedded jars (e.g. `crash_assistant.mixins.json` inside
+        # `META-INF/jarjar/crash_assistant-neoforge.jar`) — likely because JiJ
+        # needs a writable path for its in-process FS extraction. The failure
+        # surfaces as `MixinInitialisationError` and FML calls `System.exit(0)`
+        # without writing a crash report, matching the silent exit-0 we saw.
+        # `files=` does `cp -r --dereference` into the data dir on every start
+        # (~700 MB), which is slow but matches the proven /opt/aoc-manual layout.
+        "mods" = aeronauticsServerMods;
       };
 
     };
+  };
+
+  services.prometheus.exporters = {
+    #
   };
 
   age.secrets = {
