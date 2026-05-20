@@ -221,7 +221,7 @@ _: rec {
     # ----------------------------------
     "blehbundle" =
       let
-        address = "localhost";
+        address = "10.0.33.15";
       in
       {
         inherit address;

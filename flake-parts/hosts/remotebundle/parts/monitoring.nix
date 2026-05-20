@@ -228,6 +228,7 @@ in
               targets = [
                 (mkTarget "remotebundle" "node")
                 (mkTarget "pupibundle" "node")
+                (mkTarget "blehbundle" "node")
               ];
             }
           ];

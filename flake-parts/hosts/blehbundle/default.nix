@@ -75,52 +75,31 @@ let
       ${lib.concatMapStringsSep "\n" (m: "cp -L ${m} $out/") extraMods}
     '';
 
-  # ServerStarterJar — NeoForged's in-process bootstrap launcher used by the
-  # upstream CurseForge serverpack `start.sh`. Pinned to 0.1.34 (same version
-  # that the manual `/opt/aoc-manual` baseline downloaded and proved working).
-  # See https://github.com/neoforged/ServerStarterJar
-  serverStarterJar = pkgs.fetchurl {
-    url = "https://github.com/neoforged/ServerStarterJar/releases/download/0.1.34/server.jar";
-    hash = "sha256-H2tc/eUQ69HeNfoVqLHjgooheIJ1CIEPtzfPc4eAhLI=";
-  };
+  # NOTE: temporarily commented out to verify that the mods=files= fix above
+  # is the ONLY thing needed (i.e. that plain nix-minecraft + neoforgeServers
+  # works once `mods/` is a real writable directory). Restore if the test fails.
+  /*
+    serverStarterJar = pkgs.fetchurl {
+      url = "https://github.com/neoforged/ServerStarterJar/releases/download/0.1.34/server.jar";
+      hash = "sha256-H2tc/eUQ69HeNfoVqLHjgooheIJ1CIEPtzfPc4eAhLI=";
+    };
 
-  neoforgePkg = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
+    neoforgePkg = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
 
-  # Custom launcher package for `services.minecraft-servers.servers.aeronautics`.
-  # Replaces nix-minecraft's default invocation (`java @unix_args.txt`) with a
-  # ServerStarterJar-driven launch (`java -jar server.jar nogui`).
-  #
-  # Why this matters: `java @unix_args.txt` initialises
-  # `java.nio.file.spi.FileSystemProvider.installedProviders` at JVM startup,
-  # before BootstrapLauncher has loaded the NeoForge module path. NeoForge's
-  # `JarJarFileSystems` (JiJ) provider therefore never appears in the cached
-  # provider list, and JiJ-packed mods (e.g. Sinytra Connector beta.14) get
-  # silently rejected as "not a valid mod file" — FML then aborts mod loading
-  # with a clean `exit 0` after `mixin/INFO: Compatibility level set to JAVA_21`,
-  # no crash report.
-  #
-  # SSJ does the module-layer setup in-process and explicitly calls
-  # `loadInstalledProviders()` + `SET_installedProviders` so JiJ becomes visible.
-  # See Main.java around the "Clear installed providers so the JiJ provider can
-  # be found" comment in github.com/neoforged/ServerStarterJar.
-  #
-  # SSJ reads `run.sh` from CWD to derive the launch args, then resolves
-  # `libraries/...` paths relative to CWD too — so we symlink the NeoForge
-  # runtime (run.sh, user_jvm_args.txt, libraries/) and SSJ itself into the
-  # server data dir via nix-minecraft's `symlinks` option below.
-  aeronauticsServerPkg =
-    pkgs.runCommand "aeronautics-neoforge-ssj"
-      {
-        meta.mainProgram = "minecraft-server";
-      }
-      ''
-        mkdir -p $out/bin
-        cat > $out/bin/minecraft-server <<EOF
-        #!${pkgs.runtimeShell}
-        exec ${pkgs.jdk21_headless}/bin/java "\$@" -jar ${serverStarterJar} nogui
-        EOF
-        chmod +x $out/bin/minecraft-server
-      '';
+    aeronauticsServerPkg =
+      pkgs.runCommand "aeronautics-neoforge-ssj"
+        {
+          meta.mainProgram = "minecraft-server";
+        }
+        ''
+          mkdir -p $out/bin
+          cat > $out/bin/minecraft-server <<EOF
+          #!${pkgs.runtimeShell}
+          exec ${pkgs.jdk21_headless}/bin/java "\$@" -jar ${serverStarterJar} nogui
+          EOF
+          chmod +x $out/bin/minecraft-server
+        '';
+  */
 in
 {
   # -----------------
@@ -148,7 +127,7 @@ in
   tensorfiles = {
     profiles = {
       headless.enable = true;
-      # with-base-monitoring-exports.enable = true;
+      with-base-monitoring-exports.enable = true;
     };
 
     services.networking.networkmanager.enable = false;
@@ -244,17 +223,18 @@ in
       enable = true;
       autoStart = true;
 
-      # NeoForge 21.1.228 wrapped to launch via ServerStarterJar instead of
-      # `java @unix_args.txt`. See `aeronauticsServerPkg` above for the why.
-      package = aeronauticsServerPkg;
+      # NeoForge 21.1.228 — matches variables.txt MODLOADER_VERSION in the
+      # serverpack.
+      package = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
+      # package = aeronauticsServerPkg;   # SSJ-wrapped variant (commented out for the simplification test)
 
       # Aikar-style G1GC flags tuned for Create-heavy packs. 5 GiB heap leaves
       # ~3 GiB for OS + JVM metaspace + Netty/native off-heap surges during
       # world-gen on the 8 GiB box. Dropped AlwaysPreTouch (was OOM-killing
       # the JVM during chunk-gen on first boot).
       jvmOpts = builtins.concatStringsSep " " [
-        "-Xms5G"
-        "-Xmx5G"
+        "-Xms6G"
+        "-Xmx6G"
         "-XX:+UseG1GC"
         "-XX:+ParallelRefProcEnabled"
         "-XX:MaxGCPauseMillis=200"
@@ -297,13 +277,10 @@ in
       };
 
       symlinks = {
-        # ServerStarterJar reads `run.sh` from CWD and resolves relative paths
-        # (`libraries/...`, `user_jvm_args.txt`) against CWD as well, so we
-        # mirror the NeoForge runtime + SSJ jar into the server data dir.
-        "run.sh" = "${neoforgePkg}/run.sh";
-        "user_jvm_args.txt" = "${neoforgePkg}/user_jvm_args.txt";
-        "libraries" = "${neoforgePkg}/libraries";
-        "server.jar" = serverStarterJar;
+        # NOTE: SSJ-related symlinks (run.sh, user_jvm_args.txt, libraries,
+        # server.jar) were commented out for the simplification test. Restore
+        # together with `aeronauticsServerPkg` above if plain neoforgeServers
+        # turns out to need them.
       };
 
       files = {
