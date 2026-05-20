@@ -133,7 +133,7 @@ in
   };
 
   services.pgadmin = {
-    enable = true;
+    enable = false;
     inherit (pgadminVars) port;
     initialEmail = "t@tsandrini.sh";
     initialPasswordFile = config.age.secrets."hosts/${hostName}/pgadmin-admin-password".path;

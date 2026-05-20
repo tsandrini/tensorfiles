@@ -208,11 +208,11 @@ in
       };
     };
 
-    virtualHosts."${virtualHostsVar."pgadmin".domain}" = mkPublicVhost {
-      locations."/" = {
-        proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
-      };
-    };
+    # virtualHosts."${virtualHostsVar."pgadmin".domain}" = mkPublicVhost {
+    #   locations."/" = {
+    #     proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
+    #   };
+    # };
 
     virtualHosts."${virtualHostsVar."forgejo".domain}" = mkPublicVhost {
       locations."/" = {
@@ -320,7 +320,7 @@ in
       };
 
       pgadmin = {
-        enable = true;
+        enable = false;
         settings = {
           TARGET = "http://${virtualHostsVar."pgadmin".proxyEndpoint}";
           METRICS_BIND = "localhost:${toString virtualHostsVar."pgadmin".anubisMetricsPort}";
