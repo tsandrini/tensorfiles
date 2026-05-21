@@ -54,6 +54,10 @@ in
           sshKey = null;
           authorizedKeys = [ tsandrini ];
         };
+        mrpack = {
+          sshKey = null;
+          authorizedKeys = [ tsandrini ];
+        };
       };
     };
     blehbundle = {

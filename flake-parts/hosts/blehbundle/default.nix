@@ -1,4 +1,4 @@
-# --- flake-parts/hosts/remotebundle/default.nix
+# --- flake-parts/hosts/blehbundle/default.nix
 #
 # Author:  tsandrini <t@tsandrini.sh>
 # URL:     https://github.com/tsandrini/tensorfiles
