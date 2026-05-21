@@ -2109,11 +2109,11 @@
     "packwiz-lt-aoc-aeronautics": {
       "flake": false,
       "locked": {
-        "lastModified": 1779313422,
-        "narHash": "sha256-Moo7u5WiDpg3UuoRfhAeMehmCzAKKUt/lW+Lf9Urks4=",
+        "lastModified": 1779352319,
+        "narHash": "sha256-ohnLo9A4PlBgO3rOUXp0VdxcrWFivriSzQhKpUG9XZA=",
         "owner": "tsandrini",
         "repo": "packwiz-lt-aoc-aeronautics",
-        "rev": "58d317b98ff5a07e29475abd6eadcddc0ca5af16",
+        "rev": "61f22c9b311ab313e884434f91a51a2df13d0282",
         "type": "github"
       },
       "original": {

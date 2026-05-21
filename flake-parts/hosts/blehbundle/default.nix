@@ -21,6 +21,7 @@
   config,
   pkgs,
   hostName,
+  # lib,
   ...
 }:
 let
@@ -28,7 +29,7 @@ let
 
   aeronauticsModpack = pkgs.fetchPackwizModpack {
     src = inputs.packwiz-lt-aoc-aeronautics;
-    packHash = "sha256-p0NbOcvCsMmFGwkpggrEI73vZ4/ynrtX778lcLsXNsg=";
+    packHash = "sha256-1DdZEtl+Lj0F+GQUZrIRpQah2wDgpIONJzxg3agblZc=";
     # packHash = lib.fakeHash;
     side = "server";
   };
@@ -55,7 +56,7 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = [ ];
+  environment.systemPackages = [ pkgs.tmux ];
 
   tensorfiles = {
     profiles = {
@@ -95,19 +96,7 @@ in
   };
 
   nix-mineral = {
-    # TODO: temporarily turned off to eliminate any potential issues,
-    # after the server will be functional, we can enable it back again
     enable = false;
-    preset = "performance";
-    settings = {
-      network.ip-forwarding = true;
-    };
-    extras.system.minimize-swapping = true;
-    # NOTE: Sinytra Connector / JNA / oshi-core need to extract and exec
-    # native libraries from `java.io.tmpdir` (= /tmp by default). nix-mineral's
-    # default hardening sets /tmp to noexec; turn it off so the modded server
-    # can load native code. nosuid/nodev are still applied.
-    filesystems.normal."/tmp".options."noexec" = false;
   };
 
   security.sudo.extraRules = [
