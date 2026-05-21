@@ -2106,6 +2106,22 @@
         "type": "github"
       }
     },
+    "packwiz-lt-aoc-aeronautics": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1779313422,
+        "narHash": "sha256-Moo7u5WiDpg3UuoRfhAeMehmCzAKKUt/lW+Lf9Urks4=",
+        "owner": "tsandrini",
+        "repo": "packwiz-lt-aoc-aeronautics",
+        "rev": "58d317b98ff5a07e29475abd6eadcddc0ca5af16",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tsandrini",
+        "repo": "packwiz-lt-aoc-aeronautics",
+        "type": "github"
+      }
+    },
     "plasma-manager": {
       "inputs": {
         "home-manager": [
@@ -2230,6 +2246,7 @@
         "nixvim": "nixvim",
         "nur": "nur",
         "nvim-base46": "nvim-base46",
+        "packwiz-lt-aoc-aeronautics": "packwiz-lt-aoc-aeronautics",
         "plasma-manager": "plasma-manager",
         "pre-commit-hooks": "pre-commit-hooks_2",
         "shadow-nix": "shadow-nix",

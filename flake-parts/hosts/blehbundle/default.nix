@@ -19,7 +19,6 @@
 }:
 {
   config,
-  lib,
   pkgs,
   hostName,
   ...
@@ -27,42 +26,12 @@
 let
   selfVars = infraVars.hosts."${hostName}";
 
-  # The official server pack zip from CurseForge ("Additional Files" section
-  # on the modpack page). The author bundles the full mod set including
-  # non-redistributable JARs. To bump pack version: replace this file and
-  # bump the derivation name.
-  aeronauticsServerpack =
-    pkgs.runCommand "aoc-aeronautics-serverpack-v1.6"
-      {
-        nativeBuildInputs = [ pkgs.unzip ];
-      }
-      ''
-        mkdir -p $out
-        unzip -q ${./serverpack.zip} -d $out
-      '';
-
-  # Layer on top of the serverpack: filter mods we don't want, drop in mods
-  # we do want. Currently:
-  #  - continuity: client-only connected-textures mod, hard-depends on
-  #    `connector` which Sinytra Connector beta.14 doesn't register on
-  #    dedicated 1.21.1 servers (sinytra/Connector#1428). Server crashes
-  #    on the dep check unless removed.
-  aeronauticsServerMods =
-    let
-      excludedMods = [
-        "continuity-*.jar"
-      ];
-      extraMods = [
-        # future: pkgs.fetchurl { url = "https://cdn.modrinth.com/..."; hash = "..."; }
-      ];
-    in
-    pkgs.runCommand "aeronautics-server-mods" { } ''
-      mkdir -p $out
-      cp -L ${aeronauticsServerpack}/mods/*.jar $out/
-      chmod u+w -R $out
-      ${lib.concatMapStringsSep "\n" (pat: "rm -f $out/${pat}") excludedMods}
-      ${lib.concatMapStringsSep "\n" (m: "cp -L ${m} $out/") extraMods}
-    '';
+  aeronauticsModpack = pkgs.fetchPackwizModpack {
+    src = inputs.packwiz-lt-aoc-aeronautics;
+    packHash = "sha256-p0NbOcvCsMmFGwkpggrEI73vZ4/ynrtX778lcLsXNsg=";
+    # packHash = lib.fakeHash;
+    side = "server";
+  };
 
 in
 {
@@ -191,10 +160,7 @@ in
       # serverpack.
       package = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
 
-      # Aikar-style G1GC flags tuned for Create-heavy packs. 5 GiB heap leaves
-      # ~3 GiB for OS + JVM metaspace + Netty/native off-heap surges during
-      # world-gen on the 8 GiB box. Dropped AlwaysPreTouch (was OOM-killing
-      # the JVM during chunk-gen on first boot).
+      # Aikar-style G1GC flags tuned for Create-heavy packs.
       jvmOpts = builtins.concatStringsSep " " [
         "-Xms6G"
         "-Xmx6G"
@@ -228,27 +194,30 @@ in
 
       serverProperties = {
         server-port = 25565;
+        level-name = "lt-aoc-aeronautics2";
         difficulty = "normal";
         gamemode = "survival";
         max-players = 8;
         motd = "Henlo punťíííkuu, strčím ti prst do nosu :3 hi hi";
         white-list = true;
         online-mode = true;
-        spawn-protection = 0;
+        spawn-protection = 16;
         view-distance = 10;
         simulation-distance = 10;
       };
 
       files = {
-        "config" = "${aeronauticsServerpack}/config";
-        "defaultconfigs" = "${aeronauticsServerpack}/defaultconfigs";
+        # fetchPackwizModpack keeps overrides at ${modpack}/overrides/<name>
+        # rather than merging them into the pack root.
+        "config" = "${aeronauticsModpack}/overrides/config";
+        "defaultconfigs" = "${aeronauticsModpack}/overrides/defaultconfigs";
 
         # `mods` MUST go through `files=` (real dir copy), not `symlinks=`.
         # NeoForge JarInJar resolves each jar via `Path.toRealPath()`; if that
         # lands in /nix/store, mixin configs inside JiJ-embedded jars can't be
         # opened and FML aborts with `MixinInitialisationError` + System.exit(0).
         # `files=` does `cp -r --dereference` (~700 MB) on every start.
-        "mods" = aeronauticsServerMods;
+        "mods" = "${aeronauticsModpack}/mods";
       };
 
     };

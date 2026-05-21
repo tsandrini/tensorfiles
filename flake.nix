@@ -130,6 +130,10 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
+    packwiz-lt-aoc-aeronautics = {
+      url = "github:tsandrini/packwiz-lt-aoc-aeronautics";
+      flake = false;
+    };
 
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {
