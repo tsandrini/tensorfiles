@@ -179,6 +179,7 @@ in
         "TenMarky" = "53e7d569-b7be-4595-95ea-e6fb9123efa9";
         "zenmaya" = "e32e9504-8b66-48b5-a1ac-a8484894ceaf";
         "Sarianille" = "f8686022-6a6e-4e61-bf86-d5891676a599";
+        "ondatra00" = "49cbc216-94f4-42d2-a3dd-17315a7d6b2e";
       };
 
       serverProperties = {
