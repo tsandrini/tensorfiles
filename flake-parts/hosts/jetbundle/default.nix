@@ -37,7 +37,6 @@ in
     # Fingerprint sensor
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.open-fprintd
     # nixos-06cb-009a-fingerprint-sensor.nixosModules.python-validity
-    inputs.nix-mineral.nixosModules.nix-mineral
 
     ./disko.nix
     ./hardware-configuration.nix
@@ -91,14 +90,6 @@ in
         "docker"
       ];
     };
-  };
-
-  nix-mineral = {
-    enable = true;
-    preset = [
-      "compatibility"
-      "performance"
-    ];
   };
 
   tensorfiles.networking.firewall.subnets-firewall = {

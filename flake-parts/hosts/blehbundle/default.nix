@@ -46,7 +46,6 @@ in
   # --------------------------
   imports = [
     inputs.disko.nixosModules.disko
-    inputs.nix-mineral.nixosModules.nix-mineral
     inputs.nix-minecraft.nixosModules.minecraft-servers
 
     ./hardware-configuration.nix
@@ -93,10 +92,6 @@ in
         #
       ];
     };
-  };
-
-  nix-mineral = {
-    enable = false;
   };
 
   security.sudo.extraRules = [

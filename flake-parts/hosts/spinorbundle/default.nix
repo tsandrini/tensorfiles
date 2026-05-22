@@ -27,7 +27,6 @@
     inputs.disko.nixosModules.disko
     inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
-    inputs.nix-mineral.nixosModules.nix-mineral
 
     ./hardware-configuration.nix
     ./disko.nix
@@ -74,13 +73,6 @@
         "docker"
       ];
     };
-  };
-  nix-mineral = {
-    enable = true;
-    preset = [
-      "compatibility"
-      "performance"
-    ];
   };
 
   tensorfiles.networking.firewall.subnets-firewall = {

@@ -97,11 +97,6 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-mineral.url = "github:cynicsketch/nix-mineral";
-    # nix-mineral = {
-    #   url = "github:tsandrini/nix-mineral?rev=c0cbad73243d0ce358c8074855e2c98578340422";
-    #   flake = false;
-    # };
     immutable-insights.url = "github:tsandrini/immutable-insights";
     lix-module = {
       url = "https://git.lix.systems/lix-project/nixos-module/archive/2.93.0.tar.gz";

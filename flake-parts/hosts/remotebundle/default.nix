@@ -37,7 +37,6 @@ in
   # --------------------------
   imports = [
     (inputs.vpsadminos + "/os/lib/nixos-container/unstable/vpsadminos.nix")
-    inputs.nix-mineral.nixosModules.nix-mineral
 
     (importApply ./parts/nginx-proxy.nix { inherit inputs secretsPath infraVars; })
     (importApply ./parts/postgres.nix { inherit secretsPath infraVars; })
@@ -87,14 +86,6 @@ in
       allowedTCPPorts = [
         #
       ];
-    };
-  };
-
-  nix-mineral = {
-    enable = true;
-    settings = {
-      network.ip-forwarding = true;
-      kernel.cpu-mitigations = "smt-on";
     };
   };
 
