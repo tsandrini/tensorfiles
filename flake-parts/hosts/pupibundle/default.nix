@@ -36,7 +36,6 @@ in
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    # inputs.nix-mineral.nixosModules.nix-mineral
     inputs.disko.nixosModules.disko
 
     ./hardware-configuration.nix
@@ -63,6 +62,7 @@ in
       headless.enable = true;
       with-base-monitoring-exports.enable = true;
     };
+    security.hardening.server.enable = true;
 
     services.networking.networkmanager.enable = false;
     security.agenix.enable = true;

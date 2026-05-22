@@ -64,6 +64,9 @@ in
     programs_nh = importApply ./programs/nh.nix { inherit localFlake; };
 
     # -- security --
+    security_hardening_base = importApply ./security/hardening/base.nix { inherit localFlake; };
+    security_hardening_desktop = importApply ./security/hardening/desktop.nix { inherit localFlake; };
+    security_hardening_server = importApply ./security/hardening/server.nix { inherit localFlake; };
 
     # -- services --
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {

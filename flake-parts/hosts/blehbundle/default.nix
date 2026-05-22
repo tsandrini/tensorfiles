@@ -62,6 +62,7 @@ in
       headless.enable = true;
       with-base-monitoring-exports.enable = true;
     };
+    security.hardening.server.enable = true;
 
     services.networking.networkmanager.enable = false;
     security.agenix.enable = true;

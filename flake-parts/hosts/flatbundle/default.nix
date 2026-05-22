@@ -73,6 +73,7 @@ in
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
     };
+    security.hardening.desktop.enable = true;
 
     security.agenix.enable = true;
 
