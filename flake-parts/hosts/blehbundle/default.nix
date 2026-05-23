@@ -29,9 +29,9 @@ let
 
   aeronauticsModpack = pkgs.fetchPackwizModpack {
     src = inputs.packwiz-lt-aoc-aeronautics;
-    packHash = "sha256-1DdZEtl+Lj0F+GQUZrIRpQah2wDgpIONJzxg3agblZc=";
+    packHash = "sha256-WORGA3bbHMGp3HtGGGBIv61fBTAn1/9k39E5JAhwDG8=";
     # packHash = lib.fakeHash;
-    side = "server";
+    # side = "server";
   };
 
 in

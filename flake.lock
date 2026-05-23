@@ -1990,11 +1990,11 @@
     "packwiz-lt-aoc-aeronautics": {
       "flake": false,
       "locked": {
-        "lastModified": 1779352319,
-        "narHash": "sha256-ohnLo9A4PlBgO3rOUXp0VdxcrWFivriSzQhKpUG9XZA=",
+        "lastModified": 1779494562,
+        "narHash": "sha256-ToTewr5Z8ciR9a/NmB1NyNEUYsG9Z/AQbKi3XSLz/OI=",
         "owner": "tsandrini",
         "repo": "packwiz-lt-aoc-aeronautics",
-        "rev": "61f22c9b311ab313e884434f91a51a2df13d0282",
+        "rev": "d585b59c5041ef95ab6542804e683636974cec75",
         "type": "github"
       },
       "original": {
