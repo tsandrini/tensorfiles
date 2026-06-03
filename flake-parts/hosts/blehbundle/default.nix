@@ -31,7 +31,7 @@ let
     src = inputs.packwiz-lt-aoc-aeronautics;
     packHash = "sha256-WORGA3bbHMGp3HtGGGBIv61fBTAn1/9k39E5JAhwDG8=";
     # packHash = lib.fakeHash;
-    # side = "server";
+    side = "server";
   };
 
 in
@@ -82,6 +82,7 @@ in
     nixosPassthrough = {
       allowedTCPPorts = [
         25565
+        2222
       ];
       allowedUDPPorts = [
         config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
@@ -94,6 +95,8 @@ in
       ];
     };
   };
+
+  services.openssh.allowSFTP = true;
 
   security.sudo.extraRules = [
     {
@@ -184,12 +187,13 @@ in
         difficulty = "normal";
         gamemode = "survival";
         max-players = 8;
-        motd = "Henlo punťíííkuu, strčím ti prst do nosu :3 hi hi";
+        motd = "LT AOC";
         white-list = true;
         online-mode = true;
         spawn-protection = 16;
         view-distance = 10;
         simulation-distance = 10;
+        allow-flight = true;
       };
 
       files = {
