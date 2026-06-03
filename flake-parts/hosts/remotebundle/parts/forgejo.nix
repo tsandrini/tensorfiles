@@ -93,7 +93,7 @@ in
         ENABLED = true;
         PROTOCOL = "smtp";
         SMTP_ADDR = "localhost";
-        FROM = "git-bot@$tsandrini.sh";
+        FROM = "git-bot@tsandrini.sh";
       };
       DEFAULT = {
         APP_NAME = "tsandrini's git";
