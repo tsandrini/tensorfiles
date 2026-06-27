@@ -46,6 +46,7 @@ in
           cmp.cmp.enable = _ true;
           cmp.lspkind.enable = _ true;
           cmp.schemastore.enable = _ true;
+          cmp.snippets.enable = _ true;
 
           lsp.lsp.enable = _ true;
           lsp.lsp.withKeymaps = _ false; # use lspsaga keymaps instead

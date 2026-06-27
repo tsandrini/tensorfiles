@@ -87,6 +87,7 @@ in
     plugins_cmp_cmp = importApply ./plugins/cmp/cmp.nix { inherit localFlake; };
     plugins_cmp_lspkind = importApply ./plugins/cmp/lspkind.nix { inherit localFlake; };
     plugins_cmp_schemastore = importApply ./plugins/cmp/schemastore.nix { inherit localFlake; };
+    plugins_cmp_snippets = importApply ./plugins/cmp/snippets.nix { inherit localFlake; };
 
     plugins_lsp_conform = importApply ./plugins/lsp/conform.nix { inherit localFlake; };
     plugins_lsp_sniprun = importApply ./plugins/lsp/sniprun.nix { inherit localFlake; };
