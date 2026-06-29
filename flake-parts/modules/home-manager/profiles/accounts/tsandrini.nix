@@ -70,6 +70,7 @@ in
           default = {
             "tomas.sandrini@seznam.cz" = { };
             "WareCzech@gmail.com" = { };
+            "tomas.sandrini@meteopress.com" = { };
             "t@${defaultDomain}" = { };
             "business@${defaultDomain}" = { };
             "security@${defaultDomain}" = { };
@@ -121,6 +122,36 @@ in
           "WareCzech@gmail.com" = {
             address = _ "WareCzech@gmail.com";
             userName = _ "WareCzech"; # TODO https://github.com/nix-community/home-manager/issues/3712
+            imap.host = _ "imap.gmail.com";
+            imap.port = _ 993;
+            primary = _ false;
+            realName = _ "Tomáš Sandrini";
+            smtp.host = _ "smtp.gmail.com";
+            smtp.port = _ 587;
+            smtp.tls.useStartTls = _ true;
+            thunderbird.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.thunderbird");
+            neomutt.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.neomutt");
+            notmuch.enable = _ (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.notmuch");
+
+            passwordCommand =
+              mkIf (agenixCheck && accountCfg.agenixPassword.enable)
+                "cat ${config.age.secrets.${accountCfg.agenixPassword.passwordSecretsPath}.path}";
+          };
+        };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.email.enable && cfg.email.accounts."tomas.sandrini@meteopress.com".enable) {
+      accounts.email.accounts =
+        let
+          accountCfg = cfg.email.accounts."tomas.sandrini@meteopress.com";
+        in
+        {
+          "tomas.sandrini@meteopress.com" = {
+            # NOTE google workspace requires OAuth2 (basic auth disabled); the HM
+            # thunderbird module only emits OAuth2 prefs when flavor == "gmail.com"
+            flavor = _ "gmail.com";
+            address = _ "tomas.sandrini@meteopress.com";
+            userName = _ "tomas.sandrini@meteopress.com"; # TODO https://github.com/nix-community/home-manager/issues/3712
             imap.host = _ "imap.gmail.com";
             imap.port = _ 993;
             primary = _ false;
