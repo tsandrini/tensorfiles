@@ -293,6 +293,7 @@ in
                 ublock-origin # Finally, an efficient wide-spectrum content blocker. Easy on CPU and memory.
                 skip-redirect # This add-on tries to extract the final url from the intermediary url and goes there straight away if successful.
                 multi-account-containers # Firefox Multi-Account Containers lets you keep parts of your online life separated into color-coded tabs.
+                onepassword-password-manager # The best way to experience 1Password in your browser
 
                 # ~ Utils
                 keepassxc-browser # Official browser plugin for the KeePassXC password manager
