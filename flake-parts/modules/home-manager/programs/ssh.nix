@@ -107,6 +107,14 @@ in
         matchBlocks."*".setEnv = {
           TERM = _ "xterm-256color";
         };
+
+        # NOTE: pin github.com to the personal key. Deploy keys
+        # loaded in the agent are offered first under the default `IdentitiesOnly no`
+        # and auth as the wrong account -> "Repository not found".
+        matchBlocks."github.com" = {
+          identityFile = _ "~/${cfg.sshKey.privateKeyHomePath}";
+          identitiesOnly = _ true;
+        };
       };
 
       programs.keychain = {

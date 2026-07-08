@@ -1228,11 +1228,11 @@
     "meteopress-radar-radar_deploy": {
       "flake": false,
       "locked": {
-        "lastModified": 1782616833,
-        "narHash": "sha256-PckoqIZRj7djlIJO2cj7xsLh1/MjlWp5AanjXepIMCw=",
+        "lastModified": 1783500158,
+        "narHash": "sha256-8hVhLKG79tGpvC7FiPI5y4+irx8L+GGQjsP9j2F0y7A=",
         "ref": "refs/heads/main",
-        "rev": "c42c807bb7350cae53935779a271c55f33955825",
-        "revCount": 566,
+        "rev": "702e7c0599dcaf2d115466f824c88971f824a69b",
+        "revCount": 590,
         "type": "git",
         "url": "ssh://git@github.com/Meteopresscz/radar-radar_deploy.git"
       },

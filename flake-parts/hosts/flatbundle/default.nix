@@ -176,6 +176,8 @@ in
     pkgs.vial
   ];
 
+  services.envfs.enable = true;
+
   home-manager.users."tsandrini" = {
     imports = [
       inputs.mcp-servers-nix.homeManagerModules.default
@@ -215,6 +217,12 @@ in
       # github.enable = true;
     };
 
+    programs.ssh.includes = [
+      "${inputs.meteopress-radar-radar_deploy}/ssh/radars"
+      "${inputs.meteopress-radar-radar_deploy}/ssh/dev"
+      "${inputs.meteopress-radar-radar_deploy}/ssh/vilekula"
+    ];
+
     programs.claude-code = {
       enable = true;
       package = pkgs.llm-agents.claude-code;
@@ -228,6 +236,7 @@ in
       pkgs.kbfs # Keybase filesystem
       pkgs.teams-for-linux # Unofficial Microsoft Teams client for Linux
       pkgs.prismlauncher # Free, open source launcher for Minecraft
+      pkgs.drawio # Desktop version of draw.io for creating diagrams
 
       # --- LLM garbage ---
       inputs.self.packages.${system}.cc-switcher
