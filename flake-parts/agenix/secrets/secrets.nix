@@ -145,6 +145,10 @@ in
     remotebundle
   ]
   ++ [ tsandrini ];
+  "hosts/remotebundle/infra-docs-mtpr-basic-auth-file.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
 
   # --- spinorbundle ---
   # --------------------

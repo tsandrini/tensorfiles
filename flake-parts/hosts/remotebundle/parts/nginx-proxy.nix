@@ -208,6 +208,17 @@ in
       };
     };
 
+    virtualHosts."${virtualHostsVar."infra-docs-mtpr".domain}" = mkPublicVhost {
+      root = inputs.meteopress-infra-docs-wip.packages.${system}.docs-site;
+      basicAuthFile = config.age.secrets."hosts/${hostName}/infra-docs-mtpr-basic-auth-file".path;
+
+      locations."/" = {
+        tryFiles = "$uri $uri/ =404";
+        index = "index.html";
+      };
+      extraConfig = "error_page 404 /404.html;";
+    };
+
     # virtualHosts."${virtualHostsVar."pgadmin".domain}" = mkPublicVhost {
     #   locations."/" = {
     #     proxyPass = "http://unix:${config.services.anubis.instances.pgadmin.settings.BIND}";
@@ -365,6 +376,11 @@ in
 
     "hosts/${hostName}/prometheus-ui-basic-auth-file" = {
       file = "${secretsPath}/hosts/${hostName}/prometheus-ui-basic-auth-file.age";
+      owner = config.services.nginx.user;
+    };
+
+    "hosts/${hostName}/infra-docs-mtpr-basic-auth-file" = {
+      file = "${secretsPath}/hosts/${hostName}/infra-docs-mtpr-basic-auth-file.age";
       owner = config.services.nginx.user;
     };
   };

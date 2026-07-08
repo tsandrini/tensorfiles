@@ -130,6 +130,12 @@
       flake = false;
     };
 
+    meteopress-radar-radar_deploy = {
+      url = "git+ssh://git@github.com/Meteopresscz/radar-radar_deploy.git";
+      flake = false;
+    };
+    meteopress-infra-docs-wip.url = "git+ssh://git@github.com/Meteopresscz/infra-docs-wip.git";
+
     # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
     # kitty-scrollback-nvim = {
     #   url = "github:mikesmithgh/kitty-scrollback.nvim";

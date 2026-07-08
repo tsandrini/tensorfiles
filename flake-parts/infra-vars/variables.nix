@@ -214,6 +214,11 @@ _: rec {
                   domain = "pihole.${intranetDomain}";
                   proxyEndpoint = "${hosts."pupibundle".address}";
                 };
+                # --- mtpr ---
+                "infra-docs-mtpr" = {
+                  domain = "infra-docs-wip.mtpr.${intranetDomain}";
+                  proxyEndpoint = null;
+                };
               };
             };
         };
