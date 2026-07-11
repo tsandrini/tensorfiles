@@ -14,12 +14,6 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
 { pkgs, system, ... }:
-let
-  pkgs-osu-lazer-bin = import inputs.nixpkgs-osu-lazer-bin {
-    inherit system;
-    config.allowUnfree = true;
-  };
-in
 {
   # -----------------
   # | SPECIFICATION |
@@ -122,6 +116,7 @@ in
   };
 
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
+  programs.nh.clean.enable = false; # NOTE We have enough space buddy
 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
@@ -200,6 +195,12 @@ in
       # github.enable = true;
     };
 
+    programs.ssh.includes = [
+      "${inputs.meteopress-radar-radar_deploy}/ssh/radars"
+      "${inputs.meteopress-radar-radar_deploy}/ssh/dev"
+      "${inputs.meteopress-radar-radar_deploy}/ssh/vilekula"
+    ];
+
     programs.claude-code = {
       enable = true;
       package = pkgs.llm-agents.claude-code;
@@ -207,7 +208,7 @@ in
     };
 
     home.packages = [
-      pkgs-osu-lazer-bin.osu-lazer-bin
+      pkgs.drawio # Desktop version of draw.io for creating diagrams
 
       # --- LLM garbage ---
       inputs.self.packages.${system}.cc-switcher
