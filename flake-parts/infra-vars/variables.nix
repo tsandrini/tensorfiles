@@ -216,7 +216,7 @@ _: rec {
                 };
                 # --- mtpr ---
                 "infra-docs-mtpr" = {
-                  domain = "infra-docs-wip.mtpr.${intranetDomain}";
+                  domain = "infra-docs-wip.mtpr.${primaryDomain}";
                   proxyEndpoint = null;
                 };
               };
