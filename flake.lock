@@ -87,31 +87,6 @@
         "type": "gitlab"
       }
     },
-    "blueprint": {
-      "inputs": {
-        "nixpkgs": [
-          "llm-agents",
-          "nixpkgs"
-        ],
-        "systems": [
-          "llm-agents",
-          "systems"
-        ]
-      },
-      "locked": {
-        "lastModified": 1776249299,
-        "narHash": "sha256-Dt9t1TGRmJFc0xVYhttNBD6QsAgHOHCArqGa0AyjrJY=",
-        "owner": "numtide",
-        "repo": "blueprint",
-        "rev": "56131e8628f173d24a27f6d27c0215eff57e40dd",
-        "type": "github"
-      },
-      "original": {
-        "owner": "numtide",
-        "repo": "blueprint",
-        "type": "github"
-      }
-    },
     "buffer_manager-nvim": {
       "flake": false,
       "locked": {
@@ -1163,7 +1138,6 @@
     },
     "llm-agents": {
       "inputs": {
-        "blueprint": "blueprint",
         "bun2nix": "bun2nix",
         "flake-parts": "flake-parts_5",
         "nixpkgs": "nixpkgs_9",
@@ -1171,11 +1145,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1783599665,
-        "narHash": "sha256-dtyRTYJjZYOlf2/G/Xcieg2H9BaMhAOdCKWpMIbYOYg=",
+        "lastModified": 1784096685,
+        "narHash": "sha256-b32HyAoqQdgQstUBblZ5Nnk5M62yiOhpgpJVJohJ+k0=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "87d0d4b44d5f1ff0e103aac8026c426758411421",
+        "rev": "d9654e7480b8146fddd709dbe5d12668bb34fa74",
         "type": "github"
       },
       "original": {
@@ -1189,11 +1163,11 @@
         "nixpkgs": "nixpkgs_10"
       },
       "locked": {
-        "lastModified": 1783475267,
-        "narHash": "sha256-pZ/IeIHIKvCVyvJng2Fx268hPCmJTCXOTIGbGylaB14=",
+        "lastModified": 1784034644,
+        "narHash": "sha256-SLHR64tjv0nFnEX376h8kG+edPeBBzCNEvh7GFE9INI=",
         "owner": "natsukium",
         "repo": "mcp-servers-nix",
-        "rev": "207ee8dda98410bd1abdacdaf3ceff57fd90c4d1",
+        "rev": "fc8000cb10d4e56487ec2277d21f04932682f1af",
         "type": "github"
       },
       "original": {
@@ -1212,11 +1186,11 @@
         "systems": "systems_9"
       },
       "locked": {
-        "lastModified": 1783083580,
-        "narHash": "sha256-7jIWQijKEV0aeb2U6UYgxzGzbZ4IkMT4SlWOXWVsDTM=",
+        "lastModified": 1784036775,
+        "narHash": "sha256-vBsH68mNXGurA25MSZmtPhO7yzFZlO/YIXtfFZCmA5A=",
         "ref": "refs/heads/main",
-        "rev": "9fae2afa51f2c481890a94e5dc419cedad5fae39",
-        "revCount": 9,
+        "rev": "f136c6431d635a437e0a033000ab10011aa464ca",
+        "revCount": 11,
         "type": "git",
         "url": "ssh://git@github.com/Meteopresscz/infra-docs-wip.git"
       },
@@ -1228,11 +1202,11 @@
     "meteopress-radar-radar_deploy": {
       "flake": false,
       "locked": {
-        "lastModified": 1783552314,
-        "narHash": "sha256-MU8vT0Rt4cbcCj3Ov6r2nVB1qDrAKZTxsv1hCOfBoVo=",
+        "lastModified": 1783609777,
+        "narHash": "sha256-AVGXwo/CAmuKukVEo/HP+Ybe9E5Zga0svjHwqxfRgkw=",
         "ref": "refs/heads/main",
-        "rev": "46e0a4586a0ba8b3afb199fd08105954f27a7d7e",
-        "revCount": 601,
+        "rev": "814fe03e033db7b0402f8573e626f60ecca4e0ea",
+        "revCount": 603,
         "type": "git",
         "url": "ssh://git@github.com/Meteopresscz/radar-radar_deploy.git"
       },
@@ -2160,11 +2134,11 @@
     },
     "nixpkgs_9": {
       "locked": {
-        "lastModified": 1783279667,
-        "narHash": "sha256-/NAkDSsve+GNM0Bt6tleJdCGfsTlK89nPjkVOzZMo0s=",
+        "lastModified": 1783816212,
+        "narHash": "sha256-2aZisVTVGSFEk3MYcOiWQp3zvwyzbqpktB69Rcfp150=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f205b5574fd0cb7da5b702a2da51507b7f4fdd1b",
+        "rev": "3b32825de172d0bc85664f495edb096b10862524",
         "type": "github"
       },
       "original": {

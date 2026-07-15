@@ -225,7 +225,7 @@ in
 
     programs.claude-code = {
       enable = true;
-      package = pkgs.llm-agents.claude-code;
+      package = inputs.llm-agents.packages.${system}.claude-code;
       enableMcpIntegration = true;
     };
 
@@ -241,15 +241,15 @@ in
       # --- LLM garbage ---
       inputs.self.packages.${system}.cc-switcher
       # pkgs.llm-agents.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
-      pkgs.llm-agents.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
-      pkgs.llm-agents.auto-claude # Autonomous multi-agent coding framework powered by Claude AI
-      # pkgs.llm-agents.cc-switch-cli # CLI version of CC Switch - All-in-One Assistant for Claude Code, Codex & Gemini CLI
-      pkgs.llm-agents.claude-plugins # CLI tool for managing Claude Code plugins
-      pkgs.llm-agents.claudebox # Sandboxed environment for Claude Code
-      pkgs.llm-agents.skills-installer # Install agent skills across multiple AI coding clients
-      pkgs.llm-agents.sandbox-runtime # Lightweight sandboxing tool for enforcing filesystem and network restrictions
-      pkgs.llm-agents.ccusage # Usage analysis tool for Claude Code
-      pkgs.llm-agents.agent-browser # Headless browser automation CLI for AI agents
+      inputs.llm-agents.packages.${system}.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
+      inputs.llm-agents.packages.${system}.auto-claude # Autonomous multi-agent coding framework powered by Claude AI
+      # inputs.llm-agents.packages.${system}.cc-switch-cli # CLI version of CC Switch - All-in-One Assistant for Claude Code, Codex & Gemini CLI
+      inputs.llm-agents.packages.${system}.claude-plugins # CLI tool for managing Claude Code plugins
+      inputs.llm-agents.packages.${system}.claudebox # Sandboxed environment for Claude Code
+      inputs.llm-agents.packages.${system}.skills-installer # Install agent skills across multiple AI coding clients
+      inputs.llm-agents.packages.${system}.sandbox-runtime # Lightweight sandboxing tool for enforcing filesystem and network restrictions
+      inputs.llm-agents.packages.${system}.ccusage # Usage analysis tool for Claude Code
+      inputs.llm-agents.packages.${system}.agent-browser # Headless browser automation CLI for AI agents
     ];
   };
 }

@@ -98,7 +98,6 @@ in
           inputs.emacs-overlay.overlays.default
           inputs.nur.overlays.default
           inputs.niri.overlays.niri
-          inputs.llm-agents.overlays.default
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
@@ -118,7 +117,6 @@ in
           inputs.emacs-overlay.overlays.default
           inputs.nur.overlays.default
           inputs.niri.overlays.niri
-          inputs.llm-agents.overlays.default
           # neovim-nightly-overlay.overlays.default
           # (final: _prev: { nur = import inputs.nur { pkgs = final; }; })
         ];
