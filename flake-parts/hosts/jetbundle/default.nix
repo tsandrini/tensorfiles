@@ -170,6 +170,8 @@
       profiles.accounts.tsandrini.enable = true;
       security.agenix.enable = true;
       services.keepassxc.enable = true;
+
+      programs.claude-code.enable = true;
     };
 
     services.syncthing = {
@@ -201,28 +203,12 @@
       "${inputs.meteopress-radar-radar_deploy}/ssh/vilekula"
     ];
 
-    programs.claude-code = {
-      enable = true;
-      package = inputs.llm-agents.packages.${system}.claude-code;
-      enableMcpIntegration = true;
-    };
-
     home.packages = [
       pkgs.drawio # Desktop version of draw.io for creating diagrams
 
       # --- LLM garbage ---
-      inputs.self.packages.${system}.cc-switcher
-      # pkgs.llm-agents.claude-code # Agentic coding tool that lives in your terminal, understands your codebase, and helps you code faster
-      # inputs.llm-agent.packages.${system}.
+      # NOTE: claude-code ecosystem CLIs come from tensorfiles.hm.programs.claude-code (extraPackages)
       inputs.llm-agents.packages.${system}.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
-      inputs.llm-agents.packages.${system}.auto-claude # Autonomous multi-agent coding framework powered by Claude AI
-      # inputs.llm-agents.packages.${system}.cc-switch-cli # CLI version of CC Switch - All-in-One Assistant for Claude Code, Codex & Gemini CLI
-      inputs.llm-agents.packages.${system}.claude-plugins # CLI tool for managing Claude Code plugins
-      inputs.llm-agents.packages.${system}.claudebox # Sandboxed environment for Claude Code
-      inputs.llm-agents.packages.${system}.skills-installer # Install agent skills across multiple AI coding clients
-      inputs.llm-agents.packages.${system}.sandbox-runtime # Lightweight sandboxing tool for enforcing filesystem and network restrictions
-      inputs.llm-agents.packages.${system}.ccusage # Usage analysis tool for Claude Code
-      inputs.llm-agents.packages.${system}.agent-browser # Headless browser automation CLI for AI agents
     ];
   };
 }

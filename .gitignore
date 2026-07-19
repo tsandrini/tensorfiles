@@ -1,5 +1,6 @@
 # LLM crap
 CLAUDE.md
+!flake-parts/modules/**/CLAUDE.md
 AGENTS.md
 .claude
 .agents

@@ -22,6 +22,7 @@
         "flake.lock" # NOTE: prettier thinks this is json >.< prettier baka!!!
         "p10k.zsh"
         "flake-parts/modules/home-manager/programs/file-managers/lf/icons"
+        "flake-parts/modules/home-manager/programs/claude-code/config/"
         "flake-parts/pkgs/intranet-unauthorized/index.html"
         "flake-parts/pkgs/intranet-unauthorized/assets/emil.mp4"
         "etc/"
