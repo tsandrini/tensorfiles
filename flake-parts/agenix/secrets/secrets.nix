@@ -37,6 +37,22 @@ in
   # | COMMON |
   # ----------
   "common/nix-conf-global-access-tokens.age".publicKeys = hosts ++ users;
+  # claude-code read-only workspace tokens, sourced by workspace .envrc
+  "common/claude-code-meteopress-meta-envfile.age".publicKeys = [
+    flatbundle
+    jetbundle
+  ]
+  ++ users;
+  "common/claude-code-pesekmudra-meta-envfile.age".publicKeys = [
+    flatbundle
+    jetbundle
+  ]
+  ++ users;
+  "common/claude-code-tsandrini-meta-envfile.age".publicKeys = [
+    flatbundle
+    jetbundle
+  ]
+  ++ users;
 
   # ---------
   # | HOSTS |

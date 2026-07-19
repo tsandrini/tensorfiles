@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{
+  localFlake,
+  inputs,
+  secretsPath,
+}:
 {
   config,
   lib,
@@ -20,20 +24,25 @@
   ...
 }:
 let
+  inherit (builtins) pathExists;
   inherit (lib)
     mkIf
     mkMerge
     mkEnableOption
     mkOption
+    mapAttrsToList
     types
     getExe
     ;
-  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
+  inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.programs.claude-code;
   _ = mkOverrideAtHmModuleLevel;
 
   llmPkgs = inputs.llm-agents.packages.${system};
+
+  secretsCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.secrets.enable;
 in
 {
   options.tensorfiles.hm.programs.claude-code = {
@@ -43,6 +52,35 @@ in
       `~/.claude/settings.json` — shared across hosts. MCP servers are
       inherited from `programs.mcp.servers` (mcp-servers-nix).
     '';
+
+    secrets = {
+      enable =
+        mkEnableOption ''
+          declaration of the per-workspace envfile secrets carrying
+          read-only `CLAUDE_META_*` tokens, each sourced by its workspace
+          root `.envrc`. Executed only when the
+          `tensorfiles.hm.security.agenix` backend is loaded & enabled —
+          a different secrets backend can supply the same decrypted
+          envfiles instead.
+        ''
+        // {
+          default = true;
+        };
+
+      envfileSecretsPaths = mkOption {
+        type = types.attrsOf types.str;
+        default = {
+          meteopress = "common/claude-code-meteopress-meta-envfile";
+          pesekmudra = "common/claude-code-pesekmudra-meta-envfile";
+          tsandrini = "common/claude-code-tsandrini-meta-envfile";
+        };
+        description = ''
+          Workspace name → secret path, relative to the secrets dir and
+          without the `.age` suffix. The decrypted envfile is sourced by
+          the matching workspace root `.envrc`.
+        '';
+      };
+    };
 
     extraPackages.enable =
       mkEnableOption ''
@@ -79,7 +117,6 @@ in
     mutableContextPath = mkOption {
       type = types.nullOr types.str;
       default = null;
-      example = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles/flake-parts/modules/home-manager/programs/claude-code/config/CLAUDE.md";
       description = ''
         Absolute path to `CLAUDE.md` inside a live checkout of this repo.
         When set, `~/.claude/CLAUDE.md` becomes an out-of-store symlink,
@@ -145,6 +182,12 @@ in
             "Bash(gh pr merge:*)"
             "Bash(gh pr close:*)"
             "Bash(gh repo delete:*)"
+            # NOTE: secret hygiene — env files & decrypted agenix paths never
+            # enter context (`.envrc` deliberately NOT matched)
+            "Read(**/.env)"
+            "Read(**/.env.*)"
+            "Read(/run/agenix/**)"
+            "Read(/run/user/*/agenix/**)"
           ];
         };
       };
@@ -168,6 +211,19 @@ in
         llmPkgs.ccusage
         llmPkgs.agent-browser
       ];
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf secretsCheck {
+      # NOTE: declarations activate once the .age files exist (`agenix -e`);
+      # decrypted under $XDG_RUNTIME_DIR/agenix/, sourced by workspace .envrc
+      age.secrets = mkMerge (
+        mapAttrsToList (
+          _ws: secretPath:
+          mkIf (pathExists (secretsPath + "/${secretPath}.age")) {
+            "${secretPath}".file = _ (secretsPath + "/${secretPath}.age");
+          }
+        ) cfg.secrets.envfileSecretsPaths
+      );
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.statusline.enable {

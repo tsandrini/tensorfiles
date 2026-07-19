@@ -38,6 +38,28 @@ harness files are touched. Canonical copy lives in tensorfiles:
   the directory name is the slash command.
 - Memory topics: `<scope>--<topic>.md`; `MEMORY.md` is the mandatory index.
 
+## Workspace meta layer
+
+Root entries are repo clones, with exactly two exceptions: `.claude/`
+(the harness) and `meta/` (workspace tooling). `meta/scripts/` holds
+cross-repo and company-wide helper tooling, runnable by human and Claude
+alike (e.g. `sync_all_repos`). A script serving a single Claude workflow
+lives inside that skill's directory instead. No third root exception —
+future meta content nests under `meta/`.
+
+## Secrets
+
+- Token values NEVER appear in rules, skills, memory, CLAUDE.md, or
+  command output — never echo or print them. Context carries pointers
+  only: variable name, scope, source.
+- Env vars are prefixed `CLAUDE_META_<NAME>`; all Claude tokens are
+  read-only.
+- Values live in per-workspace agenix envfiles
+  (`claude-code-<workspace>-meta-envfile`), decrypted at login and
+  sourced by the workspace root `.envrc`.
+- Read guards for `.env*` files and decrypted agenix paths are enforced
+  by permission deny rules in the tensorfiles claude-code module.
+
 ## Hard rules
 
 - Never write a rule without `paths:` — it would load unconditionally.
