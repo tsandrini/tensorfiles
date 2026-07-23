@@ -56,12 +56,12 @@ in
     secrets = {
       enable =
         mkEnableOption ''
-          declaration of the per-workspace envfile secrets carrying
-          read-only `CLAUDE_META_*` tokens, each sourced by its workspace
-          root `.envrc`. Executed only when the
-          `tensorfiles.hm.security.agenix` backend is loaded & enabled —
-          a different secrets backend can supply the same decrypted
-          envfiles instead.
+          the per-workspace envfile secrets carrying read-only
+          `CLAUDE_META_*` tokens, injected on every direnv evaluation via
+          a direnvrc hook that resolves the nearest `.claude/meta-env`
+          marker. Executed only when the `tensorfiles.hm.security.agenix`
+          backend is loaded & enabled — a different secrets backend can
+          supply the hook's envfiles instead.
         ''
         // {
           default = true;
@@ -76,8 +76,9 @@ in
         };
         description = ''
           Workspace name → secret path, relative to the secrets dir and
-          without the `.age` suffix. The decrypted envfile is sourced by
-          the matching workspace root `.envrc`.
+          without the `.age` suffix. Each workspace root's
+          `.claude/meta-env` marker names its secret; the direnvrc hook
+          resolves and loads the decrypted envfile.
         '';
       };
     };
@@ -152,7 +153,7 @@ in
             CLAUDE_CODE_SUBAGENT_MODEL = _ "sonnet";
           };
 
-          model = _ "claude-fable-5[1m]";
+          model = _ "claude-opus-4-8[1m]";
           effortLevel = _ "xhigh";
           promptSuggestionEnabled = _ false;
           awaySummaryEnabled = _ false;
@@ -215,7 +216,7 @@ in
     # |----------------------------------------------------------------------| #
     (mkIf secretsCheck {
       # NOTE: declarations activate once the .age files exist (`agenix -e`);
-      # decrypted under $XDG_RUNTIME_DIR/agenix/, sourced by workspace .envrc
+      # decrypted under $XDG_RUNTIME_DIR/agenix/
       age.secrets = mkMerge (
         mapAttrsToList (
           _ws: secretPath:
@@ -224,6 +225,29 @@ in
           }
         ) cfg.secrets.envfileSecretsPaths
       );
+
+      # NOTE: direnv layers don't nest — nested `direnv exec` would drop a
+      # workspace-root env layer. This hook runs before EVERY .envrc
+      # evaluation: it walks up to the nearest `.claude/meta-env` marker
+      # (identity, versioned in the meta-root) and dotenv-loads the named
+      # envfile (resolution, backend-specific to agenix here).
+      programs.direnv.stdlib = ''
+        _claude_meta_env_load() {
+          local dir="$PWD" secret_name envfile
+          while [ -n "$dir" ]; do
+            if [ -r "$dir/.claude/meta-env" ]; then
+              secret_name="$(<"$dir/.claude/meta-env")"
+              envfile="''${XDG_RUNTIME_DIR:-/run/user/$UID}/agenix/$secret_name"
+              if [ -n "$secret_name" ] && [ -r "$envfile" ]; then
+                dotenv "$envfile"
+              fi
+              break
+            fi
+            dir="''${dir%/*}"
+          done
+        }
+        _claude_meta_env_load
+      '';
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.statusline.enable {

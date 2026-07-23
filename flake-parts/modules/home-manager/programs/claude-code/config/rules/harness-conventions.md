@@ -55,10 +55,20 @@ future meta content nests under `meta/`.
 - Env vars are prefixed `CLAUDE_META_<NAME>`; all Claude tokens are
   read-only.
 - Values live in per-workspace agenix envfiles
-  (`claude-code-<workspace>-meta-envfile`), decrypted at login and
-  sourced by the workspace root `.envrc`.
+  (`claude-code-<workspace>-meta-envfile`, plain dotenv format — no
+  `export`). Each workspace root's `.claude/meta-env` marker names its
+  secret; a direnvrc hook (tensorfiles claude-code module) walks up to
+  the nearest marker on EVERY direnv evaluation and loads the envfile —
+  markers carry identity, the hook carries backend resolution.
+- direnv layers do NOT nest — that is exactly why injection lives in the
+  direnvrc hook, not in `.envrc` files. Never re-add tokens via nested
+  `.envrc` files.
 - Read guards for `.env*` files and decrypted agenix paths are enforced
   by permission deny rules in the tensorfiles claude-code module.
+- When testing token presence in shell, use ONLY `${VAR:+set}` — never
+  `${VAR:-...}`, `echo $VAR`, or `env` dumps: one wrong expansion prints
+  the value into the transcript. Tools must fail hard on empty tokens,
+  never fall back to other credentials.
 
 ## Hard rules
 
