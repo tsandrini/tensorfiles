@@ -52,6 +52,7 @@ in
   environment.systemPackages = [
     pkgs.libva-utils # Collection of utilities and examples for VA-API
     pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
+    pkgs.tigervnc # Fork of tightVNC, made in cooperation with VirtualGL
     # pkgs.python3Packages.playwright # Python version of the Playwright testing and automation library
     # pkgs.playwright # Framework for Web Testing and Automation
     # pkgs.playwright-mcp # Playwright MCP server
