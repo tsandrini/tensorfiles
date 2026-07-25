@@ -40,12 +40,15 @@ harness files are touched. Canonical copy lives in tensorfiles:
 
 ## Workspace meta layer
 
-Root entries are repo clones, with exactly two exceptions: `.claude/`
-(the harness) and `meta/` (workspace tooling). `meta/scripts/` holds
-cross-repo and company-wide helper tooling, runnable by human and Claude
-alike (e.g. `sync_all_repos`). A script serving a single Claude workflow
-lives inside that skill's directory instead. No third root exception —
-future meta content nests under `meta/`.
+Top-level directories are independent repo clones — ignored wholesale,
+with exactly two tracked exceptions: `.claude/` (the harness) and
+`meta/` (workspace tooling). Loose files at the root auto-track and sync
+between machines via the meta-root repo. `meta/scripts/` holds cross-repo
+and company-wide helper tooling, runnable by human and Claude alike
+(e.g. `sync_all_repos`). A script serving a single Claude workflow lives
+inside that skill's directory instead. No third directory exception —
+future meta content nests under `meta/`. Internal company doc dumps
+(regenerable caches, exports) do NOT get tracked — ignore them.
 
 ## Secrets
 
