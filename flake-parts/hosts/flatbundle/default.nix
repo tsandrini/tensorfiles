@@ -53,6 +53,8 @@ in
     pkgs.libva-utils # Collection of utilities and examples for VA-API
     pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications with Docker
     pkgs.tigervnc # Fork of tightVNC, made in cooperation with VirtualGL
+    pkgs.screen # Window manager that multiplexes a physical terminal
+    pkgs.picocom # Minimal dumb-terminal emulation program
     # pkgs.python3Packages.playwright # Python version of the Playwright testing and automation library
     # pkgs.playwright # Framework for Web Testing and Automation
     # pkgs.playwright-mcp # Playwright MCP server
@@ -97,6 +99,7 @@ in
         "networkmanager"
         "input"
         "docker"
+        "dialout"
       ];
     };
   };
@@ -238,6 +241,7 @@ in
       pkgs.teams-for-linux # Unofficial Microsoft Teams client for Linux
       pkgs.prismlauncher # Free, open source launcher for Minecraft
       pkgs.drawio # Desktop version of draw.io for creating diagrams
+      pkgs.bitwarden-desktop
 
       # --- LLM garbage ---
       # NOTE: claude-code ecosystem CLIs come from tensorfiles.hm.programs.claude-code (extraPackages)

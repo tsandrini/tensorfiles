@@ -205,6 +205,7 @@
 
     home.packages = [
       pkgs.drawio # Desktop version of draw.io for creating diagrams
+      pkgs.bitwarden-desktop
 
       # --- LLM garbage ---
       # NOTE: claude-code ecosystem CLIs come from tensorfiles.hm.programs.claude-code (extraPackages)
