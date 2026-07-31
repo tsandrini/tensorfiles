@@ -140,7 +140,9 @@ in
 
   programs.bash = {
     interactiveShellInit = ''
-      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
+      # NOTE -z IN_NIX_SHELL: nix-shell/nix develop set up their env in the rcfile
+      # sourced *after* this file; exec'ing fish here would skip it
+      if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} && -z ''${IN_NIX_SHELL} ]]
       then
         shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
         exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
