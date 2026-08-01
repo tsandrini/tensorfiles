@@ -162,6 +162,9 @@ in
           remoteControlAtStartup = _ true;
           skipAutoPermissionPrompt = _ true;
 
+          # NOTE: transcript/session-data retention (default 30d)
+          cleanupPeriodDays = _ 365;
+
           # NOTE: enforces the git-readonly rule from CLAUDE.md; `git add` /
           # `git restore` intentionally absent — staging is granted per-repo
           permissions.deny = _ [
