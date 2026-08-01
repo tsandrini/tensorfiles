@@ -189,6 +189,11 @@ in
     (mkIf cfg.withFzf {
       programs.fzf = {
         enable = _ true;
+        # NOTE the fzf-fish plugin already binds history/dir/git/process search
+        # from conf.d, so fzf's own integration only duplicates ctrl-r (which
+        # atuin claims) and adds ctrl-t/alt-c. Off until the binding map is
+        # settled; the widget options below go inert for fish while it is.
+        enableFishIntegration = _ false;
         changeDirWidgetCommand = _ "${getExe pkgs.fd} --type d --hidden --follow --exclude .git";
         changeDirWidgetOptions = _ [
           "--preview '${getExe pkgs.eza} --icons --group-directories-first -la {}'"

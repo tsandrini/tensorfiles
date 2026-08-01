@@ -80,6 +80,7 @@ in
 
         programs = {
           shells.fish.enable = _ true;
+          shells.atuin.enable = _ true;
           # editors.neovim.enable = _ true;
           file-managers.yazi.enable = _ true;
 

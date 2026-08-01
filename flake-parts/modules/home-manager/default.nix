@@ -81,6 +81,7 @@ in
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
     programs_shells_zsh = importApply ./programs/shells/zsh { inherit localFlake; };
     programs_shells_fish = importApply ./programs/shells/fish.nix { inherit localFlake; };
+    programs_shells_atuin = importApply ./programs/shells/atuin.nix { inherit localFlake; };
     # programs_spicetify = importApply ./programs/spicetify.nix { inherit localFlake inputs; };
     programs_ssh = importApply ./programs/ssh.nix {
       inherit localFlake secretsPath pubkeys;
