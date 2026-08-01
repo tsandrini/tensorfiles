@@ -148,12 +148,12 @@ in
           env = {
             ANTHROPIC_AUTH_TOKEN = _ "";
             ANTHROPIC_BASE_URL = _ "";
-            MAX_THINKING_TOKENS = _ "10000";
-            CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = _ "75";
-            CLAUDE_CODE_SUBAGENT_MODEL = _ "sonnet";
+            # MAX_THINKING_TOKENS = _ "10000";
+            # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = _ "75";
+            # CLAUDE_CODE_SUBAGENT_MODEL = _ "sonnet";
           };
 
-          model = _ "claude-opus-4-8[1m]";
+          model = _ "claude-opus-5";
           effortLevel = _ "xhigh";
           promptSuggestionEnabled = _ false;
           awaySummaryEnabled = _ false;
