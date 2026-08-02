@@ -19,21 +19,12 @@
 }:
 {
   config,
-  pkgs,
   hostName,
   # lib,
   ...
 }:
 let
   selfVars = infraVars.hosts."${hostName}";
-
-  aeronauticsModpack = pkgs.fetchPackwizModpack {
-    src = inputs.packwiz-lt-aoc-aeronautics;
-    packHash = "sha256-WORGA3bbHMGp3HtGGGBIv61fBTAn1/9k39E5JAhwDG8=";
-    # packHash = lib.fakeHash;
-    side = "server";
-  };
-
 in
 {
   # -----------------
@@ -55,7 +46,7 @@ in
   # ------------------------------
   # | ADDITIONAL SYSTEM PACKAGES |
   # ------------------------------
-  environment.systemPackages = [ pkgs.tmux ];
+  environment.systemPackages = [ ];
 
   tensorfiles = {
     profiles = {
@@ -80,13 +71,13 @@ in
 
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
-      allowedTCPPorts = [
-        25565
-        2222
-      ];
+      # NOTE: temporary break-glass -- this is the only way back in if the
+      # tunnel dies, and deploy-rs targets wgAddress. Drop once the endpoint
+      # watchdog has proven itself.
+      allowedTCPPorts = config.services.openssh.ports;
       allowedUDPPorts = [
         config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
-        25565
+        #
       ];
     };
     defaultSubnets = {
@@ -128,88 +119,22 @@ in
             "10.5.0.0/24"
           ];
 
-          # endpoint = "vpn.tsandrini.sh:51821";
-          endpoint = "[2a02:8308:298:c900::a]:51821";
+          # NOTE: endpoint is owned by wireguard-endpoint-watchdog below, not set
+          # here -- the AAAA this used to hardcode never completes a handshake
+          # (router drops inbound udp/51821 on v6), which kept this host dark.
           persistentKeepalive = 25;
         }
       ];
     };
   };
 
-  services.minecraft-servers = {
+  tensorfiles.networking.wireguard-endpoint-watchdog = {
     enable = true;
-    eula = true;
-
-    servers.lt-aoc-aeronautics = {
-      enable = true;
-      autoStart = true;
-
-      # NeoForge 21.1.228 — matches variables.txt MODLOADER_VERSION in the
-      # serverpack.
-      package = pkgs.neoforgeServers.neoforge-1_21_1-21_1_228;
-
-      # Aikar-style G1GC flags tuned for Create-heavy packs.
-      jvmOpts = builtins.concatStringsSep " " [
-        "-Xms6G"
-        "-Xmx6G"
-        "-XX:+UseG1GC"
-        "-XX:+ParallelRefProcEnabled"
-        "-XX:MaxGCPauseMillis=200"
-        "-XX:+UnlockExperimentalVMOptions"
-        "-XX:+DisableExplicitGC"
-        "-XX:G1NewSizePercent=30"
-        "-XX:G1MaxNewSizePercent=40"
-        "-XX:G1HeapRegionSize=8M"
-        "-XX:G1ReservePercent=20"
-        "-XX:G1HeapWastePercent=5"
-        "-XX:G1MixedGCCountTarget=4"
-        "-XX:InitiatingHeapOccupancyPercent=15"
-        "-XX:G1MixedGCLiveThresholdPercent=90"
-        "-XX:G1RSetUpdatingPauseTimePercent=5"
-        "-XX:SurvivorRatio=32"
-        "-XX:+PerfDisableSharedMem"
-        "-XX:MaxTenuringThreshold=1"
-        "-Dlog4j2.formatMsgNoLookups=true"
-      ];
-
-      whitelist = {
-        "tsandrini" = "73cdb8a9-a7fc-49be-89d9-ad3924b71b44";
-        "A_Tarkus" = "f8bde3b3-839b-45f7-91ef-3e070d22041a";
-        "TenMarky" = "53e7d569-b7be-4595-95ea-e6fb9123efa9";
-        "zenmaya" = "e32e9504-8b66-48b5-a1ac-a8484894ceaf";
-        "Sarianille" = "f8686022-6a6e-4e61-bf86-d5891676a599";
-        "ondatra00" = "49cbc216-94f4-42d2-a3dd-17315a7d6b2e";
-      };
-
-      serverProperties = {
-        server-port = 25565;
-        level-name = "lt-aoc-aeronautics2";
-        difficulty = "normal";
-        gamemode = "survival";
-        max-players = 8;
-        motd = "LT AOC";
-        white-list = true;
-        online-mode = true;
-        spawn-protection = 16;
-        view-distance = 10;
-        simulation-distance = 10;
-        allow-flight = true;
-      };
-
-      files = {
-        # fetchPackwizModpack keeps overrides at ${modpack}/overrides/<name>
-        # rather than merging them into the pack root.
-        "config" = "${aeronauticsModpack}/overrides/config";
-        "defaultconfigs" = "${aeronauticsModpack}/overrides/defaultconfigs";
-
-        # `mods` MUST go through `files=` (real dir copy), not `symlinks=`.
-        # NeoForge JarInJar resolves each jar via `Path.toRealPath()`; if that
-        # lands in /nix/store, mixin configs inside JiJ-embedded jars can't be
-        # opened and FML aborts with `MixinInitialisationError` + System.exit(0).
-        # `files=` does `cp -r --dereference` (~700 MB) on every start.
-        "mods" = "${aeronauticsModpack}/mods";
-      };
-
+    interfaces.wg-home-tunnel = {
+      peerPublicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
+      endpointHost = "vpn.tsandrini.sh";
+      endpointPort = 51821;
+      addressFamily = "ipv4";
     };
   };
 

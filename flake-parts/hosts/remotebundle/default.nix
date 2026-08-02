@@ -126,10 +126,22 @@ in
             "10.5.0.0/24"
           ];
 
-          endpoint = "vpn.tsandrini.sh:51821";
+          # NOTE: endpoint is owned by wireguard-endpoint-watchdog below, not set
+          # here -- `wg set` latches the first getaddrinfo result forever, and
+          # vpn.tsandrini.sh has an AAAA the router does not answer WireGuard on.
           persistentKeepalive = 25;
         }
       ];
+    };
+  };
+
+  tensorfiles.networking.wireguard-endpoint-watchdog = {
+    enable = true;
+    interfaces.wg-home-tunnel = {
+      peerPublicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
+      endpointHost = "vpn.tsandrini.sh";
+      endpointPort = 51821;
+      addressFamily = "ipv4";
     };
   };
 

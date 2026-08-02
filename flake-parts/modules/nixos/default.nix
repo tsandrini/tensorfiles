@@ -33,6 +33,9 @@ in
     networking_firewall_subnets-firewall = importApply ./networking/firewall/subnets-firewall.nix {
       inherit localFlake;
     };
+    networking_wireguard-endpoint-watchdog = importApply ./networking/wireguard-endpoint-watchdog.nix {
+      inherit localFlake;
+    };
 
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };
