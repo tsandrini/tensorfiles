@@ -201,8 +201,7 @@ in
 
       programs.claude-code = {
         enable = true;
-        # NOTE: live-editable CLAUDE.md while the harness setup is iterated on
-        mutableContextPath = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles/flake-parts/modules/home-manager/programs/claude-code/config/CLAUDE.md";
+        mikrotikLookup.enable = true;
       };
     };
 

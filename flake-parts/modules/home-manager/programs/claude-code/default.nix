@@ -30,6 +30,7 @@ let
     mkMerge
     mkEnableOption
     mkOption
+    mapAttrs
     mapAttrsToList
     types
     getExe
@@ -43,6 +44,9 @@ let
 
   secretsCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.secrets.enable;
+
+  mikrotikCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.ssh") && cfg.mikrotikLookup.enable;
 in
 {
   options.tensorfiles.hm.programs.claude-code = {
@@ -111,6 +115,59 @@ in
           stays imperative — design it with the `ccstatusline` TUI, then
           capture the resulting file here to make it declarative (the TUI
           can no longer save once the file is a store symlink).
+        '';
+      };
+    };
+
+    mikrotikLookup = {
+      enable = mkEnableOption ''
+        SSH client aliases for read-only MikroTik/RouterOS lookups, backing
+        the `mikrotik-lookup` skill. Declares only the client side — the
+        router must already carry a restricted user whose group omits
+        `write`, `policy`, `sensitive`, `reboot` and `sniff`, so read-only
+        is enforced by RouterOS itself rather than by agent conventions
+        (a write attempt fails with `not enough permissions (9)`, and
+        WireGuard private keys stay masked in every export).
+
+        Requires `tensorfiles.hm.programs.ssh`, which owns `programs.ssh`
+      '';
+
+      user = mkOption {
+        type = types.str;
+        default = "claude-ro";
+        description = ''
+          RouterOS username to log in as, shared by every host in
+          `hosts`. Must match the restricted user created on the device.
+        '';
+      };
+
+      identityFile = mkOption {
+        type = types.str;
+        default = "~/.ssh/mikrotik_claude_ro";
+        description = ''
+          Private key offered to every host in `hosts`, deliberately
+          separate from the primary identity. Paired with
+          `IdentitiesOnly`, so keychain-loaded keys are never offered to
+          the router.
+        '';
+      };
+
+      hosts = mkOption {
+        type = types.attrsOf types.str;
+        default = {
+          mikrobundle-ro = "10.10.0.1";
+        };
+        example = {
+          mikrobundle-ro = "10.10.0.1";
+          otherrouter-ro = "192.168.88.1";
+        };
+        description = ''
+          SSH host alias → address. The `-ro` suffix is load-bearing:
+          it is what permission allow-rules match on, keeping a future
+          read-write alias from being covered by the same prefix.
+
+          Reachable over LAN/ULA only — the router-side service ACL
+          rejects everything else.
         '';
       };
     };
@@ -251,6 +308,16 @@ in
         }
         _claude_meta_env_load
       '';
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf mikrotikCheck {
+      programs.ssh.matchBlocks = mapAttrs (_alias: address: {
+        hostname = _ address;
+        user = _ cfg.mikrotikLookup.user;
+        identityFile = _ cfg.mikrotikLookup.identityFile;
+        identitiesOnly = _ true;
+        extraOptions.RequestTTY = _ "no";
+      }) cfg.mikrotikLookup.hosts;
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.statusline.enable {
