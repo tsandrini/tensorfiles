@@ -48,10 +48,10 @@ in
       inherit localFlake inputs;
     };
     profiles_graphical-plasma5 = importApply ./profiles/graphical-plasma5.nix {
-      inherit localFlake inputs;
+      inherit localFlake;
     };
     profiles_graphical-plasma6 = importApply ./profiles/graphical-plasma6.nix {
-      inherit localFlake inputs;
+      inherit localFlake;
     };
     profiles_graphical-startx-home-manager = importApply ./profiles/graphical-startx-home-manager.nix {
       inherit localFlake;

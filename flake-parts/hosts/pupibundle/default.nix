@@ -120,11 +120,6 @@ in
     nameservers = [ "127.0.0.1" ];
   };
 
-  # free up :53 (Pi-hole needs it; systemd-resolved otherwise grabs 127.0.0.53:53)
-  services.resolved.extraConfig = ''
-    DNSStubListener=no
-  '';
-
   services.dnsmasq.enable = false;
 
   services.unbound = {

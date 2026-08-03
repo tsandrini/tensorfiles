@@ -264,7 +264,7 @@ in
     (mkIf cfg.extraPackages.enable {
       home.packages = [
         localFlake.packages.${system}.cc-switcher
-        llmPkgs.auto-claude
+        llmPkgs.aperant
         llmPkgs.claude-plugins
         llmPkgs.claudebox
         llmPkgs.skills-installer
@@ -311,12 +311,12 @@ in
     })
     # |----------------------------------------------------------------------| #
     (mkIf mikrotikCheck {
-      programs.ssh.matchBlocks = mapAttrs (_alias: address: {
-        hostname = _ address;
-        user = _ cfg.mikrotikLookup.user;
-        identityFile = _ cfg.mikrotikLookup.identityFile;
-        identitiesOnly = _ true;
-        extraOptions.RequestTTY = _ "no";
+      programs.ssh.settings = mapAttrs (_alias: address: {
+        HostName = _ address;
+        User = _ cfg.mikrotikLookup.user;
+        IdentityFile = _ cfg.mikrotikLookup.identityFile;
+        IdentitiesOnly = _ true;
+        RequestTTY = _ "no";
       }) cfg.mikrotikLookup.hosts;
     })
     # |----------------------------------------------------------------------| #

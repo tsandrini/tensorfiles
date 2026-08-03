@@ -34,7 +34,7 @@ in
   };
 
   imports = [
-    inputs.dms.nixosModules.greeter
+    inputs.dank-greeter.nixosModules.default
     inputs.niri.nixosModules.niri
   ];
 
@@ -76,7 +76,7 @@ in
         package = _ pkgs.xwayland-satellite;
       };
 
-      programs.dank-material-shell.greeter = {
+      programs.dms-greeter = {
         enable = _ true;
         configHome = _ "/home/tsandrini"; # TODO probably find a better way to do this
         compositor.name = _ "niri";

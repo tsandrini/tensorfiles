@@ -51,7 +51,7 @@ in
         gnucash # Free software for double entry accounting
         libreoffice # Comprehensive, professional-quality productivity suite, a variant of openoffice.org
         obsidian # A knowledge base that works on top of a local folder of plain text Markdown files
-        texlive.combined.scheme-full # TeX Live environment
+        texliveFull # TeX Live environment
         zathura # A highly customizable and functional PDF viewer
         zotero # Collect, organize, cite, and share your research sources
         # todoist # Todoist CLI Client

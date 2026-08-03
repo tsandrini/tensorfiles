@@ -12,12 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{ localFlake }:
 {
   config,
   lib,
   pkgs,
-  system,
   ...
 }:
 let
@@ -122,7 +121,8 @@ in
 
         #kdePackages.bismuth # A dynamic tiling extension for KWin
         # kdePackages.polonium # Auto-tiler that uses KWin 5.27+ tiling functionality
-        inputs.self.packages.${system}.polonium-nightly
+        # inputs.self.packages.${system}.polonium-nightly
+        polonium # Auto-tiler that uses KWin 6.0+ tiling functionality
       ];
 
       services.xserver.enable = _ true;

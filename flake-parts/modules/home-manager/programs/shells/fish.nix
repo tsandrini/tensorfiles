@@ -194,12 +194,16 @@ in
         # atuin claims) and adds ctrl-t/alt-c. Off until the binding map is
         # settled; the widget options below go inert for fish while it is.
         enableFishIntegration = _ false;
-        changeDirWidgetCommand = _ "${getExe pkgs.fd} --type d --hidden --follow --exclude .git";
-        changeDirWidgetOptions = _ [
-          "--preview '${getExe pkgs.eza} --icons --group-directories-first -la {}'"
-        ];
-        fileWidgetCommand = _ "${getExe pkgs.fd} --type f --hidden --follow --exclude .git";
-        fileWidgetOptions = _ [ "--preview '${getExe pkgs.bat} -n --color=always --line-range :500 {}'" ];
+        changeDirWidget = {
+          command = _ "${getExe pkgs.fd} --type d --hidden --follow --exclude .git";
+          options = _ [
+            "--preview '${getExe pkgs.eza} --icons --group-directories-first -la {}'"
+          ];
+        };
+        fileWidget = {
+          command = _ "${getExe pkgs.fd} --type f --hidden --follow --exclude .git";
+          options = _ [ "--preview '${getExe pkgs.bat} -n --color=always --line-range :500 {}'" ];
+        };
       };
     })
     # |----------------------------------------------------------------------| #

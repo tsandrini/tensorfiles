@@ -238,7 +238,7 @@ in
               "${cfg.binds.mod}+Shift+K".action = _ a.move-window-up;
               "${cfg.binds.mod}+Shift+L".action = _ a.move-column-right;
 
-              # --- Resizing windowws ----
+              # --- Resizing windows ----
               "${cfg.binds.mod}+Left".action = _ (a.set-column-width "-10%");
               "${cfg.binds.mod}+Right".action = _ (a.set-column-width "+10%");
               "${cfg.binds.mod}+Up".action = _ (a.set-window-height "-10%");

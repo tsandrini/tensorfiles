@@ -12,8 +12,7 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ lib, ... }:
-{
+_: {
   perSystem =
     { pkgs, ... }:
     {
@@ -27,7 +26,7 @@
         #     ;
         # };
         my_cookies = pkgs.callPackage ./my_cookies.nix { };
-        polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; };
+        # polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; }; # NOTE: broken
         certbot-dns-wedos = pkgs.callPackage ./certbot-dns-wedos.nix { };
         intranet-unauthorized = pkgs.callPackage ./intranet-unauthorized { };
         cc-switcher = pkgs.writeShellApplication {

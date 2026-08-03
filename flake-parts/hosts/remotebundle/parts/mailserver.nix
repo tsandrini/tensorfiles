@@ -215,18 +215,12 @@ in
 
   mailserver = {
     enable = true;
-    stateVersion = 3;
+    stateVersion = 5;
     inherit (mailserverVars) fqdn domains;
 
     x509.useACMEHost = config.mailserver.fqdn;
 
-    enableManageSieve = true;
     virusScanning = false;
-
-    monitoring = {
-      enable = false; # NOTE: we use our own monitoring monit module
-      alertAddress = infraVars.common.contacts.monitoringEmail;
-    };
 
     accounts = {
       "${mailserverVars.securityEmail}" = {

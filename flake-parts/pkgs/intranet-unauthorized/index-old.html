@@ -412,7 +412,10 @@
                   <a
                     class="btn"
                     href="#"
-                    onclick="location.reload(); return false;"
+                    onclick="
+                      location.reload();
+                      return false;
+                    "
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <path
@@ -434,7 +437,11 @@
                   <a
                     class="btn"
                     href="#"
-                    onclick="navigator.clipboard?.writeText(location.href); this.innerText='Copied ✓'; return false;"
+                    onclick="
+                      navigator.clipboard?.writeText(location.href);
+                      this.innerText = 'Copied ✓';
+                      return false;
+                    "
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                       <path

@@ -98,22 +98,22 @@ in
     {
       programs.ssh = {
         enable = _ true;
-        enableDefaultConfig = _ true;
 
-        # NOTE: Override TERM for all SSH connections to avoid issues with
-        # remote servers that lack the ghostty terminfo entry (xterm-ghostty).
-        # This preserves the full xterm-ghostty features locally while
-        # ensuring compatibility over SSH.
-        matchBlocks."*".setEnv = {
-          TERM = _ "xterm-256color";
-        };
+        enableDefaultConfig = _ false;
 
-        # NOTE: pin github.com to the personal key. Deploy keys
-        # loaded in the agent are offered first under the default `IdentitiesOnly no`
-        # and auth as the wrong account -> "Repository not found".
-        matchBlocks."github.com" = {
-          identityFile = _ "~/${cfg.sshKey.privateKeyHomePath}";
-          identitiesOnly = _ true;
+        settings = {
+          "*" = {
+            SetEnv.TERM = _ "xterm-256color"; # NOTE: compatibility
+            # NOTE: default values
+            UserKnownHostsFile = _ "~/.ssh/known_hosts";
+            ControlPath = _ "~/.ssh/master-%r@%n:%p";
+          };
+
+          # NOTE: prevents trying it to load other keys
+          "github.com" = {
+            IdentityFile = _ "~/${cfg.sshKey.privateKeyHomePath}";
+            IdentitiesOnly = _ true;
+          };
         };
       };
 
