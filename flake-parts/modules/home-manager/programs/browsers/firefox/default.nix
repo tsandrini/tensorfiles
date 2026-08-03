@@ -415,6 +415,7 @@ in
             "extensions.screenshots.disabled" = _ true;
             "browser.download.dir" = _ config.home.sessionVariables.DOWNLOADS_DIR;
             "privacy.history.custom" = _ false;
+            "network.dns.disableIPv6" = _ false;
 
             # Let Nix manage extensions
             "app.update.auto" = _ false;
