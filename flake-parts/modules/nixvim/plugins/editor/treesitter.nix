@@ -42,6 +42,10 @@ in
         folding.enable = _ true;
         nixvimInjections = _ true;
         nixGrammars = _ true;
+
+        # NOTE: ansible-vim 5.0 sets a bare `ansible` ft on nvim (was `yaml.ansible`);
+        # no such grammar exists, so `get_lang` falls through to the ft name itself.
+        languageRegister.yaml = _ [ "ansible" ];
       };
 
       plugins.treesitter-context = {
