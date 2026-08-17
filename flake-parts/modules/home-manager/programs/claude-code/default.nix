@@ -153,21 +153,47 @@ in
       };
 
       hosts = mkOption {
-        type = types.attrsOf types.str;
+        type = types.attrsOf (
+          types.coercedTo types.str (address: { inherit address; }) (
+            types.submodule {
+              options = {
+                address = mkOption {
+                  type = types.str;
+                  description = "Router address (IP or hostname).";
+                };
+                port = mkOption {
+                  type = types.port;
+                  default = 22;
+                  description = "Port of the router's SSH service.";
+                };
+              };
+            }
+          )
+        );
         default = {
           mikrobundle-ro = "10.10.0.1";
+          pesekmudra-ro = {
+            address = "10.0.0.1";
+            port = 22022;
+          };
         };
         example = {
           mikrobundle-ro = "10.10.0.1";
-          otherrouter-ro = "192.168.88.1";
+          otherrouter-ro = {
+            address = "192.168.88.1";
+            port = 22022;
+          };
         };
         description = ''
-          SSH host alias → address. The `-ro` suffix is load-bearing:
-          it is what permission allow-rules match on, keeping a future
-          read-write alias from being covered by the same prefix.
+          SSH host alias → router endpoint; a bare string is shorthand
+          for `{ address = <str>; }` on port 22. The `-ro` suffix is
+          load-bearing: it is what permission allow-rules match on,
+          keeping a future read-write alias from being covered by the
+          same prefix.
 
-          Reachable over LAN/ULA only — the router-side service ACL
-          rejects everything else.
+          Reachable only from where each router's service ACL allows —
+          LAN/ULA for mikrobundle, the site WireGuard tunnel for
+          pesekmudra.
         '';
       };
     };
@@ -311,8 +337,9 @@ in
     })
     # |----------------------------------------------------------------------| #
     (mkIf mikrotikCheck {
-      programs.ssh.settings = mapAttrs (_alias: address: {
-        HostName = _ address;
+      programs.ssh.settings = mapAttrs (_alias: host: {
+        HostName = _ host.address;
+        Port = _ host.port;
         User = _ cfg.mikrotikLookup.user;
         IdentityFile = _ cfg.mikrotikLookup.identityFile;
         IdentitiesOnly = _ true;
