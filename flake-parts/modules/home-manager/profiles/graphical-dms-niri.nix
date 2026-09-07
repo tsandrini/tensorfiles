@@ -141,6 +141,7 @@ in
         pkgs.kdePackages.kio-extras # Additional components to increase the functionality of KIO
         pkgs.kdePackages.kio-fuse # FUSE Interface for KIO
         pkgs.kdePackages.dolphin # File manager by KDE
+        pkgs.kdePackages.print-manager # A tool for managing print jobs and printers
         # pkgs.kdePackages.gwenview # Image viewer by KDE
         # pkgs.qimgv # Qt6 image viewer with optional video support
         # pkgs.imv # Command line image viewer for tiling window managers

@@ -119,6 +119,8 @@ in
         8000
         8080
         5173
+        # android wireless ADB
+        43669
       ];
       allowedUDPPorts = [
         # WG
@@ -128,6 +130,8 @@ in
         8000
         8080
         5173
+        # android wireless ADB
+        43669
       ];
     };
   };
@@ -165,6 +169,22 @@ in
     enable = true;
     secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
+
+  # services.avahi = {
+  #   enable = true;
+  #   nssmdns4 = true;
+  #   openFirewall = true;
+  # };
+  #
+  # services.printing = {
+  #   enable = true;
+  #   drivers = [
+  #     pkgs.cups-filters # Backends, and other software that was once part of the core CUPS distribution
+  #     pkgs.cups-browsed # Daemon for browsing the Bonjour broadcasts of shared, remote CUPS printers
+  #     pkgs.gutenprint # Ghostscript and cups printer drivers
+  #     pkgs.hplip # Print, scan and fax HP drivers for Linux
+  #   ];
+  # };
 
   virtualisation.docker = {
     enable = true;
@@ -243,10 +263,14 @@ in
       pkgs.prismlauncher # Free, open source launcher for Minecraft
       pkgs.drawio # Desktop version of draw.io for creating diagrams
       pkgs.bitwarden-desktop
+      pkgs.darktable # Virtual lighttable and darkroom for photographers
+      pkgs.rawtherapee # RAW converter and digital photo processing software
+      pkgs.google-clasp # Develop Apps Script Projects locally
 
       # --- LLM garbage ---
       # NOTE: claude-code ecosystem CLIs come from tensorfiles.hm.programs.claude-code (extraPackages)
       inputs.llm-agents.packages.${system}.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
+      inputs.llm-agents.packages.${system}.claude-desktop # Desktop application for Claude.ai
     ];
   };
 }
