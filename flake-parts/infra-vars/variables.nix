@@ -30,6 +30,8 @@ _: rec {
         common.networking.defaultSubnet
         common.networking.intranetSubnet
         "192.168.11.0/24" # Meteopress vila
+        "192.168.21.0/24" # Meteopress vila
+        "192.168.31.0/24" # Meteopress vila
       ];
       defaultNameservers = [
         "10.10.0.10"
