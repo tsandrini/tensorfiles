@@ -14,6 +14,26 @@
   relative path): `.claude-tmp/` at the project root. Never loose files
   in the repo root.
 
+## Reports & page-shaped output
+
+- A report, dashboard, visualization, or any other "HTML" deliverable
+  means a standalone local `.html` file — self-contained (inline
+  CSS/JS), openable offline, shareable as a plain file. Place it at the
+  path I name, otherwise per the Temporary-files rules above.
+- Never substitute a claude.ai Artifact for it: artifacts are hard to
+  distribute and I cannot edit them myself. Use the Artifact tool only
+  when I explicitly ask for an artifact.
+
+## Browser
+
+- All browser interaction goes through the Playwright MCP server
+  (nix-deployed, headless Chromium): navigate / snapshot / screenshot /
+  evaluate via its tools.
+- Never install, enable, or propose the Claude-in-Chrome extension or
+  any other browser extension/driver, and never invoke the
+  `claude-in-chrome` skill. If the Playwright MCP is missing or
+  misbehaving, stop and tell me — I will fix the deployment.
+
 ## Git — read-only
 
 Never change git state: no add/commit/push/pull/fetch/checkout/branch/
