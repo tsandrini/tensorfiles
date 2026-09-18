@@ -231,6 +231,9 @@ in
           env = {
             ANTHROPIC_AUTH_TOKEN = _ "";
             ANTHROPIC_BASE_URL = _ "";
+            # NOTE: `claudeInChromeDefaultEnabled` lives in the mutable
+            # ~/.claude.json, not settings.json; this triBool env outranks it
+            CLAUDE_CODE_ENABLE_CFC = _ "0";
             # MAX_THINKING_TOKENS = _ "10000";
             # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = _ "75";
             # CLAUDE_CODE_SUBAGENT_MODEL = _ "sonnet";
@@ -244,6 +247,10 @@ in
           skipDangerousModePermissionPrompt = _ true;
           remoteControlAtStartup = _ true;
           skipAutoPermissionPrompt = _ true;
+          # NOTE: false = "Ask each time", true = "Switch automatically"
+          switchModelsOnFlag = _ false;
+          enableArtifact = _ false;
+          inputNeededNotifEnabled = _ true;
 
           # NOTE: transcript/session-data retention (default 30d)
           cleanupPeriodDays = _ 365;
