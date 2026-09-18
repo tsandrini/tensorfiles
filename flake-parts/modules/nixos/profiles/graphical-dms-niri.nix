@@ -103,14 +103,14 @@ in
       xdg.portal = {
         enable = _ true;
         extraPortals = [
-          pkgs.xdg-desktop-portal-wlr # xdg-desktop-portal backend for wlroots
           pkgs.xdg-desktop-portal-gtk # Desktop integration portals for sandboxed apps
-          pkgs.xdg-desktop-portal-gnome # Backend implementation for xdg-desktop-portal for the GNOME desktop environment
+          # pkgs.xdg-desktop-portal-wlr # xdg-desktop-portal backend for wlroots
+          # pkgs.xdg-desktop-portal-gnome # Backend implementation for xdg-desktop-portal for the GNOME desktop environment
         ];
-        config.common.default = [
-          "wlr"
-          "gtk"
-        ];
+        # config.common.default = [
+        #   "wlr"
+        #   "gtk"
+        # ];
       };
 
       environment.sessionVariables = {
