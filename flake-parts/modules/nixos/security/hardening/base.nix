@@ -15,11 +15,49 @@
 { localFlake }:
 { config, lib, ... }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    mkOption
+    types
+    subtractLists
+    concatStringsSep
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.security.hardening.base;
   _ = mkOverrideAtProfileLevel;
+
+  # Dead/rare protocols and legacy filesystems that periodically produce
+  # CVEs and that nothing on a typical host needs autoloaded.
+  blacklistedKernelModules = [
+    # Dead network protocols
+    "dccp"
+    "sctp"
+    "rds"
+    "tipc"
+    "ax25"
+    "decnet"
+    "x25"
+    "netrom"
+    "rose"
+    "atm"
+    "appletalk"
+    "ipx"
+    # Legacy/exotic filesystems (re-enable per-host via `allowedKernelModules`)
+    "cramfs"
+    "freevxfs"
+    "jffs2"
+    "hfs"
+    "hfsplus"
+    "udf"
+    # NOTE: `thunderbolt` and `firewire-core` are real DMA attack surface
+    # but blacklisting them breaks docking stations and external GPUs.
+    # Opt in per-host if you care.
+  ];
+
+  unknownAllowedKernelModules = subtractLists blacklistedKernelModules cfg.allowedKernelModules;
 in
 {
   options.tensorfiles.security.hardening.base = {
@@ -39,6 +77,23 @@ in
       Designed to be a no-op for normal workloads. Both `desktop` and
       `server` hardening profiles inherit this base layer.
     '';
+
+    allowedKernelModules = mkOption {
+      type = types.listOf types.str;
+      default = [ ];
+      example = [ "udf" ];
+      description = ''
+        Kernel modules to exempt from this profile's module blacklist, for
+        hosts that genuinely need one of them (e.g. `udf` for optical media
+        and most ISO images).
+
+        Only subtracts from the list defined by this profile -- modules
+        blacklisted elsewhere via `boot.blacklistedKernelModules` stay
+        blacklisted. Every entry must be part of the profile's blacklist,
+        otherwise evaluation fails, so typos and stale exemptions surface
+        immediately. No-op on containers, where the blacklist isn't applied.
+      '';
+    };
   };
 
   config = mkIf cfg.enable (mkMerge [
@@ -81,33 +136,15 @@ in
         "randomize_kstack_offset=on"
       ];
 
-      # Dead/rare protocols and legacy filesystems that periodically produce
-      # CVEs and that nothing on a typical host needs autoloaded.
-      boot.blacklistedKernelModules = [
-        # Dead network protocols
-        "dccp"
-        "sctp"
-        "rds"
-        "tipc"
-        "ax25"
-        "decnet"
-        "x25"
-        "netrom"
-        "rose"
-        "atm"
-        "appletalk"
-        "ipx"
-        # Legacy/exotic filesystems (re-enable per-host if you use one)
-        "cramfs"
-        "freevxfs"
-        "jffs2"
-        "hfs"
-        "hfsplus"
-        "udf"
-        # NOTE: `thunderbolt` and `firewire-core` are real DMA attack surface
-        # but blacklisting them breaks docking stations and external GPUs.
-        # Opt in per-host if you care.
+      assertions = [
+        {
+          assertion = unknownAllowedKernelModules == [ ];
+          message = "tensorfiles.security.hardening.base.allowedKernelModules: not part of the profile's blacklist: ${concatStringsSep ", " unknownAllowedKernelModules}";
+        }
       ];
+
+      # NOTE: plain list, merges with blacklists from hardware/host modules.
+      boot.blacklistedKernelModules = subtractLists cfg.allowedKernelModules blacklistedKernelModules;
     })
     # |----------------------------------------------------------------------| #
   ]);
