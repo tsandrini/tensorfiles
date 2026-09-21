@@ -1,0 +1,54 @@
+Fix a data race on the host cursor surface in the nested Wayland backend.
+
+SetCursorImage() destroys and recreates m_pCursorSurface on the compositor
+thread, while UpdateCursor() is also invoked from the Wayland input thread's
+callbacks (pointer enter, keyboard enter/leave) and passes the very same
+pointer to wl_pointer.set_cursor. When a click lands while the client changes
+its cursor image, a request naming an already destroyed wl_surface goes out,
+the host compositor raises a protocol error ("error in client communication"
+in niri) and CWaylandInputThread::ThreadFunc abort()s on the dead connection.
+
+Reproduces within seconds with anything that swaps cursors under the pointer:
+InstallShield installers (hourglass), Delphi autorun menus (hand cursor).
+Still present upstream in 3.16.28.
+
+--- a/src/Backends/WaylandBackend.cpp	2026-09-19 15:31:51.905771758 +0200
++++ b/src/Backends/WaylandBackend.cpp	2026-09-19 15:31:51.951045806 +0200
+@@ -847,6 +847,10 @@
+         wl_surface *m_pCursorSurface = nullptr;
+         std::shared_ptr<INestedHints::CursorInfo> m_pDefaultCursorInfo;
+         wl_surface *m_pDefaultCursorSurface = nullptr;
++
++        // Guards the cursor state above: SetCursorImage() runs on the compositor
++        // thread, UpdateCursor() also runs from the Wayland input thread.
++        std::recursive_mutex m_CursorLock;
+     };
+     const wl_registry_listener CWaylandBackend::s_RegistryListener =
+     {
+@@ -2396,6 +2400,8 @@
+
+     void CWaylandBackend::SetCursorImage( std::shared_ptr<INestedHints::CursorInfo> info )
+     {
++        std::scoped_lock lock{ m_CursorLock };
++
+         m_pCursorInfo = info;
+
+         if ( m_pCursorSurface )
+@@ -2410,6 +2416,8 @@
+     }
+     void CWaylandBackend::SetRelativeMouseMode( wl_surface *pSurface, bool bRelative )
+     {
++        std::scoped_lock lock{ m_CursorLock };
++
+         if ( !m_pPointer )
+             return;
+
+@@ -2447,6 +2455,8 @@
+
+     void CWaylandBackend::UpdateCursor()
+     {
++        std::scoped_lock lock{ m_CursorLock };
++
+         bool bUseHostCursor = false;
+
+         if ( !m_pPointer )

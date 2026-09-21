@@ -14,7 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 _: {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, lib, ... }:
     {
       packages = {
         # pywalfox-native = pkgs.callPackage ./pywalfox-native.nix { };
@@ -42,6 +42,10 @@ _: {
           text = builtins.readFile ./cc-switcher.sh;
         };
         # awatcher = pkgs.callPackage ./awatcher.nix { };
+      }
+      # NOTE: 32-bit wine exists on x86_64-linux only
+      // lib.optionalAttrs (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
+        retrowine = pkgs.callPackage ./retrowine { };
       };
     };
 }
