@@ -77,6 +77,8 @@ in
       packages-graphical-extra.enable = true;
     };
     security.hardening.desktop.enable = true;
+    # NOTE: required for optical media (external DVD drive)
+    security.hardening.base.allowedKernelModules = [ "udf" ];
 
     security.agenix.enable = true;
 
@@ -84,6 +86,11 @@ in
     # roots instead of the default ones.
     tasks.nix-garbage-collect.enable = false;
     programs.nh.enable = true;
+
+    programs.retrowine = {
+      enable = true;
+      root = "/mnt/hdd-backup/games-backup";
+    };
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -100,6 +107,7 @@ in
         "input"
         "docker"
         "dialout"
+        "cdrom" # NOTE: required for cdemu (/dev/vhba_ctl)
       ];
     };
   };
@@ -270,7 +278,7 @@ in
       # --- LLM garbage ---
       # NOTE: claude-code ecosystem CLIs come from tensorfiles.hm.programs.claude-code (extraPackages)
       inputs.llm-agents.packages.${system}.codex # OpenAI Codex CLI - a coding agent that runs locally on your computer
-      inputs.llm-agents.packages.${system}.claude-desktop # Desktop application for Claude.ai
+      # inputs.llm-agents.packages.${system}.claude-desktop # Desktop application for Claude.ai
     ];
   };
 }

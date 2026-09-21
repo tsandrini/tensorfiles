@@ -66,6 +66,20 @@
     { device = "/dev/disk/by-label/swap"; }
   ];
 
+  fileSystems."/mnt/hdd-backup" = {
+    device = "/dev/disk/by-label/hdd-backup";
+    fsType = "ext4";
+    options = [
+      "nofail"
+      "nosuid"
+      "nodev"
+      "noatime"
+      "x-systemd.automount"
+      "x-systemd.idle-timeout=2min"
+      "x-systemd.device-timeout=5s"
+    ];
+  };
+
   powerManagement = {
     enable = true;
     # cpuFreqGovernor = "schedutil";
