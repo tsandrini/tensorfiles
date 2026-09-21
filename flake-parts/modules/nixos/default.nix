@@ -65,6 +65,7 @@ in
     # -- programs --
     programs_shadow-nix = importApply ./programs/shadow-nix.nix { inherit localFlake inputs; };
     programs_nh = importApply ./programs/nh.nix { inherit localFlake; };
+    programs_retrowine = importApply ./programs/retrowine.nix { inherit localFlake; };
 
     # -- security --
     security_hardening_base = importApply ./security/hardening/base.nix { inherit localFlake; };
