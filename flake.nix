@@ -127,7 +127,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
-    mcp-servers-nix.url = "github:natsukium/mcp-servers-nix";
+    # NOTE: pinned pre-`2026.8.31` servers bump — reference servers now need
+    # python `mcp>=1.29.0`, we build them against root nixpkgs (`mcp` 1.27.1).
+    # Unpin once nixpkgs is bumped past 2026-09-04.
+    mcp-servers-nix.url = "github:natsukium/mcp-servers-nix/6577b26a337efd8ea6f581f64f200d07634cd6e1";
     nix-minecraft.url = "github:Infinidoge/nix-minecraft";
     packwiz-lt-aoc-aeronautics = {
       url = "github:tsandrini/packwiz-lt-aoc-aeronautics";
