@@ -126,6 +126,7 @@ in
         # Dev ports
         8000
         8080
+        8081
         5173
         # android wireless ADB
         43669
@@ -137,6 +138,7 @@ in
         # Dev ports
         8000
         8080
+        8081
         5173
         # android wireless ADB
         43669

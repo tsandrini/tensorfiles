@@ -32,6 +32,9 @@ _: rec {
         "192.168.11.0/24" # Meteopress vila
         "192.168.21.0/24" # Meteopress vila
         "192.168.31.0/24" # Meteopress vila
+
+        # TODO: remove
+        "192.168.0.0/24"
       ];
       defaultNameservers = [
         "10.10.0.10"
