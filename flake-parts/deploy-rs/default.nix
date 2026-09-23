@@ -27,7 +27,7 @@ let
 
       profiles.system = {
         user = "root";
-        sshUser = "tsandrini"; # TODO: add deploy user?
+        sshUser = "deploy";
         sshOpts = [
           "-p"
           "${toString infraVars.common.services.openssh.defaultPort}"

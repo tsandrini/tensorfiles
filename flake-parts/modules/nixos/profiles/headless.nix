@@ -15,6 +15,7 @@
 { localFlake }:
 {
   config,
+  options,
   lib,
   pkgs,
   ...
@@ -82,10 +83,23 @@ in
       # storage and rotation natively, and Promtail reads from the journal
       # directly. rsyslog would only produce duplicate text log files on
       # disk (~530MB closure cost).
-      services.journald.extraConfig = _ ''
-        SystemMaxUse=100M
-        MaxRetentionSec=7day
-      '';
+      # NOTE: pupibundle evals on nixos-raspberrypi's 26.05 pin (no
+      # journald.settings); drop the fallback once that pin reaches 26.11
+      services.journald =
+        if options.services.journald ? settings then
+          {
+            settings.Journal = {
+              SystemMaxUse = _ "100M";
+              MaxRetentionSec = _ "7day";
+            };
+          }
+        else
+          {
+            extraConfig = _ ''
+              SystemMaxUse=100M
+              MaxRetentionSec=7day
+            '';
+          };
       services.logrotate.enable = _ true;
     }
     # |----------------------------------------------------------------------| #

@@ -58,6 +58,7 @@ in
     };
     profiles_headless = importApply ./profiles/headless.nix { inherit localFlake; };
     profiles_minimal = importApply ./profiles/minimal.nix { inherit localFlake infraVars; };
+    profiles_with-deploy-user = importApply ./profiles/with-deploy-user.nix { inherit localFlake; };
     profiles_with-base-monitoring-exports = importApply ./profiles/with-base-monitoring-exports.nix {
       inherit localFlake infraVars;
     };

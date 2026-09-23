@@ -16,7 +16,8 @@ let
   # spinorbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH1693g0EVyChehwAjJqkKLWD8ZysLbo9TbRZ2B9BcKe root@spinorbundle";
   # jetbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAQpLfZTRGfeVkh0tTCZ7Ads5fwYnl3cIj34Fukkymhp root@jetbundle";
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
-  maya = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiElRBnJTDprJmK5zo4xM0mO0y83KwPJYfDwfWh58gm maya@balthasar";
+  deploy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKMF32cs/4ZtlrPNfFZyGZ7dLNaYZ+JKWpPSF1bwqqE deploy@tsandrini";
+  # maya = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiElRBnJTDprJmK5zo4xM0mO0y83KwPJYfDwfWh58gm maya@balthasar";
 in
 {
   common = { };
@@ -24,11 +25,9 @@ in
     flatbundle = {
       users = {
         root = {
-          sshKey = null;
           authorizedKeys = [ ];
         };
         tsandrini = {
-          sshKey = null;
           authorizedKeys = [ tsandrini ];
         };
       };
@@ -36,11 +35,9 @@ in
     jetbundle = {
       users = {
         root = {
-          sshKey = null;
           authorizedKeys = [ ];
         };
         tsandrini = {
-          sshKey = null;
           authorizedKeys = [ tsandrini ];
         };
       };
@@ -48,30 +45,34 @@ in
     remotebundle = {
       users = {
         root = {
-          sshKey = null;
           authorizedKeys = [ ];
         };
         tsandrini = {
-          sshKey = null;
           authorizedKeys = [ tsandrini ];
         };
         mrpack = {
-          sshKey = null;
           authorizedKeys = [ tsandrini ];
+        };
+        deploy = {
+          authorizedKeys = [
+            deploy
+          ];
         };
       };
     };
     blehbundle = {
       users = {
         root = {
-          sshKey = null;
           authorizedKeys = [ ];
         };
         tsandrini = {
-          sshKey = null;
           authorizedKeys = [
             tsandrini
-            maya
+          ];
+        };
+        deploy = {
+          authorizedKeys = [
+            deploy
           ];
         };
       };
@@ -79,12 +80,15 @@ in
     pupibundle = {
       users = {
         root = {
-          sshKey = null;
           authorizedKeys = [ ];
         };
         tsandrini = {
-          sshKey = null;
           authorizedKeys = [ tsandrini ];
+        };
+        deploy = {
+          authorizedKeys = [
+            deploy
+          ];
         };
       };
     };

@@ -57,6 +57,7 @@ in
     profiles = {
       headless.enable = true;
       with-base-monitoring-exports.enable = true;
+      with-deploy-user.enable = true;
     };
 
     services.networking.networkmanager.enable = false;
