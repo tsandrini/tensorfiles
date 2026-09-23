@@ -28,6 +28,10 @@ in
   flake.nixosModules = {
     # -- misc --
     misc_nix = importApply ./misc/nix.nix { inherit inputs localFlake; };
+    misc_remote-builders = importApply ./misc/remote-builders.nix {
+      inherit localFlake infraVars;
+      inherit (config.agenix) secretsPath pubkeys;
+    };
 
     # -- networking --
     networking_firewall_subnets-firewall = importApply ./networking/firewall/subnets-firewall.nix {

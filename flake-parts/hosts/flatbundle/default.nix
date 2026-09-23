@@ -82,6 +82,14 @@ in
 
     security.agenix.enable = true;
 
+    misc.remote-builders.client = {
+      enable = true;
+      builders.pupibundle = {
+        systems = [ "aarch64-linux" ];
+        maxJobs = 2;
+      };
+    };
+
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
     tasks.nix-garbage-collect.enable = false;

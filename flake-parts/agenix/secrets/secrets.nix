@@ -73,6 +73,8 @@ in
   # --------------------
   "hosts/flatbundle/users/root/system-password.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
   "hosts/flatbundle/users/tsandrini/system-password.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
+  # nix-daemon's key for the remote builders (`nix-ssh` user there)
+  "hosts/flatbundle/nix-remote-builder-ssh-key.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
 
   # --- jetbundle ---
   # --------------------

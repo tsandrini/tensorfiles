@@ -68,6 +68,8 @@ in
     services.networking.networkmanager.enable = false;
     security.agenix.enable = true;
 
+    misc.remote-builders.server.enable = true;
+
     tasks.nix-garbage-collect.enable = false;
     programs.nh.enable = true;
 

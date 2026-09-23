@@ -18,9 +18,13 @@ let
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
   deploy = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEKMF32cs/4ZtlrPNfFZyGZ7dLNaYZ+JKWpPSF1bwqqE deploy@tsandrini";
   # maya = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiElRBnJTDprJmK5zo4xM0mO0y83KwPJYfDwfWh58gm maya@balthasar";
+
+  nix-remote-builder-flatbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/NqSHi0kMfd4hf14y2VxnQoaW+561MbI/CnM81aSFQ nix-remote-builder@flatbundle";
 in
 {
-  common = { };
+  common = {
+    nixRemoteBuilders = [ nix-remote-builder-flatbundle ];
+  };
   hosts = {
     flatbundle = {
       users = {
@@ -78,6 +82,7 @@ in
       };
     };
     pupibundle = {
+      hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINLvjzkKLhKbaRU/uf3A+pf25rir3y+6mvcbaAxt2DHP root@pupibundle";
       users = {
         root = {
           authorizedKeys = [ ];
