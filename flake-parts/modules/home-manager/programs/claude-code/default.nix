@@ -239,8 +239,10 @@ in
             # CLAUDE_CODE_SUBAGENT_MODEL = _ "sonnet";
           };
 
-          model = _ "claude-opus-5";
-          effortLevel = _ "xhigh";
+          model = _ "claude-opus-5-5";
+          # NOTE: top-level `effortLevel` is legacy and ignored for models newer
+          # than claude-opus-5; per-model keys are also what `/effort` writes
+          modelSettings."claude-opus-5-5".effortLevel = _ "xhigh";
           promptSuggestionEnabled = _ false;
           awaySummaryEnabled = _ false;
           tui = _ "fullscreen";
