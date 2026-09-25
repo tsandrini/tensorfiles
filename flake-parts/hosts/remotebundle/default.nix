@@ -94,7 +94,13 @@ in
   fileSystems."/mnt/NAS" = {
     device = "172.16.131.12:/nas/5829";
     fsType = "nfs";
-    options = [ "nofail" ];
+    # NOTE: the NFS client takes a random privileged source port (665-1023)
+    # and once grabbed dovecot's 993; mount after dovecot so it can't.
+    # `noresvport` is no option, the NAS rejects unprivileged ports.
+    options = [
+      "nofail"
+      "x-systemd.after=dovecot.service"
+    ];
   };
 
   security.sudo.extraRules = [
