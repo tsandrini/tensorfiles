@@ -25,6 +25,7 @@ _: rec {
     networking = {
       defaultSubnet = "10.10.0.0/24";
       intranetSubnet = "10.0.33.0/24";
+      iotSubnet = "10.30.0.0/24";
       defaultGateway = "10.10.0.1";
       defaultFirewallSubnets = [
         common.networking.defaultSubnet
@@ -264,6 +265,10 @@ _: rec {
         services = {
           unbound = {
             port = 5335;
+            iotPorts = {
+              noInternet = 5336;
+              internet = 5337;
+            };
           };
           prometheus = {
             exporters = {

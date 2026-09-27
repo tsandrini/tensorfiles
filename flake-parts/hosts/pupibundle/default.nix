@@ -25,6 +25,9 @@ let
   prometheusExporters = selfVars.services.prometheus.exporters;
 
   virtualHostsVar = infraVars.hosts."remotebundle".services.nginx.virtualHosts;
+  unboundVars = selfVars.services.unbound;
+  iotDnsNoInternet = "${selfVars.address}@${toString unboundVars.iotPorts.noInternet}";
+  iotDnsInternet = "${selfVars.address}@${toString unboundVars.iotPorts.internet}";
 in
 {
   # -----------------
@@ -110,6 +113,16 @@ in
         prometheusExporters.unbound.port
       ];
     };
+    subnets."${infraVars.common.networking.iotSubnet}" = {
+      allowedTCPPorts = [
+        unboundVars.iotPorts.noInternet
+        unboundVars.iotPorts.internet
+      ];
+      allowedUDPPorts = [
+        unboundVars.iotPorts.noInternet
+        unboundVars.iotPorts.internet
+      ];
+    };
   };
 
   networking = {
@@ -139,8 +152,26 @@ in
           ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."remotebundle".wgAddress}"''
         ];
 
-        interface = [ "127.0.0.1" ];
-        inherit (selfVars.services.unbound) port;
+        interface = [
+          "127.0.0.1"
+          iotDnsNoInternet
+          iotDnsInternet
+        ];
+        # NOTE: end0 may not have its address yet when unbound binds
+        ip-freebind = true;
+
+        # NOTE: interfaces default to refuse; any access-control matching the
+        # client overrides interface-*, so never add one for the IoT subnet
+        interface-action = [
+          "${iotDnsNoInternet} allow"
+          "${iotDnsInternet} allow"
+        ];
+        interface-view = [
+          "${iotDnsNoInternet} iot-no-internet"
+          "${iotDnsInternet} iot-internet"
+        ];
+
+        inherit (unboundVars) port;
         access-control = [ "127.0.0.1 allow" ];
 
         # security hardening defaults
@@ -170,6 +201,19 @@ in
         root-hints = "${pkgs.dns-root-data}/root.hints";
         auto-trust-anchor-file = "/var/lib/unbound/root.key"; # DNSSEC
       };
+
+      view = [
+        {
+          name = "iot-no-internet";
+          local-zone = [ ''"." always_nxdomain'' ];
+        }
+        {
+          name = "iot-internet";
+          view-first = true;
+          local-zone = [ ''"home.tsandrini.sh." always_nxdomain'' ];
+        }
+      ];
+
     };
   };
 
