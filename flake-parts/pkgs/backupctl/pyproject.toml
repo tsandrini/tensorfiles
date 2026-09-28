@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backupctl"
+version = "0.1.0"
+description = "Browse, replicate and maintain restic repositories on a Hetzner Storage Box"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "tsandrini", email = "t@tsandrini.sh" }]
+
+[project.scripts]
+backupctl = "backupctl.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "UP", "SIM", "RUF", "PTH"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
