@@ -59,11 +59,7 @@ def run(config: Config, args: argparse.Namespace) -> int:
         source = restic.from_repo_args(repo)
         if not restic.replica_ready(repo):
             print(f"== {repo.name}: initializing the replica at {repo.replica}")
-            restic.run(
-                restic.command(config, repo, "init", "--copy-chunker-params", *source, replica=True)
-            )
+            restic.run(config, repo, "init", "--copy-chunker-params", *source, replica=True)
         print(f"== {repo.name}: copying new snapshots")
-        restic.run(
-            restic.command(config, repo, "copy", "--retry-lock", "30m", *source, replica=True)
-        )
+        restic.run(config, repo, "copy", "--retry-lock", "30m", *source, replica=True)
     return 0

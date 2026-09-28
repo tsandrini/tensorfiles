@@ -3,17 +3,20 @@
 from __future__ import annotations
 
 import argparse
+import json
 from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
 
-from backupctl import cli
+from backupctl import cli, restic
 from backupctl.commands import maintain, passthrough, replicate, status, sync_keys
 from backupctl.config import Config, parse
 from backupctl.errors import UsageError
 
 from .conftest import Recorder
+
+NOW = datetime(2026, 9, 28, 12, 0, tzinfo=UTC)
 
 
 def ns(**kwargs: object) -> argparse.Namespace:
@@ -141,3 +144,58 @@ def test_cli_reports_config_errors(tmp_path: Path, capsys: pytest.CaptureFixture
 def test_cli_requires_command() -> None:
     with pytest.raises(SystemExit):
         cli.main([])
+
+
+# --- status rows ---
+
+
+def test_status_row_reports_restic_errors(config: Config, monkeypatch: pytest.MonkeyPatch) -> None:
+    def fail(*_args: object, **_kwargs: object) -> None:
+        raise restic.ResticError("alpha", "snapshots", False, 10)
+
+    monkeypatch.setattr("backupctl.restic.run", fail)
+    cells, ok = status.row(config, config.repositories["alpha"], replica=False, now=NOW, max_age=26)
+    assert cells[-1] == "repository does not exist"
+    assert not ok
+
+
+def test_status_row_fresh_and_stale(config: Config, monkeypatch: pytest.MonkeyPatch) -> None:
+    snapshots = '[{"time": "2026-09-28T10:00:00+00:00"}, {"time": "2026-09-27T10:00:00+00:00"}]'
+    monkeypatch.setattr("backupctl.restic.run", lambda *_a, **_k: snapshots)
+    repo = config.repositories["alpha"]
+    cells, ok = status.row(config, repo, replica=False, now=NOW, max_age=26)
+    assert (cells[2], cells[4], cells[5], ok) == ("2", "2.0h", "ok", True)
+    cells, ok = status.row(config, repo, replica=False, now=NOW, max_age=1)
+    assert (cells[5], ok) == ("stale", False)
+
+
+def test_status_row_empty_repository(config: Config, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr("backupctl.restic.run", lambda *_a, **_k: "null")
+    cells, ok = status.row(config, config.repositories["beta"], replica=False, now=NOW, max_age=26)
+    assert (cells[5], ok) == ("empty", False)
+
+
+def test_status_row_replica_not_attached(sample: dict, tmp_path: Path) -> None:
+    sample["repositories"]["alpha"]["replica"] = str(tmp_path / "unplugged" / "restic" / "alpha")
+    config = parse(sample)
+    cells, ok = status.row(config, config.repositories["alpha"], replica=True, now=NOW, max_age=26)
+    assert (cells[1], cells[5], ok) == ("replica", "not attached", False)
+
+
+def test_cli_restic_failure_exits_1(
+    tmp_path: Path, sample: dict, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    def fail(*_args: object, **_kwargs: object) -> None:
+        raise restic.ResticError("alpha", "forget", False, 12)
+
+    config_path = tmp_path / "config.json"
+    config_path.write_text(json.dumps(sample))
+    monkeypatch.setattr("backupctl.restic.run", fail)
+    assert cli.main(["--config", str(config_path), "maintain", "alpha"]) == 1
+
+
+def test_status_row_replica_not_initialized(sample: dict, tmp_path: Path) -> None:
+    sample["repositories"]["alpha"]["replica"] = str(tmp_path / "restic" / "alpha")
+    config = parse(sample)
+    cells, ok = status.row(config, config.repositories["alpha"], replica=True, now=NOW, max_age=26)
+    assert (cells[5], ok) == ("not initialized", False)

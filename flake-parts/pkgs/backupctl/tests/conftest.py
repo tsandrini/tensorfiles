@@ -7,7 +7,8 @@ from typing import Any
 
 import pytest
 
-from backupctl.config import Config, parse
+from backupctl import restic
+from backupctl.config import Config, Repository, parse
 
 SAMPLE: dict[str, Any] = {
     "restic": "/bin/restic",
@@ -53,8 +54,15 @@ class Recorder:
     def __init__(self) -> None:
         self.calls: list[list[str]] = []
 
-    def __call__(self, argv: list[str], *, capture: bool = False) -> None:
-        self.calls.append(argv)
+    def __call__(
+        self,
+        config: Config,
+        repo: Repository,
+        *args: str,
+        replica: bool = False,
+        capture: bool = False,
+    ) -> None:
+        self.calls.append(restic.command(config, repo, *args, replica=replica))
 
     def subcommands(self) -> list[tuple[str, str]]:
         """(repository argument, restic subcommand) of every recorded call."""

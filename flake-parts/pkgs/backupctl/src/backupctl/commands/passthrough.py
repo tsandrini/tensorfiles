@@ -56,4 +56,4 @@ def run(config: Config, args: argparse.Namespace) -> int:
         Never returns on success.
     """
     [repo] = config.select([args.repo])
-    restic.exec_(restic.command(config, repo, *restic_args(args.args), replica=args.replica))
+    restic.exec_(config, repo, *restic_args(args.args), replica=args.replica)

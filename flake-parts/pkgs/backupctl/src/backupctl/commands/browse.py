@@ -54,4 +54,4 @@ def run(config: Config, args: argparse.Namespace) -> int:
     target.mkdir(parents=True, exist_ok=True)
     print(f"mounting {repo.name}{' (replica)' if args.replica else ''} at {target}")
     print("every snapshot is a folder under snapshots/, press Ctrl-C to unmount")
-    restic.exec_(restic.command(config, repo, "mount", str(target), replica=args.replica))
+    restic.exec_(config, repo, "mount", str(target), replica=args.replica)

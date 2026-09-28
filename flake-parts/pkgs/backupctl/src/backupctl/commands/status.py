@@ -5,10 +5,11 @@ from __future__ import annotations
 import argparse
 import json
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 from backupctl import restic
-from backupctl.config import Config
+from backupctl.config import Config, Repository
 
 
 def register(subparsers: argparse._SubParsersAction) -> None:
@@ -22,8 +23,8 @@ def register(subparsers: argparse._SubParsersAction) -> None:
         help="show the newest snapshot and its age per repository",
         description=(
             "Show snapshot count, newest snapshot and its age for every repository and, "
-            "if attached, its replica. Exits 1 if a repository (not a replica) has no "
-            "snapshot or its newest one is older than --max-age."
+            "if attached, its replica. Exits 1 unless every repository (not replica) is "
+            "reachable and its newest snapshot is younger than --max-age."
         ),
     )
     parser.add_argument("repos", nargs="*", metavar="repo", help="repositories (default: all)")
@@ -49,6 +50,54 @@ def newest(snapshots: list[dict[str, Any]] | None) -> datetime | None:
     return max((datetime.fromisoformat(s["time"]) for s in snapshots or []), default=None)
 
 
+def row(
+    config: Config, repo: Repository, *, replica: bool, now: datetime, max_age: float
+) -> tuple[list[str], bool]:
+    """Status of one copy of a repository.
+
+    Args:
+        config: Parsed config.
+        repo: Repository to inspect.
+        replica: Inspect the replica instead of the repository.
+        now: Reference time for the age.
+        max_age: Age in hours after which the copy is stale.
+
+    Returns:
+        The table row (repository, copy, snapshots, newest, age, state) and
+        whether the copy is healthy.
+    """
+    label = "replica" if replica else "storage box"
+    if replica and not restic.replica_ready(repo):
+        # `<mount>/<replicaRoot>/<repo>`; the root only appears with the first `replicate`
+        mount = Path(repo.replica or "/").parent.parent
+        state = "not initialized" if restic.listable(mount) else "not attached"
+        return [repo.name, label, "-", "-", "-", state], False
+
+    try:
+        out = restic.run(
+            config, repo, "--no-lock", "snapshots", "--json", replica=replica, capture=True
+        )
+    except restic.ResticError as err:
+        return [repo.name, label, "-", "-", "-", err.reason], False
+
+    snapshots = json.loads(out or "null")
+    latest = newest(snapshots)
+    if latest is None:
+        return [repo.name, label, "0", "-", "-", "empty"], False
+
+    age = (now - latest).total_seconds() / 3600
+    stale = age > max_age
+    cells = [
+        repo.name,
+        label,
+        str(len(snapshots)),
+        latest.astimezone().strftime("%Y-%m-%d %H:%M"),
+        f"{age:.1f}h",
+        "stale" if stale else "ok",
+    ]
+    return cells, not stale
+
+
 def run(config: Config, args: argparse.Namespace) -> int:
     """Print the status table.
 
@@ -57,47 +106,22 @@ def run(config: Config, args: argparse.Namespace) -> int:
         args: Parsed command line.
 
     Returns:
-        0 if every repository is fresh, 1 otherwise.
+        0 if every repository (replicas are informative) is healthy, 1 otherwise.
     """
     now = datetime.now(UTC)
-    rows = [("REPOSITORY", "COPY", "SNAPSHOTS", "NEWEST", "AGE")]
+    rows = [["REPOSITORY", "COPY", "SNAPSHOTS", "NEWEST", "AGE", "STATE"]]
     healthy = True
 
     for repo in config.select(args.repos):
-        copies = [("storage box", False)]
+        cells, ok = row(config, repo, replica=False, now=now, max_age=args.max_age)
+        rows.append(cells)
+        healthy = healthy and ok
         if repo.replica is not None:
-            copies.append(("replica", True))
+            # replicas are refreshed by hand, so their age never fails the check
+            cells, _ = row(config, repo, replica=True, now=now, max_age=float("inf"))
+            rows.append(cells)
 
-        for label, replica in copies:
-            if replica and not restic.replica_ready(repo):
-                rows.append((repo.name, label, "-", "not available", "-"))
-                continue
-
-            argv = restic.command(config, repo, "--no-lock", "snapshots", "--json", replica=replica)
-            snapshots = json.loads(restic.run(argv, capture=True).stdout or "null")
-            latest = newest(snapshots)
-            if latest is None:
-                rows.append((repo.name, label, "0", "-", "-"))
-                if not replica:
-                    healthy = False
-                continue
-
-            age = (now - latest).total_seconds() / 3600
-            stale = not replica and age > args.max_age
-            healthy = healthy and not stale
-            rows.append(
-                (
-                    repo.name,
-                    label,
-                    str(len(snapshots)),
-                    latest.astimezone().strftime("%Y-%m-%d %H:%M"),
-                    f"{age:.1f}h" + (" STALE" if stale else ""),
-                )
-            )
-
-    widths = [max(len(row[i]) for row in rows) for i in range(len(rows[0]))]
-    for row in rows:
-        print(
-            "  ".join(cell.ljust(width) for cell, width in zip(row, widths, strict=True)).rstrip()
-        )
+    widths = [max(len(cells[i]) for cells in rows) for i in range(len(rows[0]))]
+    for cells in rows:
+        print("  ".join(c.ljust(w) for c, w in zip(cells, widths, strict=True)).rstrip())
     return 0 if healthy else 1

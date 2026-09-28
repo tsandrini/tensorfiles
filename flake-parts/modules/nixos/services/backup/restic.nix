@@ -72,12 +72,13 @@ let
     adminSshKey = "restic-admin-ssh-key";
   };
 
-  # NOTE: the Storage Box whitelists `rclone serve restic --stdio`; keys with a
-  # forced command ignore whatever command is requested.
+  # NOTE: the Storage Box whitelists `rclone serve restic --stdio` (`-q` drops
+  # its "config file not found" NOTICE); keys with a forced command ignore
+  # whatever command is requested.
   rcloneOptions = keyFile: {
     "rclone.program" =
       "${lib.getExe' config.programs.ssh.package "ssh"} -i ${keyFile} -o BatchMode=yes -o ServerAliveInterval=60 ${sshAlias}";
-    "rclone.args" = "rclone serve restic --stdio";
+    "rclone.args" = "rclone serve restic --stdio -q";
   };
   # `services.restic.backups.*.extraOptions` format (single-quoted values)
   toExtraOptions = opts: mapAttrsToList (k: v: "${k}='${v}'") opts;
@@ -109,7 +110,7 @@ let
     + concatStrings (
       mapAttrsToList (
         repoName: key:
-        ''command="rclone serve restic --stdio --append-only ${box.repositoryRoot}/${repoName}",restrict ${key}''
+        ''command="rclone serve restic --stdio --append-only -q ${box.repositoryRoot}/${repoName}",restrict ${key}''
         + "\n"
       ) cfg.admin.authorizedKeys.appendOnly
     )
@@ -218,15 +219,15 @@ in
     storageBox = {
       host = mkOption {
         type = types.str;
-        default = infraVars.common.backup.storageBox.host;
-        defaultText = literalExpression "infraVars.common.backup.storageBox.host";
+        default = infraVars.hosts."storagebundle-1".host;
+        defaultText = "${infraVars.hosts."storagebundle-1".host}";
         description = "Hostname of the Hetzner Storage Box holding the repositories.";
       };
 
       port = mkOption {
         type = types.port;
-        default = infraVars.common.backup.storageBox.port;
-        defaultText = literalExpression "infraVars.common.backup.storageBox.port";
+        default = infraVars.hosts."storagebundle-1".port;
+        defaultText = "${infraVars.hosts."storagebundle-1".port}";
         description = ''
           SSH port of the Storage Box. Has to be 23 -- only that port offers
           the `rclone serve restic` backend and honours `command=` restrictions.
@@ -235,15 +236,15 @@ in
 
       user = mkOption {
         type = types.str;
-        default = infraVars.common.backup.storageBox.user;
-        defaultText = literalExpression "infraVars.common.backup.storageBox.user";
+        default = infraVars.hosts."storagebundle-1".user;
+        defaultText = "${infraVars.hosts."storagebundle-1".user}";
         description = "Storage Box (sub-)account to log in as.";
       };
 
       repositoryRoot = mkOption {
         type = types.str;
-        default = infraVars.common.backup.storageBox.repositoryRoot;
-        defaultText = literalExpression "infraVars.common.backup.storageBox.repositoryRoot";
+        default = infraVars.hosts."storagebundle-1".repositoryRoot;
+        defaultText = "${infraVars.hosts."storagebundle-1".repositoryRoot}";
         description = ''
           Directory on the Storage Box, relative to the account home, that
           holds one restic repository per backed-up host.

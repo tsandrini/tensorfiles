@@ -68,28 +68,24 @@ def run(config: Config, args: argparse.Namespace) -> int:
                 continue
             print(f"== {repo.name} ({label}): forget --prune")
             restic.run(
-                restic.command(
-                    config,
-                    repo,
-                    "forget",
-                    "--prune",
-                    "--retry-lock",
-                    "30m",
-                    *config.retention,
-                    replica=replica,
-                )
+                config,
+                repo,
+                "forget",
+                "--prune",
+                "--retry-lock",
+                "30m",
+                *config.retention,
+                replica=replica,
             )
             print(f"== {repo.name} ({label}): check --read-data-subset {subset}")
             restic.run(
-                restic.command(
-                    config,
-                    repo,
-                    "check",
-                    "--retry-lock",
-                    "30m",
-                    "--read-data-subset",
-                    subset,
-                    replica=replica,
-                )
+                config,
+                repo,
+                "check",
+                "--retry-lock",
+                "30m",
+                "--read-data-subset",
+                subset,
+                replica=replica,
             )
     return 0

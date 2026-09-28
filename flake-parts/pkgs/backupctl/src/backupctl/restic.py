@@ -2,14 +2,59 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import os
+import shlex
 import subprocess
 import sys
 from pathlib import Path
 from typing import NoReturn
 
 from backupctl.config import Config, Repository
-from backupctl.errors import UsageError
+from backupctl.errors import BackupctlError, UsageError
+
+log = logging.getLogger(__name__)
+
+# restic >= 0.17 exit codes, see `restic --help`
+EXIT_REASONS = {
+    1: "fatal error",
+    3: "some source files could not be read",
+    10: "repository does not exist",
+    11: "repository is locked",
+    12: "wrong password",
+    130: "interrupted",
+}
+
+
+class ResticError(BackupctlError):
+    """A restic invocation exited non-zero.
+
+    Attributes:
+        repo: Name of the repository it ran against.
+        subcommand: restic subcommand, e.g. `snapshots`.
+        replica: Whether it ran against the replica.
+        returncode: restic exit code.
+        reason: Human-readable meaning of the exit code.
+        detail: restic's own error message, if it was captured.
+    """
+
+    def __init__(
+        self,
+        repo: str,
+        subcommand: str,
+        replica: bool,
+        returncode: int,
+        detail: str | None = None,
+    ) -> None:
+        self.repo = repo
+        self.subcommand = subcommand
+        self.replica = replica
+        self.returncode = returncode
+        self.reason = EXIT_REASONS.get(returncode, f"exit code {returncode}")
+        self.detail = detail
+        where = f"{repo} (replica)" if replica else repo
+        super().__init__(f"`restic {subcommand}` on {where}: {self.reason}")
 
 
 def repo_args(repo: Repository, *, replica: bool = False) -> list[str]:
@@ -65,33 +110,87 @@ def command(config: Config, repo: Repository, *args: str, replica: bool = False)
         replica: Address the local replica instead.
 
     Returns:
-        The argv, ready for `run` or `exec_`.
+        The argv.
     """
     return [config.restic, *repo_args(repo, replica=replica), *args]
 
 
-def run(argv: list[str], *, capture: bool = False) -> subprocess.CompletedProcess[str]:
-    """Run a command, failing loudly.
+def subcommand(args: tuple[str, ...] | list[str]) -> str:
+    """The restic subcommand among the arguments (the first non-option).
 
     Args:
-        argv: Command to run.
-        capture: Capture stdout (as text) instead of passing it through.
+        args: Arguments following the repository selection.
 
     Returns:
-        The completed process.
-
-    Raises:
-        subprocess.CalledProcessError: The command exited non-zero.
+        The subcommand, `restic` if there is none.
     """
-    return subprocess.run(argv, check=True, text=True, stdout=subprocess.PIPE if capture else None)
+    return next((arg for arg in args if not arg.startswith("-")), "restic")
 
 
-def exec_(argv: list[str]) -> NoReturn:
-    """Replace the current process, handing it the terminal (and Ctrl-C).
+def error_detail(stderr: str) -> str | None:
+    """restic's own error message from captured stderr.
 
     Args:
-        argv: Command to execute.
+        stderr: Captured standard error; with `--json` restic reports fatal
+            errors as `{"message_type": "exit_error", ...}` lines.
+
+    Returns:
+        The first line of the message, `None` if there is nothing useful.
     """
+    lines = [line.strip() for line in stderr.splitlines() if line.strip()]
+    for line in lines:
+        try:
+            message = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(message, dict) and message.get("message_type") == "exit_error":
+            return str(message.get("message", "")).splitlines()[0] or None
+    return lines[-1] if lines else None
+
+
+def run(
+    config: Config,
+    repo: Repository,
+    *args: str,
+    replica: bool = False,
+    capture: bool = False,
+) -> str | None:
+    """Run restic against a repository, failing loudly.
+
+    Args:
+        config: Parsed config.
+        repo: Repository to address.
+        *args: Subcommand and its arguments.
+        replica: Address the local replica instead.
+        capture: Capture stdout and stderr instead of passing them through.
+
+    Returns:
+        Captured stdout, `None` when not capturing.
+
+    Raises:
+        ResticError: restic exited non-zero.
+    """
+    argv = command(config, repo, *args, replica=replica)
+    log.debug("running %s", shlex.join(argv))
+    pipe = subprocess.PIPE if capture else None
+    proc = subprocess.run(argv, text=True, stdout=pipe, stderr=pipe, check=False)
+    if proc.returncode != 0:
+        detail = error_detail(proc.stderr) if capture else None
+        raise ResticError(repo.name, subcommand(args), replica, proc.returncode, detail)
+    return proc.stdout if capture else None
+
+
+def exec_(config: Config, repo: Repository, *args: str, replica: bool = False) -> NoReturn:
+    """Replace the current process with restic, handing it the terminal (and Ctrl-C).
+
+    Args:
+        config: Parsed config.
+        repo: Repository to address.
+        *args: Subcommand and its arguments.
+        replica: Address the local replica instead.
+    """
+    argv = command(config, repo, *args, replica=replica)
+    log.debug("executing %s", shlex.join(argv))
     sys.stdout.flush()
     os.execv(argv[0], argv)
 
@@ -109,6 +208,26 @@ def available(path: str | Path) -> bool:
         return Path(path).exists()
     except OSError:
         return False
+
+
+def listable(path: str | Path) -> bool:
+    """Whether a directory can be listed.
+
+    Unlike `available`, listing an automount point makes it mount, so this
+    tells an attached disk from an absent one.
+
+    Args:
+        path: Directory to probe.
+
+    Returns:
+        `True` if the directory can be read.
+    """
+    try:
+        with os.scandir(path) as entries:
+            next(entries, None)
+    except OSError:
+        return False
+    return True
 
 
 def replica_ready(repo: Repository) -> bool:
