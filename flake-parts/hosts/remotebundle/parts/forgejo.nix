@@ -16,6 +16,7 @@
   infraVars,
 }:
 {
+  config,
   pkgs,
   hostName,
   ...
@@ -103,6 +104,14 @@ in
 
   systemd.services.forgejo = {
     path = [ pkgs.system-sendmail ];
+  };
+
+  tensorfiles.services.backup.restic = {
+    paths = [ config.services.forgejo.stateDir ];
+    exclude = [
+      "${config.services.forgejo.stateDir}/data/indexers"
+      "${config.services.forgejo.stateDir}/log"
+    ];
   };
 
   services.prometheus.exporters = {

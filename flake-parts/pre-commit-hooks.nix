@@ -39,6 +39,10 @@
         shellcheck.enable = true; # Shell script analysis tool
         shfmt.enable = true; # Shell parser and formatter
 
+        # --- Python ---
+        ruff.enable = true; # An extremely fast Python linter
+        ruff-format.enable = true; # An extremely fast Python code formatter
+
         # --- Misc ---
         markdownlint.enable = true; # Markdown lint tool
         editorconfig-checker.enable = true; # .editorconfig file checker

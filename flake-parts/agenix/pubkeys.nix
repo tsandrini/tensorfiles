@@ -20,10 +20,29 @@ let
   # maya = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAiElRBnJTDprJmK5zo4xM0mO0y83KwPJYfDwfWh58gm maya@balthasar";
 
   nix-remote-builder-flatbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/NqSHi0kMfd4hf14y2VxnQoaW+561MbI/CnM81aSFQ nix-remote-builder@flatbundle";
+
+  restic-admin-flatbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILQVLzUifJAI7NFgTXjxTS7OexmM/ipWEMxLtk9HInSW restic-admin-flatbundle";
+  restic-client-remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUsiIQboHD33Y1C5ut6JQ1ZL7PMMqa01oZUG2+4mVrp restic-client-remotebundle";
+  restic-client-blehbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID03+HqMSNIKeldtNA5sZgppOaRf4p2TC4NoDFn4OLf0 restic-client-blehbundle";
 in
 {
   common = {
     nixRemoteBuilders = [ nix-remote-builder-flatbundle ];
+
+    # Rendered into the Storage Box `authorized_keys` by
+    # `restic-storagebox-sync-keys` (tensorfiles.services.backup.restic.admin)
+    backup.storageBox = {
+      hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIICf9svRenC/PLKIL9nk6K/pxQgoiFC41wTNvoIncOxs";
+      fullAccess = [
+        tsandrini
+        restic-admin-flatbundle
+      ];
+      # each locked to `restic/<name>`
+      appendOnly = {
+        remotebundle = restic-client-remotebundle;
+        blehbundle = restic-client-blehbundle;
+      };
+    };
   };
   hosts = {
     flatbundle = {

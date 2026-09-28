@@ -75,6 +75,15 @@ in
     "render"
   ];
 
+  # thumbs/ and encoded-video/ are regenerated from the originals
+  tensorfiles.services.backup.restic.paths =
+    map (dir: "${config.services.immich.mediaLocation}/${dir}")
+      [
+        "library"
+        "upload"
+        "profile"
+      ];
+
   services.prometheus.exporters = {
     #
   };

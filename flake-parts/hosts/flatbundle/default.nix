@@ -90,6 +90,13 @@ in
       };
     };
 
+    services.backup.restic.admin = {
+      enable = true;
+      user = "tsandrini";
+      repositories.remotebundle = { };
+      replicaPath = "/mnt/hdd-backup/restic";
+    };
+
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
     tasks.nix-garbage-collect.enable = false;

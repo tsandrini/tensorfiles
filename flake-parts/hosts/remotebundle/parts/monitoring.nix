@@ -353,6 +353,8 @@ in
     http_listen_port = lokiVars.server.http_port;
   };
 
+  tensorfiles.services.backup.restic.paths = [ config.services.grafana.dataDir ];
+
   services.prometheus.exporters = {
     #
   };

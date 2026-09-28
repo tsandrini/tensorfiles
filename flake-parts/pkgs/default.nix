@@ -29,6 +29,7 @@ _: {
         # polonium-nightly = pkgs.libsForQt5.callPackage ./polonium-nightly.nix { inherit lib; }; # NOTE: broken
         certbot-dns-wedos = pkgs.callPackage ./certbot-dns-wedos.nix { };
         intranet-unauthorized = pkgs.callPackage ./intranet-unauthorized { };
+        backupctl = pkgs.python3Packages.callPackage ./backupctl { };
         cc-switcher = pkgs.writeShellApplication {
           name = "cc-switcher";
           runtimeInputs = [

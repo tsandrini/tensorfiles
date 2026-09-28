@@ -299,6 +299,13 @@ in
     };
   };
 
+  # NOTE: rspamd's learned state lives in redis, /var/lib/rspamd only caches
+  tensorfiles.services.backup.restic.paths = [
+    config.mailserver.storage.path
+    config.mailserver.dkim.keyDirectory
+    "/var/lib/redis-rspamd"
+  ];
+
   services.prometheus.exporters = {
     postfix = {
       enable = true;

@@ -74,6 +74,13 @@ in
     };
   };
 
+  tensorfiles.services.backup.restic = {
+    enable = true;
+    notifyEmail = infraVars.common.contacts.monitoringEmail;
+    paths = [ "/home" ];
+    exclude = [ "/home/*/.cache" ];
+  };
+
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
       allowedTCPPorts = [

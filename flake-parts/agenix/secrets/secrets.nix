@@ -53,6 +53,18 @@ in
     jetbundle
   ]
   ++ users;
+  # restic repository passwords, shared by the backed-up host and flatbundle
+  # (tensorfiles.services.backup.restic.admin)
+  "common/backup/restic-remotebundle-password.age".publicKeys = [
+    remotebundle
+    flatbundle
+  ]
+  ++ users;
+  "common/backup/restic-blehbundle-password.age".publicKeys = [
+    blehbundle
+    flatbundle
+  ]
+  ++ users;
 
   # ---------
   # | HOSTS |
@@ -68,6 +80,11 @@ in
     blehbundle
   ]
   ++ [ tsandrini ];
+  # append-only Storage Box key (restic backups)
+  "hosts/blehbundle/backup-storagebox-client-ssh-key.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
 
   # --- flatbundle ---
   # --------------------
@@ -75,6 +92,8 @@ in
   "hosts/flatbundle/users/tsandrini/system-password.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
   # nix-daemon's key for the remote builders (`nix-ssh` user there)
   "hosts/flatbundle/nix-remote-builder-ssh-key.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
+  # full-access Storage Box key (restic admin commands)
+  "hosts/flatbundle/backup-storagebox-admin-ssh-key.age".publicKeys = [ flatbundle ] ++ [ tsandrini ];
 
   # --- jetbundle ---
   # --------------------
@@ -91,6 +110,11 @@ in
   "hosts/remotebundle/wedos-wapi-credentials.age".publicKeys = [
     remotebundle
   ];
+  # append-only Storage Box key (restic backups)
+  "hosts/remotebundle/backup-storagebox-client-ssh-key.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
   # mailserver
   "hosts/remotebundle/mailserver/t-at-tsandrini-dot-sh.age".publicKeys = [
     remotebundle

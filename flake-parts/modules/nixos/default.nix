@@ -78,6 +78,10 @@ in
     security_hardening_server = importApply ./security/hardening/server.nix { inherit localFlake; };
 
     # -- services --
+    services_backup_restic = importApply ./services/backup/restic.nix {
+      inherit localFlake infraVars;
+      inherit (config.agenix) secretsPath pubkeys;
+    };
     services_networking_networkmanager = importApply ./services/networking/networkmanager.nix {
       inherit localFlake;
     };

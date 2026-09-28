@@ -63,6 +63,18 @@ _: rec {
   };
   hosts = {
     # ----------------------------------
+    "storagebundle-1" =
+      let
+        address = "u677704.your-storagebox.de";
+      in
+      {
+        inherit address;
+        host = address;
+        user = "u677704";
+        port = 23;
+        repositoryRoot = "restic";
+      };
+    # ----------------------------------
     "remotebundle" =
       let
         address = "localhost";
