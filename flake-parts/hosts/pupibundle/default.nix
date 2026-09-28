@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ inputs, infraVars }:
+{
+  inputs,
+  infraVars,
+  # importApply,
+}:
 {
   config,
   pkgs,
@@ -43,6 +47,8 @@ in
 
     ./hardware-configuration.nix
     ./disko.nix
+
+    # (importApply ./parts/home-assistant.nix { inherit infraVars; })
   ]
   ++ (with nixos-raspberrypi.nixosModules; [
     raspberry-pi-5.base
@@ -282,26 +288,6 @@ in
   systemd.tmpfiles.rules = [
     "f /etc/pihole/versions 0644 pihole pihole - -"
   ];
-
-  # services.home-assistant = {
-  #   enable = true;
-  #   extraComponents = [
-  #     # Components required to complete the onboarding
-  #     "analytics"
-  #     "google_translate"
-  #     "met"
-  #     "radio_browser"
-  #     "shopping_list"
-  #     # Recommended for fast zlib compression
-  #     # https://www.home-assistant.io/integrations/isal
-  #     "isal"
-  #   ];
-  #   config = {
-  #     # Includes dependencies for a basic setup
-  #     # https://www.home-assistant.io/integrations/default_config/
-  #     default_config = { };
-  #   };
-  # };
 
   services.prometheus.exporters = {
     pihole = {

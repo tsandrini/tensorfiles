@@ -270,6 +270,9 @@ _: rec {
               internet = 5337;
             };
           };
+          home-assistant = {
+            port = 8123;
+          };
           prometheus = {
             exporters = {
               node.port = common.services.prometheus.exporters.node.defaultPort;
