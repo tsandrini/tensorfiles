@@ -48,7 +48,8 @@ in
       `~/.config/handoff/config.toml` by hand or point `configFile` at an
       agenix-decrypted file. The relay encryption password is an agenix
       secret shared by every host that syncs (`cryptPasswordSecretsPath`);
-      reference its decrypted path from the config's `crypt.password_file`.
+      reference its decrypted path from the config's `crypt.password_file`
+      as `$XDG_RUNTIME_DIR/agenix/<path>` (UIDs differ between hosts).
     '';
 
     package = mkOption {

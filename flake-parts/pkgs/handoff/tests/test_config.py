@@ -90,6 +90,27 @@ def test_errors(patch: dict, match: str) -> None:
         parse({**MINIMAL, **patch})
 
 
+def test_paths_expand_env_and_home(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("XDG_RUNTIME_DIR", "/run/user/4242")
+    data = {
+        **MINIMAL,
+        "relay": {
+            "r": {
+                "path": "/x",
+                "backend": {"type": "sftp", "key_file": "$HOME/.ssh/k"},
+                "crypt": {"password_file": "$XDG_RUNTIME_DIR/agenix/pw"},
+            }
+        },
+        "state_dir": "~/state",
+    }
+    config = parse(data)
+    relay = config.relay(None)
+    assert relay.crypt is not None
+    assert relay.crypt.password_file == Path("/run/user/4242/agenix/pw")
+    assert relay.backend["key_file"] == str(Path("~/.ssh/k").expanduser())
+    assert config.state_dir == Path("~/state").expanduser()
+
+
 def test_workspace_selection() -> None:
     config = parse(
         {**MINIMAL, "workspace": {"root": "/x", "include": ["a/*"], "exclude": ["a/skip"]}}

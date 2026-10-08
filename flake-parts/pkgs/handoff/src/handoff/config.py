@@ -251,6 +251,18 @@ def load(path: Path) -> Config:
     return parse(data)
 
 
+def _path(value: str) -> Path:
+    """Expand `$VAR`, `${VAR}` and `~` in a configured path.
+
+    Args:
+        value: Raw string from the config.
+
+    Returns:
+        The expanded path.
+    """
+    return Path(os.path.expandvars(value)).expanduser()
+
+
 def _table(data: dict[str, Any], key: str, where: str, *, required: bool = True) -> dict:
     value = data.get(key)
     if value is None:
@@ -290,7 +302,9 @@ def _parse_relay(name: str, raw: dict[str, Any]) -> Relay:
     for key, value in backend.items():
         if isinstance(value, bool):
             rendered[key] = "true" if value else "false"
-        elif isinstance(value, int | float | str):
+        elif isinstance(value, str):
+            rendered[key] = os.path.expandvars(value)
+        elif isinstance(value, int | float):
             rendered[key] = str(value)
         else:
             raise ConfigError(f"`backend.{key}` in {where} has to be a string, number or bool")
@@ -302,8 +316,8 @@ def _parse_relay(name: str, raw: dict[str, Any]) -> Relay:
             raise ConfigError(f"`crypt.password_file` in {where} is required")
         salt_file = raw_crypt.get("salt_file")
         crypt = Crypt(
-            password_file=Path(password_file).expanduser(),
-            salt_file=Path(salt_file).expanduser() if salt_file else None,
+            password_file=_path(password_file),
+            salt_file=_path(salt_file) if salt_file else None,
         )
     transfers = raw.get("transfers", 16)
     if isinstance(transfers, bool) or not isinstance(transfers, int) or transfers < 1:
@@ -351,7 +365,7 @@ def parse(data: Any) -> Config:
     if isinstance(depth, bool) or not isinstance(depth, int) or depth < 1:
         raise ConfigError("`depth` in [workspace] has to be a positive integer")
     workspace = Workspace(
-        root=Path(root).expanduser(),
+        root=_path(root),
         depth=depth,
         include=_strings(raw_ws, "include", "[workspace]"),
         exclude=_strings(raw_ws, "exclude", "[workspace]"),
@@ -387,7 +401,7 @@ def parse(data: Any) -> Config:
     if host := data.get("host"):
         extra["host"] = str(host)
     if state_dir := data.get("state_dir"):
-        extra["state_dir"] = Path(str(state_dir)).expanduser()
+        extra["state_dir"] = _path(str(state_dir))
 
     return Config(
         relays=relays,

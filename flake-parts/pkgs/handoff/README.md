@@ -104,7 +104,7 @@ key_file = "~/.ssh/id_ed25519"
 known_hosts_file = "~/.ssh/known_hosts"
 
 [relay.storagebox.crypt]
-password_file = "/run/user/1000/agenix/common/handoff-crypt-password"
+password_file = "$XDG_RUNTIME_DIR/agenix/common/handoff-crypt-password"
 
 [relay.usb]
 path = "/mnt/usb/handoff"
@@ -128,9 +128,11 @@ max_mb = 0                           # no limit for this one
 ```
 
 `backend` is handed to rclone verbatim (`type` plus whatever that backend
-needs), `crypt.salt_file` is optional. `always_exclude` entries without `/`
-match a path segment anywhere (`node_modules` at any depth); entries with `/`
-match the whole path relative to the repository. `keep_ignored` are globs
+needs), `crypt.salt_file` is optional. Paths expand `~` and environment
+variables, so one config file serves hosts with different UIDs.
+`always_exclude` entries without `/` match a path segment anywhere
+(`node_modules` at any depth); entries with `/` match the whole path
+relative to the repository. `keep_ignored` are globs
 relative to the repository. Repositories are discovered, not listed;
 `include`/`exclude` are fnmatch globs on the unit id. Directories at
 repository depth that are not git repositories are reported by `status` and
