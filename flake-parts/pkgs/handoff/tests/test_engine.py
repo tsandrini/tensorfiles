@@ -21,13 +21,11 @@ def actions(outcomes: list) -> dict[str, str]:
 
 
 def states(host: Host) -> dict[str, str]:
-    units, _ = local_units(host.config)
-    return {r.unit_id: r.state for r in host.engine().status(units)}
+    return {r.unit_id: r.state for r in host.engine().status(local_units(host.config))}
 
 
 def push(host: Host, **kwargs: object) -> dict[str, str]:
-    units, _ = local_units(host.config)
-    return actions(host.engine().push(units, **kwargs))  # type: ignore[arg-type]
+    return actions(host.engine().push(local_units(host.config), **kwargs))  # type: ignore[arg-type]
 
 
 def pull(host: Host, **kwargs: object) -> dict[str, str]:
@@ -237,12 +235,62 @@ def test_status_covers_relay_only_and_excluded_units(alpha: Host, beta: Host) ->
     make_repo(alpha.path(""), "work/excluded-thing")
     make_repo(alpha.path(""), "notincluded/repo")
     make_repo(alpha.path(""), "work/fresh")
-    (alpha.path("") / "work/notes").mkdir()
-    units, others = local_units(alpha.config)
+    units = local_units(alpha.config)
     assert [u.id for u in units] == [UNIT, "work/fresh"]
-    assert others == ["work/notes"]
     assert push(alpha, dry_run=True) == {UNIT: "would push", "work/fresh": "would push"}
     assert states(alpha) == {UNIT: "never pushed", "work/fresh": "never pushed"}
     push(alpha)
     assert states(beta) == {UNIT: "not local", "work/fresh": "not local"}
     assert pull(beta) == {UNIT: "pulled", "work/fresh": "pulled"}
+
+
+def test_plain_directories_travel_too(alpha: Host, beta: Host) -> None:
+    notes = alpha.path("work/notes")
+    write(notes, "todo.md", "- things\n")
+    write(notes, "deep/idea.txt", "x\n")
+    write(notes, "node_modules/junk.js", "j\n")
+    (notes / "run.sh").write_text("#!/bin/sh\n")
+    (notes / "run.sh").chmod(0o755)
+    units = local_units(alpha.config)
+    assert [(u.id, u.kind) for u in units] == [("work/notes", "plain")]
+    assert push(alpha) == {"work/notes": "pushed"}
+    rows = alpha.engine().status(local_units(alpha.config))
+    assert [(r.unit_id, r.kind, r.state) for r in rows] == [("work/notes", "plain", "in sync")]
+    assert not any(p.startswith("node_modules/") for p in alpha.relay_files("repos/work/notes"))
+
+    rows = beta.engine().status(local_units(beta.config))
+    assert [(r.unit_id, r.kind, r.state) for r in rows] == [("work/notes", "plain", "not local")]
+    assert pull(beta) == {"work/notes": "pulled"}
+    copy = beta.path("work/notes")
+    assert (copy / "todo.md").read_text() == "- things\n"
+    assert (copy / "deep/idea.txt").exists()
+    assert copy.joinpath("run.sh").stat().st_mode & 0o111 == 0o111
+    assert not (copy / "node_modules").exists()
+    assert states(beta) == {"work/notes": "in sync"}
+
+    (notes / "deep/idea.txt").unlink()
+    (notes / "deep").rmdir()  # empty directories travel too, so drop it for real
+    write(notes, "todo.md", "- done\n")
+    assert push(alpha) == {"work/notes": "pushed"}
+    assert pull(beta) == {"work/notes": "pulled"}
+    assert (copy / "todo.md").read_text() == "- done\n"
+    assert not (copy / "deep").exists()
+
+
+def test_unreadable_relay_is_not_treated_as_empty(
+    alpha: Host, relay: Relay, tmp_path: Path
+) -> None:
+    from handoff.config import Crypt
+    from handoff.errors import RelayError
+
+    make_repo(alpha.path(""), UNIT)
+    push(alpha)
+    if relay.crypt is None:
+        other = tmp_path / "other-pw"
+        other.write_text("different\n")
+        wrong = Relay(name="local", path=relay.path, backend=relay.backend, crypt=Crypt(other))
+    else:
+        wrong = Relay(name="local", path=relay.path, backend=relay.backend)  # plaintext view
+    alpha.config.relays["local"] = wrong
+    with pytest.raises(RelayError, match="not empty but holds nothing"):
+        states(alpha)

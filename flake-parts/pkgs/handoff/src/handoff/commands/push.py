@@ -19,8 +19,8 @@ def register(subparsers: argparse._SubParsersAction) -> None:
         "push",
         help="copy local repositories to the relay",
         description=(
-            "Copy every changed local repository (working tree, untracked files and the "
-            "whole .git) to its canonical copy on the relay. Refuses a repository whose "
+            "Copy every changed local unit (git repositories with their whole .git, plain "
+            "directories wholesale) to its canonical copy on the relay. Refuses a repository whose "
             "relay copy moved on since this host last synced it."
         ),
     )
@@ -43,7 +43,7 @@ def run(config: Config, args: argparse.Namespace) -> int:
     Returns:
         0 when nothing was skipped or in conflict, 1 otherwise.
     """
-    units, _ = local_units(config)
+    units = local_units(config)
     chosen = select(args.units, [u.id for u in units])
     units = [u for u in units if u.id in chosen]
     with engine_for(config, args) as engine:

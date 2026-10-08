@@ -4,9 +4,11 @@ Carry dirty git working trees between machines without committing: `handoff
 push` before you leave, `handoff pull` when you arrive. Everything a
 repository holds that is not gitignored travels, plus the whole `.git`
 (index, stashes, reflogs, branches, remotes, in-progress rebases), plus an
-explicit list of gitignored files that should travel anyway (`.env`). Build
-output and dependency trees never travel. The relay is encrypted client-side,
-so a rented Storage Box only ever sees ciphertext and ciphertext names.
+explicit list of gitignored files that should travel anyway (`.env`).
+Directories without git at the same depth (notes, scratch folders) travel
+wholesale. Build output and dependency trees never travel. The relay is
+encrypted client-side, so a rented Storage Box only ever sees ciphertext and
+ciphertext names.
 
 It is a plain copier with a precise file set and a safety protocol, not a
 merge tool. One host works on a repository at a time; the protocol makes sure
@@ -77,6 +79,9 @@ every 30 s when output is not a terminal.
 - Units with `index.lock`, a merge, rebase or cherry-pick in progress are
   skipped in both directions. Symlinks are never uploaded; their targets
   travel in the file set and are recreated on pull.
+- A relay path that holds files this config cannot read (another crypt
+  password, or crypt against a plaintext tree) is an error, never "empty",
+  so a push cannot start a second, unrelated tree next to the real one.
 
 ## Config
 
@@ -133,10 +138,11 @@ variables, so one config file serves hosts with different UIDs.
 `always_exclude` entries without `/` match a path segment anywhere
 (`node_modules` at any depth); entries with `/` match the whole path
 relative to the repository. `keep_ignored` are globs
-relative to the repository. Repositories are discovered, not listed;
-`include`/`exclude` are fnmatch globs on the unit id. Directories at
-repository depth that are not git repositories are reported by `status` and
-otherwise ignored.
+relative to the repository. Units are discovered, not listed;
+`include`/`exclude` are fnmatch globs on the unit id. A directory at
+repository depth is a git unit when it has a `.git` and a plain unit
+otherwise (`status` shows the kind); `always_exclude` and `max_mb` apply to
+both.
 
 Changing the crypt password orphans everything on the relay: wipe the relay
 path and push again from the host that holds the current state.

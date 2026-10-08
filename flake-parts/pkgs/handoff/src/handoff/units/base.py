@@ -15,10 +15,17 @@ class Unit(Protocol):
         id: Stable identifier shared by every host, e.g. `meteopress/radar-kit-fu`;
             also the unit's relative path below the workspace root and on the relay.
         root: Local directory of the unit (may not exist yet before the first pull).
+        kind: `"git"` or `"plain"`, recorded on the relay so a pull can create
+            the right kind of unit.
     """
 
     id: str
     root: Path
+    kind: str
+
+    def exists(self) -> bool:
+        """Whether the unit is present locally."""
+        ...
 
     def collect(self) -> FileSet:
         """List what travels, honouring the unit's rules."""

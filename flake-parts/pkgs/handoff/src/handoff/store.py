@@ -48,6 +48,7 @@ class Meta:
         fingerprint: Fingerprint of the pushed state.
         files: Number of files pushed.
         bytes: Total size of the pushed regular files.
+        kind: `"git"` or `"plain"` (older stamps without it are git).
     """
 
     generation: str
@@ -56,6 +57,7 @@ class Meta:
     fingerprint: str
     files: int
     bytes: int
+    kind: str = "git"
 
     @classmethod
     def from_json(cls, text: str) -> Meta:
@@ -68,7 +70,7 @@ class Meta:
             The stamp.
         """
         data = json.loads(text)
-        return cls(**{k: data[k] for k in cls.__dataclass_fields__})
+        return cls(**{k: data[k] for k in cls.__dataclass_fields__ if k in data})
 
 
 def obscure(secret: str) -> str:
@@ -299,11 +301,31 @@ class Store:
         dest = self.tmp / "meta"
         dest.mkdir(exist_ok=True)
         self._run("copy", self.remote("meta"), str(dest), "--include", "*.json", ok_not_found=True)
+        if not any(dest.rglob("*.json")):
+            self._check_empty()
         stamps = {}
         for path in sorted(dest.rglob("*.json")):
             unit_id = path.relative_to(dest).with_suffix("").as_posix()
             stamps[unit_id] = Meta.from_json(path.read_text())
         return stamps
+
+    def _check_empty(self) -> None:
+        """Refuse to mistake an unreadable relay for an empty one.
+
+        A relay written with another crypt password, or with crypt while this
+        config has none (and vice versa), shows no readable `meta/`; treating
+        that as empty would let a push create a second, unrelated tree.
+
+        Raises:
+            RelayError: The relay path holds files this config cannot read.
+        """
+        base = f"{BASE_REMOTE}:{self.cfg.path}"
+        listing = self._run("lsf", base, "--max-depth", "1", ok_not_found=True).strip()
+        if listing:
+            raise RelayError(
+                f"relay path {self.cfg.path} is not empty but holds nothing this config can "
+                "read: wrong crypt password, or crypt/plaintext mismatch?"
+            )
 
     def fetch_lists(self, unit_ids: list[str]) -> dict[str, FileSet]:
         """Download the file sets of the given units' canonical copies.

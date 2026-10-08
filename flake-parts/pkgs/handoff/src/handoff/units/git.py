@@ -10,6 +10,7 @@ from pathlib import Path
 from handoff.config import Config, Rules
 from handoff.errors import HandoffError
 from handoff.fileset import FileSet, collect, excluded
+from handoff.units.plain import PlainDir
 
 # Rewritten by read-only git commands (`status` refreshes stat data, `fetch`
 # rewrites FETCH_HEAD); they travel, but do not count as a local change.
@@ -41,6 +42,7 @@ class GitRepo:
     id: str
     root: Path
     rules: Rules
+    kind: str = "git"
 
     @property
     def git_dir(self) -> Path:
@@ -105,34 +107,41 @@ class GitRepo:
         return None
 
 
-def unit_for(config: Config, unit_id: str) -> GitRepo:
+def unit_for(config: Config, unit_id: str, kind: str | None = None) -> GitRepo | PlainDir:
     """The unit with a given id, whether or not it exists locally.
 
     Args:
         config: Parsed config.
         unit_id: `<bundle>/<repo>`.
+        kind: `"git"` or `"plain"` as recorded on the relay; decides the type
+            when the unit does not exist locally yet.
 
     Returns:
         The unit.
     """
-    return GitRepo(
-        id=unit_id, root=config.workspace.root / unit_id, rules=config.rules_for(unit_id)
-    )
+    root = config.workspace.root / unit_id
+    rules = config.rules_for(unit_id)
+    if (root / ".git").exists():
+        return GitRepo(id=unit_id, root=root, rules=rules)
+    if kind == "plain" or (kind is None and root.is_dir()):
+        return PlainDir(id=unit_id, root=root, rules=rules)
+    return GitRepo(id=unit_id, root=root, rules=rules)
 
 
-def discover(config: Config) -> tuple[list[GitRepo], list[str]]:
-    """Find the repositories below the workspace root.
+def discover(config: Config) -> list[GitRepo | PlainDir]:
+    """Find the units below the workspace root.
+
+    Every directory at repository depth is a unit: a git repository when it
+    has a `.git`, a plain directory otherwise.
 
     Args:
         config: Parsed config.
 
     Returns:
-        The discovered units sorted by id, and the ids of directories at
-        repository depth that are not git repositories (left to other tools).
+        The discovered units sorted by id.
     """
     ws = config.workspace
-    repos: list[GitRepo] = []
-    others: list[str] = []
+    units: list[GitRepo | PlainDir] = []
     level = [ws.root] if ws.root.is_dir() else []
     for _ in range(ws.depth - 1):
         level = [
@@ -146,10 +155,6 @@ def discover(config: Config) -> tuple[list[GitRepo], list[str]]:
             if not child.is_dir() or child.is_symlink() or child.name.startswith("."):
                 continue
             unit_id = child.relative_to(ws.root).as_posix()
-            if not ws.selects(unit_id):
-                continue
-            if (child / ".git").exists():
-                repos.append(unit_for(config, unit_id))
-            else:
-                others.append(unit_id)
-    return repos, others
+            if ws.selects(unit_id):
+                units.append(unit_for(config, unit_id))
+    return units

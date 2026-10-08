@@ -29,7 +29,8 @@ from handoff.errors import RelayError, UsageError
 from handoff.fileset import EMPTY, KIND_DIR, KIND_FILE, KIND_LINK, FileSet
 from handoff.state import StateStore, UnitState
 from handoff.store import Meta, Store
-from handoff.units.git import GitRepo, discover, unit_for
+from handoff.units.base import Unit
+from handoff.units.git import discover, unit_for
 
 MIB = 1024 * 1024
 
@@ -85,9 +86,11 @@ class UnitStatus:
         relay_time: Push time of the canonical copy, `None` if never pushed.
         state: `in sync`, `push pending`, `pull pending`, `conflict`,
             `never pushed`, `not local`, `diverged`, `unadopted`, `blocked`.
+        kind: `git` or `plain`.
     """
 
     unit_id: str
+    kind: str
     local: str
     relay_host: str | None
     relay_time: str | None
@@ -96,7 +99,7 @@ class UnitStatus:
 
 @dataclass
 class _Push:
-    unit: GitRepo
+    unit: Unit
     fileset: FileSet
     fingerprint: str
     meta: Meta | None
@@ -106,7 +109,7 @@ class _Push:
 
 @dataclass
 class _Pull:
-    unit: GitRepo
+    unit: Unit
     meta: Meta
     fileset: FileSet | None  # local, None when the unit does not exist yet
     previous: FileSet
@@ -241,7 +244,7 @@ class Engine:
     # --- push ---
 
     def push(
-        self, units: list[GitRepo], *, force: bool = False, dry_run: bool = False
+        self, units: list[Unit], *, force: bool = False, dry_run: bool = False
     ) -> list[Outcome]:
         """Push every given unit, transferring everything in one batch.
 
@@ -308,6 +311,7 @@ class Engine:
                             fingerprint=p.fingerprint,
                             files=p.fileset.files,
                             bytes=p.fileset.bytes,
+                            kind=p.unit.kind,
                         ),
                         p.fileset,
                     )
@@ -334,7 +338,7 @@ class Engine:
             f"{len(p.removals or [])} removed, {p.fileset.files} files total"
         )
 
-    def _plan_push(self, unit: GitRepo, *, force: bool) -> Outcome | _Push:
+    def _plan_push(self, unit: Unit, *, force: bool) -> Outcome | _Push:
         if why := unit.blocker():
             return Outcome(unit.id, "skipped", why)
         fileset = unit.collect()
@@ -477,7 +481,7 @@ class Engine:
 
     def _plan_pull(self, unit_id: str, *, take_relay: bool, keep_local: bool) -> Outcome | _Pull:
         meta = self.meta[unit_id]
-        unit = unit_for(self.config, unit_id)
+        unit = unit_for(self.config, unit_id, kind=meta.kind)
         state = self.state.load(unit_id)
         fileset = fingerprint = None
         if unit.exists():
@@ -507,7 +511,7 @@ class Engine:
 
     # --- status ---
 
-    def status(self, units: list[GitRepo]) -> list[UnitStatus]:
+    def status(self, units: list[Unit]) -> list[UnitStatus]:
         """Status of every local unit and every unit on the relay.
 
         Args:
@@ -520,44 +524,51 @@ class Engine:
         ids = sorted(set(local) | {uid for uid in self.meta if self.config.workspace.selects(uid)})
         return [self._status_one(uid, local.get(uid)) for uid in ids]
 
-    def _status_one(self, unit_id: str, unit: GitRepo | None) -> UnitStatus:
+    def _status_one(self, unit_id: str, unit: Unit | None) -> UnitStatus:
         meta = self.meta.get(unit_id)
         state = self.state.load(unit_id)
         relay_host = meta.host if meta else None
         relay_time = meta.time if meta else None
 
         if unit is None:
-            return UnitStatus(unit_id, "missing", relay_host, relay_time, "not local")
+            return UnitStatus(
+                unit_id,
+                meta.kind if meta else "git",
+                "missing",
+                relay_host,
+                relay_time,
+                "not local",
+            )
         if why := unit.blocker():
-            return UnitStatus(unit_id, why, relay_host, relay_time, "blocked")
+            return UnitStatus(unit_id, unit.kind, why, relay_host, relay_time, "blocked")
 
         fingerprint = unit.fingerprint(unit.collect())
         if meta is None:
-            return UnitStatus(unit_id, "changed", None, None, "never pushed")
+            return UnitStatus(unit_id, unit.kind, "changed", None, None, "never pushed")
         if state is None:
             if fingerprint == meta.fingerprint:
-                return UnitStatus(unit_id, "clean", relay_host, relay_time, "unadopted")
-            return UnitStatus(unit_id, "changed", relay_host, relay_time, "diverged")
+                return UnitStatus(unit_id, unit.kind, "clean", relay_host, relay_time, "unadopted")
+            return UnitStatus(unit_id, unit.kind, "changed", relay_host, relay_time, "diverged")
 
         local_changed = fingerprint != state.fingerprint
         relay_newer = meta.generation != state.generation
         local = "changed" if local_changed else "clean"
         if local_changed and relay_newer:
-            return UnitStatus(unit_id, local, relay_host, relay_time, "conflict")
+            return UnitStatus(unit_id, unit.kind, local, relay_host, relay_time, "conflict")
         if local_changed:
-            return UnitStatus(unit_id, local, relay_host, relay_time, "push pending")
+            return UnitStatus(unit_id, unit.kind, local, relay_host, relay_time, "push pending")
         if relay_newer:
-            return UnitStatus(unit_id, local, relay_host, relay_time, "pull pending")
-        return UnitStatus(unit_id, local, relay_host, relay_time, "in sync")
+            return UnitStatus(unit_id, unit.kind, local, relay_host, relay_time, "pull pending")
+        return UnitStatus(unit_id, unit.kind, local, relay_host, relay_time, "in sync")
 
 
-def local_units(config: Config) -> tuple[list[GitRepo], list[str]]:
+def local_units(config: Config) -> list[Unit]:
     """Discover the local units.
 
     Args:
         config: Parsed config.
 
     Returns:
-        Units and the non-repository directories at repository depth.
+        Git repositories and plain directories at repository depth.
     """
     return discover(config)
