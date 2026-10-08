@@ -45,6 +45,19 @@ in
     };
   };
   hosts = {
+    navibundle = {
+      users = {
+        root = {
+          authorizedKeys = [ ];
+        };
+        tsandrini = {
+          authorizedKeys = [ tsandrini ];
+        };
+        deploy = {
+          authorizedKeys = [ deploy ];
+        };
+      };
+    };
     flatbundle = {
       users = {
         root = {

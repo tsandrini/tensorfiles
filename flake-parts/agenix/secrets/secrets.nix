@@ -19,6 +19,7 @@ let
   remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA/zORD7glqIeAJNnoW7PFKmZV1eJr46glrSvFDyWH2/ root@nixos";
   pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINLvjzkKLhKbaRU/uf3A+pf25rir3y+6mvcbaAxt2DHP root@pupibundle";
   blehbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUem9jyfHkEN3DRNuS896ai1+Pu/vxiQrXoZw0cHxGH root@blehbundle";
+  navibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4CsU0/G4Qv5YXPfII/7cfXHoUxGmnCDXJKQjkIa0g3 root@navibundle";
 
   hosts = [
     spinorbundle
@@ -27,6 +28,7 @@ let
     flatbundle
     pupibundle
     blehbundle
+    navibundle
   ];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
@@ -41,16 +43,19 @@ in
   "common/claude-code-meteopress-meta-envfile.age".publicKeys = [
     flatbundle
     jetbundle
+    navibundle
   ]
   ++ users;
   "common/claude-code-pesekmudra-meta-envfile.age".publicKeys = [
     flatbundle
     jetbundle
+    navibundle
   ]
   ++ users;
   "common/claude-code-tsandrini-meta-envfile.age".publicKeys = [
     flatbundle
     jetbundle
+    navibundle
   ]
   ++ users;
   # restic repository passwords, shared by the backed-up host and flatbundle
@@ -85,6 +90,11 @@ in
     blehbundle
   ]
   ++ [ tsandrini ];
+
+  # --- navibundle ---
+  # --------------------
+  "hosts/navibundle/users/root/system-password.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
+  "hosts/navibundle/users/tsandrini/system-password.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
 
   # --- flatbundle ---
   # --------------------

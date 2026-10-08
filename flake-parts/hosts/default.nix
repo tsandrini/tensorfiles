@@ -175,6 +175,33 @@ in
         };
       }
     );
+    navibundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "navibundle" {
+        withHomeManager = true;
+        extraOverlays = sharedOverlays ++ [
+          inputs.emacs-overlay.overlays.default
+          inputs.nur.overlays.default
+          inputs.niri.overlays.niri
+        ];
+        extraModules = sharedModules ++ [
+          inputs.nur.modules.nixos.default
+        ];
+        hostImportArgs = {
+          inherit inputs;
+        };
+      }
+    );
+    navibundle-installer = withSystem "x86_64-linux" (
+      args:
+      mkHost args "navibundle-installer" {
+        extraOverlays = sharedOverlays;
+        extraModules = sharedModules;
+        hostImportArgs = {
+          inherit inputs;
+        };
+      }
+    );
     spinorbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "spinorbundle" {
