@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -98,6 +99,49 @@ def row(
     return cells, not stale
 
 
+def handoff_row(config: Config, *, now: datetime) -> list[str]:
+    """Status of the `handoff` relay (dirty working trees carried between hosts).
+
+    Informative only: it never fails the check, and a broken `handoff` shows
+    up as its state rather than as an error.
+
+    Args:
+        config: Parsed config (with `handoff` set).
+        now: Reference time for the age.
+
+    Returns:
+        The table row (handoff, relay, units, newest push, age, state).
+    """
+    try:
+        proc = subprocess.run(
+            [config.handoff or "handoff", "status", "--json"],
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        data = json.loads(proc.stdout)
+    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError) as err:
+        reason = err.__class__.__name__ if not isinstance(err, OSError) else err.strerror
+        return ["handoff", "-", "-", "-", "-", f"unavailable ({reason})"]
+
+    units = data.get("units") or []
+    on_relay = [u for u in units if u.get("relay_time")]
+    latest = max((datetime.fromisoformat(u["relay_time"]) for u in on_relay), default=None)
+    pending: dict[str, int] = {}
+    for u in units:
+        if u["state"] not in ("in sync", "unadopted"):
+            pending[u["state"]] = pending.get(u["state"], 0) + 1
+    state = "ok" if not pending else ", ".join(f"{n} {s}" for s, n in sorted(pending.items()))
+    return [
+        "handoff",
+        str(data.get("relay", "-")),
+        str(len(on_relay)),
+        latest.astimezone().strftime("%Y-%m-%d %H:%M") if latest else "-",
+        f"{(now - latest).total_seconds() / 3600:.1f}h" if latest else "-",
+        state,
+    ]
+
+
 def run(config: Config, args: argparse.Namespace) -> int:
     """Print the status table.
 
@@ -109,7 +153,7 @@ def run(config: Config, args: argparse.Namespace) -> int:
         0 if every repository (replicas are informative) is healthy, 1 otherwise.
     """
     now = datetime.now(UTC)
-    rows = [["REPOSITORY", "COPY", "SNAPSHOTS", "NEWEST", "AGE", "STATE"]]
+    rows = [["REPOSITORY", "COPY", "SNAPSHOTS", "NEWEST", "AGE", "STATE"]]  # handoff: UNITS
     healthy = True
 
     for repo in config.select(args.repos):
@@ -120,6 +164,9 @@ def run(config: Config, args: argparse.Namespace) -> int:
             # replicas are refreshed by hand, so their age never fails the check
             cells, _ = row(config, repo, replica=True, now=now, max_age=float("inf"))
             rows.append(cells)
+
+    if config.handoff and not args.repos:
+        rows.append(handoff_row(config, now=now))
 
     widths = [max(len(cells[i]) for cells in rows) for i in range(len(rows[0]))]
     for cells in rows:

@@ -192,16 +192,6 @@ in
         };
       }
     );
-    navibundle-installer = withSystem "x86_64-linux" (
-      args:
-      mkHost args "navibundle-installer" {
-        extraOverlays = sharedOverlays;
-        extraModules = sharedModules;
-        hostImportArgs = {
-          inherit inputs;
-        };
-      }
-    );
     spinorbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "spinorbundle" {

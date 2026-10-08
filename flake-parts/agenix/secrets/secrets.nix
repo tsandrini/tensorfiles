@@ -70,6 +70,13 @@ in
     flatbundle
   ]
   ++ users;
+  # handoff relay encryption, shared by the hosts that push/pull working trees
+  # (tensorfiles.hm.programs.handoff)
+  "common/handoff-crypt-password.age".publicKeys = [
+    flatbundle
+    navibundle
+  ]
+  ++ users;
 
   # ---------
   # | HOSTS |

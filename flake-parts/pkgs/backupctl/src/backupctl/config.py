@@ -52,6 +52,8 @@ class Config:
         browse_directory: Mount root for `browse`, relative to `$HOME`.
         authorized_keys_file: Rendered Storage Box `authorized_keys`, `None`
             if `sync-keys` is not available on this host.
+        handoff: Path of the `handoff` binary whose relay state `status`
+            reports as one more row, `None` to leave it out.
     """
 
     restic: str
@@ -64,6 +66,7 @@ class Config:
     check_read_data_subset: str = "5%"
     browse_directory: str = "Backups"
     authorized_keys_file: str | None = None
+    handoff: str | None = None
 
     def select(self, names: list[str], *, require_replica: bool = False) -> list[Repository]:
         """Resolve repository names given on the command line.
@@ -188,4 +191,5 @@ def parse(data: Any) -> Config:
         check_read_data_subset=data.get("checkReadDataSubset") or "5%",
         browse_directory=data.get("browseDirectory") or "Backups",
         authorized_keys_file=data.get("authorizedKeysFile"),
+        handoff=data.get("handoff"),
     )

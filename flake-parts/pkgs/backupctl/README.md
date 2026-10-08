@@ -47,7 +47,10 @@ configured repository.
 ```
 
 `authorizedKeysFile`, `replicaRoot` and every `replica` are optional (`null`
-disables the matching commands).
+disables the matching commands). An optional `"handoff": "/nix/store/…/bin/handoff"`
+makes `status` append one informative row for the `handoff` relay (the number
+of units on the relay, the newest push and what is pending); it runs as the
+invoking user and reads that user's handoff config.
 
 ## Development
 

@@ -30,6 +30,7 @@ _: {
         certbot-dns-wedos = pkgs.callPackage ./certbot-dns-wedos.nix { };
         intranet-unauthorized = pkgs.callPackage ./intranet-unauthorized { };
         backupctl = pkgs.python3Packages.callPackage ./backupctl { };
+        handoff = pkgs.python3Packages.callPackage ./handoff { };
         cc-switcher = pkgs.writeShellApplication {
           name = "cc-switcher";
           runtimeInputs = [

@@ -13,9 +13,6 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 #
-# Generated with `nixos-generate-config --show-hardware-config --no-filesystems`
-# on the navibundle-installer live system (2026-10-06); filesystems come from
-# ./disko.nix, the HDD mount is declared below.
 {
   config,
   lib,

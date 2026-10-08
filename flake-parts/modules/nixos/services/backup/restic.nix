@@ -144,6 +144,7 @@ let
     inherit (cfg) browseDirectory;
     authorizedKeysFile = if cfg.admin.enable then "${authorizedKeysFile}" else null;
     replicaRoot = if cfg.admin.enable then cfg.admin.replicaPath else null;
+    handoff = if cfg.admin.handoff.enable then lib.getExe cfg.admin.handoff.package else null;
     inherit (cfg.admin) retention checkReadDataSubset;
     # full access wins if a host also administers its own repository
     repositories = ownRepository // adminRepositories;
@@ -418,6 +419,22 @@ in
           blehbundle = { };
         };
         description = "Repositories to administer, keyed by the backed-up host name.";
+      };
+
+      handoff = {
+        enable = mkEnableOption ''
+          Makes `backupctl status` report the `handoff` relay (dirty working
+          trees carried between hosts, see `flake-parts/pkgs/handoff`) as one
+          more informative row. `handoff` runs as the invoking user and reads
+          that user's handoff config.
+        '';
+
+        package = mkOption {
+          type = types.package;
+          default = localFlake.packages.${system}.handoff;
+          defaultText = literalExpression "tensorfiles.packages.\${system}.handoff";
+          description = "The `handoff` package.";
+        };
       };
 
       replicaPath = mkOption {

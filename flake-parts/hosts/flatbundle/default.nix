@@ -95,6 +95,7 @@ in
       user = "tsandrini";
       repositories.remotebundle = { };
       replicaPath = "/mnt/hdd-backup/restic";
+      handoff.enable = true;
     };
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -235,6 +236,7 @@ in
     ];
 
     tensorfiles.hm = {
+      programs.handoff.enable = true;
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;
       services.pywalfox-native.enable = true;

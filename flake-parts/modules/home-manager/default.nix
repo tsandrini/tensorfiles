@@ -75,6 +75,7 @@ in
     programs_delta = importApply ./programs/delta.nix { inherit localFlake; };
     programs_dsearch = importApply ./programs/dsearch.nix { inherit localFlake inputs; };
     programs_gpg = importApply ./programs/gpg.nix { inherit localFlake; };
+    programs_handoff = importApply ./programs/handoff.nix { inherit localFlake secretsPath; };
     programs_niri-flake = importApply ./programs/niri-flake.nix { inherit localFlake; };
     programs_newsboat = importApply ./programs/newsboat.nix { inherit localFlake; };
     programs_pywal = importApply ./programs/pywal.nix { inherit localFlake; };

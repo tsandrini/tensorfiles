@@ -39,6 +39,49 @@ def test_newest_empty(snapshots: list | None) -> None:
     assert status.newest(snapshots) is None
 
 
+def test_handoff_row_summarises_relay(sample: dict, tmp_path: Path) -> None:
+    fake = tmp_path / "handoff"
+    fake.write_text(
+        "#!/bin/sh\n"
+        "cat <<'EOF'\n"
+        + json.dumps(
+            {
+                "relay": "storagebox",
+                "host": "h",
+                "healthy": False,
+                "units": [
+                    {
+                        "unit_id": "a/x",
+                        "state": "in sync",
+                        "relay_time": "2026-09-28T09:00:00+00:00",
+                    },
+                    {
+                        "unit_id": "a/y",
+                        "state": "push pending",
+                        "relay_time": "2026-09-28T11:00:00+00:00",
+                    },
+                    {"unit_id": "a/z", "state": "never pushed", "relay_time": None},
+                ],
+                "others": [],
+            }
+        )
+        + "\nEOF\n"
+    )
+    fake.chmod(0o755)
+    sample["handoff"] = str(fake)
+    row = status.handoff_row(parse(sample), now=NOW)
+    assert row[:3] == ["handoff", "storagebox", "2"]
+    assert row[4] == "1.0h"
+    assert row[5] == "1 never pushed, 1 push pending"
+
+
+def test_handoff_row_unavailable(sample: dict) -> None:
+    sample["handoff"] = "/nonexistent/handoff"
+    row = status.handoff_row(parse(sample), now=NOW)
+    assert row[0] == "handoff"
+    assert row[5].startswith("unavailable")
+
+
 # --- maintain ---
 
 
