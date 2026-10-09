@@ -64,6 +64,33 @@ class StateStore:
         """
         return FileSet.load(self._base(unit_id).with_suffix(".files"))
 
+    def load_merge(self, name: str) -> dict:
+        """Per-host state of a merge unit: last pull marker and the hash cache.
+
+        Args:
+            name: Merge unit name.
+
+        Returns:
+            Decoded JSON, empty when the unit was never synced.
+        """
+        path = self.dir.parent / "merge" / f"{name}.json"
+        if not path.exists():
+            return {}
+        return json.loads(path.read_text())
+
+    def save_merge(self, name: str, data: dict) -> None:
+        """Record the state of a merge unit.
+
+        Args:
+            name: Merge unit name.
+            data: JSON-serialisable state.
+        """
+        path = self.dir.parent / "merge" / f"{name}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tmp = path.with_suffix(".json.tmp")
+        tmp.write_text(json.dumps(data))
+        tmp.replace(path)
+
     def save(self, unit_id: str, state: UnitState, fileset: FileSet) -> None:
         """Record a new baseline.
 

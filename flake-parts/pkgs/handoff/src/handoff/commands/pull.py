@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import argparse
 
-from handoff.commands._common import add_relay_option, engine_for, report
+from handoff.commands._common import (
+    add_relay_option,
+    engine_for,
+    merge_engine,
+    report,
+    split_selection,
+)
 from handoff.config import Config
 from handoff.engine import select
 
@@ -24,7 +30,14 @@ def register(subparsers: argparse._SubParsersAction) -> None:
             "relay, unless --take-relay or --keep-local say otherwise."
         ),
     )
-    parser.add_argument("units", nargs="*", metavar="unit", help="unit ids or `bundle/` prefixes")
+    parser.add_argument(
+        "units", nargs="*", metavar="unit", help="unit ids, `bundle/` prefixes, or `claude`"
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Claude state: consider every relay file, not only pushes since the last pull",
+    )
     parser.add_argument(
         "--take-relay",
         action="store_true",
@@ -48,10 +61,22 @@ def run(config: Config, args: argparse.Namespace) -> int:
     Returns:
         0 when nothing was skipped or in conflict, 1 otherwise.
     """
+    requested, want_units, want_claude = split_selection(args.units)
     with engine_for(config, args) as engine:
-        known = [uid for uid in sorted(engine.meta) if config.workspace.selects(uid)]
-        chosen = select(args.units, known)
-        outcomes = engine.pull(
-            chosen, take_relay=args.take_relay, keep_local=args.keep_local, dry_run=args.dry_run
-        )
-    return report(outcomes, quiet_actions=frozenset({"up to date"}))
+        code = 0
+        if want_units:
+            known = [uid for uid in sorted(engine.meta) if config.workspace.selects(uid)]
+            chosen = select(requested, known)
+            outcomes = engine.pull(
+                chosen,
+                take_relay=args.take_relay,
+                keep_local=args.keep_local,
+                dry_run=args.dry_run,
+            )
+            code = report(outcomes, quiet_actions=frozenset({"up to date"}))
+        merge = merge_engine(config, engine) if want_claude else None
+        if merge is not None:
+            result = merge.pull(everything=args.all, dry_run=args.dry_run)
+            print(result.summary("would pull" if args.dry_run else "pulled"))
+            code = code or (1 if result.problem else 0)
+    return code

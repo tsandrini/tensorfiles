@@ -32,6 +32,7 @@ def test_status_json_on_empty_relay(config_file: Path, capsys: pytest.CaptureFix
         "host": "testhost",
         "healthy": True,
         "units": [],
+        "claude": None,
     }
 
 

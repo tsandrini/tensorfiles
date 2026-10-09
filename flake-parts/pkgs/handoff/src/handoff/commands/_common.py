@@ -10,6 +10,8 @@ from pathlib import Path
 
 from handoff.config import Config
 from handoff.engine import Engine, Outcome
+from handoff.merge import NAME as CLAUDE
+from handoff.merge import MergeEngine
 from handoff.state import StateStore
 from handoff.store import Store
 
@@ -39,6 +41,36 @@ def engine_for(config: Config, args: argparse.Namespace) -> Iterator[Engine]:
         store = Store(relay_cfg, Path(tmp))
         state = StateStore(config.state_dir, relay_cfg.name)
         yield Engine(config, store, state)
+
+
+def merge_engine(config: Config, engine: Engine) -> MergeEngine | None:
+    """The Claude-state engine sharing the relay and state of `engine`.
+
+    Args:
+        config: Parsed config.
+        engine: The repository engine of this command.
+
+    Returns:
+        The merge engine, `None` when `[claude]` is not configured.
+    """
+    if config.claude is None:
+        return None
+    return MergeEngine(config, config.claude, engine.store, engine.state)
+
+
+def split_selection(requested: list[str]) -> tuple[list[str], bool, bool]:
+    """Separate the `claude` pseudo-unit from repository selections.
+
+    Args:
+        requested: Positional unit arguments.
+
+    Returns:
+        The repository selections (empty means all), whether repositories are
+        wanted at all, and whether Claude state is wanted. Nothing requested
+        means everything.
+    """
+    units = [u for u in requested if u != CLAUDE]
+    return units, not requested or bool(units), not requested or CLAUDE in requested
 
 
 def report(outcomes: list[Outcome], *, quiet_actions: frozenset[str] = frozenset()) -> int:

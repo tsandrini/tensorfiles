@@ -258,6 +258,7 @@ class Engine:
         """
         outcomes: dict[str, Outcome] = {}
         plans: list[_Push] = []
+        say(f"fetching relay state, scanning {len(units)} local units")
         for unit in units:
             result = self._plan_push(unit, force=force)
             if isinstance(result, Outcome):
@@ -399,6 +400,7 @@ class Engine:
             raise UsageError("--take-relay and --keep-local exclude each other")
         outcomes: dict[str, Outcome] = {}
         plans: list[_Pull] = []
+        say(f"scanning {len(unit_ids)} units against the relay")
         for uid in unit_ids:
             result = self._plan_pull(uid, take_relay=take_relay, keep_local=keep_local)
             if isinstance(result, Outcome):

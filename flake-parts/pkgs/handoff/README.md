@@ -39,6 +39,8 @@ meta/<unit>.files                   everything the copy holds: dirs, links,
                                     sizes, nanosecond mtimes, modes
 history/<time>/<unit>/<path>        files a push overwrote or removed
 conflicts/<host>/<unit>/<time>/     local copies a pull set aside
+state/claude/<path>                 Claude Code state (merge unit)
+merge-meta/claude.{json,files}      its stamp and per-file list
 ```
 
 rclone is configured purely through environment variables, so no rclone
@@ -82,6 +84,42 @@ every 30 s when output is not a terminal.
 - A relay path that holds files this config cannot read (another crypt
   password, or crypt against a plaintext tree) is an error, never "empty",
   so a push cannot start a second, unrelated tree next to the real one.
+
+## Claude Code state
+
+`~/.claude` is a different animal: both machines write to it, so there is no
+canonical copy to protect. With a `[claude]` table the runtime state that
+home-manager does not manage travels as a _merge unit_, reconciled per file:
+
+- what travels: sessions (`projects/`), rewind checkpoints (`file-history/`),
+  the prompt history, plans, task output and pasted content; the live
+  registry, shell snapshots, caches, credentials, debug and telemetry stay
+  home, and so does everything the home-manager module renders;
+- a session file only ever grows, so the shorter copy being a byte prefix of
+  the longer one is the normal case: push uploads new and extended files,
+  pull downloads them, verified byte for byte after the download;
+- a file that diverged on both sides is never overwritten: push parks the
+  local version under `conflicts/` on the relay, pull parks the relay's
+  version under `~/.claude/handoff-conflicts/<host>/...`, and `status`
+  counts it as diverged;
+- the prompt history is merged as a union of lines ordered by timestamp;
+- deletions never propagate and a pull only considers what other hosts
+  pushed since this host's last pull (`pull --all` reconciles everything,
+  for a fresh machine or to get an old session back);
+- a session the local registry reports as running is never overwritten by a
+  pull, and `status` on the other machine lists it under "live elsewhere"
+  so you do not resume it there.
+
+`handoff push claude` / `pull claude` act on the state alone; without
+arguments every command covers repositories and the state.
+
+```toml
+[claude]
+root = "~/.claude"                   # default
+# include = [...]                    # default: the list above
+exclude = []
+conflicts_dir = "handoff-conflicts"
+```
 
 ## Config
 

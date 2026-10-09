@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from handoff.config import Config, Crypt, Relay, Rules, Workspace
+from handoff.config import ClaudeState, Config, Crypt, Relay, Rules, Workspace
 from handoff.engine import Engine
 from handoff.state import StateStore
 from handoff.store import Store
@@ -123,6 +123,7 @@ def make_host(tmp_path: Path, relay: Relay, name: str, **rules: object) -> Host:
             root=base / "ws", depth=2, include=("work/*", "other/*"), exclude=("*/excluded-*",)
         ),
         defaults=Rules(keep_ignored=(".env",), max_mb=None, **rules),  # type: ignore[arg-type]
+        claude=ClaudeState(root=base / "claude"),
         host=name,
         state_dir=base / "state",
     )

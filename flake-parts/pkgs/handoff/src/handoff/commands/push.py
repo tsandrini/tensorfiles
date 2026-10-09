@@ -4,7 +4,13 @@ from __future__ import annotations
 
 import argparse
 
-from handoff.commands._common import add_relay_option, engine_for, report
+from handoff.commands._common import (
+    add_relay_option,
+    engine_for,
+    merge_engine,
+    report,
+    split_selection,
+)
 from handoff.config import Config
 from handoff.engine import local_units, select
 
@@ -24,7 +30,9 @@ def register(subparsers: argparse._SubParsersAction) -> None:
             "relay copy moved on since this host last synced it."
         ),
     )
-    parser.add_argument("units", nargs="*", metavar="unit", help="unit ids or `bundle/` prefixes")
+    parser.add_argument(
+        "units", nargs="*", metavar="unit", help="unit ids, `bundle/` prefixes, or `claude`"
+    )
     parser.add_argument(
         "--force", action="store_true", help="overwrite a relay copy this host did not sync from"
     )
@@ -43,9 +51,18 @@ def run(config: Config, args: argparse.Namespace) -> int:
     Returns:
         0 when nothing was skipped or in conflict, 1 otherwise.
     """
+    requested, want_units, want_claude = split_selection(args.units)
     units = local_units(config)
-    chosen = select(args.units, [u.id for u in units])
+    chosen = select(requested, [u.id for u in units]) if want_units else []
     units = [u for u in units if u.id in chosen]
     with engine_for(config, args) as engine:
-        outcomes = engine.push(units, force=args.force, dry_run=args.dry_run)
-    return report(outcomes, quiet_actions=frozenset({"unchanged"}))
+        code = 0
+        if want_units:
+            outcomes = engine.push(units, force=args.force, dry_run=args.dry_run)
+            code = report(outcomes, quiet_actions=frozenset({"unchanged"}))
+        merge = merge_engine(config, engine) if want_claude else None
+        if merge is not None:
+            result = merge.push(dry_run=args.dry_run)
+            print(result.summary("would push" if args.dry_run else "pushed"))
+            code = code or (1 if result.problem else 0)
+    return code
