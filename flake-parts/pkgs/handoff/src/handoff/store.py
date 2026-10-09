@@ -3,7 +3,7 @@
 Layout below the relay path:
 
     repos/<unit id>/<path>                  canonical copy (regular files only)
-    meta/<unit id>.json                     generation stamp of that copy (`Meta`)
+    meta/index.json                         generation stamps of every unit (`Meta`)
     meta/<unit id>.files                    `FileSet` JSON: everything the copy
                                             holds, incl. dirs, links, modes, mtimes
     history/<time>/<unit id>/<path>         files a push overwrote or removed
@@ -34,6 +34,7 @@ log = logging.getLogger("handoff")
 
 BASE_REMOTE = "handoffbase"
 CRYPT_REMOTE = "handoffcrypt"
+INDEX = "index.json"
 
 # rclone exit code for "directory not found" on the source
 EXIT_NOT_FOUND = 3
@@ -295,21 +296,40 @@ class Store:
 
     # --- metadata ---
 
-    def fetch_meta(self) -> dict[str, Meta]:
+    def fetch_meta(self, *, strict: bool = True) -> dict[str, Meta]:
         """Download every generation stamp in one go.
+
+        Args:
+            strict: Refuse a relay that holds unreadable content; off when
+                re-reading during a publish, when `repos/` is already there.
 
         Returns:
             Stamps keyed by unit id; empty for a relay that was never pushed to.
         """
         dest = self.tmp / "meta"
         dest.mkdir(exist_ok=True)
+        self._run(
+            "copy",
+            self.remote("meta"),
+            str(dest),
+            "--files-from-raw",
+            self._list_file("index", [INDEX]),
+            "--ignore-times",
+            "--no-traverse",
+            ok_not_found=True,
+        )
+        index = dest / INDEX
+        if index.exists():
+            data = json.loads(index.read_text())
+            return {uid: Meta.from_json(json.dumps(raw)) for uid, raw in data["units"].items()}
+        # relays written before the index existed: one stamp file per unit
         self._run("copy", self.remote("meta"), str(dest), "--include", "*.json", ok_not_found=True)
-        if not any(dest.rglob("*.json")):
-            self._check_empty()
         stamps = {}
         for path in sorted(dest.rglob("*.json")):
             unit_id = path.relative_to(dest).with_suffix("").as_posix()
             stamps[unit_id] = Meta.from_json(path.read_text())
+        if not stamps and strict:
+            self._check_empty()
         return stamps
 
     def _check_empty(self) -> None:
@@ -411,19 +431,29 @@ class Store:
         )
 
     def publish(self, items: dict[str, tuple[Meta, FileSet]]) -> None:
-        """Upload stamps and file sets, in one go.
+        """Upload file sets and the stamp index, in one go.
+
+        The index is re-read right before writing so stamps another host
+        published meanwhile survive; two hosts publishing in the same second
+        can still lose one side's stamps, which only costs that host a
+        re-upload of the affected units next time.
 
         Args:
             items: Per unit id, the new stamp and the file set it describes.
         """
         if not items:
             return
+        stamps = self.fetch_meta(strict=False)
+        stamps.update({uid: meta for uid, (meta, _) in items.items()})
         staging = self.tmp / "publish"
-        paths = []
-        for uid, (meta, fileset) in items.items():
+        (staging / "meta").mkdir(parents=True, exist_ok=True)
+        (staging / "meta" / INDEX).write_text(
+            json.dumps({"units": {uid: asdict(m) for uid, m in sorted(stamps.items())}})
+        )
+        paths = [f"meta/{INDEX}"]
+        for uid, (_, fileset) in items.items():
             fileset.dump(staging / "meta" / f"{uid}.files")
-            (staging / "meta" / f"{uid}.json").write_text(json.dumps(asdict(meta), indent=2) + "\n")
-            paths += [f"meta/{uid}.files", f"meta/{uid}.json"]
+            paths.append(f"meta/{uid}.files")
         self._run(
             "copy",
             str(staging),

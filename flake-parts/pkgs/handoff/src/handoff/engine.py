@@ -17,9 +17,11 @@ puller restores times, modes, links and directories itself.
 from __future__ import annotations
 
 import contextlib
+import multiprocessing
 import os
 import sys
 import uuid
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -33,6 +35,39 @@ from handoff.units.base import Unit
 from handoff.units.git import discover, unit_for
 
 MIB = 1024 * 1024
+
+
+def _scan_one(unit: Unit) -> tuple[FileSet, str] | str:
+    if why := unit.blocker():
+        return why
+    fileset = unit.collect()
+    return fileset, unit.fingerprint(fileset)
+
+
+def scan(units: list[Unit], jobs: int | None = None) -> dict[str, tuple[FileSet, str] | str]:
+    """Collect and fingerprint units, in parallel processes.
+
+    Scanning is Python-bound (hundreds of thousands of paths), so threads
+    would not help; forked workers do.
+
+    Args:
+        units: Units to scan.
+        jobs: Worker processes, `None` for a sensible default.
+
+    Returns:
+        Per unit id, the file set and fingerprint, or the blocker reason.
+    """
+    if not units:
+        return {}
+    jobs = jobs or min(8, os.cpu_count() or 1, len(units))
+    if jobs <= 1:
+        return {u.id: _scan_one(u) for u in units}
+    try:
+        with ProcessPoolExecutor(jobs, mp_context=multiprocessing.get_context("fork")) as pool:
+            results = list(pool.map(_scan_one, units, chunksize=1))
+    except (OSError, RuntimeError):
+        results = [_scan_one(u) for u in units]
+    return {u.id: r for u, r in zip(units, results, strict=True)}
 
 
 def say(text: str) -> None:
@@ -259,8 +294,9 @@ class Engine:
         outcomes: dict[str, Outcome] = {}
         plans: list[_Push] = []
         say(f"fetching relay state, scanning {len(units)} local units")
+        scanned = scan(units)
         for unit in units:
-            result = self._plan_push(unit, force=force)
+            result = self._plan_push(unit, scanned[unit.id], force=force)
             if isinstance(result, Outcome):
                 outcomes[unit.id] = result
             else:
@@ -339,11 +375,12 @@ class Engine:
             f"{len(p.removals or [])} removed, {p.fileset.files} files total"
         )
 
-    def _plan_push(self, unit: Unit, *, force: bool) -> Outcome | _Push:
-        if why := unit.blocker():
-            return Outcome(unit.id, "skipped", why)
-        fileset = unit.collect()
-        fingerprint = unit.fingerprint(fileset)
+    def _plan_push(
+        self, unit: Unit, scanned: tuple[FileSet, str] | str, *, force: bool
+    ) -> Outcome | _Push:
+        if isinstance(scanned, str):
+            return Outcome(unit.id, "skipped", scanned)
+        fileset, fingerprint = scanned
         limit = unit.rules.max_mb
         if limit and fileset.bytes > limit * MIB:
             size = fileset.bytes / MIB
@@ -401,8 +438,14 @@ class Engine:
         outcomes: dict[str, Outcome] = {}
         plans: list[_Pull] = []
         say(f"scanning {len(unit_ids)} units against the relay")
+        local_units_ = {
+            uid: unit_for(self.config, uid, kind=self.meta[uid].kind) for uid in unit_ids
+        }
+        scanned = scan([u for u in local_units_.values() if u.exists()])
         for uid in unit_ids:
-            result = self._plan_pull(uid, take_relay=take_relay, keep_local=keep_local)
+            result = self._plan_pull(
+                local_units_[uid], scanned.get(uid), take_relay=take_relay, keep_local=keep_local
+            )
             if isinstance(result, Outcome):
                 outcomes[uid] = result
             else:
@@ -481,16 +524,22 @@ class Engine:
             text += f", local copy set aside under {p.set_aside}"
         return text
 
-    def _plan_pull(self, unit_id: str, *, take_relay: bool, keep_local: bool) -> Outcome | _Pull:
+    def _plan_pull(
+        self,
+        unit: Unit,
+        scanned: tuple[FileSet, str] | str | None,
+        *,
+        take_relay: bool,
+        keep_local: bool,
+    ) -> Outcome | _Pull:
+        unit_id = unit.id
         meta = self.meta[unit_id]
-        unit = unit_for(self.config, unit_id, kind=meta.kind)
         state = self.state.load(unit_id)
         fileset = fingerprint = None
-        if unit.exists():
-            if why := unit.blocker():
-                return Outcome(unit_id, "skipped", why)
-            fileset = unit.collect()
-            fingerprint = unit.fingerprint(fileset)
+        if isinstance(scanned, str):
+            return Outcome(unit_id, "skipped", scanned)
+        if scanned is not None:
+            fileset, fingerprint = scanned
 
         if state is not None and state.generation == meta.generation:
             if fingerprint == state.fingerprint:
@@ -524,27 +573,24 @@ class Engine:
         """
         local = {u.id: u for u in units}
         ids = sorted(set(local) | {uid for uid in self.meta if self.config.workspace.selects(uid)})
-        return [self._status_one(uid, local.get(uid)) for uid in ids]
+        scanned = scan(units)
+        return [self._status_one(uid, local.get(uid), scanned.get(uid)) for uid in ids]
 
-    def _status_one(self, unit_id: str, unit: Unit | None) -> UnitStatus:
+    def _status_one(
+        self, unit_id: str, unit: Unit | None, scanned: tuple[FileSet, str] | str | None
+    ) -> UnitStatus:
         meta = self.meta.get(unit_id)
         state = self.state.load(unit_id)
         relay_host = meta.host if meta else None
         relay_time = meta.time if meta else None
 
-        if unit is None:
-            return UnitStatus(
-                unit_id,
-                meta.kind if meta else "git",
-                "missing",
-                relay_host,
-                relay_time,
-                "not local",
-            )
-        if why := unit.blocker():
-            return UnitStatus(unit_id, unit.kind, why, relay_host, relay_time, "blocked")
+        if unit is None or scanned is None:
+            kind = meta.kind if meta else "git"
+            return UnitStatus(unit_id, kind, "missing", relay_host, relay_time, "not local")
+        if isinstance(scanned, str):
+            return UnitStatus(unit_id, unit.kind, scanned, relay_host, relay_time, "blocked")
 
-        fingerprint = unit.fingerprint(unit.collect())
+        _, fingerprint = scanned
         if meta is None:
             return UnitStatus(unit_id, unit.kind, "changed", None, None, "never pushed")
         if state is None:

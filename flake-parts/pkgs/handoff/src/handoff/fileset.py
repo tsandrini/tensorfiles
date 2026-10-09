@@ -166,31 +166,68 @@ class FileSet:
 EMPTY = FileSet(())
 
 
-def excluded(rel_path: str, patterns: Iterable[str]) -> bool:
-    """Whether a relative path is hit by an always-exclude pattern.
+class ExcludeRules:
+    """Compiled always-exclude patterns.
 
     Patterns without `/` match any single path segment (`node_modules`
     anywhere in the tree); patterns with `/` match the whole relative path.
+    Literal segment names are a set lookup, which is what makes scanning
+    hundreds of thousands of paths cheap.
+    """
+
+    def __init__(self, patterns: Iterable[str]) -> None:
+        """Compile patterns.
+
+        Args:
+            patterns: fnmatch globs.
+        """
+        self.literal: set[str] = set()
+        self.segment_globs: list[str] = []
+        self.path_globs: list[str] = []
+        for p in patterns:
+            if "/" in p:
+                self.path_globs.append(p)
+            elif any(c in p for c in "*?["):
+                self.segment_globs.append(p)
+            else:
+                self.literal.add(p)
+
+    def __call__(self, rel_path: str) -> bool:
+        """Whether a relative path (or one of its parents) is excluded.
+
+        Args:
+            rel_path: `/`-separated path relative to the unit root.
+
+        Returns:
+            `True` when excluded.
+        """
+        segments = rel_path.split("/")
+        if self.literal and not self.literal.isdisjoint(segments):
+            return True
+        for pattern in self.segment_globs:
+            if any(fnmatchcase(seg, pattern) for seg in segments):
+                return True
+        return any(fnmatchcase(rel_path, p) for p in self.path_globs)
+
+
+def excluded(rel_path: str, patterns: Iterable[str]) -> bool:
+    """Whether a relative path is hit by an always-exclude pattern.
 
     Args:
         rel_path: `/`-separated path relative to the unit root.
-        patterns: fnmatch globs.
+        patterns: fnmatch globs, see `ExcludeRules`.
 
     Returns:
         `True` when the path (or one of its parents) is excluded.
     """
-    segments = rel_path.split("/")
-    for pattern in patterns:
-        if "/" in pattern:
-            if fnmatchcase(rel_path, pattern):
-                return True
-        elif any(fnmatchcase(seg, pattern) for seg in segments):
-            return True
-    return False
+    return ExcludeRules(patterns)(rel_path)
 
 
 def _entry(root: Path, rel: str) -> Entry | None:
-    st = os.lstat(root / rel)
+    try:
+        st = os.lstat(root / rel)
+    except FileNotFoundError:
+        return None
     if stat.S_ISLNK(st.st_mode):
         return Entry(rel, KIND_LINK, target=str((root / rel).readlink()))
     if stat.S_ISDIR(st.st_mode):
@@ -200,7 +237,7 @@ def _entry(root: Path, rel: str) -> Entry | None:
     return None  # sockets, fifos: never travel
 
 
-def walk(root: Path, rel: str, exclude: Iterable[str]) -> Iterator[Entry]:
+def walk(root: Path, rel: str, exclude: Iterable[str] | ExcludeRules) -> Iterator[Entry]:
     """Every entry below (and including) a directory, honouring excludes.
 
     Symlinks are reported but never followed.
@@ -213,8 +250,8 @@ def walk(root: Path, rel: str, exclude: Iterable[str]) -> Iterator[Entry]:
     Yields:
         Entries in no particular order.
     """
-    patterns = tuple(exclude)
-    if excluded(rel, patterns):
+    is_excluded = exclude if isinstance(exclude, ExcludeRules) else ExcludeRules(exclude)
+    if is_excluded(rel):
         return
     top = _entry(root, rel)
     if top is None:
@@ -228,7 +265,7 @@ def walk(root: Path, rel: str, exclude: Iterable[str]) -> Iterator[Entry]:
         with os.scandir(root / current) as it:
             for child in it:
                 child_rel = f"{current}/{child.name}"
-                if excluded(child_rel, patterns):
+                if is_excluded(child_rel):
                     continue
                 entry = _entry(root, child_rel)
                 if entry is None:
@@ -249,21 +286,27 @@ def collect(root: Path, rels: Iterable[str], exclude: Iterable[str]) -> FileSet:
     Returns:
         The de-duplicated, sorted file set.
     """
-    patterns = tuple(exclude)
+    is_excluded = ExcludeRules(exclude)
     seen: dict[str, Entry] = {}
     for rel in rels:
         rel = rel.strip("/")
-        if not rel or rel in seen or excluded(rel, patterns):
+        if not rel or rel in seen or is_excluded(rel):
             continue
-        if not (root / rel).is_symlink() and not (root / rel).exists():
+        top = _entry(root, rel)  # one lstat; missing paths (deleted tracked files) drop out
+        if top is None:
             continue
-        for entry in walk(root, rel, patterns):
-            seen.setdefault(entry.path, entry)
+        if top.kind == KIND_DIR:
+            for entry in walk(root, rel, is_excluded):
+                seen.setdefault(entry.path, entry)
+        else:
+            seen[rel] = top
     # parents of every entry must exist on the receiving side as well
     for path in list(seen):
-        parts = path.split("/")
-        for i in range(1, len(parts)):
-            parent = "/".join(parts[:i])
-            if parent not in seen:
-                seen[parent] = Entry(parent, KIND_DIR)
+        cut = path.rfind("/")
+        while cut > 0:
+            parent = path[:cut]
+            if parent in seen:
+                break
+            seen[parent] = Entry(parent, KIND_DIR)
+            cut = parent.rfind("/")
     return FileSet(tuple(sorted(seen.values(), key=lambda e: e.path)))

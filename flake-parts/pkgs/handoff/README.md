@@ -34,7 +34,7 @@ Layout below the relay path:
 
 ```text
 repos/<unit>/<path>                 canonical copy (regular files only)
-meta/<unit>.json                    generation, host, time, fingerprint
+meta/index.json                     generation, host, time, fingerprint per unit
 meta/<unit>.files                   everything the copy holds: dirs, links,
                                     sizes, nanosecond mtimes, modes
 history/<time>/<unit>/<path>        files a push overwrote or removed
@@ -61,7 +61,9 @@ exactly the differing files; the puller diffs the relay's set against its own
 disk, downloads what differs, then restores directories, symlinks, modes and
 mtimes itself. All units of one command move in a single rclone batch, with rclone's
 live progress (files, bytes, rate, ETA) on the terminal and a stats line
-every 30 s when output is not a terminal.
+every 30 s when output is not a terminal. Scanning the workspace runs in
+forked worker processes; with a few hundred repositories `status` takes a
+few seconds, most of it one relay round trip per metadata file.
 
 - **push** refuses a unit whose relay copy moved on since the baseline
   (`pull first, or push --force`). `--force` overwrites; what the relay had

@@ -67,7 +67,7 @@ def test_push_then_pull_creates_identical_copy(alpha: Host, beta: Host) -> None:
     git(repo, "stash", "-q")
 
     assert push(alpha) == {UNIT: "pushed"}
-    assert json.loads(alpha.relay_read(f"meta/{UNIT}.json"))["host"] == "alpha"
+    assert json.loads(alpha.relay_read("meta/index.json"))["units"][UNIT]["host"] == "alpha"
     on_relay = alpha.relay_files(f"repos/{UNIT}")
     assert ".env" in on_relay
     assert "debug.log" not in on_relay
