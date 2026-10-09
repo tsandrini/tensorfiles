@@ -210,6 +210,8 @@ in
     tensorfiles.hm = {
       programs.handoff.enable = true;
       profiles.graphical-dms-niri.enable = true;
+      # Philips 346B1C ultrawide; the vertical Dell is HDMI-A-1
+      programs.niri-flake.workspaces.output = "DP-1";
       programs.pywal.enable = true;
       services.pywalfox-native.enable = true;
 

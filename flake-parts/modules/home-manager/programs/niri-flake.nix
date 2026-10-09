@@ -130,6 +130,23 @@ in
       TODO
     '';
 
+    workspaces = {
+      output = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "DP-1";
+        description = ''
+          Output the pre-created named workspaces (1-8) are pinned to via
+          `open-on-output`, so that the numeric `Mod+N` binds (which address
+          workspaces by index on the focused output) work on the main monitor
+          from the first boot. Accepts a connector name or the
+          `"Make Model Serial"` string, same as niri `output` sections; falls
+          back to the primary output when not connected. `null` leaves niri's
+          default, i.e. the first output enumerated at startup.
+        '';
+      };
+    };
+
     binds = {
       mod = mkOption {
         type = types.str;
@@ -166,32 +183,15 @@ in
         package = _ pkgs.niri-unstable;
         settings = {
           prefer-no-csd = _ true;
-          workspaces = {
-            "01" = {
-              name = _ "1";
-            };
-            "02" = {
-              name = _ "2";
-            };
-            "03" = {
-              name = _ "3";
-            };
-            "04" = {
-              name = _ "4";
-            };
-            "05" = {
-              name = _ "5";
-            };
-            "06" = {
-              name = _ "6";
-            };
-            "07" = {
-              name = _ "7";
-            };
-            "08" = {
-              name = _ "8";
-            };
-          };
+          workspaces = lib.listToAttrs (
+            lib.genList (
+              i:
+              lib.nameValuePair (lib.fixedWidthNumber 2 (i + 1)) {
+                name = _ (toString (i + 1));
+                open-on-output = _ cfg.workspaces.output;
+              }
+            ) 8
+          );
 
           input = {
             keyboard = {
