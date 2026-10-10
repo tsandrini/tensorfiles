@@ -130,6 +130,10 @@
       url = "github:losnoco/smithay/spicy-master";
       flake = false;
     };
+    bbhost-src = {
+      url = "github:droogie/bbhost";
+      flake = false;
+    };
     danksearch = {
       url = "github:AvengeMedia/danksearch";
       inputs.nixpkgs.follows = "nixpkgs";

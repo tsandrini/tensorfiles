@@ -55,6 +55,22 @@
         "type": "github"
       }
     },
+    "bbhost-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791625654,
+        "narHash": "sha256-PwcRSw/sLmg1ldwQ2oX6OY9XBWqHX7LjnHDjiIOhT7Q=",
+        "owner": "droogie",
+        "repo": "bbhost",
+        "rev": "c421ea051ebd74704ebd8d874aa46906ebeb5487",
+        "type": "github"
+      },
+      "original": {
+        "owner": "droogie",
+        "repo": "bbhost",
+        "type": "github"
+      }
+    },
     "betterfox": {
       "flake": false,
       "locked": {
@@ -2330,6 +2346,7 @@
       "inputs": {
         "agenix": "agenix",
         "arkenfox-user-js": "arkenfox-user-js",
+        "bbhost-src": "bbhost-src",
         "betterfox": "betterfox",
         "buffer_manager-nvim": "buffer_manager-nvim",
         "dank-greeter": "dank-greeter",

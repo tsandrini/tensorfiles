@@ -24,6 +24,7 @@ let
     inherit system;
     config.allowUnfree = true;
   };
+
 in
 {
   # -----------------
@@ -62,6 +63,9 @@ in
     pkgs.vulkan-tools # Khronos official Vulkan Tools and Utilities
     pkgs.radeontop # Top-like tool for viewing AMD Radeon GPU utilization
     pkgs.nvtopPackages.amd # (h)top like task monitor for AMD GPUs
+
+    # --- gaming ---
+    inputs.self.packages.${system}.bbhost # Bloodborne (PS4) translation layer
   ];
 
   # ---------------------

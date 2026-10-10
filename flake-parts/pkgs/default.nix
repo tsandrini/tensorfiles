@@ -50,9 +50,10 @@
         };
         # awatcher = pkgs.callPackage ./awatcher.nix { };
       }
-      # NOTE: 32-bit wine exists on x86_64-linux only
+      # NOTE: 32-bit wine exists on x86_64-linux only; bbhost runs x86-64 PS4 code natively
       // lib.optionalAttrs (pkgs.stdenv.hostPlatform.system == "x86_64-linux") {
         retrowine = pkgs.callPackage ./retrowine { };
+        bbhost = pkgs.callPackage ./bbhost { inherit (inputs) bbhost-src; };
       };
     };
 }
