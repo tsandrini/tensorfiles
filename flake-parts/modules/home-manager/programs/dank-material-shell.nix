@@ -26,6 +26,7 @@ let
   pywalCheck = (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.pywal") && cfg.pywal.enable;
   niri-flakeCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.niri-flake") && cfg.niri-flake.enable;
+  dankCalendarCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.dank-calendar";
 in
 {
   options.tensorfiles.hm.programs.dank-material-shell = {
@@ -61,7 +62,7 @@ in
         enableVPN = _ true;
         enableDynamicTheming = _ true;
         enableAudioWavelength = _ true;
-        enableCalendarEvents = _ true;
+        enableCalendarEvents = _ (!dankCalendarCheck);
         enableClipboardPaste = _ true;
       };
     }

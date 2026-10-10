@@ -138,6 +138,10 @@
       url = "github:AvengeMedia/danksearch";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dankcalendar = {
+      url = "github:AvengeMedia/dankcalendar";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     llm-agents.url = "github:numtide/llm-agents.nix";
     # NOTE: pinned pre-`2026.8.31` servers bump — reference servers now need
     # python `mcp>=1.29.0`, we build them against root nixpkgs (`mcp` 1.27.1).

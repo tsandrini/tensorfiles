@@ -70,6 +70,7 @@ in
     programs_file-managers_lf = importApply ./programs/file-managers/lf { inherit localFlake; };
     programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix { inherit localFlake; };
     programs_git = importApply ./programs/git.nix { inherit localFlake; };
+    programs_dank-calendar = importApply ./programs/dank-calendar.nix { inherit localFlake inputs; };
     programs_dank-material-shell = importApply ./programs/dank-material-shell.nix {
       inherit localFlake inputs;
     };
