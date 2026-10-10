@@ -20,6 +20,7 @@
 {
   config,
   lib,
+  pkgs,
   system,
   ...
 }:
@@ -42,6 +43,20 @@ let
   _ = mkOverrideAtHmModuleLevel;
 
   llmPkgs = inputs.llm-agents.packages.${system};
+
+  # NOTE: upstream recipe copies only dist/ccstatusline.js, 2.2.32 ships chunks
+  ccstatusline = llmPkgs.ccstatusline.overrideAttrs {
+    installPhase = ''
+      runHook preInstall
+      mkdir -p $out/bin $out/lib/ccstatusline
+      cp -r $src/dist/. $out/lib/ccstatusline/
+      substituteInPlace $out/lib/ccstatusline/ccstatusline.js \
+        --replace-fail "#!/usr/bin/env node" "#!${getExe pkgs.nodejs}"
+      chmod +x $out/lib/ccstatusline/ccstatusline.js
+      ln -s $out/lib/ccstatusline/ccstatusline.js $out/bin/ccstatusline
+      runHook postInstall
+    '';
+  };
 
   secretsCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix") && cfg.secrets.enable;
@@ -363,12 +378,12 @@ in
     (mkIf cfg.statusline.enable {
       programs.claude-code.settings.statusLine = {
         type = _ "command";
-        command = _ (getExe llmPkgs.ccstatusline);
+        command = _ (getExe ccstatusline);
         padding = _ 0;
       };
 
       # NOTE: ccstatusline doubles as its own TUI configurator
-      home.packages = [ llmPkgs.ccstatusline ];
+      home.packages = [ ccstatusline ];
 
       xdg.configFile."ccstatusline/settings.json" = mkIf (cfg.statusline.settingsFile != null) {
         source = cfg.statusline.settingsFile;
