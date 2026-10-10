@@ -30,6 +30,7 @@ let
     mkMerge
     mkEnableOption
     mkOption
+    literalExpression
     mapAttrs
     mapAttrsToList
     types
@@ -108,13 +109,16 @@ in
 
       settingsFile = mkOption {
         type = types.nullOr types.path;
-        default = null;
+        default = ./config/ccstatusline.json;
+        defaultText = literalExpression "./config/ccstatusline.json";
         description = ''
           Captured ccstatusline configuration deployed declaratively to
-          `~/.config/ccstatusline/settings.json`. When null, the config
-          stays imperative — design it with the `ccstatusline` TUI, then
-          capture the resulting file here to make it declarative (the TUI
-          can no longer save once the file is a store symlink).
+          `~/.config/ccstatusline/settings.json`. The default is the layout
+          designed on flatbundle (3 powerline lines: model/effort/context,
+          git + cwd, usage/cost/clock + tokens). Set to null to go back to an
+          imperative file — design it with the `ccstatusline` TUI, then
+          capture the resulting file here (the TUI can no longer save once
+          the file is a store symlink).
         '';
       };
     };

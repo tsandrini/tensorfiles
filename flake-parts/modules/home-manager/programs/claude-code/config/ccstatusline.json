@@ -1,0 +1,104 @@
+{
+  "colorLevel": 2,
+  "compactThreshold": 60,
+  "defaultPadding": " ",
+  "flexMode": "full-minus-40",
+  "gitCacheTtlSeconds": 5,
+  "globalBold": true,
+  "inheritSeparatorColors": true,
+  "lines": [
+    [
+      {
+        "color": "cyan",
+        "id": "1",
+        "type": "model"
+      },
+      {
+        "id": "91b5dc90-eb73-4001-a44f-636aa670800d",
+        "type": "thinking-effort"
+      },
+      {
+        "id": "26cda6df-0141-4af4-b82e-adaa06ce53e6",
+        "type": "context-window"
+      }
+    ],
+    [
+      {
+        "id": "28eaaac8-c146-4dce-a22d-ee6daebe0bb9",
+        "type": "git-origin-owner-repo"
+      },
+      {
+        "id": "7c7de4ff-9591-4b76-9e89-f884575b9692",
+        "type": "git-branch"
+      },
+      {
+        "id": "e2e0fa7a-d1ea-4988-9cde-f38fca47c420",
+        "type": "git-changes"
+      },
+      {
+        "id": "0de1049d-8930-423e-bd3e-1fedf7e34908",
+        "type": "git-status"
+      },
+      {
+        "id": "2c4b873d-0efb-4953-8090-33cf241dd5db",
+        "type": "flex-separator"
+      },
+      {
+        "id": "e3c09968-ac4e-4642-afec-2cfc735459fa",
+        "type": "current-working-dir"
+      }
+    ],
+    [
+      {
+        "id": "608b3125-7bca-49e8-8e54-62f994b64216",
+        "type": "session-usage"
+      },
+      {
+        "id": "3f5edf32-df57-4a88-b266-7c9e03e7979f",
+        "type": "weekly-usage"
+      },
+      {
+        "id": "cc93bf01-a7b0-4710-b230-4820d5af4d5f",
+        "type": "session-cost"
+      },
+      {
+        "id": "17fe441d-59b8-4a4d-9487-b2c0cbfd9450",
+        "type": "session-clock"
+      },
+      {
+        "id": "808d7f62-bf14-4ec0-a419-c11178b81289",
+        "type": "flex-separator"
+      },
+      {
+        "id": "2ddb79e3-4a64-439a-b841-3788ff40c570",
+        "type": "tokens-input"
+      },
+      {
+        "id": "0ca27e5c-0225-45f2-86e9-9557d483b2e0",
+        "type": "tokens-output"
+      }
+    ],
+    [
+      {
+        "id": "01fa8759-77ab-4ade-a031-7aea8ea9fa74",
+        "type": "flex-separator"
+      }
+    ]
+  ],
+  "minimalistMode": false,
+  "powerline": {
+    "autoAlign": false,
+    "continueThemeAcrossLines": false,
+    "enabled": true,
+    "endCaps": [],
+    "separatorInvertBackground": [
+      false
+    ],
+    "separators": [
+      ""
+    ],
+    "startCaps": [],
+    "theme": "custom"
+  },
+  "version": 4
+}
