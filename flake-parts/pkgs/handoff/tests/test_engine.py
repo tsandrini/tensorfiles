@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -294,3 +295,41 @@ def test_unreadable_relay_is_not_treated_as_empty(
     alpha.config.relays["local"] = wrong
     with pytest.raises(RelayError, match="not empty but holds nothing"):
         states(alpha)
+
+
+def verify(host: Host, **kwargs: object) -> dict[str, str]:
+    return actions(host.engine().verify(local_units(host.config), **kwargs))  # type: ignore[arg-type]
+
+
+def test_verify_finds_same_size_content_corruption(alpha: Host, beta: Host) -> None:
+    repo = make_repo(alpha.path(""), UNIT, {"README.md": "hello\n"})
+    push(alpha)
+    pull(beta)
+    ref = beta.path(UNIT) / ".git/refs/heads/main"
+    good = ref.read_bytes()
+    st = ref.stat()
+    ref.write_bytes(b"0" * len(good))  # same size, other content ...
+    os.utime(ref, ns=(st.st_mtime_ns, st.st_mtime_ns))  # ... and the old mtime
+    assert states(beta) == {UNIT: "in sync"}  # stat-based sync cannot tell
+
+    # hashes were recorded at push time, so beta can already be checked
+    assert verify(beta, dry_run=True) == {UNIT: "mismatch"}
+    assert verify(beta, fix=True) == {UNIT: "fixed"}
+    assert ref.read_bytes() == good
+    assert ref.stat().st_mtime_ns == st.st_mtime_ns
+    assert verify(beta) == {UNIT: "verified"}
+    assert states(beta) == {UNIT: "in sync"}
+
+    # a relay list without hashes (pre-hash push) is backfilled from the good host
+    engine = alpha.engine()
+    lists = engine.store.fetch_lists([UNIT])
+    stripped = lists[UNIT].with_hashes({e.path: "" for e in lists[UNIT].entries})
+    engine.store.publish({UNIT: (engine.meta[UNIT], stripped)})
+    assert verify(beta) == {UNIT: "verified"}  # nothing to compare against
+    assert verify(alpha, rehash=True) == {UNIT: "hashed"}
+    ref.write_bytes(b"1" * len(good))
+    os.utime(ref, ns=(st.st_mtime_ns, st.st_mtime_ns))
+    assert verify(beta) == {UNIT: "mismatch"}
+    assert verify(beta, fix=True) == {UNIT: "fixed"}
+    assert ref.read_bytes() == good
+    assert git(beta.path(UNIT), "rev-parse", "HEAD") == git(repo, "rev-parse", "HEAD")

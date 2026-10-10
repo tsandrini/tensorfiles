@@ -28,7 +28,7 @@ from pathlib import Path
 
 from handoff.config import Config
 from handoff.errors import RelayError, UsageError
-from handoff.fileset import EMPTY, KIND_DIR, KIND_FILE, KIND_LINK, FileSet
+from handoff.fileset import EMPTY, KIND_DIR, KIND_FILE, KIND_LINK, FileSet, hash_files
 from handoff.state import StateStore, UnitState
 from handoff.store import Meta, Store
 from handoff.units.base import Unit
@@ -70,6 +70,31 @@ def scan(units: list[Unit], jobs: int | None = None) -> dict[str, tuple[FileSet,
     return {u.id: r for u, r in zip(units, results, strict=True)}
 
 
+def _hash_one(item: tuple[Path, FileSet]) -> dict[str, str]:
+    root, fileset = item
+    return hash_files(root, [e.path for e in fileset.of_kind(KIND_FILE)])
+
+
+def _hash_units(items: list[tuple[Path, FileSet]]) -> dict[str, dict[str, str]]:
+    """Hash the regular files of several units in parallel.
+
+    Args:
+        items: Unit root and file set, in unit order.
+
+    Returns:
+        Per unit id (taken from the root's last two path parts), hashes by path.
+    """
+    if not items:
+        return {}
+    jobs = min(8, os.cpu_count() or 1, len(items))
+    try:
+        with ProcessPoolExecutor(jobs, mp_context=multiprocessing.get_context("fork")) as pool:
+            results = list(pool.map(_hash_one, items, chunksize=1))
+    except (OSError, RuntimeError):
+        results = [_hash_one(i) for i in items]
+    return {"/".join(root.parts[-2:]): r for (root, _), r in zip(items, results, strict=True)}
+
+
 def say(text: str) -> None:
     """Progress line for the user, on stderr so `--json` output stays clean.
 
@@ -107,7 +132,7 @@ class Outcome:
     @property
     def failed(self) -> bool:
         """Whether the outcome should fail the command."""
-        return self.action in {"conflict", "skipped", "failed"}
+        return self.action in {"conflict", "skipped", "failed", "mismatch"}
 
 
 @dataclass(frozen=True)
@@ -304,7 +329,11 @@ class Engine:
 
         relay_lists = self.store.fetch_lists([p.unit.id for p in plans if p.meta is not None])
         for p in plans:
-            p.uploads, p.removals = plan_upload(p.fileset, relay_lists.get(p.unit.id, EMPTY))
+            base = relay_lists.get(p.unit.id, EMPTY)
+            p.uploads, p.removals = plan_upload(p.fileset, base)
+            carried = {e.path: e.hash for e in base.entries if e.hash}
+            carried.update(hash_files(p.unit.root, p.uploads))
+            p.fileset = p.fileset.with_hashes(carried)
 
         if dry_run:
             for p in plans:
@@ -559,6 +588,99 @@ class Engine:
 
         previous = self.state.fileset(unit_id) or EMPTY
         return _Pull(unit, meta, fileset, previous, take_relay, set_aside)
+
+    # --- verify ---
+
+    def verify(
+        self, units: list[Unit], *, fix: bool = False, rehash: bool = False, dry_run: bool = False
+    ) -> list[Outcome]:
+        """Compare file contents with the relay's recorded hashes.
+
+        Stat-based sync cannot see a file whose content changed while its
+        size and mtime stayed (an `rsync --size-only` bootstrap does exactly
+        that to 41-byte git refs). This hashes every regular file of each
+        in-sync unit and reports the mismatches.
+
+        Args:
+            units: Local units; only units in sync with the relay are checked.
+            fix: Download the mismatching files from the relay.
+            rehash: Publish this host's hashes as the relay's truth for units
+                whose files all match the relay's stat data (backfill for
+                lists written before hashes existed). Only do this on the
+                host whose copies are known to be good.
+            dry_run: Only report (with `fix`).
+
+        Returns:
+            One outcome per unit: `verified`, `mismatch`, `fixed`, `hashed`,
+            `skipped`.
+        """
+        say(f"fetching relay state, scanning {len(units)} local units")
+        scanned = scan(units)
+        checked = []
+        for unit in units:
+            res = scanned[unit.id]
+            state = self.state.load(unit.id)
+            meta = self.meta.get(unit.id)
+            if isinstance(res, str) or meta is None or state is None:
+                continue
+            if state.generation != meta.generation or res[1] != state.fingerprint:
+                continue  # not in sync: push/pull decide, not verify
+            checked.append((unit, res[0]))
+        say(f"hashing {len(checked)} in-sync units")
+        relay_lists = self.store.fetch_lists([u.id for u, _ in checked])
+        outcomes: dict[str, Outcome] = {
+            u.id: Outcome(u.id, "skipped", "not in sync; push or pull first")
+            for u in units
+            if u.id not in {c.id for c, _ in checked}
+        }
+        hashed = _hash_units([(u.root, fs) for u, fs in checked])
+        to_publish: dict[str, tuple[Meta, FileSet]] = {}
+        to_fix: dict[str, list[str]] = {}
+        for unit, _fileset in checked:
+            relay = relay_lists.get(unit.id, EMPTY)
+            local_hashes = hashed[unit.id]
+            relay_hashes = {e.path: e.hash for e in relay.entries if e.kind == KIND_FILE}
+            unknown = [p for p, h in relay_hashes.items() if not h]
+            bad = sorted(
+                p
+                for p, h in relay_hashes.items()
+                if h and p in local_hashes and local_hashes[p] != h
+            )
+            if bad:
+                to_fix[unit.id] = bad
+                outcomes[unit.id] = Outcome(
+                    unit.id,
+                    "mismatch",
+                    f"{len(bad)} files differ from the relay: " + ", ".join(bad[:5]),
+                )
+            elif unknown and rehash:
+                to_publish[unit.id] = (self.meta[unit.id], relay.with_hashes(local_hashes))
+                outcomes[unit.id] = Outcome(
+                    unit.id, "hashed", f"{len(local_hashes)} hashes published"
+                )
+            elif unknown:
+                outcomes[unit.id] = Outcome(
+                    unit.id, "verified", f"{len(unknown)} files have no relay hash yet (--rehash)"
+                )
+            else:
+                outcomes[unit.id] = Outcome(unit.id, "verified")
+
+        if dry_run:
+            return [outcomes[u.id] for u in units]
+        if to_publish:
+            self.store.publish(to_publish)
+            for uid, (meta, fileset) in to_publish.items():
+                self.state.save(uid, UnitState(meta.generation, meta.fingerprint, now()), fileset)
+        if fix and to_fix:
+            paths = [f"{uid}/{p}" for uid, bad in to_fix.items() for p in bad]
+            say(f"downloading {len(paths)} files from the relay")
+            self.store.get("repos", paths, self.config.workspace.root)
+            for uid, bad in to_fix.items():
+                unit = next(u for u, _ in checked if u.id == uid)
+                relay = relay_lists[uid]
+                materialize(unit.root, relay, set(bad))
+                outcomes[uid] = Outcome(uid, "fixed", f"{len(bad)} files restored from the relay")
+        return [outcomes[u.id] for u in units]
 
     # --- status ---
 

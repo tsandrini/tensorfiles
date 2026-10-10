@@ -7,7 +7,7 @@ import json
 import os
 import stat
 from collections.abc import Iterable, Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from fnmatch import fnmatchcase
 from pathlib import Path
 
@@ -27,6 +27,8 @@ class Entry:
         mtime: Modification time in nanoseconds (regular files only).
         mode: Permission bits (regular files only).
         target: Link target (symlinks only).
+        hash: Hex SHA-256 of the content when known, else empty. Never part
+            of the fingerprint; `verify` compares it against the disk.
     """
 
     path: str
@@ -35,6 +37,7 @@ class Entry:
     mtime: int = 0
     mode: int = 0
     target: str = ""
+    hash: str = ""
 
     def same_content(self, other: Entry | None) -> bool:
         """Whether `other` describes the same bytes, time and mode.
@@ -83,6 +86,19 @@ class FileSet:
         """Entries keyed by path."""
         return {e.path: e for e in self.entries}
 
+    def with_hashes(self, hashes: dict[str, str]) -> FileSet:
+        """Copy with content hashes attached to the given regular files.
+
+        Args:
+            hashes: Hex SHA-256 keyed by path.
+
+        Returns:
+            The new file set (entries not in `hashes` keep what they had).
+        """
+        return FileSet(
+            tuple(replace(e, hash=hashes[e.path]) if e.path in hashes else e for e in self.entries)
+        )
+
     def of_kind(self, kind: str) -> list[Entry]:
         """Entries of one kind, in path order.
 
@@ -123,7 +139,7 @@ class FileSet:
         Returns:
             Compact JSON.
         """
-        rows = [[e.path, e.kind, e.size, e.mtime, e.mode, e.target] for e in self.entries]
+        rows = [[e.path, e.kind, e.size, e.mtime, e.mode, e.target, e.hash] for e in self.entries]
         return json.dumps({"entries": rows}, separators=(",", ":"))
 
     @classmethod
@@ -164,6 +180,41 @@ class FileSet:
 
 
 EMPTY = FileSet(())
+
+
+def sha256_file(path: Path) -> str:
+    """Hex SHA-256 of a file's content.
+
+    Args:
+        path: File to hash.
+
+    Returns:
+        The digest.
+    """
+    h = hashlib.sha256()
+    with path.open("rb") as fh:
+        while chunk := fh.read(1 << 20):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def hash_files(root: Path, paths: list[str]) -> dict[str, str]:
+    """Hash regular files below a root.
+
+    Args:
+        root: Directory the paths are relative to.
+        paths: Relative paths; unreadable ones are left out.
+
+    Returns:
+        Hex SHA-256 keyed by path.
+    """
+    out = {}
+    for rel in paths:
+        try:
+            out[rel] = sha256_file(root / rel)
+        except OSError:
+            continue
+    return out
 
 
 class ExcludeRules:

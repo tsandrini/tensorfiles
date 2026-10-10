@@ -20,6 +20,8 @@ the other host cannot silently lose work when that assumption breaks.
   relay
 - `pull [unit...] [--take-relay | --keep-local] [-n]` -- bring the relay's
   copies into the workspace
+- `verify [unit...] [--fix] [--rehash] [-n]` -- hash local files and compare
+  them with the relay's recorded hashes
 
 A `unit` is `<bundle>/<repo>` relative to the workspace root; `bundle/`
 selects a whole bundle. Without arguments every unit is acted on.
@@ -187,15 +189,28 @@ both.
 Changing the crypt password orphans everything on the relay: wipe the relay
 path and push again from the host that holds the current state.
 
+## Verifying contents
+
+Sync decisions are stat-based (size, nanosecond mtime, mode). A file whose
+content changed while its stat data did not is invisible to push, pull and
+status. That is rare in normal use but easy to manufacture: `rsync
+--size-only` skips same-size files yet still copies their mtime, and every
+git ref is 41 bytes. `verify` closes the gap: push records a SHA-256 for
+every uploaded file, and `verify` hashes the local files of each in-sync
+unit and reports the ones that differ from the relay. `--fix` restores them
+from the relay; `--rehash` publishes the local hashes for units the relay
+has no hashes for yet, and belongs on the host whose copies are known to be
+good. Hashing the whole workspace takes about a minute per 10 GiB.
+
 ## Bootstrapping a second machine
 
 Copying the workspace by hand first saves the initial transfer, but the copy
 has no baseline. After `push` on the original host, run
 `pull --take-relay` on the copy: identical units are adopted, differing ones
 become exact mirrors. A `tar` copy truncates mtimes to seconds, which makes
-every file look changed; the pull then re-downloads the tracked set. An
-`rsync -a --size-only` pass over the LAN first fixes the timestamps without
-moving data.
+every file look changed; the pull then re-downloads the tracked set. A plain
+`rsync -a` pass over the LAN first (never `--size-only`) brings the copy to
+the same bytes and timestamps, and `verify` afterwards proves it.
 
 ## Limits
 
