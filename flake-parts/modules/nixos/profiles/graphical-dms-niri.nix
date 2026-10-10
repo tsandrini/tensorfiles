@@ -20,7 +20,14 @@
   ...
 }:
 let
-  inherit (lib) mkIf mkMerge mkEnableOption;
+  inherit (lib)
+    mkIf
+    mkMerge
+    mkEnableOption
+    mkOption
+    literalExpression
+    types
+    ;
   inherit (localFlake.lib.modules) mkOverrideAtProfileLevel;
 
   cfg = config.tensorfiles.profiles.graphical-dms-niri;
@@ -31,6 +38,16 @@ in
     enable = mkEnableOption ''
       TODO
     '';
+
+    package = mkOption {
+      type = types.package;
+      default = pkgs.niri-unstable;
+      defaultText = literalExpression "pkgs.niri-unstable";
+      description = ''
+        The niri package providing the greeter session. Keep it in sync with
+        `tensorfiles.hm.programs.niri-flake.package` on the HM side.
+      '';
+    };
   };
 
   imports = [
@@ -90,7 +107,7 @@ in
       # have to traverse from NixOS -> HM somehow.
       programs.niri = {
         enable = _ true;
-        package = _ pkgs.niri-unstable;
+        package = _ cfg.package;
       };
 
       services.accounts-daemon.enable = _ true; # Required to persist user info

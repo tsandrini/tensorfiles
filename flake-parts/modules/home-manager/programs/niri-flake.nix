@@ -25,6 +25,7 @@ let
     mkMerge
     mkEnableOption
     mkOption
+    literalExpression
     types
     ;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
@@ -41,7 +42,7 @@ let
         pkgs.satty
         pkgs.jq
         pkgs.wl-clipboard
-        pkgs.niri-unstable
+        cfg.package
         pkgs.coreutils
       ]
     }:$PATH
@@ -123,12 +124,166 @@ let
       niri msg output "$EDP" off
     fi
   '';
+
+  # --- HDR toggle: an optional include that, when present, shadows the
+  # default output block (niri takes the first `output "X"` it sees)
+  hdrStateFile = "${config.xdg.stateHome}/niri/hdr-on.kdl";
+  hdrOutputBlock = hdrNode: ''
+    output "${cfg.hdr.output}" {
+    ${cfg.hdr.outputConfig}
+      ${hdrNode} {
+        reference-luminance ${toString cfg.hdr.referenceLuminance}
+      }
+    }
+
+  '';
+  # NOTE: only ever included at runtime, so the hm.kdl validation never sees
+  # it -- validate it on its own
+  hdrOnFile =
+    pkgs.runCommand "niri-hdr-on.kdl"
+      {
+        nativeBuildInputs = [ cfg.package ];
+        src = pkgs.writeText "niri-hdr-on.kdl" (hdrOutputBlock ''hdr mode="on"'');
+      }
+      ''
+        niri validate -c $src
+        cp $src $out
+      '';
+
+  niriHdrToggle = pkgs.writeShellApplication {
+    name = "niri-hdr-toggle";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.libnotify
+    ];
+    text = ''
+      state=${lib.escapeShellArg hdrStateFile}
+
+      notify() {
+        [ -n "''${NIRI_HDR_QUIET:-}" ] && return 0
+        notify-send -a niri -h string:x-canonical-private-synchronous:niri-hdr "HDR: $1" "$2"
+      }
+
+      on() {
+        mkdir -p "$(dirname "$state")"
+        # NOTE: swapped in atomically -- niri polls the include every 500 ms
+        ln -sfn ${hdrOnFile} "$state.tmp"
+        mv -T "$state.tmp" "$state"
+        notify on "output stays in BT.2020 + PQ; launch HDR games now"
+      }
+
+      off() {
+        [ -e "$state" ] || [ -L "$state" ] || return 0
+        rm -f "$state"
+        notify auto "SDR desktop; HDR only for fullscreen HDR clients"
+      }
+
+      case "''${1:-toggle}" in
+        on) on ;;
+        off) off ;;
+        toggle) if [ -e "$state" ]; then off; else on; fi ;;
+        status) if [ -e "$state" ]; then echo on; else echo auto; fi ;;
+        *)
+          echo "usage: niri-hdr-toggle [on|off|toggle|status]" >&2
+          exit 2
+          ;;
+      esac
+    '';
+  };
+
+  extraKdl = pkgs.writeText "niri-extra.kdl" (
+    lib.optionalString cfg.hdr.enable ''
+      // `niri-hdr-toggle on` links a copy of the block below with
+      // `hdr mode="on"` here; first-wins over it and over dms/outputs.kdl
+      include optional=true "${hdrStateFile}"
+      ${hdrOutputBlock "hdr"}
+    ''
+    + cfg.extraConfig
+  );
+  hasExtraKdl = cfg.hdr.enable || cfg.extraConfig != "";
 in
 {
   options.tensorfiles.hm.programs.niri-flake = {
     enable = mkEnableOption ''
       TODO
     '';
+
+    package = mkOption {
+      type = types.package;
+      default = pkgs.niri-unstable;
+      defaultText = literalExpression "pkgs.niri-unstable";
+      description = ''
+        The niri package to run. The generated config is validated against it
+        at build time, so a fork with extra config nodes (e.g. `niri-spicy`)
+        has to be set here, not only on the NixOS side.
+      '';
+    };
+
+    extraConfig = mkOption {
+      type = types.lines;
+      default = "";
+      example = ''
+        output "DP-1" {
+          mode "3840x2160@240.000"
+          hdr { reference-luminance 203; }
+        }
+      '';
+      description = ''
+        Raw KDL pulled in through an `include` placed *before* the modelled
+        settings and before any DMS-generated files. Meant for nodes niri-flake
+        does not model yet (e.g. `hdr` on `niri-spicy`). Validated with
+        `package` at build time.
+
+        NOTE: niri does not merge repeated `output "X"` blocks -- the first one
+        wins wholesale, so an output declared here must carry its full config
+        (mode, position, ...) and is no longer managed by DMS's display settings.
+      '';
+    };
+
+    hdr = {
+      enable = mkEnableOption ''
+        an HDR-capable output declared in Nix (niri-spicy `hdr` node) plus a
+        `niri-hdr-toggle` script and keybind switching it between `auto`
+        (SDR desktop, HDR only for fullscreen HDR clients) and `on` (always
+        BT.2020 + PQ, needed by games that probe HDR once at startup). The
+        state resets to `auto` at login.
+      '';
+
+      output = mkOption {
+        type = types.str;
+        example = "Philips Consumer Electronics Company 32M2N8900P AU02611004077";
+        description = ''
+          Output name as niri matches it -- connector or the full
+          `"Make Model Serial"` from `niri msg outputs`.
+        '';
+      };
+
+      outputConfig = mkOption {
+        type = types.lines;
+        example = ''
+          mode "3840x2160@240.001"
+          position x=0 y=0
+          max-bpc 10
+        '';
+        description = ''
+          Body of the `output` block minus the `hdr` node. Must be complete
+          (mode, position, ...): niri takes the first `output "X"` block it
+          sees, so DMS's display settings no longer apply to this output.
+        '';
+      };
+
+      referenceLuminance = mkOption {
+        type = types.int;
+        default = 203;
+        description = "SDR white in cd/m² while the output is in HDR mode.";
+      };
+
+      bind = mkOption {
+        type = types.str;
+        default = "Mod+Shift+D";
+        description = "Keybind running `niri-hdr-toggle`.";
+      };
+    };
 
     workspaces = {
       output = mkOption {
@@ -180,9 +335,12 @@ in
       home.packages = [ toggleEdp ];
 
       programs.niri = {
-        package = _ pkgs.niri-unstable;
+        package = _ cfg.package;
         settings = {
           prefer-no-csd = _ true;
+          # NOTE: an absolute store path so the include is also seen by the
+          # build-time `niri validate`, not only at runtime
+          includes = _ (lib.optional hasExtraKdl "${extraKdl}");
           workspaces = lib.listToAttrs (
             lib.genList (
               i:
@@ -281,6 +439,29 @@ in
         };
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.hdr.enable {
+      home.packages = [ niriHdrToggle ];
+
+      programs.niri.settings.binds."${cfg.hdr.bind}".action = _ (
+        config.lib.niri.actions.spawn [ "niri-hdr-toggle" ]
+      );
+
+      # NOTE: ordered before niri.service so a leftover `on` never flashes
+      # HDR at login
+      systemd.user.services.niri-hdr-reset = {
+        Unit = {
+          Description = _ "Reset the niri HDR override to auto";
+          Before = _ [ "graphical-session-pre.target" ];
+        };
+        Service = {
+          Type = _ "oneshot";
+          Environment = _ [ "NIRI_HDR_QUIET=1" ];
+          ExecStart = _ "${lib.getExe niriHdrToggle} off";
+        };
+        Install.WantedBy = _ [ "graphical-session-pre.target" ];
+      };
+    })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.binds.dms.enable {
       programs.niri.settings.binds =
