@@ -12,7 +12,8 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-_: {
+{ inputs, ... }:
+{
   perSystem =
     { pkgs, lib, ... }:
     {
@@ -31,6 +32,10 @@ _: {
         intranet-unauthorized = pkgs.callPackage ./intranet-unauthorized { };
         backupctl = pkgs.python3Packages.callPackage ./backupctl { };
         handoff = pkgs.python3Packages.callPackage ./handoff { };
+        niri-spicy = pkgs.callPackage ./niri-spicy {
+          niri-src = inputs.niri-spicy-src;
+          smithay-src = inputs.smithay-spicy-src;
+        };
         cc-switcher = pkgs.writeShellApplication {
           name = "cc-switcher";
           runtimeInputs = [

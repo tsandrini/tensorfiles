@@ -1231,6 +1231,23 @@
         "type": "github"
       }
     },
+    "niri-spicy-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791539778,
+        "narHash": "sha256-ICejOlb0pV71S2rc+TGRLAF8xZIrnbxikrBbRq2DEws=",
+        "owner": "losnoco",
+        "repo": "niri",
+        "rev": "1bfaa833dce073d53d9db72c2c12a77f452864eb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "losnoco",
+        "ref": "spicy-main",
+        "repo": "niri",
+        "type": "github"
+      }
+    },
     "niri-stable": {
       "flake": false,
       "locked": {
@@ -2333,6 +2350,7 @@
         "meteopress-infra-docs-wip": "meteopress-infra-docs-wip",
         "meteopress-radar-radar_deploy": "meteopress-radar-radar_deploy",
         "niri": "niri",
+        "niri-spicy-src": "niri-spicy-src",
         "nix-alien": "nix-alien",
         "nix-gaming": "nix-gaming",
         "nix-index-database": "nix-index-database_2",
@@ -2354,6 +2372,7 @@
         "plasma-manager": "plasma-manager",
         "pre-commit-hooks": "pre-commit-hooks_3",
         "shadow-nix": "shadow-nix",
+        "smithay-spicy-src": "smithay-spicy-src",
         "systems": "systems_14",
         "vpsadminos": "vpsadminos"
       }
@@ -2371,6 +2390,23 @@
       "original": {
         "owner": "tsandrini",
         "repo": "shadow-nix",
+        "type": "github"
+      }
+    },
+    "smithay-spicy-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791539778,
+        "narHash": "sha256-hteyKrqUZwtMUWhh2h6BMHL9RSK4bLvbSpNgdeiyBCA=",
+        "owner": "losnoco",
+        "repo": "smithay",
+        "rev": "064e3066ea377ef8c628323031e5eb4632819c97",
+        "type": "github"
+      },
+      "original": {
+        "owner": "losnoco",
+        "ref": "spicy-master",
+        "repo": "smithay",
         "type": "github"
       }
     },

@@ -122,6 +122,14 @@
       url = "github:epireyn/niri-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    niri-spicy-src = {
+      url = "github:losnoco/niri/spicy-main";
+      flake = false;
+    };
+    smithay-spicy-src = {
+      url = "github:losnoco/smithay/spicy-master";
+      flake = false;
+    };
     danksearch = {
       url = "github:AvengeMedia/danksearch";
       inputs.nixpkgs.follows = "nixpkgs";
