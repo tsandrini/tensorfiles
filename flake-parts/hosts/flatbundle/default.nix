@@ -14,6 +14,7 @@
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { inputs }:
 {
+  config,
   pkgs,
   system,
   ...
@@ -76,25 +77,17 @@ in
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
     };
+    services.networking.ssh.enable = true;
     security.hardening.desktop.enable = true;
     # NOTE: required for optical media (external DVD drive)
     security.hardening.base.allowedKernelModules = [ "udf" ];
 
     security.agenix.enable = true;
 
-    misc.remote-builders.client = {
-      enable = true;
-      builders.pupibundle = {
-        systems = [ "aarch64-linux" ];
-        maxJobs = 2;
-      };
-    };
-
     services.backup.restic.admin = {
       enable = true;
       user = "tsandrini";
       repositories.remotebundle = { };
-      replicaPath = "/mnt/hdd-backup/restic";
       handoff.enable = true;
     };
 
@@ -102,11 +95,6 @@ in
     # roots instead of the default ones.
     tasks.nix-garbage-collect.enable = false;
     programs.nh.enable = true;
-
-    programs.retrowine = {
-      enable = true;
-      root = "/mnt/hdd-backup/games-backup";
-    };
 
     system.users.usersSettings."root" = {
       agenixPassword.enable = true;
@@ -128,6 +116,7 @@ in
     };
   };
 
+  services.openssh.openFirewall = false;
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
       allowedTCPPorts = [
@@ -135,7 +124,7 @@ in
       ];
     };
     defaultSubnets = {
-      allowedTCPPorts = [
+      allowedTCPPorts = config.services.openssh.ports ++ [
         # WG
         51820
         51821
