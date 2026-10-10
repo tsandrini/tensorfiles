@@ -198,6 +198,9 @@ in
 
   services.udev.packages = [
     pkgs.qmk
+    # NOTE: evnia-panel's Ambiglow hidraw access (uaccess rule shipped by the
+    # package); the panel itself is HM-side (tensorfiles.hm.programs.evnia-panel)
+    inputs.self.packages.${system}.evnia-panel
     pkgs.qmk-udev-rules
     pkgs.qmk_hid
     pkgs.via
@@ -214,6 +217,7 @@ in
 
     tensorfiles.hm = {
       programs.handoff.enable = true;
+      programs.evnia-panel.enable = true;
       profiles.graphical-dms-niri.enable = true;
       programs.niri-flake = {
         package = inputs.self.packages.${system}.niri-spicy;

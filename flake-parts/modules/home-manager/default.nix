@@ -66,6 +66,7 @@ in
       inherit localFlake inputs;
     };
     programs_editors_neovim = importApply ./programs/editors/neovim.nix { inherit localFlake; };
+    programs_evnia-panel = importApply ./programs/evnia-panel.nix { inherit localFlake; };
     programs_file-managers_lf = importApply ./programs/file-managers/lf { inherit localFlake; };
     programs_file-managers_yazi = importApply ./programs/file-managers/yazi.nix { inherit localFlake; };
     programs_git = importApply ./programs/git.nix { inherit localFlake; };

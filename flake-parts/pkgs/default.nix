@@ -32,6 +32,7 @@
         intranet-unauthorized = pkgs.callPackage ./intranet-unauthorized { };
         backupctl = pkgs.python3Packages.callPackage ./backupctl { };
         handoff = pkgs.python3Packages.callPackage ./handoff { };
+        evnia-panel = pkgs.python3Packages.callPackage ./evnia-panel { };
         niri-spicy = pkgs.callPackage ./niri-spicy {
           niri-src = inputs.niri-spicy-src;
           smithay-src = inputs.smithay-spicy-src;
