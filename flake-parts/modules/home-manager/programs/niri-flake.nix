@@ -390,6 +390,12 @@ in
                 cooldown-ms = _ 150;
               };
 
+              # --- Monitors (Y/O flank the U/I workspace keys) ---
+              "${cfg.binds.mod}+Y".action = _ a.focus-monitor-left;
+              "${cfg.binds.mod}+O".action = _ a.focus-monitor-right;
+              "${cfg.binds.mod}+Shift+Y".action = _ a.move-column-to-monitor-left;
+              "${cfg.binds.mod}+Shift+O".action = _ a.move-column-to-monitor-right;
+
               # --- Moving stuff ---
               "${cfg.binds.mod}+Shift+H".action = _ a.move-column-left;
               "${cfg.binds.mod}+Shift+J".action = _ a.move-window-down;
