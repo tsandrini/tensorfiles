@@ -20,11 +20,52 @@
   modulesPath,
   ...
 }:
+let
+  # manual escape hatches for the Wi-Fi driver; see the ath12k NOTE below
+  wifi-on = pkgs.writeShellApplication {
+    name = "wifi-on";
+    runtimeInputs = [
+      pkgs.kmod
+      pkgs.networkmanager
+      pkgs.pciutils
+    ];
+    text = ''
+      # NOTE: after an ath12k crash + warm reset the module drops off the PCIe
+      # bus (bridge 0d:06.0, bus 10 empty) until a real cold power cycle
+      if [ -z "$(lspci -d 17cb:)" ]; then
+        echo "wifi-on: no Qualcomm WCN785x on the PCI bus -- cold power cycle (PSU off ~30 s) needed" >&2
+        exit 1
+      fi
+      sudo modprobe ath12k_wifi7
+      for _ in $(seq 20); do nmcli -t -f DEVICE,TYPE device | grep -q ':wifi$' && break; sleep 0.5; done
+      nmcli radio wifi on
+      nmcli -f DEVICE,TYPE,STATE device | grep -E 'DEVICE|wifi'
+    '';
+  };
+  wifi-off = pkgs.writeShellApplication {
+    name = "wifi-off";
+    runtimeInputs = [
+      pkgs.kmod
+      pkgs.networkmanager
+    ];
+    text = ''
+      nmcli radio wifi off
+      sudo modprobe -r ath12k_wifi7 ath12k
+    '';
+  };
+in
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   networking.useDHCP = lib.mkDefault true;
+
+  # Realtek RTL8126 5GbE: magic packet only -- link-change/broadcast wake
+  # (`p u b m`) makes the box power itself back on after shutdown
+  networking.interfaces.enp17s0.wakeOnLan = {
+    enable = true;
+    policy = [ "magic" ];
+  };
 
   boot = {
     loader = {
@@ -69,6 +110,31 @@
       options it87 ignore_resource_conflict=1
     '';
   };
+
+  # NOTE: the WCN7850 Wi-Fi 7 driver (ath12k) can die re-initialising inside
+  # the resume path (order-8 GFP_NOIO alloc, no reclaim allowed) and a
+  # half-initialised radio oopses on unload -> reboot. So the driver never
+  # crosses a sleep: unloaded before suspend, reloaded after resume in normal
+  # context. A wedged module also drops off the PCIe bus and keeps asserting
+  # WAKE# (box powers itself back on) until a real cold power cycle.
+  powerManagement = {
+    powerDownCommands = ''
+      if grep -q '^ath12k_wifi7 ' /proc/modules; then
+        touch /run/ath12k-reload
+        ${pkgs.kmod}/bin/modprobe -r ath12k_wifi7 ath12k
+      fi
+    '';
+    resumeCommands = ''
+      if [ -e /run/ath12k-reload ]; then
+        rm -f /run/ath12k-reload
+        ${pkgs.kmod}/bin/modprobe ath12k_wifi7
+      fi
+    '';
+  };
+  environment.systemPackages = [
+    wifi-on
+    wifi-off
+  ];
 
   hardware = {
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
