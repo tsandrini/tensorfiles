@@ -70,6 +70,7 @@ in
   tensorfiles = {
     profiles = {
       graphical-dms-niri.enable = true;
+      graphical-dms-niri.package = inputs.self.packages.${system}.niri-spicy;
 
       packages-base.enable = true;
       packages-extra.enable = true;
@@ -210,8 +211,24 @@ in
     tensorfiles.hm = {
       programs.handoff.enable = true;
       profiles.graphical-dms-niri.enable = true;
-      # Philips 346B1C ultrawide; the vertical Dell is HDMI-A-1
-      programs.niri-flake.workspaces.output = "DP-1";
+      programs.niri-flake = {
+        package = inputs.self.packages.${system}.niri-spicy;
+        workspaces.output = "DP-1";
+        hdr = {
+          enable = true;
+          output = "Philips Consumer Electronics Company 32M2N8900P AU02611004077";
+          outputConfig = ''
+            mode "3840x2160@240.001"
+            scale 1
+            position x=0 y=0
+            // VRR only while a fullscreen client asks for it: always-on VRR
+            // flickers on OLED desktops
+            variable-refresh-rate on-demand=true
+            focus-at-startup
+            max-bpc 10
+          '';
+        };
+      };
       programs.pywal.enable = true;
       services.pywalfox-native.enable = true;
 

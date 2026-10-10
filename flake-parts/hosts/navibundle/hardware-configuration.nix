@@ -73,6 +73,7 @@
   hardware = {
     cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
     enableRedistributableFirmware = true;
+    # opentabletdriver.enable = true;
   };
 
   # 16 GiB swapfile on the LUKS-backed root (no hibernation)
