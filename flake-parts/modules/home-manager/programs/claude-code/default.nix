@@ -122,6 +122,17 @@ in
           default = true;
         };
 
+      package = mkOption {
+        type = types.package;
+        default = ccstatusline;
+        defaultText = literalExpression "llm-agents ccstatusline with the dist/ install fix";
+        readOnly = true;
+        description = ''
+          The ccstatusline build this module deploys, exposed for wrappers
+          such as `tensorfiles.hm.services.ccdash`.
+        '';
+      };
+
       settingsFile = mkOption {
         type = types.nullOr types.path;
         default = ./config/ccstatusline.json;

@@ -134,6 +134,7 @@ in
       allowedTCPPorts = config.services.openssh.ports ++ [
         51820
         51821
+        7837 # ccdash
         8000
         8080
         8081
@@ -245,6 +246,7 @@ in
       security.agenix.enable = true;
       programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
+      services.ccdash.enable = true;
 
       programs.claude-code = {
         enable = true;
