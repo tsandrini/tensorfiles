@@ -48,6 +48,17 @@ in
       wrapper (kept in front of ccstatusline when that is enabled)
     '';
 
+    channel.enable = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether to start interactive Claude Code sessions with the ccdash
+        channel, so the web UI can reply to them and answer their permission
+        prompts. Needs `programs.ccdash.channel.allow` on the NixOS host,
+        otherwise Claude Code skips the channel.
+      '';
+    };
+
     port = mkOption {
       type = types.port;
       default = 7837;
@@ -97,6 +108,7 @@ in
         enable = _ true;
         settings.http.listen = _ [ "[::]:${toString cfg.port}" ];
         settings.workspaces.dirs = _ cfg.workspaces;
+        claudeCode.channel.enable = _ cfg.channel.enable;
         claudeCode.statusLine = {
           enable = _ true;
           command = mkIf ccstatuslineCheck (_ (getExe claudeCodeCfg.statusline.package));

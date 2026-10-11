@@ -42,6 +42,7 @@ in
     inputs.disko.nixosModules.disko
     # inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations
+    inputs.ccdash.nixosModules.default
 
     ./hardware-configuration.nix
     ./disko.nix
@@ -152,6 +153,10 @@ in
       ];
     };
   };
+
+  # NOTE: lets the HM `claude` wrapper load the ccdash channel without the
+  # dev-channel dialog (replaces Anthropic's default channel allowlist)
+  programs.ccdash.channel.allow = true;
 
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
   programs.nh.clean.enable = false; # NOTE We have enough space buddy
