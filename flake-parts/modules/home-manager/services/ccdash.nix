@@ -59,6 +59,16 @@ in
       '';
     };
 
+    telemetry.enable = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether Claude Code exports OpenTelemetry metrics and events to the
+        ccdash daemon (loopback only), for tokens, cache hits, API latency,
+        commits and edit decisions in the analytics view.
+      '';
+    };
+
     port = mkOption {
       type = types.port;
       default = 7837;
@@ -109,6 +119,7 @@ in
         settings.http.listen = _ [ "[::]:${toString cfg.port}" ];
         settings.workspaces.dirs = _ cfg.workspaces;
         claudeCode.channel.enable = _ cfg.channel.enable;
+        claudeCode.telemetry.enable = _ cfg.telemetry.enable;
         claudeCode.statusLine = {
           enable = _ true;
           command = mkIf ccstatuslineCheck (_ (getExe claudeCodeCfg.statusline.package));
