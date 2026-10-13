@@ -275,6 +275,8 @@ in
           modelSettings."claude-opus-5-5".effortLevel = _ "xhigh";
           promptSuggestionEnabled = _ false;
           awaySummaryEnabled = _ false;
+          # NOTE: not on the docs page; key from the 2.1.296 settings schema
+          idleCompaction = _ false;
           tui = _ "fullscreen";
           skipDangerousModePermissionPrompt = _ true;
           remoteControlAtStartup = _ true;
