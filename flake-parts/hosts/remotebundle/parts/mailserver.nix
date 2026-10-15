@@ -296,6 +296,11 @@ in
         hashedPasswordFile = mkAccountPath "git-bot-at-tsandrini-dot-sh";
         aliases = [ ];
       };
+
+      "testing@${mailserverVars.primaryDomain}" = {
+        hashedPasswordFile = mkAccountPath "testing-at-tsandrini-dot-sh";
+        aliases = [ ];
+      };
     };
   };
 
@@ -352,5 +357,8 @@ in
 
     "hosts/${hostName}/mailserver/git-bot-at-tsandrini-dot-sh".file =
       secretsPath + "/hosts/${hostName}/mailserver/git-bot-at-tsandrini-dot-sh.age";
+
+    "hosts/${hostName}/mailserver/testing-at-tsandrini-dot-sh".file =
+      secretsPath + "/hosts/${hostName}/mailserver/testing-at-tsandrini-dot-sh.age";
   };
 }

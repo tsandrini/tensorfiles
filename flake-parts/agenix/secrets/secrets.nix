@@ -168,6 +168,10 @@ in
     remotebundle
   ]
   ++ [ tsandrini ];
+  "hosts/remotebundle/mailserver/testing-at-tsandrini-dot-sh.age".publicKeys = [
+    remotebundle
+  ]
+  ++ [ tsandrini ];
   # rspamd
   "hosts/remotebundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
     remotebundle
