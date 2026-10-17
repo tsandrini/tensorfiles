@@ -332,7 +332,6 @@ in
       home.packages = [
         localFlake.packages.${system}.cc-switcher
         llmPkgs.aperant
-        llmPkgs.claude-plugins
         llmPkgs.claudebox
         llmPkgs.skills-installer
         llmPkgs.sandbox-runtime
