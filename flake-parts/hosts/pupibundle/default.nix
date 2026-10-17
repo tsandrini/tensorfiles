@@ -28,7 +28,7 @@ let
   selfVars = infraVars.hosts."${hostName}";
   prometheusExporters = selfVars.services.prometheus.exporters;
 
-  virtualHostsVar = infraVars.hosts."remotebundle".services.nginx.virtualHosts;
+  virtualHostsVar = infraVars.hosts."blehbundle".services.nginx.virtualHosts;
   unboundVars = selfVars.services.unbound;
   iotDnsNoInternet = "${selfVars.address}@${toString unboundVars.iotPorts.noInternet}";
   iotDnsInternet = "${selfVars.address}@${toString unboundVars.iotPorts.internet}";
@@ -155,7 +155,7 @@ in
         ];
 
         local-data = [
-          ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."remotebundle".wgAddress}"''
+          ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
         ];
 
         interface = [

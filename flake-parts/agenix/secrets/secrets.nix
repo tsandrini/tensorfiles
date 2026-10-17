@@ -97,6 +97,58 @@ in
     blehbundle
   ]
   ++ [ tsandrini ];
+  # services copied over from remotebundle (meta/plans/vps-migration.md)
+  "hosts/blehbundle/wedos-acme-env.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/prometheus-ui-basic-auth-file.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/infra-docs-mtpr-basic-auth-file.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/pgadmin-admin-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/grafana-bot-mail-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/grafana-admin-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/grafana-secret-key.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/security-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/t-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/business-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/monitoring-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/shopping-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/newsletters-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/grafana-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/immich-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/git-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/testing-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
 
   # --- navibundle ---
   # --------------------

@@ -24,5 +24,8 @@
     };
     options = import ./options.nix { inherit lib; };
     strings = import ./strings.nix { inherit lib; };
+    nixos = {
+      nginx = import ./nixos/nginx.nix { inherit lib; };
+    };
   };
 }

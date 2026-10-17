@@ -246,6 +246,8 @@ _: rec {
     "blehbundle" =
       let
         address = "10.0.33.15";
+        # NOTE: services proxy to themselves over loopback, `address` is the WG IP
+        localAddress = "localhost";
       in
       {
         inherit address;
@@ -256,11 +258,152 @@ _: rec {
           tsandrini = { };
         };
         services = {
-          prometheus = {
-            exporters = {
-              node.port = common.services.prometheus.exporters.node.defaultPort;
+          mailserver = rec {
+            primaryDomain = "tsandrini.sh";
+            fqdn = "mail.${primaryDomain}";
+            domains = [
+              primaryDomain
+              "tsandrini.cz"
+              "tsandrini.eu"
+              "tsandrini.tech"
+            ];
+            securityEmail = "security@${primaryDomain}";
+            monitoringEmail = "monitoring@${primaryDomain}";
+          };
+
+          immich = {
+            port = 2283;
+          };
+          grafana = {
+            server = {
+              http_port = 3001;
+              http_addr = "0.0.0.0";
             };
           };
+          influxdb2 = {
+            server = {
+              http_port = 8086;
+              http_addr = "localhost";
+            };
+          };
+          loki = {
+            server = {
+              http_port = 3200;
+              http_addr = "0.0.0.0";
+            };
+          };
+          prometheus = {
+            server = {
+              http_port = 9090;
+              http_addr = "localhost";
+            };
+            exporters = {
+              node.port = common.services.prometheus.exporters.node.defaultPort;
+              postgres.port = 9187;
+              nginx.port = 9113;
+              loki.port = hosts."blehbundle".services.loki.server.http_port;
+              nginxlog.port = 9117;
+              postfix.port = 9154;
+              rspamd.port = 11334;
+              dovecot.port = 9166;
+            };
+          };
+          postgresql = {
+            port = 5432;
+            instances = {
+              # NOTE: The user and database names need to be uqual for
+              #       ensureDBOwnership to work
+              "grafana" = {
+                database = "grafana";
+                user = "grafana";
+              };
+              "forgejo" = {
+                database = "forgejo";
+                user = "forgejo";
+              };
+              "immich" = {
+                database = "immich";
+                user = "immich";
+              };
+              "firefly-iii" = {
+                database = "firefly-iii";
+                user = "firefly-iii";
+              };
+              "hass" = {
+                database = "hass";
+                user = "hass";
+              };
+            };
+          };
+          pgadmin = {
+            port = 5050;
+          };
+          forgejo = {
+            server = {
+              http_port = 3000;
+              http_addr = "localhost";
+            };
+          };
+          nginx =
+            let
+              inherit (common.services.prometheus.exporters.anubis) portRangeStart;
+              primaryDomain = "tsandrini.sh";
+              intranetDomain = "home.${primaryDomain}";
+            in
+            {
+              inherit primaryDomain intranetDomain;
+              virtualHosts = {
+                "immutable-insights" = {
+                  domain = "${primaryDomain}";
+                  anubisMetricsPort = portRangeStart + 0;
+                };
+                "pgadmin" = {
+                  domain = "pgadmin.${primaryDomain}";
+                  proxyEndpoint = "${localAddress}:${toString hosts."blehbundle".services.pgadmin.port}";
+                  anubisMetricsPort = portRangeStart + 1;
+                };
+                "grafana" = {
+                  domain = "grafana.${primaryDomain}";
+                  proxyEndpoint = "${localAddress}:${toString hosts."blehbundle".services.grafana.server.http_port}";
+                  anubisMetricsPort = portRangeStart + 2;
+                };
+                "forgejo" = {
+                  domain = "git.${primaryDomain}";
+                  proxyEndpoint = "${localAddress}:${toString hosts."blehbundle".services.forgejo.server.http_port}";
+                  anubisMetricsPort = portRangeStart + 3;
+                };
+                "prometheus" = {
+                  domain = "prometheus.${primaryDomain}";
+                  proxyEndpoint = "${localAddress}:${
+                    toString hosts."blehbundle".services.prometheus.server.http_port
+                  }";
+                };
+                "immich" = {
+                  domain = "pics.${primaryDomain}";
+                  proxyEndpoint = "${localAddress}:${toString hosts."blehbundle".services.immich.port}";
+                };
+                "roundcube" = {
+                  domain = "webmail.${primaryDomain}";
+                  proxyEndpoint = null;
+                };
+                "rspamd" = {
+                  domain = "rspamd.${primaryDomain}";
+                  proxyEndpoint = "unix:/run/rspamd/worker-controller.sock:/";
+                };
+                "emil" = {
+                  domain = "emil.${primaryDomain}";
+                };
+                "intra-pihole" = {
+                  domain = "pihole.${intranetDomain}";
+                  proxyEndpoint = "${hosts."pupibundle".address}";
+                };
+                # --- mtpr ---
+                "infra-docs-mtpr" = {
+                  domain = "infra-docs-wip.mtpr.${primaryDomain}";
+                  proxyEndpoint = null;
+                };
+              };
+            };
         };
       };
     # ----------------------------------

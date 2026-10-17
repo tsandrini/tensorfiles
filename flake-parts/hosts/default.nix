@@ -171,6 +171,7 @@ in
             inputs
             infraVars
             secretsPath
+            importApply
             ;
         };
       }

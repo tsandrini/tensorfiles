@@ -16,21 +16,22 @@
   inputs,
   infraVars,
   secretsPath,
+  importApply,
 }:
 {
   config,
   hostName,
-  # lib,
   ...
 }:
 let
   selfVars = infraVars.hosts."${hostName}";
+
 in
 {
   # -----------------
   # | SPECIFICATION |
   # -----------------
-  # Netcup VPS 1000 G11s (KVM/QEMU, 4 vCPU, 8 GB RAM, 256 GB virtio-blk)
+  # Netcup VPS 1000 G12 (KVM/QEMU, AMD EPYC Genoa, 4 vCPU, 8 GB RAM, 256 GB virtio-blk)
 
   # --------------------------
   # | ROLES & MODULES & etc. |
@@ -41,6 +42,15 @@ in
 
     ./hardware-configuration.nix
     ./disko.nix
+
+    (importApply ./parts/nginx-proxy.nix { inherit inputs secretsPath infraVars; })
+    (importApply ./parts/postgres.nix { inherit secretsPath infraVars; })
+    (importApply ./parts/forgejo.nix { inherit infraVars; })
+    (importApply ./parts/immich.nix { inherit infraVars; })
+    (importApply ./parts/monitoring.nix { inherit secretsPath infraVars; })
+    (importApply ./parts/mailserver.nix { inherit infraVars inputs secretsPath; })
+    (importApply ./parts/mrpack-host.nix { inherit infraVars; })
+    # (importApply ./parts/firefly.nix { inherit secretsPath infraVars; })
   ];
 
   # ------------------------------
@@ -70,12 +80,18 @@ in
     };
   };
 
+  tensorfiles.services.backup.restic = {
+    enable = true;
+    notifyEmail = infraVars.common.contacts.monitoringEmail;
+    paths = [ "/home" ];
+    exclude = [ "/home/*/.cache" ];
+  };
+
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
-      # NOTE: temporary break-glass -- this is the only way back in if the
-      # tunnel dies, and deploy-rs targets wgAddress. Drop once the endpoint
-      # watchdog has proven itself.
-      allowedTCPPorts = config.services.openssh.ports;
+      allowedTCPPorts = [
+        #
+      ];
       allowedUDPPorts = [
         config.networking.wireguard.interfaces.wg-home-tunnel.listenPort
         #
