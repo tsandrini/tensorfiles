@@ -154,7 +154,6 @@ in
             inputs
             secretsPath
             infraVars
-            importApply
             ;
         };
       }

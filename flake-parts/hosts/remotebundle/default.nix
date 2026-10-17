@@ -16,7 +16,6 @@
   inputs,
   secretsPath,
   infraVars,
-  importApply,
 }:
 {
   config,
@@ -35,17 +34,12 @@ in
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
+  # NOTE: FROZEN since the 2026-10-18 cutover to blehbundle
+  # (meta/plans/vps-migration.md). The service parts stay unimported so a
+  # vpsFree node reboot brings up only ssh/WireGuard; all state is left on
+  # disk as the fallback until vpsFree is cancelled.
   imports = [
     (inputs.vpsadminos + "/os/lib/nixos-container/unstable/vpsadminos.nix")
-
-    (importApply ./parts/nginx-proxy.nix { inherit inputs secretsPath infraVars; })
-    (importApply ./parts/postgres.nix { inherit secretsPath infraVars; })
-    (importApply ./parts/forgejo.nix { inherit infraVars; })
-    (importApply ./parts/immich.nix { inherit infraVars; })
-    (importApply ./parts/monitoring.nix { inherit secretsPath infraVars; })
-    (importApply ./parts/mailserver.nix { inherit infraVars inputs secretsPath; })
-    (importApply ./parts/mrpack-host.nix { inherit infraVars; })
-    # (importApply ./parts/firefly.nix { inherit secretsPath infraVars; })
   ];
 
   # ------------------------------
@@ -72,13 +66,6 @@ in
       agenixPassword.enable = true;
       extraGroups = [ "input" ];
     };
-  };
-
-  tensorfiles.services.backup.restic = {
-    enable = true;
-    notifyEmail = infraVars.common.contacts.monitoringEmail;
-    paths = [ "/home" ];
-    exclude = [ "/home/*/.cache" ];
   };
 
   tensorfiles.networking.firewall.subnets-firewall = {
