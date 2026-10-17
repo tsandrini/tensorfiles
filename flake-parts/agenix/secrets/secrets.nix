@@ -63,11 +63,13 @@ in
   "common/backup/restic-remotebundle-password.age".publicKeys = [
     remotebundle
     flatbundle
+    navibundle
   ]
   ++ users;
   "common/backup/restic-blehbundle-password.age".publicKeys = [
     blehbundle
     flatbundle
+    navibundle
   ]
   ++ users;
   # handoff relay encryption, shared by the hosts that push/pull working trees
@@ -154,6 +156,8 @@ in
   # --------------------
   "hosts/navibundle/users/root/system-password.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
   "hosts/navibundle/users/tsandrini/system-password.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
+  # full-access Storage Box key (restic admin commands)
+  "hosts/navibundle/backup-storagebox-admin-ssh-key.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
 
   # --- flatbundle ---
   # --------------------

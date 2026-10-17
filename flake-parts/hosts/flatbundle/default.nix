@@ -83,11 +83,15 @@ in
     security.hardening.base.allowedKernelModules = [ "udf" ];
 
     security.agenix.enable = true;
+    networking.ssh-aliases.enable = true;
 
     services.backup.restic.admin = {
       enable = true;
       user = "tsandrini";
-      repositories.remotebundle = { };
+      repositories = {
+        remotebundle = { };
+        blehbundle = { };
+      };
       handoff.enable = true;
     };
 

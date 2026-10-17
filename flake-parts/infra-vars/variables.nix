@@ -73,6 +73,10 @@ _: rec {
         user = "u677704";
         port = 23;
         repositoryRoot = "restic";
+        ssh = {
+          port = 23;
+          user = "u677704";
+        };
       };
     # ----------------------------------
     "remotebundle" =

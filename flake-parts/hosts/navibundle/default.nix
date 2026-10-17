@@ -87,6 +87,7 @@ in
       with-deploy-user.enable = true;
     };
     services.networking.ssh.enable = true;
+    networking.ssh-aliases.enable = true;
     security.hardening.desktop.enable = true;
     # NOTE: required for optical media (external DVD drive, retrowine dumps)
     security.hardening.base.allowedKernelModules = [ "udf" ];
@@ -95,6 +96,16 @@ in
 
     # NOTE: no remote-builders client here -- binfmt aarch64 on 16 Zen 5 cores
     # beats building on the Pi, and it would need hosts/navibundle/nix-remote-builder-ssh-key
+
+    services.backup.restic.admin = {
+      enable = true;
+      user = "tsandrini";
+      repositories = {
+        remotebundle = { };
+        blehbundle = { };
+      };
+      replicaPath = "/mnt/hdd-backup/restic";
+    };
 
     tasks.nix-garbage-collect.enable = false;
     programs.nh.enable = true;

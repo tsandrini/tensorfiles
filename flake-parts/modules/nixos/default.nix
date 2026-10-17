@@ -40,6 +40,10 @@ in
     networking_wireguard-endpoint-watchdog = importApply ./networking/wireguard-endpoint-watchdog.nix {
       inherit localFlake;
     };
+    networking_ssh-aliases = importApply ./networking/ssh-aliases.nix {
+      inherit localFlake infraVars;
+      inherit (config.agenix) pubkeys;
+    };
 
     # -- profiles --
     profiles_base = importApply ./profiles/base.nix { inherit localFlake; };

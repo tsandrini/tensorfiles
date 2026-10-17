@@ -63,6 +63,7 @@
     security.hardening.desktop.enable = true;
 
     security.agenix.enable = true;
+    networking.ssh-aliases.enable = true;
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.

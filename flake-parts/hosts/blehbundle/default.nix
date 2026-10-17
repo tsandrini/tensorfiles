@@ -38,7 +38,6 @@ in
   # --------------------------
   imports = [
     inputs.disko.nixosModules.disko
-    inputs.nix-minecraft.nixosModules.minecraft-servers
 
     ./hardware-configuration.nix
     ./disko.nix
