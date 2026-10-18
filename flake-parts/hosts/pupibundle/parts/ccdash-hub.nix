@@ -15,9 +15,10 @@
 #
 # The ccdash hub (meta/plans/ccdash-hub/spec.md): every workstation's
 # collector reports here over `wss://ccdash.home.tsandrini.sh/collect`; the
-# web UI, the API and the ntfy notifications are served from here. Intranet
-# only: nginx listens on the LAN address with the `*.home` wildcard cert and
-# allows the home and WireGuard subnets. Each piece waits for its secret.
+# web UI (installable as a PWA), the API and the notifications (ntfy and
+# Web Push) are served from here. Intranet only: nginx listens on the LAN
+# address with the `*.home` wildcard cert and allows the home and WireGuard
+# subnets. Each piece waits for its secret.
 {
   inputs,
   secretsPath,
@@ -79,6 +80,7 @@ in
             "PesekMudra"
             "tsandrini"
           ];
+          push.subject = "mailto:${infraVars.common.contacts.securityEmail}";
         }
         // optionalAttrs ntfyCheck {
           notify = {
