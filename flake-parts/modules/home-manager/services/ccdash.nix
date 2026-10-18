@@ -12,7 +12,11 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ localFlake, inputs }:
+{
+  localFlake,
+  inputs,
+  secretsPath,
+}:
 {
   config,
   lib,
@@ -25,8 +29,10 @@ let
     mkIf
     mkMerge
     mkOption
+    optionalAttrs
     types
     ;
+  inherit (builtins) pathExists;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel isModuleLoadedAndEnabled;
 
   cfg = config.tensorfiles.hm.services.ccdash;
@@ -35,6 +41,12 @@ let
 
   dmsCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.dank-material-shell";
   niriCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.niri-flake";
+
+  notifySecret = cfg.notify.tokenSecretPath;
+  notifyCheck =
+    cfg.notify.enable
+    && (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix")
+    && pathExists (secretsPath + "/${notifySecret}.age");
 
   ccstatuslineCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.claude-code")
@@ -53,9 +65,9 @@ in
       default = true;
       description = ''
         Whether to start interactive Claude Code sessions with the ccdash
-        channel, so the web UI can reply to them and answer their permission
-        prompts. Needs `programs.ccdash.channel.allow` on the NixOS host,
-        otherwise Claude Code skips the channel.
+        channel, so the web UI can reply to them. Needs
+        `programs.ccdash.channel.allow` on the NixOS host, otherwise Claude
+        Code skips the channel.
       '';
     };
 
@@ -69,11 +81,55 @@ in
       '';
     };
 
+    notify = {
+      enable = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          Whether to push prompts and finished turns to the phone through
+          ntfy, with buttons that answer the prompts. Needs the
+          `tensorfiles.hm.security.agenix` backend and the token secret
+          (`tokenSecretPath`); stays off until that secret exists.
+        '';
+      };
+
+      url = mkOption {
+        type = types.str;
+        default = "https://ntfy.home.tsandrini.sh";
+        description = "The ntfy server.";
+      };
+
+      topic = mkOption {
+        type = types.str;
+        default = "ccdash";
+        description = "The ntfy topic notifications go to.";
+      };
+
+      webUrl = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "http://10.10.0.204:7837";
+        description = ''
+          How the phone reaches the daemon, for the buttons and taps. `null`
+          uses this machine's LAN address and {option}`port`.
+        '';
+      };
+
+      tokenSecretPath = mkOption {
+        type = types.str;
+        default = "common/ccdash-ntfy-token";
+        description = ''
+          Secret holding an ntfy access token that may publish to the topic,
+          relative to the secrets dir and without the `.age` suffix.
+        '';
+      };
+    };
+
     port = mkOption {
       type = types.port;
       default = 7837;
       description = ''
-        Port of the read-only HTTP API and web UI, bound on all addresses.
+        Port of the HTTP API and web UI, bound on all addresses.
         Reachability is up to the host firewall.
       '';
     };
@@ -126,6 +182,17 @@ in
         };
       };
     }
+    # |----------------------------------------------------------------------| #
+    (mkIf notifyCheck {
+      age.secrets."${notifySecret}".file = _ (secretsPath + "/${notifySecret}.age");
+
+      services.ccdash.settings.notify = {
+        url = _ cfg.notify.url;
+        topic = _ cfg.notify.topic;
+        token_file = _ config.age.secrets."${notifySecret}".path;
+      }
+      // optionalAttrs (cfg.notify.webUrl != null) { web_url = _ cfg.notify.webUrl; };
+    })
     # |----------------------------------------------------------------------| #
     (mkIf dmsCheck {
       services.ccdash.dms.enable = _ true;

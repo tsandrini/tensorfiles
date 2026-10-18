@@ -103,7 +103,7 @@ in
 
     # -- services --
     services_activitywatch = importApply ./services/activitywatch.nix { inherit localFlake; };
-    services_ccdash = importApply ./services/ccdash.nix { inherit localFlake inputs; };
+    services_ccdash = importApply ./services/ccdash.nix { inherit localFlake inputs secretsPath; };
     services_dunst = importApply ./services/dunst.nix { inherit localFlake; };
     services_keepassxc = importApply ./services/keepassxc.nix { inherit localFlake; };
     services_pywalfox-native = importApply ./services/pywalfox-native.nix { inherit localFlake; };
