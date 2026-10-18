@@ -55,6 +55,18 @@ only when I explicitly say quick-and-dirty / urgent.
 Before declaring a task done, run the project's linters/tests through
 `direnv exec` and report the actual results.
 
+## Knowledge (ccdash)
+
+- Durable knowledge lives in the ccdash hub, not in files: use the ccdash
+  tools — `recall` before asking about past decisions or quirks,
+  `remember` + `verify` for facts, `issue_add`/`issue_update` for work
+  items, `progress` for dated entries, `doc_write` for shared documents,
+  `tell_session` to reach another running session. Everything is scoped
+  to the current workspace.
+- `.claude/memory/` directories are frozen archives (imported into the hub
+  2026-10-18): never write there. When the tools report the hub offline,
+  writes are queued and land later; carry on.
+
 ## Missing information
 
 If key information is missing (paths, config values, prior context,

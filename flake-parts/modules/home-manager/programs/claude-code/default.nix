@@ -264,6 +264,9 @@ in
             # NOTE: `claudeInChromeDefaultEnabled` lives in the mutable
             # ~/.claude.json, not settings.json; this triBool env outranks it
             CLAUDE_CODE_ENABLE_CFC = _ "0";
+            # NOTE: memory moved into the ccdash hub (knowledge tools); the
+            # `.claude/memory` dirs are frozen archives
+            CLAUDE_CODE_DISABLE_AUTO_MEMORY = _ "1";
             # MAX_THINKING_TOKENS = _ "10000";
             # CLAUDE_AUTOCOMPACT_PCT_OVERRIDE = _ "75";
             # CLAUDE_CODE_SUBAGENT_MODEL = _ "sonnet";

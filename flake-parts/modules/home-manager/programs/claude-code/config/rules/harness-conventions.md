@@ -20,7 +20,7 @@ harness files are touched. Canonical copy lives in tensorfiles:
 | L0   | workspace root `CLAUDE.md`  | every session           | ≤ ~100 lines                                     |
 | L1   | `.claude/rules/*.md`        | path match              | ≤ ~40 lines; `paths:` REQUIRED                   |
 | L2   | `.claude/skills/*/SKILL.md` | intent or path          | body free; description = 1 line, trigger-phrased |
-| L3   | `.claude/memory/`           | dynamic, Claude-written | `MEMORY.md` index ≤ ~60 lines                    |
+| L3   | ccdash notes (hub)          | dynamic, Claude-written | injected at session start; `recall` for the rest |
 
 ## Placement decision table
 
@@ -29,14 +29,15 @@ harness files are touched. Canonical copy lives in tensorfiles:
 | true for every session in the workspace            | root `CLAUDE.md` (rare — guard jealously)                                             |
 | constraint/orientation whenever touching subtree X | rule — subsystem-level by default; repo-level only for hard repo-specific constraints |
 | a procedure or deep reference for some tasks       | skill — create once a workflow repeats                                                |
-| just learned this session, unvalidated             | memory (via `/retro`); promote once stable, then prune                                |
+| just learned this session, unvalidated             | ccdash `remember` (via `/retro`); `verify` once confirmed, promote when stable         |
 
 ## Naming
 
 - Rules: `<subsystem>.md`; repo-level rules use the literal repo dir name.
 - Skills: `<scope>-<verb>` for procedures, `<scope>-<noun>` for reference;
   the directory name is the slash command.
-- Memory topics: `<scope>--<topic>.md`; `MEMORY.md` is the mandatory index.
+- Memory notes (ccdash): slug `<scope>--<topic>`, a one-line summary for
+  the index. `.claude/memory/` is a frozen archive since 2026-10-18.
 
 ## Workspace meta layer
 
