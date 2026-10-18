@@ -140,7 +140,7 @@ in
           inherit (inputs) nixos-raspberrypi; # NOTE: required for nixos-raspberrypi
         };
         hostImportArgs = {
-          inherit inputs infraVars;
+          inherit inputs infraVars secretsPath;
         };
       }
     );

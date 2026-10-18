@@ -146,7 +146,6 @@ in
       allowedTCPPorts = config.services.openssh.ports ++ [
         51820
         51821
-        7837 # ccdash
         8000
         8080
         8081

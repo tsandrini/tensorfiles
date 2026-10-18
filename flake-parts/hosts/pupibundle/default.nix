@@ -15,7 +15,7 @@
 {
   inputs,
   infraVars,
-  # importApply,
+  secretsPath,
 }:
 {
   config,
@@ -25,6 +25,7 @@
   ...
 }:
 let
+  inherit (inputs.flake-parts.lib) importApply;
   selfVars = infraVars.hosts."${hostName}";
   prometheusExporters = selfVars.services.prometheus.exporters;
 
@@ -48,6 +49,7 @@ in
     ./hardware-configuration.nix
     ./disko.nix
 
+    (importApply ./parts/ccdash-hub.nix { inherit inputs secretsPath infraVars; })
     # (importApply ./parts/home-assistant.nix { inherit infraVars; })
   ]
   ++ (with nixos-raspberrypi.nixosModules; [
@@ -157,6 +159,7 @@ in
         local-data = [
           ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
           ''"ntfy.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
+          ''"${selfVars.services.nginx.virtualHosts."intra-ccdash".domain}. A ${selfVars.address}"''
         ];
 
         interface = [

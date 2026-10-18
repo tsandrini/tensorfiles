@@ -20,6 +20,7 @@
 {
   config,
   lib,
+  hostName,
   ...
 }:
 let
@@ -29,7 +30,6 @@ let
     mkIf
     mkMerge
     mkOption
-    optionalAttrs
     types
     ;
   inherit (builtins) pathExists;
@@ -42,11 +42,10 @@ let
   dmsCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.dank-material-shell";
   niriCheck = isModuleLoadedAndEnabled config "tensorfiles.hm.programs.niri-flake";
 
-  notifySecret = cfg.notify.tokenSecretPath;
-  notifyCheck =
-    cfg.notify.enable
-    && (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix")
-    && pathExists (secretsPath + "/${notifySecret}.age");
+  tokenSecret = cfg.hub.tokenSecretPath;
+  tokenCheck =
+    (isModuleLoadedAndEnabled config "tensorfiles.hm.security.agenix")
+    && pathExists (secretsPath + "/${tokenSecret}.age");
 
   ccstatuslineCheck =
     (isModuleLoadedAndEnabled config "tensorfiles.hm.programs.claude-code")
@@ -55,10 +54,31 @@ in
 {
   options.tensorfiles.hm.services.ccdash = {
     enable = mkEnableOption ''
-      ccdash, the live dashboard for running Claude Code sessions: the
-      collector daemon, the Claude Code hooks feeding it, and the statusline
-      wrapper (kept in front of ccstatusline when that is enabled)
+      the ccdash collector: reports this machine's Claude Code sessions to
+      the hub (pupibundle), with the Claude Code hooks feeding it and the
+      statusline wrapper (kept in front of ccstatusline when that is
+      enabled). Needs the collector token secret (`hub.tokenSecretPath`)
+      and the `tensorfiles.hm.security.agenix` backend; stays off until the
+      secret exists
     '';
+
+    hub = {
+      url = mkOption {
+        type = types.str;
+        default = "wss://ccdash.home.tsandrini.sh/collect";
+        description = "The hub's `/collect` endpoint.";
+      };
+
+      tokenSecretPath = mkOption {
+        type = types.str;
+        default = "common/ccdash-collector-token-${hostName}";
+        description = ''
+          Secret holding this machine's collector token (the hub lists it
+          under this host name), relative to the secrets dir and without
+          the `.age` suffix.
+        '';
+      };
+    };
 
     channel.enable = mkOption {
       type = types.bool;
@@ -76,61 +96,9 @@ in
       default = true;
       description = ''
         Whether Claude Code exports OpenTelemetry metrics and events to the
-        ccdash daemon (loopback only), for tokens, cache hits, API latency,
-        commits and edit decisions in the analytics view.
-      '';
-    };
-
-    notify = {
-      enable = mkOption {
-        type = types.bool;
-        default = true;
-        description = ''
-          Whether to push prompts and finished turns to the phone through
-          ntfy, with buttons that answer the prompts. Needs the
-          `tensorfiles.hm.security.agenix` backend and the token secret
-          (`tokenSecretPath`); stays off until that secret exists.
-        '';
-      };
-
-      url = mkOption {
-        type = types.str;
-        default = "https://ntfy.home.tsandrini.sh";
-        description = "The ntfy server.";
-      };
-
-      topic = mkOption {
-        type = types.str;
-        default = "ccdash";
-        description = "The ntfy topic notifications go to.";
-      };
-
-      webUrl = mkOption {
-        type = types.nullOr types.str;
-        default = null;
-        example = "http://10.10.0.204:7837";
-        description = ''
-          How the phone reaches the daemon, for the buttons and taps. `null`
-          uses this machine's LAN address and {option}`port`.
-        '';
-      };
-
-      tokenSecretPath = mkOption {
-        type = types.str;
-        default = "common/ccdash-ntfy-token";
-        description = ''
-          Secret holding an ntfy access token that may publish to the topic,
-          relative to the secrets dir and without the `.age` suffix.
-        '';
-      };
-    };
-
-    port = mkOption {
-      type = types.port;
-      default = 7837;
-      description = ''
-        Port of the HTTP API and web UI, bound on all addresses.
-        Reachability is up to the host firewall.
+        collector (loopback only), which forwards the kept records to the
+        hub for tokens, cache hits, API latency, commits and edit decisions
+        in the analytics view.
       '';
     };
 
@@ -150,19 +118,6 @@ in
         '';
       };
     };
-
-    workspaces = mkOption {
-      type = types.listOf types.str;
-      default = [
-        "~/ProjectBundle/meteopress"
-        "~/ProjectBundle/PesekMudra"
-        "~/ProjectBundle/tsandrini"
-      ];
-      description = ''
-        Workspace directories the web UI can filter sessions by, named by
-        their last path component (`~/` is the home directory).
-      '';
-    };
   };
 
   imports = [ inputs.ccdash.homeModules.default ];
@@ -170,10 +125,19 @@ in
   config = mkIf cfg.enable (mkMerge [
     # |----------------------------------------------------------------------| #
     {
+      warnings = lib.optional (!tokenCheck) ''
+        tensorfiles.hm.services.ccdash: the collector token secret
+        ${tokenSecret}.age is missing, ccdash stays off on ${hostName}.
+      '';
+    }
+    # |----------------------------------------------------------------------| #
+    (mkIf tokenCheck {
+      age.secrets."${tokenSecret}".file = _ (secretsPath + "/${tokenSecret}.age");
+
       services.ccdash = {
         enable = _ true;
-        settings.http.listen = _ [ "[::]:${toString cfg.port}" ];
-        settings.workspaces.dirs = _ cfg.workspaces;
+        hub.url = _ cfg.hub.url;
+        hub.tokenFile = _ config.age.secrets."${tokenSecret}".path;
         claudeCode.channel.enable = _ cfg.channel.enable;
         claudeCode.telemetry.enable = _ cfg.telemetry.enable;
         claudeCode.statusLine = {
@@ -181,24 +145,13 @@ in
           command = mkIf ccstatuslineCheck (_ (getExe claudeCodeCfg.statusline.package));
         };
       };
-    }
-    # |----------------------------------------------------------------------| #
-    (mkIf notifyCheck {
-      age.secrets."${notifySecret}".file = _ (secretsPath + "/${notifySecret}.age");
-
-      services.ccdash.settings.notify = {
-        url = _ cfg.notify.url;
-        topic = _ cfg.notify.topic;
-        token_file = _ config.age.secrets."${notifySecret}".path;
-      }
-      // optionalAttrs (cfg.notify.webUrl != null) { web_url = _ cfg.notify.webUrl; };
     })
     # |----------------------------------------------------------------------| #
-    (mkIf dmsCheck {
+    (mkIf (tokenCheck && dmsCheck) {
       services.ccdash.dms.enable = _ true;
     })
     # |----------------------------------------------------------------------| #
-    (mkIf (dmsCheck && niriCheck) {
+    (mkIf (tokenCheck && dmsCheck && niriCheck) {
       programs.niri.settings.binds =
         let
           dms =

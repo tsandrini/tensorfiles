@@ -58,10 +58,20 @@ in
     navibundle
   ]
   ++ users;
-  # ntfy token the ccdash daemon publishes notifications with
+  # ntfy token the ccdash hub publishes notifications with
   "common/ccdash-ntfy-token.age".publicKeys = [
-    flatbundle
+    pupibundle
+  ]
+  ++ users;
+  # ccdash collector tokens: one per workstation, shared with the hub
+  "common/ccdash-collector-token-navibundle.age".publicKeys = [
     navibundle
+    pupibundle
+  ]
+  ++ users;
+  "common/ccdash-collector-token-flatbundle.age".publicKeys = [
+    flatbundle
+    pupibundle
   ]
   ++ users;
   # restic repository passwords, shared by the backed-up host and flatbundle
@@ -93,6 +103,9 @@ in
   # --------------------
   "hosts/pupibundle/users/root/system-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
   "hosts/pupibundle/users/tsandrini/system-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+  # ccdash hub: web UI bearer token, Wedos DNS-01 credentials for the *.home cert
+  "hosts/pupibundle/ccdash-ui-token.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+  "hosts/pupibundle/wedos-acme-env.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
 
   # --- blehbundle ---
   # --------------------

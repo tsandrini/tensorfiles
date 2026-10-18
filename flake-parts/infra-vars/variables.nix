@@ -439,6 +439,20 @@ _: rec {
           home-assistant = {
             port = 8123;
           };
+          ccdash-hub = {
+            port = 7837;
+            # workstations whose collectors report here (one token each)
+            collectors = [
+              "navibundle"
+              "flatbundle"
+            ];
+          };
+          nginx.virtualHosts = {
+            "intra-ccdash" = {
+              domain = "ccdash.${hosts."blehbundle".services.nginx.intranetDomain}";
+              proxyEndpoint = "127.0.0.1:${toString hosts."pupibundle".services.ccdash-hub.port}";
+            };
+          };
           prometheus = {
             exporters = {
               node.port = common.services.prometheus.exporters.node.defaultPort;
