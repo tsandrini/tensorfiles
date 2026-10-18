@@ -60,9 +60,14 @@ Before declaring a task done, run the project's linters/tests through
 - Durable knowledge lives in the ccdash hub, not in files: use the ccdash
   tools — `recall` before asking about past decisions or quirks,
   `remember` + `verify` for facts, `issue_add`/`issue_update` for work
-  items, `progress` for dated entries, `doc_write` for shared documents,
-  `tell_session` to reach another running session. Everything is scoped
-  to the current workspace.
+  items, `progress` for dated entries, `doc_write` for shared documents.
+  Everything is scoped to the current workspace.
+- Other sessions: `claim` what you are working on (a few words, the paths
+  it touches) when you start on something others might touch, `release`
+  when done; `tell_session` hands a message to another session, which
+  reads it with its next prompt (it never starts a turn there). Messages
+  and claims of others arrive as context with your prompts; a warning
+  before an edit means the file is claimed — coordinate first.
 - `.claude/memory/` directories are frozen archives (imported into the hub
   2026-10-18): never write there. When the tools report the hub offline,
   writes are queued and land later; carry on.
