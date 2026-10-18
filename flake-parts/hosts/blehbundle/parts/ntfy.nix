@@ -13,19 +13,24 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 #
-# ntfy push server for ccdash phone notifications. Everything is denied by
-# default; users, ACL entries and tokens are provisioned from the agenix env
-# file (`NTFY_AUTH_USERS`, `NTFY_AUTH_ACCESS`, `NTFY_AUTH_TOKENS`).
+# ntfy push server (ccdash phone notifications), reachable from the home and
+# WireGuard subnets only. Everything is denied by default; users, ACL entries
+# and tokens come from the agenix env file (`NTFY_AUTH_USERS`,
+# `NTFY_AUTH_ACCESS`, `NTFY_AUTH_TOKENS`). Messages are cached for an hour in
+# memory only, never on disk.
 {
   secretsPath,
   infraVars,
 }:
 {
   config,
+  lib,
   hostName,
   ...
 }:
 let
+  inherit (lib) mkForce;
+
   # --- nginx ---
   nginxVars = infraVars.hosts."blehbundle".services.nginx;
   virtualHostsVar = nginxVars.virtualHosts;
@@ -45,10 +50,14 @@ in
     enable = true;
     environmentFile = config.age.secrets."hosts/${hostName}/ntfy-env".path;
     settings = {
-      base-url = "https://${virtualHostsVar."ntfy".domain}";
-      listen-http = virtualHostsVar."ntfy".proxyEndpoint;
+      base-url = "https://${virtualHostsVar."intra-ntfy".domain}";
+      listen-http = virtualHostsVar."intra-ntfy".proxyEndpoint;
       behind-proxy = true;
       auth-default-access = "deny-all";
+      cache-duration = "1h";
+      # NOTE: "" unsets the module's defaults: an in-memory cache, no attachments
+      cache-file = mkForce "";
+      attachment-cache-dir = mkForce "";
     };
   };
 

@@ -49,6 +49,7 @@ in
     (importApply ./parts/monitoring.nix { inherit secretsPath infraVars; })
     (importApply ./parts/mailserver.nix { inherit infraVars inputs secretsPath; })
     (importApply ./parts/mrpack-host.nix { inherit infraVars; })
+    (importApply ./parts/ntfy.nix { inherit secretsPath infraVars; })
     # (importApply ./parts/firefly.nix { inherit secretsPath infraVars; })
   ];
 

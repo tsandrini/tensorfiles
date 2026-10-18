@@ -348,6 +348,9 @@ _: rec {
               http_addr = "localhost";
             };
           };
+          ntfy = {
+            port = 2586;
+          };
           nginx =
             let
               inherit (common.services.prometheus.exporters.anubis) portRangeStart;
@@ -400,6 +403,10 @@ _: rec {
                 "intra-pihole" = {
                   domain = "pihole.${intranetDomain}";
                   proxyEndpoint = "${hosts."pupibundle".address}";
+                };
+                "intra-ntfy" = {
+                  domain = "ntfy.${intranetDomain}";
+                  proxyEndpoint = "127.0.0.1:${toString hosts."blehbundle".services.ntfy.port}";
                 };
                 # --- mtpr ---
                 "infra-docs-mtpr" = {

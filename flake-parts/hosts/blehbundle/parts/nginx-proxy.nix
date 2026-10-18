@@ -293,6 +293,22 @@ in
         proxyPass = "http://${virtualHostsVar."intra-pihole".proxyEndpoint}";
       };
     };
+
+    # NOTE: unbuffered for ntfy's long-lived subscriptions
+    virtualHosts."${virtualHostsVar."intra-ntfy".domain}" = mkIntraVhost {
+      locations."/" = {
+        proxyWebsockets = true;
+        proxyPass = "http://${virtualHostsVar."intra-ntfy".proxyEndpoint}";
+        extraConfig = ''
+          proxy_buffering off;
+          proxy_request_buffering off;
+          proxy_redirect off;
+          proxy_connect_timeout 3m;
+          proxy_send_timeout 3m;
+          proxy_read_timeout 3m;
+        '';
+      };
+    };
   };
 
   services.anubis = {

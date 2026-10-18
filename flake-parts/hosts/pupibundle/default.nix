@@ -156,6 +156,7 @@ in
 
         local-data = [
           ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
+          ''"ntfy.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
         ];
 
         interface = [

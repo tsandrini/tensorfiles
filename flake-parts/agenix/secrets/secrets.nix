@@ -58,6 +58,12 @@ in
     navibundle
   ]
   ++ users;
+  # ntfy token the ccdash daemon publishes notifications with
+  "common/ccdash-ntfy-token.age".publicKeys = [
+    flatbundle
+    navibundle
+  ]
+  ++ users;
   # restic repository passwords, shared by the backed-up host and flatbundle
   # (tensorfiles.services.backup.restic.admin)
   "common/backup/restic-remotebundle-password.age".publicKeys = [
@@ -107,6 +113,8 @@ in
   "hosts/blehbundle/grafana-bot-mail-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/grafana-admin-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/grafana-secret-key.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  # ntfy users, ACL entries and tokens (NTFY_AUTH_* env vars)
+  "hosts/blehbundle/ntfy-env.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
     blehbundle
   ]
