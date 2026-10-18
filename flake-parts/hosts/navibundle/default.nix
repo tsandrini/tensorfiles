@@ -243,6 +243,7 @@ in
         hdr = {
           enable = true;
           output = "Philips Consumer Electronics Company 32M2N8900P AU02611004077";
+          connector = "DP-1";
           outputConfig = ''
             mode "3840x2160@240.001"
             scale 1
@@ -251,8 +252,8 @@ in
             // flickers on OLED desktops
             variable-refresh-rate on-demand=true
             focus-at-startup
-            max-bpc 10
           '';
+          extraOutputConfig = "max-bpc 10";
         };
       };
       programs.pywal.enable = true;

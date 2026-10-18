@@ -92,6 +92,9 @@ in
           ];
         };
       };
+
+      tensorfiles.hm.programs.niri-flake.hdr.dmsOutputsFile =
+        _ "${config.xdg.configHome}/niri/dms/outputs.kdl";
     })
     # |----------------------------------------------------------------------| #
   ]);

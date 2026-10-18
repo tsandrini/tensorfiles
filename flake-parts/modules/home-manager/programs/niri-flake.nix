@@ -125,17 +125,27 @@ let
     fi
   '';
 
-  # --- HDR toggle: an optional include that, when present, shadows the
-  # default output block (niri takes the first `output "X"` it sees)
-  hdrStateFile = "${config.xdg.stateHome}/niri/hdr-on.kdl";
-  hdrOutputBlock = hdrNode: ''
-    output "${cfg.hdr.output}" {
-    ${cfg.hdr.outputConfig}
-      ${hdrNode} {
+  # --- HDR toggle: an include rendered at runtime that shadows the fallback
+  # output block (niri takes the first `output "X"` it sees). Its geometry is
+  # copied from DMS's block for the output, so a toggle reload changes nothing
+  # but the `hdr` node.
+  hdrOutputFile = "${config.xdg.stateHome}/niri/hdr-output.kdl";
+  hdrOnMarker = "${config.xdg.stateHome}/niri/hdr-on";
+  hdrNames = [ cfg.hdr.output ] ++ lib.optional (cfg.hdr.connector != null) cfg.hdr.connector;
+
+  hdrHead = ''output "${cfg.hdr.output}" {'';
+  hdrTail = mode: ''
+    ${cfg.hdr.extraOutputConfig}
+      hdr${lib.optionalString (mode == "on") " mode=\"on\""} {
         reference-luminance ${toString cfg.hdr.referenceLuminance}
       }
     }
-
+  '';
+  hdrTailFile = mode: pkgs.writeText "niri-hdr-${mode}-tail.kdl" (hdrTail mode);
+  hdrOutputBlock = mode: ''
+    ${hdrHead}
+    ${cfg.hdr.outputConfig}
+    ${hdrTail mode}
   '';
   # NOTE: only ever included at runtime, so the hm.kdl validation never sees
   # it -- validate it on its own
@@ -143,7 +153,7 @@ let
     pkgs.runCommand "niri-hdr-on.kdl"
       {
         nativeBuildInputs = [ cfg.package ];
-        src = pkgs.writeText "niri-hdr-on.kdl" (hdrOutputBlock ''hdr mode="on"'');
+        src = pkgs.writeText "niri-hdr-on.kdl" (hdrOutputBlock "on");
       }
       ''
         niri validate -c $src
@@ -153,50 +163,124 @@ let
   niriHdrToggle = pkgs.writeShellApplication {
     name = "niri-hdr-toggle";
     runtimeInputs = [
+      cfg.package
       pkgs.coreutils
+      pkgs.diffutils
+      pkgs.gawk
       pkgs.libnotify
+      pkgs.util-linux
     ];
     text = ''
-      state=${lib.escapeShellArg hdrStateFile}
+      out=${lib.escapeShellArg hdrOutputFile}
+      marker=${lib.escapeShellArg hdrOnMarker}
+      dms=${lib.escapeShellArg (toString cfg.hdr.dmsOutputsFile)}
+      names=${lib.escapeShellArg (lib.concatStringsSep "\n" hdrNames)}
 
       notify() {
         [ -n "''${NIRI_HDR_QUIET:-}" ] && return 0
         notify-send -a niri -h string:x-canonical-private-synchronous:niri-hdr "HDR: $1" "$2"
       }
 
-      on() {
-        mkdir -p "$(dirname "$state")"
+      dms_body() {
+        [ -n "$dms" ] && [ -r "$dms" ] || return 1
+        awk -v names="$names" '
+          BEGIN {
+            n = split(names, list, "\n")
+            for (i = 1; i <= n; i++) want["output \"" list[i] "\" {"] = 1
+          }
+          !depth {
+            line = $0
+            gsub(/^[ \t]+|[ \t]+$/, "", line)
+            if (line in want) { depth = 1; found = 1 }
+            next
+          }
+          {
+            t = $0
+            depth += gsub(/\{/, "", t) - gsub(/\}/, "", t)
+            if (depth <= 0) exit
+            print
+          }
+          END { exit !found }
+        ' "$dms"
+      }
+
+      render() {
+        local tail fallback body tmp err
+        if [ "$1" = on ]; then
+          tail=${hdrTailFile "on"}
+          fallback=${hdrOnFile}
+        else
+          tail=${hdrTailFile "auto"}
+          fallback=
+        fi
+
+        if body="$(dms_body)"; then
+          tmp="$(mktemp "$out.XXXXXX")"
+          printf '%s\n%s\n' ${lib.escapeShellArg hdrHead} "$body" > "$tmp"
+          cat "$tail" >> "$tmp"
+          if ! err="$(niri validate -c "$tmp" 2>&1)"; then
+            rm -f "$tmp"
+            printf '%s\n' "$err" >&2
+            notify-send -u critical -a niri "HDR: output block rejected" \
+              "kept the previous one; run 'niri-hdr-toggle sync' for the error"
+            return 1
+          fi
+        elif [ -n "$fallback" ]; then
+          tmp="$(mktemp "$out.XXXXXX")"
+          cat "$fallback" > "$tmp"
+        else
+          rm -f "$out"
+          return 0
+        fi
+
         # NOTE: swapped in atomically -- niri polls the include every 500 ms
-        ln -sfn ${hdrOnFile} "$state.tmp"
-        mv -T "$state.tmp" "$state"
-        notify on "output stays in BT.2020 + PQ; launch HDR games now"
+        if cmp -s "$tmp" "$out"; then rm -f "$tmp"; else mv -T "$tmp" "$out"; fi
       }
 
-      off() {
-        [ -e "$state" ] || [ -L "$state" ] || return 0
-        rm -f "$state"
-        notify auto "SDR desktop; HDR only for fullscreen HDR clients"
-      }
-
-      case "''${1:-toggle}" in
-        on) on ;;
-        off) off ;;
-        toggle) if [ -e "$state" ]; then off; else on; fi ;;
-        status) if [ -e "$state" ]; then echo on; else echo auto; fi ;;
+      cmd="''${1:-toggle}"
+      case "$cmd" in
+        on | off | toggle | sync | status) ;;
         *)
-          echo "usage: niri-hdr-toggle [on|off|toggle|status]" >&2
+          echo "usage: niri-hdr-toggle [on|off|toggle|sync|status]" >&2
           exit 2
           ;;
       esac
+
+      mkdir -p "$(dirname "$out")"
+      exec 9>"$out.lock"
+      flock 9
+
+      current=auto
+      [ -e "$marker" ] && current=on
+      case "$cmd" in
+        status)
+          echo "$current"
+          exit 0
+          ;;
+        on) target=on ;;
+        off) target=auto ;;
+        toggle) if [ "$current" = on ]; then target=auto; else target=on; fi ;;
+        sync) target=$current ;;
+      esac
+
+      render "$target"
+      if [ "$target" = on ]; then touch "$marker"; else rm -f "$marker"; fi
+
+      [ "$cmd" = sync ] && exit 0
+      if [ "$target" = on ]; then
+        notify on "output stays in BT.2020 + PQ; launch HDR games now"
+      else
+        notify auto "SDR desktop; HDR only for fullscreen HDR clients"
+      fi
     '';
   };
 
   extraKdl = pkgs.writeText "niri-extra.kdl" (
     lib.optionalString cfg.hdr.enable ''
-      // `niri-hdr-toggle on` links a copy of the block below with
-      // `hdr mode="on"` here; first-wins over it and over dms/outputs.kdl
-      include optional=true "${hdrStateFile}"
-      ${hdrOutputBlock "hdr"}
+      // `niri-hdr-toggle` renders the active block here; first-wins over the
+      // fallback below and over dms/outputs.kdl
+      include optional=true "${hdrOutputFile}"
+      ${hdrOutputBlock "auto"}
     ''
     + cfg.extraConfig
   );
@@ -258,17 +342,55 @@ in
         '';
       };
 
+      connector = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = "DP-1";
+        description = ''
+          Connector of the output. Also matched when looking the output up in
+          `dmsOutputsFile`, as DMS names its blocks by connector unless its
+          display-name mode is set to the model.
+        '';
+      };
+
       outputConfig = mkOption {
         type = types.lines;
         example = ''
           mode "3840x2160@240.001"
           position x=0 y=0
-          max-bpc 10
         '';
         description = ''
-          Body of the `output` block minus the `hdr` node. Must be complete
-          (mode, position, ...): niri takes the first `output "X"` block it
-          sees, so DMS's display settings no longer apply to this output.
+          Body of the fallback `output` block, minus `extraOutputConfig` and
+          the `hdr` node, used while `dmsOutputsFile` is unset or has no block
+          for this output. Must be complete (mode, position, ...): niri takes
+          the first `output "X"` block it sees.
+        '';
+      };
+
+      extraOutputConfig = mkOption {
+        type = types.lines;
+        default = "";
+        example = "max-bpc 10";
+        description = ''
+          Nodes appended to the output block on top of its geometry
+          (`outputConfig` or the block from `dmsOutputsFile`), for settings
+          DMS cannot express. Must not repeat a node DMS writes (mode, scale,
+          position, transform, variable-refresh-rate, focus-at-startup, ...):
+          niri rejects duplicates, and the toggle then keeps the previous
+          block and sends a critical notification.
+        '';
+      };
+
+      dmsOutputsFile = mkOption {
+        type = types.nullOr types.str;
+        default = null;
+        example = literalExpression ''"''${config.xdg.configHome}/niri/dms/outputs.kdl"'';
+        description = ''
+          DMS-generated `outputs.kdl` the output's geometry is copied from, so
+          DMS's display settings (mode, scale, position, rotation, VRR, ...)
+          stay authoritative and toggling HDR keeps them. The block is
+          re-rendered on every toggle, at login, and whenever DMS saves the
+          file. `null` always uses `outputConfig`.
         '';
       };
 
@@ -457,7 +579,7 @@ in
       # HDR at login
       systemd.user.services.niri-hdr-reset = {
         Unit = {
-          Description = _ "Reset the niri HDR override to auto";
+          Description = _ "Reset niri HDR to auto and re-render its output block";
           Before = _ [ "graphical-session-pre.target" ];
         };
         Service = {
@@ -466,6 +588,26 @@ in
           ExecStart = _ "${lib.getExe niriHdrToggle} off";
         };
         Install.WantedBy = _ [ "graphical-session-pre.target" ];
+      };
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf (cfg.hdr.enable && cfg.hdr.dmsOutputsFile != null) {
+      systemd.user.paths.niri-hdr-sync = {
+        Unit = {
+          Description = _ "Watch DMS's outputs.kdl for the niri HDR output block";
+          PartOf = _ [ "graphical-session.target" ];
+        };
+        Path.PathChanged = _ cfg.hdr.dmsOutputsFile;
+        Install.WantedBy = _ [ "graphical-session.target" ];
+      };
+
+      systemd.user.services.niri-hdr-sync = {
+        Unit.Description = _ "Re-render the niri HDR output block from DMS's outputs.kdl";
+        Service = {
+          Type = _ "oneshot";
+          Environment = _ [ "NIRI_HDR_QUIET=1" ];
+          ExecStart = _ "${lib.getExe niriHdrToggle} sync";
+        };
       };
     })
     # |----------------------------------------------------------------------| #
