@@ -144,6 +144,16 @@ in
       };
 
       age.secrets."${wedosEnv}".file = secret wedosEnv;
+
+      # NOTE: Wedos allowlists WAPI clients by source address and the Pi's
+      # outgoing IPv6 is a rotating temporary one; IPv4 only, so lego always
+      # comes from the allowlisted home address
+      systemd.services."acme-order-renew-${nginxVars.intranetDomain}".serviceConfig.RestrictAddressFamilies =
+        lib.mkForce [
+          "AF_INET"
+          "AF_NETLINK"
+          "AF_UNIX"
+        ];
     })
     # |----------------------------------------------------------------------| #
   ];
