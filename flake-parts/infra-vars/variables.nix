@@ -440,6 +440,8 @@ _: rec {
             # NOTE: nginx's upstream only; HA's own port lives in its storage
             port = 8123;
           };
+          mosquitto.port = 1883;
+          zigbee2mqtt.port = 8080; # the frontend
           ccdash-hub = {
             port = 7837;
             # workstations whose collectors report here (one token each)
@@ -459,6 +461,10 @@ _: rec {
             "intra-ha" = {
               domain = "ha.${hosts."blehbundle".services.nginx.intranetDomain}";
               proxyEndpoint = "127.0.0.1:${toString hosts."pupibundle".services.home-assistant.port}";
+            };
+            "intra-z2m" = {
+              domain = "z2m.${hosts."blehbundle".services.nginx.intranetDomain}";
+              proxyEndpoint = "127.0.0.1:${toString hosts."pupibundle".services.zigbee2mqtt.port}";
             };
           };
           prometheus = {

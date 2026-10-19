@@ -106,6 +106,8 @@ in
   # ccdash hub: web UI bearer token, Wedos DNS-01 credentials for the *.home cert
   "hosts/pupibundle/ccdash-ui-token.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
   "hosts/pupibundle/wedos-acme-env.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+  # Zigbee2MQTT `secret.yaml`: network key, frontend token
+  "hosts/pupibundle/zigbee2mqtt-secret.yaml.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
 
   # --- blehbundle ---
   # --------------------
