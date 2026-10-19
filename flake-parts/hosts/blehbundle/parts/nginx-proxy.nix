@@ -32,7 +32,7 @@ let
   # NOTE: topic icons the ntfy app loads by URL (PNG or JPEG only)
   ntfyIcons = pkgs.runCommand "ntfy-icons" { nativeBuildInputs = [ pkgs.librsvg ]; } ''
     mkdir -p $out/icons
-    rsvg-convert -w 256 -h 256 ${inputs.ccdash}/web/icon.svg -o $out/icons/ccdash.png
+    rsvg-convert -w 256 -h 256 ${inputs.ccdash}/web/static/icon.svg -o $out/icons/ccdash.png
   '';
 
   # --- monitoring ---
