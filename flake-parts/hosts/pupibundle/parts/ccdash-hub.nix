@@ -64,6 +64,10 @@ in
     (mkIf hubCheck {
       services.ccdash-hub = {
         enable = true;
+        # NOTE: x86_64 derivations (cross-compiled hub, static panel), built by
+        # the deploying machine (deploy-rs `remoteBuild = false`)
+        package = inputs.ccdash.packages.x86_64-linux.ccdash-aarch64-linux;
+        webPackage = inputs.ccdash.packages.x86_64-linux.ccdash-web;
         inherit (hubVars) port;
         tokenFile = config.age.secrets."${uiToken}".path;
         collectors = lib.genAttrs collectors (host: config.age.secrets."${collectorToken host}".path);

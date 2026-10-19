@@ -131,7 +131,9 @@ in
     pupibundle = withSystem "aarch64-linux" (
       args:
       mkHost args "pupibundle" {
-        initFunction = inputs.nixos-raspberrypi.lib.nixosSystemFull;
+        # NOTE: not nixosSystemFull: its global rpi overlay (ffmpeg, kodi, …)
+        # misses the binary cache; the rpi builds stay reachable as `pkgs.rpi`
+        initFunction = inputs.nixos-raspberrypi.lib.nixosSystem;
         extraOverlays = sharedOverlays;
         extraModules = [
           inputs.nixos-generators.nixosModules.all-formats

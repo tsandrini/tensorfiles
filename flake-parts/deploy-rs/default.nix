@@ -47,8 +47,10 @@ in
     "blehbundle" = deployHost "blehbundle" "x86_64-linux" {
       hostname = infraVars.hosts."blehbundle".wgAddress;
     };
+    # NOTE: built here; only configs/units are left for binfmt, the rest is
+    # substituted. Dry-run first: anything uncached would compile emulated
     "pupibundle" = deployHost "pupibundle" "aarch64-linux" {
-      remoteBuild = true;
+      remoteBuild = false;
     };
   };
 
