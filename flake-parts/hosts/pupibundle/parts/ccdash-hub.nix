@@ -15,8 +15,9 @@
 #
 # The ccdash hub (meta/plans/ccdash-hub/spec.md): every workstation's
 # collector reports here over `wss://ccdash.home.tsandrini.sh/collect`; the
-# web UI (installable as a PWA), the API and the notifications (ntfy and
-# Web Push) are served from here. Intranet only: nginx listens on the LAN
+# web UI (installable as a PWA), the API and the Web Push notifications
+# are served from here (ntfy lost the trial; `ntfy = true` in the infra
+# variables would bring it back). Intranet only: nginx listens on the LAN
 # address with the `*.home` wildcard cert and allows the home and WireGuard
 # subnets. Each piece waits for its secret.
 {
@@ -48,7 +49,7 @@ let
 
   hubCheck = pathExists (secret uiToken);
   tlsCheck = pathExists (secret wedosEnv);
-  ntfyCheck = pathExists (secret ntfyToken);
+  ntfyCheck = hubVars.ntfy && pathExists (secret ntfyToken);
 in
 {
   imports = [ inputs.ccdash.nixosModules.hub ];

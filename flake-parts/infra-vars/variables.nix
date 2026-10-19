@@ -446,6 +446,9 @@ _: rec {
               "navibundle"
               "flatbundle"
             ];
+            # NOTE: Web Push won the H3 trial (2026-10-19); the ntfy sink stays
+            # off even while its token secret exists
+            ntfy = false;
           };
           nginx.virtualHosts = {
             "intra-ccdash" = {
