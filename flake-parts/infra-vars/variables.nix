@@ -437,6 +437,7 @@ _: rec {
             };
           };
           home-assistant = {
+            # NOTE: nginx's upstream only; HA's own port lives in its storage
             port = 8123;
           };
           ccdash-hub = {
@@ -454,6 +455,10 @@ _: rec {
             "intra-ccdash" = {
               domain = "ccdash.${hosts."blehbundle".services.nginx.intranetDomain}";
               proxyEndpoint = "127.0.0.1:${toString hosts."pupibundle".services.ccdash-hub.port}";
+            };
+            "intra-ha" = {
+              domain = "ha.${hosts."blehbundle".services.nginx.intranetDomain}";
+              proxyEndpoint = "127.0.0.1:${toString hosts."pupibundle".services.home-assistant.port}";
             };
           };
           prometheus = {

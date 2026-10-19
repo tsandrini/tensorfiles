@@ -49,8 +49,9 @@ in
     ./hardware-configuration.nix
     ./disko.nix
 
+    (importApply ./parts/intranet-tls.nix { inherit secretsPath infraVars; })
     (importApply ./parts/ccdash-hub.nix { inherit inputs secretsPath infraVars; })
-    # (importApply ./parts/home-assistant.nix { inherit infraVars; })
+    (importApply ./parts/home-assistant.nix { inherit inputs secretsPath infraVars; })
   ]
   ++ (with nixos-raspberrypi.nixosModules; [
     raspberry-pi-5.base
@@ -160,6 +161,7 @@ in
           ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
           ''"ntfy.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
           ''"${selfVars.services.nginx.virtualHosts."intra-ccdash".domain}. A ${selfVars.address}"''
+          ''"${selfVars.services.nginx.virtualHosts."intra-ha".domain}. A ${selfVars.address}"''
         ];
 
         interface = [

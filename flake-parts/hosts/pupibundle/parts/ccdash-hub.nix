@@ -132,35 +132,6 @@ in
           deny all;
         '';
       };
-
-      security.acme = {
-        acceptTerms = true;
-        defaults = {
-          email = infraVars.common.contacts.securityEmail;
-          dnsProvider = "wedos";
-          dnsResolver = "ns.wedos.net:53";
-          environmentFile = config.age.secrets."${wedosEnv}".path;
-          dnsPropagationCheck = true;
-        };
-        certs."${nginxVars.intranetDomain}" = {
-          inherit (config.services.nginx) group;
-          domain = nginxVars.intranetDomain;
-          extraDomainNames = [ "*.${nginxVars.intranetDomain}" ];
-          reloadServices = [ "nginx.service" ];
-        };
-      };
-
-      age.secrets."${wedosEnv}".file = secret wedosEnv;
-
-      # NOTE: Wedos allowlists WAPI clients by source address and the Pi's
-      # outgoing IPv6 is a rotating temporary one; IPv4 only, so lego always
-      # comes from the allowlisted home address
-      systemd.services."acme-order-renew-${nginxVars.intranetDomain}".serviceConfig.RestrictAddressFamilies =
-        lib.mkForce [
-          "AF_INET"
-          "AF_NETLINK"
-          "AF_UNIX"
-        ];
     })
     # |----------------------------------------------------------------------| #
   ];
