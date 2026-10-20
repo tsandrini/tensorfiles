@@ -69,7 +69,7 @@ in
             # NOTE: anonymous only while loopback is the sole listener
             omitPasswordAuth = true;
             settings.allow_anonymous = true;
-            acl = [ "pattern readwrite #" ];
+            acl = [ "topic readwrite #" ];
           }
         ];
       };
