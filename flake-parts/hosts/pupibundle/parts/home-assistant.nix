@@ -41,6 +41,9 @@ let
   wedosEnv = "hosts/${hostName}/wedos-acme-env";
   tlsCheck = builtins.pathExists "${secretsPath}/${wedosEnv}.age";
 
+  haCfg = config.services.home-assistant;
+  preUpgradeDir = "${haCfg.configDir}/pre-upgrade";
+
   # UI-editable files that configuration.yaml `!include`s; HA does not create them
   uiIncludes = {
     automation = "automations.yaml";
@@ -95,13 +98,33 @@ in
         // lib.mapAttrs' (domain: file: lib.nameValuePair "${domain} ui" "!include ${file}") uiIncludes;
       };
 
-      systemd.tmpfiles.rules = lib.mapAttrsToList (
-        _: file: "f ${config.services.home-assistant.configDir}/${file} 0644 hass hass - -"
-      ) uiIncludes;
+      systemd.tmpfiles.rules = [
+        "d ${preUpgradeDir} 0700 hass hass - -"
+      ]
+      ++ lib.mapAttrsToList (_: file: "f ${haCfg.configDir}/${file} 0644 hass hass - -") uiIncludes;
 
-      # NOTE: HA's own encrypted backups, not the live recorder database
+      # NOTE: HA cannot downgrade, so a version change archives the stopped
+      # predecessor's state first, whatever deployed it (spec.md, "Backups")
+      systemd.services.home-assistant.preStart = lib.mkBefore ''
+        marker=${haCfg.configDir}/.pre-upgrade-version
+        if [ -e "$marker" ] && [ "$(cat "$marker")" != ${haCfg.package.version} ]; then
+          archive=${preUpgradeDir}/$(date +%Y%m%dT%H%M%S)-$(cat "$marker").tar.zst
+          if ${lib.getExe pkgs.gnutar} -C ${haCfg.configDir} -I ${lib.getExe pkgs.zstd} \
+            --exclude=./backups --exclude=./pre-upgrade -cf "$archive" .; then
+            ls -1t ${preUpgradeDir}/*.tar.zst | tail -n +4 | xargs -r rm --
+          else
+            echo "<3>pre-upgrade archive failed, starting anyway" >&2
+            rm -f "$archive"
+          fi
+        fi
+        echo ${haCfg.package.version} >"$marker"
+      '';
+
+      # NOTE: HA's own encrypted backups and the pre-upgrade archives, not the
+      # live recorder database
       tensorfiles.services.backup.restic.paths = [
-        "${config.services.home-assistant.configDir}/backups"
+        "${haCfg.configDir}/backups"
+        preUpgradeDir
       ];
     }
     # |----------------------------------------------------------------------| #
