@@ -82,6 +82,7 @@ in
           "tplink" # Tapo L530 bulbs, local KLAP API
           "ntfy"
           "mikrotik" # presence from mikrobundle, read-only API user
+          "mcp_server" # /api/mcp for Claude Code, entities exposed to Assist only
         ];
 
         config = {
@@ -111,6 +112,7 @@ in
           archive=${preUpgradeDir}/$(date +%Y%m%dT%H%M%S)-$(cat "$marker").tar.zst
           if ${lib.getExe pkgs.gnutar} -C ${haCfg.configDir} -I ${lib.getExe pkgs.zstd} \
             --exclude=./backups --exclude=./pre-upgrade -cf "$archive" .; then
+            echo "pre-upgrade: archived the $(cat "$marker") state as $archive"
             ls -1t ${preUpgradeDir}/*.tar.zst | tail -n +4 | xargs -r rm --
           else
             echo "<3>pre-upgrade archive failed, starting anyway" >&2
