@@ -78,6 +78,7 @@ in
           "rpi_power"
           "tplink" # Tapo L530 bulbs, local KLAP API
           "ntfy"
+          "mikrotik" # presence from mikrobundle, read-only API user
         ];
 
         config = {
@@ -97,6 +98,11 @@ in
       systemd.tmpfiles.rules = lib.mapAttrsToList (
         _: file: "f ${config.services.home-assistant.configDir}/${file} 0644 hass hass - -"
       ) uiIncludes;
+
+      # NOTE: HA's own encrypted backups, not the live recorder database
+      tensorfiles.services.backup.restic.paths = [
+        "${config.services.home-assistant.configDir}/backups"
+      ];
     }
     # |----------------------------------------------------------------------| #
     (mkIf tlsCheck {

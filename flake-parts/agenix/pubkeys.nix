@@ -24,6 +24,7 @@ let
   restic-admin-flatbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILQVLzUifJAI7NFgTXjxTS7OexmM/ipWEMxLtk9HInSW restic-admin-flatbundle";
   restic-client-remotebundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMUsiIQboHD33Y1C5ut6JQ1ZL7PMMqa01oZUG2+4mVrp restic-client-remotebundle";
   restic-client-blehbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID03+HqMSNIKeldtNA5sZgppOaRf4p2TC4NoDFn4OLf0 restic-client-blehbundle";
+  restic-client-pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDhpHRcnsno0QGRflS9tPIVwS4h58+hEhlWwmtnvQHX0 restic-client-pupibundle";
   restic-admin-navibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII+BTTro7oxuAsWW2vEJIzGttDdfjmPoBmmi977ti/xU restic-admin-navibundle";
 in
 {
@@ -43,6 +44,7 @@ in
       appendOnly = {
         remotebundle = restic-client-remotebundle;
         blehbundle = restic-client-blehbundle;
+        pupibundle = restic-client-pupibundle;
       };
     };
   };

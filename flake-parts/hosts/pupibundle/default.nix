@@ -29,6 +29,12 @@ let
   selfVars = infraVars.hosts."${hostName}";
   prometheusExporters = selfVars.services.prometheus.exporters;
 
+  resticCfg = config.tensorfiles.services.backup.restic;
+  resticMissing = builtins.filter (name: !builtins.pathExists "${secretsPath}/${name}.age") [
+    resticCfg.passwordSecretsPath
+    resticCfg.sshKeySecretsPath
+  ];
+
   virtualHostsVar = infraVars.hosts."blehbundle".services.nginx.virtualHosts;
   unboundVars = selfVars.services.unbound;
   iotDnsNoInternet = "${selfVars.address}@${toString unboundVars.iotPorts.noInternet}";
@@ -96,6 +102,10 @@ in
       extraGroups = [ "input" ];
     };
   };
+
+  # NOTE: the parts add their paths; no `notifyEmail`, the Pi has no sendmail
+  warnings = map (name: "restic: ${name}.age is missing, backups stay off.") resticMissing;
+  tensorfiles.services.backup.restic.enable = resticMissing == [ ];
 
   security.sudo.extraRules = [
     {

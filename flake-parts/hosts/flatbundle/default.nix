@@ -92,6 +92,7 @@ in
       repositories = {
         remotebundle = { };
         blehbundle = { };
+        pupibundle = { };
       };
       handoff.enable = true;
     };

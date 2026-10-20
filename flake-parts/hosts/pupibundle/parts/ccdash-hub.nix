@@ -96,6 +96,8 @@ in
         };
       };
 
+      tensorfiles.services.backup.restic.paths = [ config.services.ccdash-hub.backup.directory ];
+
       age.secrets = {
         "${uiToken}" = {
           file = secret uiToken;

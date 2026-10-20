@@ -103,6 +103,7 @@ in
       repositories = {
         remotebundle = { };
         blehbundle = { };
+        pupibundle = { };
       };
       replicaPath = "/mnt/hdd-backup/restic";
     };

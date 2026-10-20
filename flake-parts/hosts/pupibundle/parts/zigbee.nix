@@ -84,6 +84,9 @@ in
           # (`CURRENT_VERSION`, dist/util/settings.js) it re-migrates each time
           version = 5;
           homeassistant.enabled = true;
+          # NOTE: defaults: a battery device is offline after 25 h without a
+          # message (the sensors report at least hourly), a router after 10 min
+          availability.enabled = true;
           mqtt.server = "mqtt://127.0.0.1:${toString mqttPort}";
           serial = {
             port = dongle;
@@ -132,6 +135,13 @@ in
       };
 
       services.home-assistant.extraComponents = [ "mqtt" ];
+
+      # NOTE: coordinator_backup.json holds the network key (restic encrypts);
+      # secret.yaml is an agenix symlink, restic stores the link only
+      tensorfiles.services.backup.restic.paths = [
+        config.services.zigbee2mqtt.dataDir
+        config.services.mosquitto.dataDir
+      ];
     })
     # |----------------------------------------------------------------------| #
     (mkIf (zigbeeCheck && tlsCheck) {

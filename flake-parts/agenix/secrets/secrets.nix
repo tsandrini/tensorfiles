@@ -88,6 +88,12 @@ in
     navibundle
   ]
   ++ users;
+  "common/backup/restic-pupibundle-password.age".publicKeys = [
+    pupibundle
+    flatbundle
+    navibundle
+  ]
+  ++ users;
   # handoff relay encryption, shared by the hosts that push/pull working trees
   # (tensorfiles.hm.programs.handoff)
   "common/handoff-crypt-password.age".publicKeys = [
@@ -108,6 +114,11 @@ in
   "hosts/pupibundle/wedos-acme-env.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
   # Zigbee2MQTT `secret.yaml`: network key, frontend token
   "hosts/pupibundle/zigbee2mqtt-secret.yaml.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
+  # append-only Storage Box key (restic backups)
+  "hosts/pupibundle/backup-storagebox-client-ssh-key.age".publicKeys = [
+    pupibundle
+  ]
+  ++ [ tsandrini ];
 
   # --- blehbundle ---
   # --------------------
@@ -123,6 +134,8 @@ in
   # services copied over from remotebundle (meta/plans/vps-migration.md)
   "hosts/blehbundle/wedos-acme-env.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/prometheus-ui-basic-auth-file.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
+  # bearer token of the HA user `prometheus` (scrapes pupibundle's /api/prometheus)
+  "hosts/blehbundle/prometheus-ha-token.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/infra-docs-mtpr-basic-auth-file.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/pgadmin-admin-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/grafana-bot-mail-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
