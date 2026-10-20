@@ -1,0 +1,974 @@
+{
+  "uid": "home-assistant",
+  "title": "Home Assistant",
+  "description": "pupibundle's Home Assistant, scraped from https://ha.home.tsandrini.sh/api/prometheus (meta/plans/home-assistant/spec.md).",
+  "tags": ["home-assistant"],
+  "editable": true,
+  "graphTooltip": 1,
+  "refresh": "1m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "schemaVersion": 42,
+  "version": 1,
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "links": [
+    {
+      "title": "Home Assistant",
+      "type": "link",
+      "url": "https://ha.home.tsandrini.sh",
+      "targetBlank": true,
+      "icon": "external link"
+    }
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Temperature now",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_sensor_temperature_celsius{job=\"home-assistant\",entity=~\"sensor\\\\..+_climate_temperature\"}",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) climate.*",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "obejvak": 1,
+              "koupelna": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Humidity now",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_sensor_humidity_percent{job=\"home-assistant\",entity=~\"sensor\\\\..+_climate_humidity\"}",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) climate.*",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "obejvak": 1,
+              "koupelna": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Sensor battery",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 5,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_sensor_battery_percent{job=\"home-assistant\",entity=~\"sensor\\\\..+_climate_battery\"}",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#d03b3b",
+                "value": null
+              },
+              {
+                "color": "#fab219",
+                "value": 20
+              },
+              {
+                "color": "#0ca30c",
+                "value": 40
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) climate.*",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "obejvak": 1,
+              "koupelna": 2
+            }
+          }
+        }
+      ],
+      "description": "SNZB-02DR2, 2x AAA. Below 20 % the phone gets a notification."
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Sensors",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 17,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_entity_available{job=\"home-assistant\",entity=~\"sensor\\\\..+_climate_temperature\"}",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "offline",
+                  "index": 0
+                },
+                "1": {
+                  "text": "online",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#d03b3b",
+                "value": null
+              },
+              {
+                "color": "#0ca30c",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) climate.*",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "obejvak": 1,
+              "koupelna": 2
+            }
+          }
+        }
+      ],
+      "description": "Zigbee2MQTT availability: a battery device is offline after 25 h without a message."
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "HA uptime",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "time() - process_start_time_seconds{job=\"home-assistant\"}",
+          "legendFormat": "uptime",
+          "refId": "A",
+          "range": false,
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value_and_name",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "wideLayout": true
+      },
+      "transformations": []
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Temperature",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_sensor_temperature_celsius{job=\"home-assistant\",entity=~\"sensor\\\\..+_climate_temperature\"}",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisBorderShow": false,
+            "gradientMode": "none"
+          },
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "obejvak"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "koupelna"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) climate.*",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "obejvak": 1,
+              "koupelna": 2
+            }
+          }
+        }
+      ],
+      "description": "obejvak: Living Room, on the Kallax. koupelna: Bathroom, on the toilet cistern."
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Humidity",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 9
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_sensor_humidity_percent{job=\"home-assistant\",entity=~\"sensor\\\\..+_climate_humidity\"}",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisBorderShow": false,
+            "gradientMode": "none"
+          },
+          "decimals": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "obejvak"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#3987e5"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "koupelna"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "#d95926"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(.*) climate.*",
+            "renamePattern": "$1"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "indexByName": {
+              "Time": 0,
+              "obejvak": 1,
+              "koupelna": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "state-timeline",
+      "title": "Bulbs",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 24,
+        "h": 6
+      },
+      "description": "Tapo L530 on the IoT subnet. Brightness 0 = off; unavailable = no answer (the shower bulb is wall-switched).",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "homeassistant_light_brightness_percent{job=\"home-assistant\"} or on(entity) (homeassistant_entity_available{job=\"home-assistant\",domain=\"light\"} - 1)",
+          "legendFormat": "{{friendly_name}}",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#5b5a57"
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "unavailable",
+                  "color": "#5b5a57",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "off",
+                  "color": "#2c2c2a",
+                  "index": 1
+                }
+              }
+            },
+            {
+              "type": "range",
+              "options": {
+                "from": 1,
+                "to": 100,
+                "result": {
+                  "text": "on",
+                  "color": "#c98500",
+                  "index": 2
+                }
+              }
+            }
+          ],
+          "custom": {
+            "lineWidth": 0,
+            "fillOpacity": 85
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "auto",
+        "rowHeight": 0.8,
+        "mergeValues": true,
+        "alignValue": "left",
+        "legend": {
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "timeseries",
+      "title": "HA CPU (share of one core)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 19,
+        "w": 8,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "rate(process_cpu_seconds_total{job=\"home-assistant\"}[5m])",
+          "legendFormat": "cpu",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisBorderShow": false,
+            "gradientMode": "none"
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "transformations": []
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "HA memory (RSS)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 19,
+        "w": 8,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "process_resident_memory_bytes{job=\"home-assistant\"}",
+          "legendFormat": "rss",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisBorderShow": false,
+            "gradientMode": "none"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "transformations": []
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "State changes per minute",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+      },
+      "gridPos": {
+        "x": 16,
+        "y": 19,
+        "w": 8,
+        "h": 7
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "vOqQHM-f7fecKnIgFdV4OnVuvHU6Pfbd"
+          },
+          "expr": "sum(rate(homeassistant_state_change_total{job=\"home-assistant\"}[5m])) * 60",
+          "legendFormat": "changes/min",
+          "refId": "A",
+          "range": true,
+          "instant": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "min": 0,
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "#3987e5"
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "spanNulls": true,
+            "axisBorderShow": false,
+            "gradientMode": "none"
+          },
+          "decimals": 1
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "transformations": []
+    }
+  ]
+}

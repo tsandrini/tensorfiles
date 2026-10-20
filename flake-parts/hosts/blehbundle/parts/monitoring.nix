@@ -18,6 +18,7 @@
 }:
 {
   config,
+  lib,
   hostName,
   ...
 }:
@@ -36,6 +37,12 @@ let
 
   # --- database ---
   postgresVars = selfVars.services.postgresql;
+
+  # --- home assistant (pupibundle) ---
+  haHost = infraVars.hosts."pupibundle";
+  haVhost = haHost.services.nginx.virtualHosts."intra-ha";
+  haToken = "hosts/${hostName}/prometheus-ha-token";
+  haCheck = builtins.pathExists "${secretsPath}/${haToken}.age";
 in
 {
   # --------------------------
@@ -51,6 +58,12 @@ in
   tensorfiles = {
     services.monitoring.loki.enable = true;
   };
+
+  warnings = lib.optional (!haCheck) "monitoring: ${haToken}.age is missing, HA is not scraped.";
+
+  # NOTE: public DNS answers *.tsandrini.sh with this host; the vhost lives on
+  # the Pi's LAN address, reached over wg-home-tunnel
+  networking.hosts = lib.mkIf haCheck { ${haHost.address} = [ haVhost.domain ]; };
 
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
@@ -162,6 +175,12 @@ in
               options.path = ../grafana/dashboards/unbound.json;
               folder = "DNS";
             }
+            # --- Home ---
+            {
+              name = "Home Assistant";
+              options.path = ../grafana/dashboards/home-assistant.json;
+              folder = "Home";
+            }
             # --- Logs ---
             {
               name = "Logs / App";
@@ -205,6 +224,8 @@ in
   services.prometheus = {
     enable = true;
     port = prometheusVars.server.http_port;
+    # NOTE: promtool runs in the build sandbox, credentials_file is not there
+    checkConfig = "syntax-only";
     globalConfig.scrape_interval = "15s";
     scrapeConfigs =
       let
@@ -344,7 +365,15 @@ in
             }
           ];
         }
-      ];
+      ]
+      ++ lib.optional haCheck {
+        job_name = "home-assistant";
+        scheme = "https";
+        metrics_path = "/api/prometheus";
+        scrape_interval = "60s";
+        authorization.credentials_file = config.age.secrets.${haToken}.path;
+        static_configs = [ { targets = [ haVhost.domain ]; } ];
+      };
   };
 
   services.loki.configuration.server = {
@@ -372,6 +401,12 @@ in
     "hosts/${hostName}/grafana-secret-key" = {
       file = "${secretsPath}/hosts/${hostName}/grafana-secret-key.age";
       owner = "grafana";
+    };
+  }
+  // lib.optionalAttrs haCheck {
+    ${haToken} = {
+      file = "${secretsPath}/${haToken}.age";
+      owner = "prometheus";
     };
   };
 }
