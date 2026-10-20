@@ -228,6 +228,29 @@ in
       };
     };
 
+    homeAssistant = {
+      enable = mkEnableOption ''
+        Claude's two doors into a Home Assistant instance, backing the
+        `home-assistant-admin` skill: the `mcp_server` integration as the
+        `home-assistant` MCP server (Streamable HTTP; OAuth 2.0 with PKCE,
+        logged in once per host with `claude mcp login`), limited to the
+        entities exposed to Assist, and `hass-cli`. The administration
+        token is not managed here: it comes from the workspace's meta
+        envfile (`CLAUDE_META_HA_TOKEN`, see `secrets`).
+
+        Requires `programs.mcp.enable`, which the hosts set
+      '';
+
+      url = mkOption {
+        type = types.str;
+        default = "https://ha.home.tsandrini.sh";
+        description = ''
+          Base URL of the Home Assistant instance, without a trailing
+          slash; the MCP endpoint is `<url>/api/mcp`.
+        '';
+      };
+    };
+
     mutableContextPath = mkOption {
       type = types.nullOr types.str;
       default = null;
@@ -388,6 +411,17 @@ in
         IdentitiesOnly = _ true;
         RequestTTY = _ "no";
       }) cfg.mikrotikLookup.hosts;
+    })
+    # |----------------------------------------------------------------------| #
+    (mkIf cfg.homeAssistant.enable {
+      warnings = lib.optional (!config.programs.mcp.enable) ''
+        tensorfiles.hm.programs.claude-code.homeAssistant: programs.mcp.enable
+        is off, so Claude Code gets no home-assistant MCP server.
+      '';
+
+      programs.mcp.servers.home-assistant.url = _ "${cfg.homeAssistant.url}/api/mcp";
+
+      home.packages = [ pkgs.home-assistant-cli ];
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.statusline.enable {
