@@ -249,6 +249,7 @@ in
       programs.claude-code = {
         enable = true;
         mikrotikLookup.enable = true;
+        homeAssistant.enable = true;
       };
     };
 
