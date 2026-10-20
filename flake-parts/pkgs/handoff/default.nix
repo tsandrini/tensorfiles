@@ -39,12 +39,13 @@ buildPythonApplication {
 
   # git and rclone are called by name
   makeWrapperArgs = [
-    "--prefix PATH : ${
-      lib.makeBinPath [
-        git
-        rclone
-      ]
-    }"
+    "--prefix"
+    "PATH"
+    ":"
+    (lib.makeBinPath [
+      git
+      rclone
+    ])
   ];
 
   nativeCheckInputs = [

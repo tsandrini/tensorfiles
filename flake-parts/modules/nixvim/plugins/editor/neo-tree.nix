@@ -52,6 +52,8 @@ in
       plugins.neo-tree = {
         enable = _ true;
         settings = {
+          # NOTE: setup() opens a log file unless this is explicitly false
+          log_to_file = _ false;
           closeIfLastWindow = _ true;
           enableDiagnostics = _ true;
           enableGitStatus = _ true;

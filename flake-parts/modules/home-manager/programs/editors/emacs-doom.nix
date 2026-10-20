@@ -104,8 +104,6 @@ in
           ds: with ds; [
             en
             cs
-            en-computers
-            en-science
           ]
         ))
         # :tools editorconfig

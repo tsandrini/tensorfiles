@@ -190,8 +190,6 @@ in
     enable = true;
     dicts = with pkgs.aspellDicts; [
       en
-      en-computers
-      en-science
       cs
     ];
     plugins = [

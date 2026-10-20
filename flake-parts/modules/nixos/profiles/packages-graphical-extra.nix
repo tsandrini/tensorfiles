@@ -89,6 +89,12 @@ in
         hoppscotch # Open source API development ecosystem
       ];
 
+      # NOTE: zotero's bundled Gecko runtime (ESR 140, EOL 2026-10-13)
+      # NOTE: sole definition — nixpkgs.config lists don't merge, last def wins
+      nixpkgs.config.permittedInsecurePackages = [
+        "firefox-esr-140-bin-unwrapped-140.17.0esr"
+      ];
+
       programs.winbox = {
         enable = _ true;
         package = _ pkgs.winbox4;

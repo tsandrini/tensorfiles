@@ -30,8 +30,31 @@ let
     # inputs.lix-module.nixosModules.default
   ];
 
+  ## Temporary workarounds for packages broken in the pinned nixpkgs; drop
+  ## each entry once its fix lands upstream.
+  ##
+  ## # Arguments
+  ## - `prev`: the package set before this overlay.
+  ##
+  ## # Returns
+  ## An attrset of package overrides.
+  nixpkgsFixes = _final: prev: {
+    # TODO: drop once nixpkgs pywal16 splits its makeWrapperArgs
+    # NOTE: one-string "--prefix PATH : …" breaks under __structuredAttrs
+    pywal16 = prev.pywal16.overridePythonAttrs (old: {
+      makeWrapperArgs = lib.concatMap (lib.splitString " ") old.makeWrapperArgs;
+    });
+
+    # TODO: drop once sphinxHook reads sphinxBuilders as an array
+    # NOTE: hook evals "$sphinxBuilders" (first element only) under __structuredAttrs
+    khal = prev.khal.overridePythonAttrs (old: {
+      sphinxBuilders = lib.concatStringsSep " " old.sphinxBuilders;
+    });
+  };
+
   sharedOverlays = [
     inputs.nix-topology.overlays.default
+    nixpkgsFixes
   ];
 
   mkHost =

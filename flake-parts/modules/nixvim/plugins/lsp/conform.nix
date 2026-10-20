@@ -119,7 +119,8 @@ in
               stop_after_first = true;
             };
             terraform = [ "terraform_fmt" ];
-            bicep = [ "bicep" ];
+            # TODO: bicep build fails (Grpc.Tools), https://github.com/NixOS/patchelf/issues/583
+            # bicep = [ "bicep" ];
             bash = [
               "shellcheck"
               "shellharden"
@@ -160,9 +161,10 @@ in
             shellharden = {
               command = _ "${lib.getExe pkgs.shellharden}";
             };
-            bicep = {
-              command = _ "${lib.getExe pkgs.bicep}";
-            };
+            # TODO: bicep build fails (Grpc.Tools), https://github.com/NixOS/patchelf/issues/583
+            # bicep = {
+            #   command = _ "${lib.getExe pkgs.bicep}";
+            # };
             #yamlfmt = {
             #  command = _ "${lib.getExe pkgs.yamlfmt}";
             #};

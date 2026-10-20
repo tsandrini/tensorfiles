@@ -42,7 +42,7 @@ buildPythonPackage rec {
   meta = {
     homepage = "https://github.com/clazzor/certbot-dns-wedos";
     description = " Certbot plugin for authentication using Wedos plugin ";
-    license = lib.licenses.apsl20;
+    license = lib.licenses.asl20;
     maintainers = [ lib.maintainers.tsandrini ];
   };
 }
