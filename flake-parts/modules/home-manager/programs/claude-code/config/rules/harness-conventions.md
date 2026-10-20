@@ -57,7 +57,10 @@ future meta content nests under `meta/`. Internal company doc dumps
   command output — never echo or print them. Context carries pointers
   only: variable name, scope, source.
 - Env vars are prefixed `CLAUDE_META_<NAME>`; all Claude tokens are
-  read-only.
+  read-only. Exception (owner, 2026-10-20): `CLAUDE_META_HA_TOKEN` is
+  Home Assistant admin (`claude-bot`), as HA tokens have no scopes; it
+  responses reach a transcript only through the redacting
+  `meta/scripts/ha`.
 - Values live in per-workspace agenix envfiles
   (`claude-code-<workspace>-meta-envfile`, plain dotenv format — no
   `export`). Each workspace root's `.claude/meta-env` marker names its
