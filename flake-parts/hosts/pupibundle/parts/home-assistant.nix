@@ -83,6 +83,7 @@ in
           "ntfy"
           "mikrotik" # presence from mikrobundle, read-only API user
           "mcp_server" # /api/mcp for Claude Code, entities exposed to Assist only
+          "switchbot" # Meter Pro CO2, passive BLE on the onboard radio
         ];
 
         config = {
