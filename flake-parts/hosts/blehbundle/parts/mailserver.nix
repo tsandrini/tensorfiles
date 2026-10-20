@@ -19,6 +19,7 @@
 }:
 {
   config,
+  lib,
   pkgs,
   hostName,
   ...
@@ -39,6 +40,11 @@ let
   virtualHostsVar = nginxVars.virtualHosts;
 
   mkAccountPath = acc: config.age.secrets."hosts/${hostName}/mailserver/${acc}".path;
+
+  # pupibundle's system mail (msmtp), waits for its secret
+  piBotAccount = "pupibundle-bot-at-tsandrini-dot-sh";
+  piBotSecret = "hosts/${hostName}/mailserver/${piBotAccount}";
+  piBotCheck = builtins.pathExists "${secretsPath}/${piBotSecret}.age";
 in
 {
   # --------------------------
@@ -299,6 +305,12 @@ in
         hashedPasswordFile = mkAccountPath "testing-at-tsandrini-dot-sh";
         aliases = [ ];
       };
+    }
+    // lib.optionalAttrs piBotCheck {
+      "pupibundle-bot@${mailserverVars.primaryDomain}" = {
+        hashedPasswordFile = mkAccountPath piBotAccount;
+        aliases = [ ];
+      };
     };
   };
 
@@ -358,5 +370,10 @@ in
 
     "hosts/${hostName}/mailserver/testing-at-tsandrini-dot-sh".file =
       secretsPath + "/hosts/${hostName}/mailserver/testing-at-tsandrini-dot-sh.age";
+  }
+  // lib.optionalAttrs piBotCheck {
+    ${piBotSecret}.file = secretsPath + "/${piBotSecret}.age";
   };
+
+  warnings = lib.optional (!piBotCheck) "mailserver: ${piBotSecret}.age is missing";
 }

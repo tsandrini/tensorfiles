@@ -119,6 +119,8 @@ in
     pupibundle
   ]
   ++ [ tsandrini ];
+  # system mail (msmtp) as pupibundle-bot@, the mailbox lives on blehbundle
+  "hosts/pupibundle/pupibundle-bot-mail-password.age".publicKeys = [ pupibundle ] ++ [ tsandrini ];
 
   # --- blehbundle ---
   # --------------------
@@ -172,6 +174,10 @@ in
   ]
   ++ [ tsandrini ];
   "hosts/blehbundle/mailserver/grafana-bot-at-tsandrini-dot-sh.age".publicKeys = [
+    blehbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/blehbundle/mailserver/pupibundle-bot-at-tsandrini-dot-sh.age".publicKeys = [
     blehbundle
   ]
   ++ [ tsandrini ];

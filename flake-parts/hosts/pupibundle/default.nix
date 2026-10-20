@@ -59,6 +59,7 @@ in
     (importApply ./parts/ccdash-hub.nix { inherit inputs secretsPath infraVars; })
     (importApply ./parts/home-assistant.nix { inherit inputs secretsPath infraVars; })
     (importApply ./parts/zigbee.nix { inherit inputs secretsPath infraVars; })
+    (importApply ./parts/mail.nix { inherit secretsPath infraVars; })
   ]
   ++ (with nixos-raspberrypi.nixosModules; [
     raspberry-pi-5.base
@@ -103,7 +104,7 @@ in
     };
   };
 
-  # NOTE: the parts add their paths; no `notifyEmail`, the Pi has no sendmail
+  # NOTE: the parts add their paths, parts/mail.nix the failure mails
   warnings = map (name: "restic: ${name}.age is missing, backups stay off.") resticMissing;
   tensorfiles.services.backup.restic.enable = resticMissing == [ ];
 
