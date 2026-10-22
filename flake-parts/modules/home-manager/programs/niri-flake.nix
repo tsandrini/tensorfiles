@@ -424,6 +424,25 @@ in
       };
     };
 
+    vrr = {
+      appIds = mkOption {
+        type = types.listOf types.str;
+        default = [ "^steam_app_" ];
+        example = [
+          "^steam_app_"
+          "^gamescope$"
+        ];
+        description = ''
+          App-id regexes of windows that switch VRR on while they are visible,
+          via a window rule with `variable-refresh-rate true`. Only affects
+          outputs set to `variable-refresh-rate on-demand=true` (e.g. by DMS's
+          display settings): `on-demand` alone never enables VRR, niri waits
+          for a matching window. The default covers Proton games, which Proton
+          names `steam_app_<appid>`. `[ ]` emits no rule.
+        '';
+      };
+    };
+
     binds = {
       mod = mkOption {
         type = types.str;
@@ -609,6 +628,16 @@ in
           ExecStart = _ "${lib.getExe niriHdrToggle} sync";
         };
       };
+    })
+    # |----------------------------------------------------------------------| #
+    # NOTE: guarded, a window rule without matches applies to every window
+    (mkIf (cfg.vrr.appIds != [ ]) {
+      programs.niri.settings.window-rules = [
+        {
+          matches = map (app-id: { inherit app-id; }) cfg.vrr.appIds;
+          variable-refresh-rate = _ true;
+        }
+      ];
     })
     # |----------------------------------------------------------------------| #
     (mkIf cfg.binds.dms.enable {
