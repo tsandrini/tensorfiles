@@ -58,11 +58,6 @@ in
     navibundle
   ]
   ++ users;
-  # ntfy token the ccdash hub publishes notifications with
-  "common/ccdash-ntfy-token.age".publicKeys = [
-    pupibundle
-  ]
-  ++ users;
   # ccdash collector tokens: one per workstation, shared with the hub
   "common/ccdash-collector-token-navibundle.age".publicKeys = [
     navibundle
@@ -143,8 +138,6 @@ in
   "hosts/blehbundle/grafana-bot-mail-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/grafana-admin-password.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/grafana-secret-key.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
-  # ntfy users, ACL entries and tokens (NTFY_AUTH_* env vars)
-  "hosts/blehbundle/ntfy-env.age".publicKeys = [ blehbundle ] ++ [ tsandrini ];
   "hosts/blehbundle/mailserver/rspamd-ui-basic-auth-file.age".publicKeys = [
     blehbundle
   ]

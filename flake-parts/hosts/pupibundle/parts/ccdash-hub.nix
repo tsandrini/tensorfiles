@@ -16,8 +16,7 @@
 # The ccdash hub (meta/plans/ccdash-hub/spec.md): every workstation's
 # collector reports here over `wss://ccdash.home.tsandrini.sh/collect`; the
 # web UI (installable as a PWA), the API and the Web Push notifications
-# are served from here (ntfy lost the trial; `ntfy = true` in the infra
-# variables would bring it back). Intranet only: nginx listens on the LAN
+# are served from here. Intranet only: nginx listens on the LAN
 # address with the `*.home` wildcard cert and allows the home and WireGuard
 # subnets. Each piece waits for its secret.
 {
@@ -33,7 +32,7 @@
 }:
 let
   inherit (builtins) pathExists;
-  inherit (lib) mkIf mkMerge optionalAttrs;
+  inherit (lib) mkIf mkMerge;
 
   selfVars = infraVars.hosts."${hostName}";
   hubVars = selfVars.services.ccdash-hub;
@@ -43,13 +42,11 @@ let
   secret = name: "${secretsPath}/${name}.age";
   uiToken = "hosts/${hostName}/ccdash-ui-token";
   wedosEnv = "hosts/${hostName}/wedos-acme-env";
-  ntfyToken = "common/ccdash-ntfy-token";
   collectorToken = host: "common/ccdash-collector-token-${host}";
   collectors = builtins.filter (host: pathExists (secret (collectorToken host))) hubVars.collectors;
 
   hubCheck = pathExists (secret uiToken);
   tlsCheck = pathExists (secret wedosEnv);
-  ntfyCheck = hubVars.ntfy && pathExists (secret ntfyToken);
 in
 {
   imports = [ inputs.ccdash.nixosModules.hub ];
@@ -86,13 +83,6 @@ in
             "tsandrini"
           ];
           push.subject = "mailto:${infraVars.common.contacts.securityEmail}";
-        }
-        // optionalAttrs ntfyCheck {
-          notify = {
-            url = "https://${nginxVars.virtualHosts."intra-ntfy".domain}";
-            topic = "ccdash";
-            token_file = config.age.secrets."${ntfyToken}".path;
-          };
         };
       };
 
@@ -101,12 +91,6 @@ in
       age.secrets = {
         "${uiToken}" = {
           file = secret uiToken;
-          owner = "ccdash";
-        };
-      }
-      // optionalAttrs ntfyCheck {
-        "${ntfyToken}" = {
-          file = secret ntfyToken;
           owner = "ccdash";
         };
       }

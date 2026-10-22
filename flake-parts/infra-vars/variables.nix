@@ -348,9 +348,6 @@ _: rec {
               http_addr = "localhost";
             };
           };
-          ntfy = {
-            port = 2586;
-          };
           nginx =
             let
               inherit (common.services.prometheus.exporters.anubis) portRangeStart;
@@ -404,10 +401,6 @@ _: rec {
                   domain = "pihole.${intranetDomain}";
                   proxyEndpoint = "${hosts."pupibundle".address}";
                 };
-                "intra-ntfy" = {
-                  domain = "ntfy.${intranetDomain}";
-                  proxyEndpoint = "127.0.0.1:${toString hosts."blehbundle".services.ntfy.port}";
-                };
                 # --- mtpr ---
                 "infra-docs-mtpr" = {
                   domain = "infra-docs-wip.mtpr.${primaryDomain}";
@@ -449,9 +442,6 @@ _: rec {
               "navibundle"
               "flatbundle"
             ];
-            # NOTE: Web Push won the H3 trial (2026-10-19); the ntfy sink stays
-            # off even while its token secret exists
-            ntfy = false;
           };
           nginx.virtualHosts = {
             "intra-ccdash" = {

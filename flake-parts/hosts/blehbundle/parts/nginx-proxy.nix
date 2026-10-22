@@ -19,7 +19,6 @@
 }:
 {
   config,
-  pkgs,
   system,
   hostName,
   ...
@@ -27,13 +26,6 @@
 let
   selfVars = infraVars.hosts."${hostName}";
   immutable-insights = inputs.immutable-insights.packages.${system}.default;
-
-  # --- ntfy ---
-  # NOTE: topic icons the ntfy app loads by URL (PNG or JPEG only)
-  ntfyIcons = pkgs.runCommand "ntfy-icons" { nativeBuildInputs = [ pkgs.librsvg ]; } ''
-    mkdir -p $out/icons
-    rsvg-convert -w 256 -h 256 ${inputs.ccdash}/web/static/icon.svg -o $out/icons/ccdash.png
-  '';
 
   # --- monitoring ---
   monitoringVars = infraVars.hosts."blehbundle";
@@ -299,23 +291,6 @@ in
       locations."/" = {
         proxyWebsockets = true;
         proxyPass = "http://${virtualHostsVar."intra-pihole".proxyEndpoint}";
-      };
-    };
-
-    # NOTE: unbuffered for ntfy's long-lived subscriptions
-    virtualHosts."${virtualHostsVar."intra-ntfy".domain}" = mkIntraVhost {
-      locations."/icons/".root = ntfyIcons;
-      locations."/" = {
-        proxyWebsockets = true;
-        proxyPass = "http://${virtualHostsVar."intra-ntfy".proxyEndpoint}";
-        extraConfig = ''
-          proxy_buffering off;
-          proxy_request_buffering off;
-          proxy_redirect off;
-          proxy_connect_timeout 3m;
-          proxy_send_timeout 3m;
-          proxy_read_timeout 3m;
-        '';
       };
     };
   };

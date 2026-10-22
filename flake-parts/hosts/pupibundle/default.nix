@@ -171,7 +171,6 @@ in
 
         local-data = [
           ''"pihole.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
-          ''"ntfy.home.tsandrini.sh. A ${infraVars.hosts."blehbundle".wgAddress}"''
           ''"${selfVars.services.nginx.virtualHosts."intra-ccdash".domain}. A ${selfVars.address}"''
           ''"${selfVars.services.nginx.virtualHosts."intra-ha".domain}. A ${selfVars.address}"''
           ''"${selfVars.services.nginx.virtualHosts."intra-z2m".domain}. A ${selfVars.address}"''

@@ -53,7 +53,12 @@ discuss before implementing; I want to be challenged. Skip the phases
 only when I explicitly say quick-and-dirty / urgent.
 
 Before declaring a task done, run the project's linters/tests through
-`direnv exec` and report the actual results.
+`direnv exec` and report the actual results. Exercise the failure path
+too (make the new flow fail on purpose: refused, offline, missing
+binary) and check what the built package serves, not only the dev setup.
+
+Anything I have to run, apply, decide or answer goes in the final
+message of the turn, complete; text before a tool call may never reach me.
 
 ## Knowledge (ccdash)
 
