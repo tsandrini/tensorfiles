@@ -33,13 +33,13 @@ in
   # -----------------
   # | SPECIFICATION |
   # -----------------
-  # Model: Lenovo Thinkpad T14
+  # Model: Lenovo Thinkpad T14 Gen 1 Intel (20S1, i5-10210U)
 
   # --------------------------
   # | ROLES & MODULES & etc. |
   # --------------------------
   imports = [
-    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14
+    inputs.nixos-hardware.nixosModules.lenovo-thinkpad-t14-intel-gen1
     # NOTE: T14 chip cant handle this
     # inputs.nix-gaming.nixosModules.pipewireLowLatency
     inputs.nix-gaming.nixosModules.platformOptimizations

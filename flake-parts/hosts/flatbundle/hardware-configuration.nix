@@ -122,22 +122,24 @@
     cpu.intel.updateMicrocode = true;
     opentabletdriver.enable = true;
 
-    graphics = {
-      enable = true;
-      extraPackages = [
-        #intel-media-driver
-        #intel-vaapi-driver
-        #libva-vdpau-driver
-        #libvdpau-va-gl
-      ];
-    };
+    # NOTE: VA-API (iHD) + compute runtime come from nixos-hardware's t14-intel-gen1
+    graphics.enable = true;
 
     bluetooth = {
       enable = true;
     };
   };
-  # Hardware hybrid decoding
-  nixpkgs.config.packageOverrides = pkgs: {
-    intel-vaapi-driver = pkgs.intel-vaapi-driver.override { enableHybridCodec = true; };
+
+  # NOTE: not a udev ATTR rule, thinkpad_acpi adds these attrs after BAT0 appears;
+  # the EC keeps the values across reboots
+  systemd.services.battery-charge-threshold = {
+    description = "Cap BAT0 charging at 80 %";
+    wantedBy = [ "multi-user.target" ];
+    unitConfig.ConditionPathExists = "/sys/class/power_supply/BAT0/charge_control_end_threshold";
+    serviceConfig.Type = "oneshot";
+    script = ''
+      echo 75 > /sys/class/power_supply/BAT0/charge_control_start_threshold
+      echo 80 > /sys/class/power_supply/BAT0/charge_control_end_threshold
+    '';
   };
 }
