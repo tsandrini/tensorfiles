@@ -6,7 +6,7 @@ import argparse
 import json
 from datetime import datetime
 
-from handoff.commands._common import add_relay_option, engine_for, merge_engine, split_selection
+from handoff.commands._common import add_relay_option, engine_for, reject_claude
 from handoff.config import Config
 from handoff.engine import UnitStatus, local_units, select
 
@@ -76,19 +76,15 @@ def run(config: Config, args: argparse.Namespace) -> int:
     Returns:
         0 when every unit is in sync, 1 otherwise.
     """
-    requested, want_units, want_claude = split_selection(args.units)
+    reject_claude(args.units)
     units = local_units(config)
     with engine_for(config, args) as engine:
-        rows = engine.status(units) if want_units else []
+        rows = engine.status(units)
         relay_name = engine.store.cfg.name
-        merge = merge_engine(config, engine) if want_claude else None
-        claude = merge.status() if merge is not None else None
-    if requested:
-        chosen = select(requested, [r.unit_id for r in rows])
+    if args.units:
+        chosen = select(args.units, [r.unit_id for r in rows])
         rows = [r for r in rows if r.unit_id in chosen]
-    healthy = all(r.state in HEALTHY for r in rows) and (
-        claude is None or not (claude.to_push or claude.to_pull or claude.diverged)
-    )
+    healthy = all(r.state in HEALTHY for r in rows)
 
     if args.json:
         print(
@@ -98,7 +94,6 @@ def run(config: Config, args: argparse.Namespace) -> int:
                     "host": config.host,
                     "healthy": healthy,
                     "units": [r.__dict__ for r in rows],
-                    "claude": claude.__dict__ if claude is not None else None,
                 },
                 indent=2,
             )
@@ -107,15 +102,4 @@ def run(config: Config, args: argparse.Namespace) -> int:
 
     if rows:
         print(table(rows))
-    if claude is not None:
-        parts = [f"{claude.local} local, {claude.relay} on relay"]
-        if claude.to_push:
-            parts.append(f"{claude.to_push} to push")
-        if claude.to_pull:
-            parts.append(f"{claude.to_pull} to pull")
-        if claude.diverged:
-            parts.append(f"{claude.diverged} diverged")
-        if claude.live_elsewhere:
-            parts.append("live elsewhere: " + ", ".join(claude.live_elsewhere))
-        print(("\n" if rows else "") + "claude state: " + ", ".join(parts))
     return 0 if healthy else 1

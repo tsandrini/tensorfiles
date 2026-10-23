@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
+import handoff
 from handoff import cli
 
 from .conftest import make_repo
@@ -32,8 +36,37 @@ def test_status_json_on_empty_relay(config_file: Path, capsys: pytest.CaptureFix
         "host": "testhost",
         "healthy": True,
         "units": [],
-        "claude": None,
     }
+
+
+def test_retired_claude_table_still_loads(config_file: Path) -> None:
+    with config_file.open("a") as f:
+        f.write('[claude]\nroot = "~/.claude"\nexclude = []\nconflicts_dir = "handoff-conflicts"\n')
+    # NOTE: own process, pytest's log handlers would swallow the CLI's stderr format
+    env = {**os.environ, "PYTHONPATH": str(Path(handoff.__file__).parents[1])}
+    proc = subprocess.run(
+        [sys.executable, "-m", "handoff", "--config", str(config_file), "status", "--json"],
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    assert proc.returncode == 0
+    assert proc.stderr == (
+        "handoff: ignoring [claude]: Claude Code state syncs through ccdash now; remove the table\n"
+    )
+    assert "claude" not in json.loads(proc.stdout)
+
+
+@pytest.mark.parametrize("command", ["push", "pull", "status", "verify"])
+def test_retired_claude_unit_is_refused(
+    config_file: Path, tmp_path: Path, capsys: pytest.CaptureFixture, command: str
+) -> None:
+    make_repo(tmp_path / "ws", "b/r")
+    assert cli.main(["--config", str(config_file), command, "b/r", "claude"]) == 2
+    err = capsys.readouterr().err
+    assert "Claude Code state is no longer handled by handoff because ccdash syncs it" in err
+    assert "matches no unit" not in err
+    assert not (tmp_path / "relay").exists()
 
 
 def test_push_pull_status_round_trip(

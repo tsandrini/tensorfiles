@@ -86,7 +86,12 @@ in
         };
       };
 
-      tensorfiles.services.backup.restic.paths = [ config.services.ccdash-hub.backup.directory ];
+      # NOTE: the database's nightly copies and the collectors' Claude Code
+      # state (sessions, prompt history; plain files outside the database)
+      tensorfiles.services.backup.restic.paths = with config.services.ccdash-hub; [
+        backup.directory
+        sync.directory
+      ];
 
       age.secrets = {
         "${uiToken}" = {

@@ -10,10 +10,11 @@ from pathlib import Path
 
 from handoff.config import Config
 from handoff.engine import Engine, Outcome
-from handoff.merge import NAME as CLAUDE
-from handoff.merge import MergeEngine
+from handoff.errors import UsageError
 from handoff.state import StateStore
 from handoff.store import Store
+
+RETIRED_CLAUDE = "claude"
 
 
 def add_relay_option(parser: argparse.ArgumentParser) -> None:
@@ -43,34 +44,23 @@ def engine_for(config: Config, args: argparse.Namespace) -> Iterator[Engine]:
         yield Engine(config, store, state)
 
 
-def merge_engine(config: Config, engine: Engine) -> MergeEngine | None:
-    """The Claude-state engine sharing the relay and state of `engine`.
+def reject_claude(requested: list[str]) -> None:
+    """Refuse the retired `claude` pseudo-unit with a pointer to ccdash.
 
-    Args:
-        config: Parsed config.
-        engine: The repository engine of this command.
-
-    Returns:
-        The merge engine, `None` when `[claude]` is not configured.
-    """
-    if config.claude is None:
-        return None
-    return MergeEngine(config, config.claude, engine.store, engine.state)
-
-
-def split_selection(requested: list[str]) -> tuple[list[str], bool, bool]:
-    """Separate the `claude` pseudo-unit from repository selections.
+    Without this, `claude` would fail later as an unknown unit, which hides
+    why it stopped working.
 
     Args:
         requested: Positional unit arguments.
 
-    Returns:
-        The repository selections (empty means all), whether repositories are
-        wanted at all, and whether Claude state is wanted. Nothing requested
-        means everything.
+    Raises:
+        UsageError: `claude` is among them.
     """
-    units = [u for u in requested if u != CLAUDE]
-    return units, not requested or bool(units), not requested or CLAUDE in requested
+    if RETIRED_CLAUDE in requested:
+        raise UsageError(
+            f"{RETIRED_CLAUDE!r} is not a unit: Claude Code state is no longer handled by "
+            "handoff because ccdash syncs it"
+        )
 
 
 def report(outcomes: list[Outcome], *, quiet_actions: frozenset[str] = frozenset()) -> int:

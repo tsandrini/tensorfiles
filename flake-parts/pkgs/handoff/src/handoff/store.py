@@ -8,8 +8,6 @@ Layout below the relay path:
                                             holds, incl. dirs, links, modes, mtimes
     history/<time>/<unit id>/<path>         files a push overwrote or removed
     conflicts/<host>/<unit id>/<time>/      local copies a pull set aside
-    state/<name>/<path>                     merge units (Claude state), see `handoff.merge`
-    merge-meta/<name>.json, <name>.files    their stamp and per-file list
 
 rclone is configured through environment variables only, so no config file
 is written and the crypt password never appears on a command line. With
@@ -378,57 +376,6 @@ class Store:
             if fileset is not None:
                 lists[uid] = fileset
         return lists
-
-    def fetch_merge(self, name: str) -> tuple[dict | None, str | None]:
-        """Download a merge unit's stamp and list.
-
-        Args:
-            name: Merge unit name (`claude`).
-
-        Returns:
-            The stamp (decoded JSON) and the raw list text, `None` each when
-            the unit was never pushed.
-        """
-        dest = self.tmp / "merge-meta" / name
-        dest.mkdir(parents=True, exist_ok=True)
-        self._run(
-            "copy",
-            self.remote("merge-meta"),
-            str(dest),
-            "--files-from-raw",
-            self._list_file(f"merge-{name}", [f"{name}.json", f"{name}.files"]),
-            "--ignore-times",
-            "--no-traverse",
-            ok_not_found=True,
-        )
-        stamp_path, list_path = dest / f"{name}.json", dest / f"{name}.files"
-        stamp = json.loads(stamp_path.read_text()) if stamp_path.exists() else None
-        listing = list_path.read_text() if list_path.exists() else None
-        return stamp, listing
-
-    def publish_merge(self, name: str, stamp: dict, listing: str) -> None:
-        """Upload a merge unit's list and stamp (list first, stamp last).
-
-        Args:
-            name: Merge unit name.
-            stamp: Stamp to store as JSON.
-            listing: Serialised list.
-        """
-        staging = self.tmp / "publish-merge"
-        (staging / "merge-meta").mkdir(parents=True, exist_ok=True)
-        (staging / "merge-meta" / f"{name}.files").write_text(listing)
-        (staging / "merge-meta" / f"{name}.json").write_text(json.dumps(stamp, indent=2) + "\n")
-        self._run(
-            "copy",
-            str(staging),
-            self.remote(),
-            "--files-from-raw",
-            self._list_file(
-                f"publish-merge-{name}", [f"merge-meta/{name}.files", f"merge-meta/{name}.json"]
-            ),
-            "--ignore-times",
-            "--no-traverse",
-        )
 
     def publish(self, items: dict[str, tuple[Meta, FileSet]]) -> None:
         """Upload file sets and the stamp index, in one go.

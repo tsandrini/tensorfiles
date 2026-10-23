@@ -91,6 +91,18 @@ in
       '';
     };
 
+    sync.enable = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether this machine's Claude Code state (sessions, rewind
+        checkpoints, plans, tasks, pasted content, the prompt history) is
+        kept in step with the hub, so a session ended here resumes on the
+        other workstations; the hub also refuses prompts in a session open
+        on another machine. Replaces handoff's former `[claude]` unit.
+      '';
+    };
+
     telemetry.enable = mkOption {
       type = types.bool;
       default = true;
@@ -138,6 +150,7 @@ in
         enable = _ true;
         hub.url = _ cfg.hub.url;
         hub.tokenFile = _ config.age.secrets."${tokenSecret}".path;
+        sync.enable = _ cfg.sync.enable;
         claudeCode.channel.enable = _ cfg.channel.enable;
         claudeCode.telemetry.enable = _ cfg.telemetry.enable;
         claudeCode.statusLine = {

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 
-from handoff.commands._common import add_relay_option, engine_for, report, split_selection
+from handoff.commands._common import add_relay_option, engine_for, reject_claude, report
 from handoff.config import Config
 from handoff.engine import local_units, select
 
@@ -44,9 +44,9 @@ def run(config: Config, args: argparse.Namespace) -> int:
     Returns:
         0 when every checked unit matches, 1 otherwise.
     """
-    requested, _, _ = split_selection(args.units)
+    reject_claude(args.units)
     units = local_units(config)
-    chosen = select(requested, [u.id for u in units])
+    chosen = select(args.units, [u.id for u in units])
     units = [u for u in units if u.id in chosen]
     with engine_for(config, args) as engine:
         outcomes = engine.verify(units, fix=args.fix, rehash=args.rehash, dry_run=args.dry_run)

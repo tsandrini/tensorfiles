@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 import pytest
@@ -119,6 +120,16 @@ def test_workspace_selection() -> None:
     assert not config.workspace.selects("a/skip")
     assert not config.workspace.selects("b/keep")
     assert parse(MINIMAL).workspace.selects("anything/at-all")
+
+
+def test_retired_claude_table_is_ignored(caplog: pytest.LogCaptureFixture) -> None:
+    with caplog.at_level(logging.WARNING, logger="handoff"):
+        config = parse({**MINIMAL, "claude": {"root": "~/.claude", "exclude": []}})
+    assert config.workspace.root == Path("~/ProjectBundle").expanduser()
+    assert not hasattr(config, "claude")
+    assert [r.getMessage() for r in caplog.records] == [
+        "ignoring [claude]: Claude Code state syncs through ccdash now; remove the table"
+    ]
 
 
 def test_unknown_relay_on_cli() -> None:

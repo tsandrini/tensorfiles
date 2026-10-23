@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import socket
 import tomllib
@@ -11,6 +12,8 @@ from pathlib import Path
 from typing import Any
 
 from handoff.errors import ConfigError, UsageError
+
+log = logging.getLogger("handoff")
 
 CONFIG_ENV = "HANDOFF_CONFIG"
 
@@ -161,52 +164,6 @@ class Workspace:
         return not self.include or any(fnmatchcase(unit_id, p) for p in self.include)
 
 
-DEFAULT_CLAUDE_INCLUDE = (
-    "projects/*",
-    "file-history/*",
-    "history.jsonl",
-    "plans/*",
-    "tasks/*",
-    "paste-cache/*",
-)
-
-
-@dataclass(frozen=True)
-class ClaudeState:
-    """Claude Code runtime state carried as a merge unit (see `handoff.merge`).
-
-    Attributes:
-        root: The `~/.claude` directory.
-        include: fnmatch globs (relative to `root`) of what travels. The
-            default covers sessions, rewind checkpoints, prompt history,
-            plans, task output and pasted content; everything else in the
-            directory is machine-local or managed by home-manager.
-        exclude: Globs that never travel, applied after `include`.
-        conflicts_dir: Directory below `root` receiving the other host's
-            version of a diverged file; never travels itself.
-    """
-
-    root: Path
-    include: tuple[str, ...] = DEFAULT_CLAUDE_INCLUDE
-    exclude: tuple[str, ...] = ()
-    conflicts_dir: str = "handoff-conflicts"
-
-    def selects(self, rel_path: str) -> bool:
-        """Whether a file below `root` travels.
-
-        Args:
-            rel_path: `/`-separated path relative to `root`.
-
-        Returns:
-            `True` when included and not excluded.
-        """
-        if rel_path == self.conflicts_dir or rel_path.startswith(self.conflicts_dir + "/"):
-            return False
-        if any(fnmatchcase(rel_path, p) for p in self.exclude):
-            return False
-        return any(fnmatchcase(rel_path, p) for p in self.include)
-
-
 @dataclass(frozen=True)
 class Config:
     """Parsed handoff config.
@@ -217,7 +174,6 @@ class Config:
         workspace: Repository discovery settings.
         defaults: Rules applied to every repository.
         repos: Per-repository overrides keyed by unit id.
-        claude: Claude Code state settings, `None` when not synced.
         host: Name this machine signs its pushes with.
         state_dir: Directory holding the per-host sync state.
     """
@@ -227,7 +183,6 @@ class Config:
     workspace: Workspace
     defaults: Rules = field(default_factory=Rules)
     repos: dict[str, RepoOverride] = field(default_factory=dict)
-    claude: ClaudeState | None = None
     host: str = field(default_factory=socket.gethostname)
     state_dir: Path = field(default_factory=default_state_dir)
 
@@ -383,6 +338,9 @@ def _parse_relay(name: str, raw: dict[str, Any]) -> Relay:
 def parse(data: Any) -> Config:
     """Build a `Config` from decoded TOML.
 
+    A leftover `[claude]` table (Claude Code state, synced by ccdash now) is
+    ignored with a warning, so older configs keep loading.
+
     Args:
         data: Decoded TOML document.
 
@@ -445,20 +403,10 @@ def parse(data: Any) -> Config:
             max_mb=_number(raw, "max_mb", where),
         )
 
-    claude = None
     if "claude" in data:
-        raw_claude = _table(data, "claude", "the config")
-        if raw_claude.get("enable", True):
-            claude = ClaudeState(
-                root=_path(str(raw_claude.get("root", "~/.claude"))),
-                include=(
-                    _strings(raw_claude, "include", "[claude]")
-                    if "include" in raw_claude
-                    else DEFAULT_CLAUDE_INCLUDE
-                ),
-                exclude=_strings(raw_claude, "exclude", "[claude]"),
-                conflicts_dir=str(raw_claude.get("conflicts_dir", "handoff-conflicts")).strip("/"),
-            )
+        log.warning(
+            "ignoring [claude]: Claude Code state syncs through ccdash now; remove the table"
+        )
 
     extra: dict[str, Any] = {}
     if host := data.get("host"):
@@ -472,6 +420,5 @@ def parse(data: Any) -> Config:
         workspace=workspace,
         defaults=defaults,
         repos=repos,
-        claude=claude,
         **extra,
     )
