@@ -56,6 +56,9 @@ in
     pkgs.docker-compose # Docker CLI plugin to define and run multi-container applications
     pkgs.screen # Window manager that multiplexes a physical terminal
     pkgs.picocom # Minimal dumb-terminal emulation program
+    pkgs.cameractrls-gtk4 # Camera controls for Linux
+    pkgs.obs-studio # Free and open source software for video recording and live streaming
+    pkgs.obs-cli # Command-line remote control for OBS
 
     # --- desktop hardware ---
     pkgs.lm_sensors # Tools for reading hardware sensors

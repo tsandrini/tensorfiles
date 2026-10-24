@@ -57,6 +57,7 @@ in
     pkgs.tigervnc # Fork of tightVNC, made in cooperation with VirtualGL
     pkgs.screen # Window manager that multiplexes a physical terminal
     pkgs.picocom # Minimal dumb-terminal emulation program
+    pkgs.cameractrls-gtk4 # Camera controls for Linux
     # pkgs.python3Packages.playwright # Python version of the Playwright testing and automation library
     # pkgs.playwright # Framework for Web Testing and Automation
     # pkgs.playwright-mcp # Playwright MCP server
