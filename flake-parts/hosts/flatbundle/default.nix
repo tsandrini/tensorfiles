@@ -237,6 +237,7 @@ in
 
     tensorfiles.hm = {
       programs.handoff.enable = true;
+      programs.dank-calendar.enable = true;
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;
       services.pywalfox-native.enable = true;
