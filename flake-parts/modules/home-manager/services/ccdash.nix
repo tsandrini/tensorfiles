@@ -151,6 +151,8 @@ in
         hub.url = _ cfg.hub.url;
         hub.tokenFile = _ config.age.secrets."${tokenSecret}".path;
         sync.enable = _ cfg.sync.enable;
+        # NOTE: the meta tokens direnv injects at the workspace root (claude-code module)
+        launch.env = _ [ "CLAUDE_META_*" ];
         claudeCode.channel.enable = _ cfg.channel.enable;
         claudeCode.telemetry.enable = _ cfg.telemetry.enable;
         claudeCode.statusLine = {
