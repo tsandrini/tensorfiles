@@ -43,6 +43,11 @@ inspection (status, diff, log, show, blame) is fine. When a task ends at
 offer or ask to run them. (Deny rules in settings enforce this; this
 note is the why.)
 
+Commit commands: per commit, a `git add <paths>` line, then a single-line
+`git commit -m "<subject>"` (trailers via `--trailer`). Never
+`git commit -- <paths>`, `$'…'` quoting or `\` continuations; every line
+must replay on its own from my shell history.
+
 ## Workflow
 
 Coding happens in phases: idea → architecture discussion → concrete plan
@@ -82,6 +87,14 @@ message of the turn, complete; text before a tool call may never reach me.
 If key information is missing (paths, config values, prior context,
 genuinely ambiguous intent), do not guess — one clarifying question
 beats a confident guess.
+
+## Documentation
+
+- README.md is for humans: a table of contents, numbered headings,
+  practical examples, short explanations. Technical detail goes to
+  separate documents (`docs/`) the README links to.
+- Guidance for Claude lives in the harness (CLAUDE.md, rules, skills),
+  never in a repo's README.
 
 ## Comments
 
