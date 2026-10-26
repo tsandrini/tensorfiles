@@ -106,7 +106,7 @@ in
     extraPackages.enable =
       mkEnableOption ''
         companion Claude Code ecosystem CLIs (cc-switcher, ccusage,
-        claudebox, sandbox-runtime, skills-installer, claude-plugins,
+        claudebox, sandbox-runtime, claude-plugins,
         auto-claude, agent-browser)
       ''
       // {
@@ -370,7 +370,6 @@ in
         localFlake.packages.${system}.cc-switcher
         llmPkgs.aperant
         llmPkgs.claudebox
-        llmPkgs.skills-installer
         llmPkgs.sandbox-runtime
         llmPkgs.ccusage
         llmPkgs.agent-browser
