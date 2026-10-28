@@ -66,6 +66,20 @@ in
         };
       };
     };
+    krupikbundle = {
+      hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII2uNUIA6VhPU2kjkK5dNOPzs9ic0oO0Bf5qHGJjzPRq root@krupikbundle";
+      users = {
+        root = {
+          authorizedKeys = [ ];
+        };
+        tsandrini = {
+          authorizedKeys = [ tsandrini ];
+        };
+        deploy = {
+          authorizedKeys = [ deploy ];
+        };
+      };
+    };
     flatbundle = {
       hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG8avUMhkJ8zQ6/uvLGGEhU6VZ00bNDR9nWko7Kk8pbX root@flatbundle";
       users = {

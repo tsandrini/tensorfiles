@@ -20,6 +20,7 @@ let
   pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINLvjzkKLhKbaRU/uf3A+pf25rir3y+6mvcbaAxt2DHP root@pupibundle";
   blehbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUem9jyfHkEN3DRNuS896ai1+Pu/vxiQrXoZw0cHxGH root@blehbundle";
   navibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4CsU0/G4Qv5YXPfII/7cfXHoUxGmnCDXJKQjkIa0g3 root@navibundle";
+  krupikbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII2uNUIA6VhPU2kjkK5dNOPzs9ic0oO0Bf5qHGJjzPRq root@krupikbundle";
 
   hosts = [
     spinorbundle
@@ -29,9 +30,13 @@ let
     pupibundle
     blehbundle
     navibundle
+    krupikbundle
   ];
 
   tsandrini = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWrK27cm+rAVKuwDjlJgCuy8Rftg2YOALwtnu7z3Ox1 tsandrini";
+  # krupikbundle's own user identity: the box is not mine, the personal key
+  # never lives there, so its HM secrets are encrypted to this key instead
+  tsandrini-krupikbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE/x90JoFIcZAJItY3w+8wWi4PID1U2hbIRL12X7U5ev tsandrini@krupikbundle";
   users = [ tsandrini ];
 in
 {
@@ -44,18 +49,24 @@ in
     flatbundle
     jetbundle
     navibundle
+    krupikbundle
+    tsandrini-krupikbundle
   ]
   ++ users;
   "common/claude-code-pesekmudra-meta-envfile.age".publicKeys = [
     flatbundle
     jetbundle
     navibundle
+    krupikbundle
+    tsandrini-krupikbundle
   ]
   ++ users;
   "common/claude-code-tsandrini-meta-envfile.age".publicKeys = [
     flatbundle
     jetbundle
     navibundle
+    krupikbundle
+    tsandrini-krupikbundle
   ]
   ++ users;
   # ccdash collector tokens: one per workstation, shared with the hub
@@ -67,6 +78,12 @@ in
   "common/ccdash-collector-token-flatbundle.age".publicKeys = [
     flatbundle
     pupibundle
+  ]
+  ++ users;
+  "common/ccdash-collector-token-krupikbundle.age".publicKeys = [
+    krupikbundle
+    pupibundle
+    tsandrini-krupikbundle
   ]
   ++ users;
   # restic repository passwords, shared by the backed-up host and flatbundle
@@ -94,6 +111,8 @@ in
   "common/handoff-crypt-password.age".publicKeys = [
     flatbundle
     navibundle
+    krupikbundle
+    tsandrini-krupikbundle
   ]
   ++ users;
 
@@ -193,6 +212,16 @@ in
   "hosts/navibundle/users/tsandrini/system-password.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
   # full-access Storage Box key (restic admin commands)
   "hosts/navibundle/backup-storagebox-admin-ssh-key.age".publicKeys = [ navibundle ] ++ [ tsandrini ];
+
+  # --- krupikbundle ---
+  # --------------------
+  # NOTE: deliberately nothing else: no restic passwords, no Storage Box keys
+  "hosts/krupikbundle/users/root/system-password.age".publicKeys = [ krupikbundle ] ++ [ tsandrini ];
+  "hosts/krupikbundle/users/tsandrini/system-password.age".publicKeys = [
+    krupikbundle
+  ]
+  ++ [ tsandrini ];
+  "hosts/krupikbundle/wg-home-tunnel-privkey.age".publicKeys = [ krupikbundle ] ++ [ tsandrini ];
 
   # --- flatbundle ---
   # --------------------

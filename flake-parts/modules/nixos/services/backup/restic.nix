@@ -104,7 +104,9 @@ let
     '';
 
   # NOTE: append-only keys must never get an RFC4716 twin -- port 22 ignores
-  # `command=`, which would turn them into full-access keys.
+  # `command=`, which would turn them into full-access keys. The Storage Box
+  # shell whitelists `rclone serve restic` only (no `serve sftp`): confine any
+  # other key with a Hetzner sub-account instead (krupikbundle's handoff relay).
   authorizedKeysFile = pkgs.writeText "storagebox-authorized-keys" (
     concatMapStrings (key: "${key}\n" + toRfc4716 key) cfg.admin.authorizedKeys.fullAccess
     + concatStrings (

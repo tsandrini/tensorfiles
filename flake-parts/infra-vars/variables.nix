@@ -79,6 +79,14 @@ _: rec {
         };
       };
     # ----------------------------------
+    "krupikbundle" = {
+      # NOTE: DHCP lease from the vila router (n100-router-vila, 192.168.31.1)
+      # for 48:21:0b:7b:de:0d; make it a static lease before relying on it
+      address = "192.168.31.136";
+      # peer on mikrobundle's wg-remote-access; ssh aliases and deploys use it
+      wgAddress = "10.0.33.16";
+    };
+    # ----------------------------------
     "remotebundle" =
       let
         address = "localhost";
@@ -441,6 +449,7 @@ _: rec {
             collectors = [
               "navibundle"
               "flatbundle"
+              "krupikbundle"
             ];
           };
           nginx.virtualHosts = {

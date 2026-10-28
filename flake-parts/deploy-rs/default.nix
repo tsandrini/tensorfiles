@@ -52,6 +52,9 @@ in
     "pupibundle" = deployHost "pupibundle" "aarch64-linux" {
       remoteBuild = false;
     };
+    "krupikbundle" = deployHost "krupikbundle" "x86_64-linux" {
+      hostname = infraVars.hosts."krupikbundle".wgAddress;
+    };
   };
 
   flake.checks = builtins.mapAttrs (

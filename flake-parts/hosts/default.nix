@@ -215,6 +215,25 @@ in
         };
       }
     );
+    krupikbundle = withSystem "x86_64-linux" (
+      args:
+      mkHost args "krupikbundle" {
+        withHomeManager = true;
+        extraOverlays = sharedOverlays ++ [
+          inputs.emacs-overlay.overlays.default
+          inputs.nur.overlays.default
+          inputs.niri.overlays.niri
+        ];
+        extraModules = sharedModules ++ [
+          inputs.nur.modules.nixos.default
+        ];
+        hostImportArgs = {
+          inherit inputs infraVars secretsPath;
+          # NOTE: the initrd sshd takes its authorized keys from here
+          inherit (config.agenix) pubkeys;
+        };
+      }
+    );
     spinorbundle = withSystem "x86_64-linux" (
       args:
       mkHost args "spinorbundle" {
