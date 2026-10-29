@@ -316,6 +316,7 @@ in
       pkgs.darktable # Virtual lighttable and darkroom for photographers
       pkgs.rawtherapee # RAW converter and digital photo processing software
       pkgs.google-clasp # Develop Apps Script Projects locally
+      pkgs.moonlight-qt # Client for the Sunshine remote console on krupikbundle
 
       # --- LLM garbage ---
       # NOTE: claude-code ecosystem CLIs come from tensorfiles.hm.programs.claude-code (extraPackages)

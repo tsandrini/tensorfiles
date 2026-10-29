@@ -38,12 +38,6 @@ in
   # iGPU, 2x Kingston KC3000 2 TB NVMe, Killer E3000 2.5GbE, BE200 Wi-Fi 7.
   # Always on, remotely unlocked LUKS; the flatbundle/navibundle workstation
   # minus gaming, photo editing, keybase and the restic admin role.
-  #
-  # Threat model: the box is not mine and may be taken away. Data lives behind
-  # LUKS, the host decrypts a deliberately small set of secrets (secrets.nix),
-  # the user identity is a dedicated key (never the personal one), sshd is
-  # key-only on the LAN subnets + tailscale, and the firmware has an admin
-  # password with USB/PXE boot off. Secure Boot (lanzaboote) is still open.
 
   # --------------------------
   # | ROLES & MODULES & etc. |
@@ -114,6 +108,7 @@ in
         "audio"
         "networkmanager"
         "input"
+        "uinput" # NOTE: required for Sunshine's input injection (/dev/uinput)
         "docker"
         "dialout"
       ];
@@ -121,6 +116,12 @@ in
   };
 
   services.openssh.openFirewall = false;
+  # NOTE: the fleet-wide sshd turns TCP forwarding off (no pivoting through a
+  # host); this box's own user needs `ssh -L` for VNC and dev servers
+  services.openssh.extraConfig = ''
+    Match User tsandrini
+      AllowTcpForwarding yes
+  '';
   tensorfiles.networking.firewall.subnets-firewall = {
     nixosPassthrough = {
       allowedTCPPorts = [
@@ -167,6 +168,9 @@ in
     peers = [
       {
         publicKey = mikrobundleWgPublicKey;
+        # NOTE: home LAN + road-warrior subnet only. Never the firewall
+        # allowlist: it holds the vila subnets this box *sits in*, and every
+        # allowed IP becomes a route -- LAN replies would leave via the tunnel
         allowedIPs = [
           infraVars.common.networking.defaultSubnet
           infraVars.common.networking.intranetSubnet
@@ -202,12 +206,60 @@ in
     publicKey = pubkeys.hosts."storagebundle-1".hostKey;
   };
 
+  # --- remote console: Sunshine (wlr capture + NVENC + uinput) for Moonlight ---
+  # NOTE: niri runs no compositor binds on virtual-keyboard input (wayvnc), so
+  # the usable remote desktop is Sunshine: input arrives as real uinput
+  # devices. Capture is niri's screencopy ("wlr"): the portal probe hangs
+  # (no ScreenCast backend) and KMS finds no monitors on the NVIDIA card. The
+  # frames live on the dGPU, so only NVENC (CUDA build) or software can encode
+  # them -- VA-API sits on the iGPU. Reachable over the home tunnel only; pair +
+  # web UI at https://<wgAddress>:47990. mDNS stays off (office LAN).
+  services.sunshine = {
+    enable = true;
+    autoStart = true;
+    capSysAdmin = false;
+    openFirewall = false;
+    package = pkgs.sunshine.override { cudaSupport = true; };
+    settings = {
+      capture = "wlr";
+      # the web UI is reached by its tunnel address, not localhost
+      csrf_allowed_origins = "https://${selfVars.wgAddress}:47990";
+    };
+    # NOTE: the office screens must not stay on an open session once the
+    # stream ends -> lock DMS on disconnect. Keeping them dark *during* a
+    # stream needs disabled outputs plus an invisible one to capture (dummy
+    # plug on the dGPU); DPMS alone wakes on the very input Sunshine injects.
+    applications.apps = [
+      {
+        name = "Desktop";
+        image-path = "desktop.png";
+        prep-cmd = [
+          {
+            do = "";
+            undo = "/etc/profiles/per-user/tsandrini/bin/dms ipc call lock lock";
+          }
+        ];
+      }
+    ];
+  };
+  services.avahi.enable = false;
+  networking.firewall.interfaces.wg-home-tunnel = {
+    allowedTCPPortRanges = [
+      {
+        from = 47984;
+        to = 47990;
+      }
+    ];
+    allowedTCPPorts = [ 48010 ];
+    allowedUDPPortRanges = [
+      {
+        from = 47998;
+        to = 48010;
+      }
+    ];
+  };
+
   # --- boot chain: LUKS unlock from home ---
-  # NOTE: sshd inside the (systemd) initrd. Its host key lives unencrypted on
-  # the ESP (boot.initrd.secrets), so it only ever authenticates the unlock
-  # prompt. From home: `ssh -J vilekula-nuc -p 2223 root@<box>` -> passphrase
-  # prompt (root's initrd shell *is* the password agent), session ends after.
-  # Port != 2222 so the two host keys don't collide in known_hosts.
   boot.initrd = {
     network = {
       enable = true;
@@ -251,10 +303,7 @@ in
   programs.ccdash.channel.allow = true;
 
   programs.nh.flake = "/home/tsandrini/ProjectBundle/tsandrini/tensorfiles";
-  programs.nh.clean = {
-    enable = true;
-    extraArgs = "--keep-since 14d --keep 5";
-  };
+  programs.nh.clean.enable = false;
 
   programs.fish.enable = true;
   users.defaultUserShell = pkgs.bash;
@@ -275,13 +324,6 @@ in
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
-  };
-
-  # L2TP/IPsec client VPNs (NetworkManager)
-  services.xl2tpd.enable = true;
-  services.strongswan = {
-    enable = true;
-    secrets = [ "ipsec.d/ipsec.nm-l2tp.secrets" ];
   };
 
   virtualisation.docker = {
@@ -332,13 +374,10 @@ in
 
       programs.claude-code = {
         enable = true;
-        # NOTE: no mikrotikLookup -- the router's read-only key stays off this box
         homeAssistant.enable = true;
       };
     };
 
-    # NOTE: device pairing is manual (UI); on loss of the box, remove the
-    # device from the other nodes
     services.syncthing = {
       enable = true;
       tray.enable = true;
