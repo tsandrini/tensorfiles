@@ -33,9 +33,6 @@ _: rec {
         "192.168.11.0/24" # Meteopress vila
         "192.168.21.0/24" # Meteopress vila
         "192.168.31.0/24" # Meteopress vila
-
-        # TODO: remove
-        "192.168.0.0/24"
       ];
       defaultNameservers = [
         "10.10.0.10"
@@ -80,8 +77,8 @@ _: rec {
       };
     # ----------------------------------
     "krupikbundle" = {
-      # NOTE: DHCP lease from the vila router (n100-router-vila, 192.168.31.1)
-      # for 48:21:0b:7b:de:0d; make it a static lease before relying on it
+      # NOTE: static DHCP lease on the vila router (vilekula-nuc, dnsmasq
+      # dhcp-static-leases.conf) for 48:21:0b:7b:de:0d
       address = "192.168.31.136";
       # peer on mikrobundle's wg-remote-access; ssh aliases and deploys use it
       wgAddress = "10.0.33.16";
