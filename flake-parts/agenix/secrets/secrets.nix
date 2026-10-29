@@ -92,18 +92,21 @@ in
     remotebundle
     flatbundle
     navibundle
+    krupikbundle
   ]
   ++ users;
   "common/backup/restic-blehbundle-password.age".publicKeys = [
     blehbundle
     flatbundle
     navibundle
+    krupikbundle
   ]
   ++ users;
   "common/backup/restic-pupibundle-password.age".publicKeys = [
     pupibundle
     flatbundle
     navibundle
+    krupikbundle
   ]
   ++ users;
   # handoff relay encryption, shared by the hosts that push/pull working trees
@@ -215,13 +218,20 @@ in
 
   # --- krupikbundle ---
   # --------------------
-  # NOTE: deliberately nothing else: no restic passwords, no Storage Box keys
+  # NOTE: same backup-admin footprint as flatbundle/navibundle (owner's call,
+  # 2026-10-29): the box's defences are the tunnel keep-up and the uplink
+  # dead-man, not a smaller secret set
   "hosts/krupikbundle/users/root/system-password.age".publicKeys = [ krupikbundle ] ++ [ tsandrini ];
   "hosts/krupikbundle/users/tsandrini/system-password.age".publicKeys = [
     krupikbundle
   ]
   ++ [ tsandrini ];
   "hosts/krupikbundle/wg-home-tunnel-privkey.age".publicKeys = [ krupikbundle ] ++ [ tsandrini ];
+  # full-access Storage Box key (restic admin commands + handoff relay)
+  "hosts/krupikbundle/backup-storagebox-admin-ssh-key.age".publicKeys = [
+    krupikbundle
+  ]
+  ++ [ tsandrini ];
 
   # --- flatbundle ---
   # --------------------

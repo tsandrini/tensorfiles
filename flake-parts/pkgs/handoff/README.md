@@ -169,10 +169,19 @@ good. Hashing the whole workspace takes about a minute per 10 GiB.
 Copying the workspace by hand first saves the initial transfer, but the copy
 has no baseline. After `push` on the original host, run
 `pull --take-relay` on the copy: identical units are adopted, differing ones
-become exact mirrors. A `tar` copy truncates mtimes to seconds, which makes
-every file look changed; the pull then re-downloads the tracked set. A plain
-`rsync -a` pass over the LAN first (never `--size-only`) brings the copy to
-the same bytes and timestamps, and `verify` afterwards proves it.
+become exact mirrors. A `tar` or `scp` copy truncates mtimes to seconds, which
+makes every file look changed; the pull then re-downloads the tracked set. An
+rsync pass over the LAN first brings the copy to the same bytes and
+timestamps -- but it has to compare at nanosecond precision, a plain
+`rsync -a` treats second-equal mtimes as unchanged and leaves the truncated
+ones alone:
+
+```bash
+rsync -a -@-1 --inplace ~/ProjectBundle/ <copy-host>:ProjectBundle/
+```
+
+Never `--size-only` (same-size rewrites such as git refs would keep stale
+content under a fresh mtime). `verify` afterwards proves the copy.
 
 ## Limits
 

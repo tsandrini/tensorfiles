@@ -20,6 +20,7 @@
 }:
 {
   config,
+  lib,
   pkgs,
   system,
   ...
@@ -27,6 +28,7 @@
 let
   selfVars = infraVars.hosts.krupikbundle;
   storageBox = infraVars.hosts."storagebundle-1";
+  vilaGateway = "192.168.31.1"; # vilekula-nuc, VLAN 31
   mikrobundleWgPublicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
 in
 {
@@ -89,6 +91,20 @@ in
     security.hardening.desktop.enable = true;
 
     security.agenix.enable = true;
+
+    # backup admin like flatbundle/navibundle (owner's call 2026-10-29): the
+    # full-access Storage Box key + repository passwords live here; `backupctl`
+    # and the handoff relay use them
+    services.backup.restic.admin = {
+      enable = true;
+      user = "tsandrini";
+      repositories = {
+        remotebundle = { };
+        blehbundle = { };
+        pupibundle = { };
+      };
+      handoff.enable = true;
+    };
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
     # roots instead of the default ones.
@@ -199,21 +215,19 @@ in
     "${secretsPath}/hosts/krupikbundle/wg-home-tunnel-privkey.age";
 
   # handoff's sftp relay (rclone) pins the Storage Box here, see
-  # ~/.config/handoff/config.toml (private, hand-copied); the box logs in as
-  # a Hetzner sub-account whose home *is* the relay, so its key sees no backups
-  programs.ssh.knownHosts."storagebox-handoff" = {
-    hostNames = [ "[${storageBox.address}]:${toString storageBox.port}" ];
-    publicKey = pubkeys.hosts."storagebundle-1".hostKey;
-  };
+  # ~/.config/handoff/config.toml (private, hand-copied); it logs in with the
+  # restic admin key (`key_file` = that agenix secret's path)
+  programs.ssh.knownHosts = lib.listToAttrs (
+    lib.imap0 (i: key: {
+      name = "storagebox-handoff-${toString i}";
+      value = {
+        hostNames = [ "[${storageBox.address}]:${toString storageBox.port}" ];
+        publicKey = key;
+      };
+    }) ([ pubkeys.hosts."storagebundle-1".hostKey ] ++ pubkeys.hosts."storagebundle-1".extraHostKeys)
+  );
 
   # --- remote console: Sunshine (wlr capture + NVENC + uinput) for Moonlight ---
-  # NOTE: niri runs no compositor binds on virtual-keyboard input (wayvnc), so
-  # the usable remote desktop is Sunshine: input arrives as real uinput
-  # devices. Capture is niri's screencopy ("wlr"): the portal probe hangs
-  # (no ScreenCast backend) and KMS finds no monitors on the NVIDIA card. The
-  # frames live on the dGPU, so only NVENC (CUDA build) or software can encode
-  # them -- VA-API sits on the iGPU. Reachable over the home tunnel only; pair +
-  # web UI at https://<wgAddress>:47990. mDNS stays off (office LAN).
   services.sunshine = {
     enable = true;
     autoStart = true;
@@ -259,6 +273,75 @@ in
     ];
   };
 
+  # --- addressing: static, the DHCP reservation on the vila router is the backup ---
+  # NOTE: NetworkManager keeps the Wi-Fi only; the wired NIC is NixOS-managed so
+  # the address survives a dead DHCP server and matches what the initrd uses
+  networking = {
+    networkmanager.unmanaged = [ "enp131s0" ];
+    interfaces.enp131s0.ipv4.addresses = [
+      {
+        inherit (selfVars) address;
+        prefixLength = 24;
+      }
+    ];
+    defaultGateway = {
+      address = vilaGateway;
+      interface = "enp131s0";
+    };
+    nameservers = [ vilaGateway ];
+  };
+
+  # --- lifelines: the tunnel home must come back by itself, and a box that
+  # loses its cable powers off so the disk is locked again ---
+  systemd.services.wg-home-tunnel-keepup = {
+    description = "Re-establish wg-home-tunnel when it is down";
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = pkgs.writeShellScript "wg-home-tunnel-keepup" ''
+        if ! ${pkgs.iproute2}/bin/ip link show wg-home-tunnel >/dev/null 2>&1 \
+          || ! ${pkgs.systemd}/bin/systemctl is-active --quiet wireguard-wg-home-tunnel.service; then
+          echo "wg-home-tunnel is down, restarting"
+          ${pkgs.systemd}/bin/systemctl restart wireguard-wg-home-tunnel.service
+          ${pkgs.systemd}/bin/systemctl start wireguard-wg-home-tunnel.target
+        fi
+      '';
+    };
+  };
+  systemd.timers.wg-home-tunnel-keepup = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "2min";
+      OnUnitActiveSec = "1min";
+    };
+  };
+  # NOTE: `systemctl stop uplink-deadman` before re-cabling the box on site
+  systemd.services.uplink-deadman = {
+    description = "Power off when the wired uplink is gone for 60 s";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    serviceConfig = {
+      Restart = "always";
+      RestartSec = 5;
+      ExecStart = pkgs.writeShellScript "uplink-deadman" ''
+        iface=enp131s0 limit=60 down=0
+        while true; do
+          if [ "$(cat /sys/class/net/$iface/carrier 2>/dev/null || echo 0)" = "1" ]; then
+            down=0
+          else
+            down=$((down + 5))
+            [ "$down" -eq 5 ] && echo "carrier lost on $iface, powering off in $limit s unless it returns"
+            if [ "$down" -ge "$limit" ]; then
+              echo "uplink gone for $limit s: powering off"
+              ${pkgs.systemd}/bin/systemctl poweroff -i
+              exit 0
+            fi
+          fi
+          sleep 5
+        done
+      '';
+    };
+  };
+
   # --- boot chain: LUKS unlock from home ---
   boot.initrd = {
     network = {
@@ -271,16 +354,15 @@ in
       };
     };
     systemd.users.root.shell = "/bin/systemd-tty-ask-password-agent";
-    # NOTE: NetworkManager forces networking.useDHCP = false, so stage 1 gets no
-    # DHCP by itself (the wakeOnLan interface even yields a 40-enp131s0 with
-    # DHCP=no); this file sorts first and wins the match
+    # NOTE: stage 1 gets no network config by itself (NetworkManager forces
+    # networking.useDHCP = false); this file sorts before the generated
+    # 40-enp131s0 and wins the match -- same static address as stage 2
     systemd.network = {
       enable = true;
       networks."10-lan" = {
         matchConfig.Type = "ether";
-        networkConfig.DHCP = "ipv4";
-        # same client-id as NetworkManager -> same lease in stage 1 and 2
-        dhcpV4Config.ClientIdentifier = "mac";
+        address = [ "${selfVars.address}/24" ];
+        routes = [ { Gateway = vilaGateway; } ];
       };
     };
   };

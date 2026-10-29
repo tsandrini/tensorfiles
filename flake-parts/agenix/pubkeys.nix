@@ -26,6 +26,7 @@ let
   restic-client-blehbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID03+HqMSNIKeldtNA5sZgppOaRf4p2TC4NoDFn4OLf0 restic-client-blehbundle";
   restic-client-pupibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDhpHRcnsno0QGRflS9tPIVwS4h58+hEhlWwmtnvQHX0 restic-client-pupibundle";
   restic-admin-navibundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAII+BTTro7oxuAsWW2vEJIzGttDdfjmPoBmmi977ti/xU restic-admin-navibundle";
+  restic-admin-krupikbundle = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILQFDsp9xADTOtxNKhvM+MLGys8pnjOQmDXiBOrOFK7r restic-admin-krupikbundle";
 in
 {
   common = {
@@ -39,6 +40,7 @@ in
         tsandrini
         restic-admin-flatbundle
         restic-admin-navibundle
+        restic-admin-krupikbundle
       ];
       # each locked to `restic/<name>`
       appendOnly = {
@@ -51,6 +53,12 @@ in
   hosts = {
     storagebundle-1 = {
       hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIICf9svRenC/PLKIL9nk6K/pxQgoiFC41wTNvoIncOxs";
+      # NOTE: Go ssh clients (rclone) ask for RSA first; a known_hosts with only
+      # the ed25519 key fails with "knownhosts: key mismatch"
+      extraHostKeys = [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA5EB5p/5Hp3hGW1oHok+PIOH9Pbn7cnUiGmUEBrCVjnAw+HrKyN8bYVV0dIGllswYXwkG/+bgiBlE6IVIBAq+JwVWu1Sss3KarHY3OvFJUXZoZyRRg/Gc/+LRCE7lyKpwWQ70dbelGRyyJFH36eNv6ySXoUYtGkwlU5IVaHPApOxe4LHPZa/qhSRbPo2hwoh0orCtgejRebNtW5nlx00DNFgsvn8Svz2cIYLxsPVzKgUxs8Zxsxgn+Q/UvR7uq4AbAhyBMLxv7DjJ1pc7PJocuTno2Rw9uMZi1gkjbnmiOh6TTXIEWbnroyIhwc8555uto9melEUmWNQ+C+PwAK+MPw=="
+        "ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAGK0po6usux4Qv2d8zKZN1dDvbWjxKkGsx7XwFdSUCnF19Q8psHEUWR7C/LtSQ5crU/g+tQVRBtSgoUcE8T+FWp5wBxKvWG2X9gD+s9/4zRmDeSJR77W6gSA/+hpOZoSE+4KgNdnbYSNtbZH/dN74EG7GLb/gcIpbUUzPNXpfKl7mQitw==" # pragma: allowlist secret
+      ];
     };
     navibundle = {
       hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID4CsU0/G4Qv5YXPfII/7cfXHoUxGmnCDXJKQjkIa0g3 root@navibundle";
