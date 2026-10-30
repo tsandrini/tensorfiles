@@ -114,6 +114,52 @@ in
       '';
     };
 
+    workspace = {
+      enable = mkOption {
+        type = types.bool;
+        default = true;
+        description = ''
+          Whether `~/ProjectBundle` is kept in step with the other
+          workstations through the hub (ccdash H9): every repository and
+          plain directory under it is snapshotted as it changes, the other
+          machines fast-forward or merge, conflicts land as git markers plus
+          an entry in the panel. Replaces handoff; the lists below are
+          handoff's `config.toml` carried over as the starting configuration
+          (the hub's wins once it exists, edited in the panel).
+        '';
+      };
+
+      include = mkOption {
+        type = types.listOf types.str;
+        default = [
+          "meteopress/*"
+          "PesekMudra/*"
+          "tsandrini/*"
+          "second-foundation/*"
+          "Sarianille/*"
+          "tcy-digital/*"
+        ];
+        description = "Globs on unit ids (`<bundle>/<repo>`) that travel.";
+      };
+
+      exclude = mkOption {
+        type = types.listOf types.str;
+        default = [
+          # third-party clones: clone them per machine, push branches to the fork
+          "tsandrini/nixpkgs"
+          "tsandrini/yosys"
+          # stubs, backups and variants
+          "*_bkp"
+          "*-bkp"
+          "tsandrini/immutable-insights-aaaa"
+          "tsandrini/immutable-insights-main"
+          "tsandrini/blog"
+          "tsandrini/emilek-stonks-peepogamba"
+        ];
+        description = "Globs on unit ids that never travel.";
+      };
+    };
+
     binds = {
       dash = mkOption {
         type = types.str;
@@ -151,6 +197,12 @@ in
         hub.url = _ cfg.hub.url;
         hub.tokenFile = _ config.age.secrets."${tokenSecret}".path;
         sync.enable = _ cfg.sync.enable;
+        workspace = {
+          enable = _ cfg.workspace.enable;
+          root = _ "~/ProjectBundle";
+          include = _ cfg.workspace.include;
+          exclude = _ cfg.workspace.exclude;
+        };
         # NOTE: the meta tokens direnv injects at the workspace root (claude-code module)
         launch.env = _ [ "CLAUDE_META_*" ];
         claudeCode.channel.enable = _ cfg.channel.enable;

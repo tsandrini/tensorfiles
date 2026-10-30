@@ -74,6 +74,9 @@ in
           inherit (vhost) domain;
         };
         backup.enable = true;
+        # NOTE: ~/ProjectBundle of the workstations as bare repositories under
+        # sync.directory/workspace (restic covers it); git enters the closure here
+        workspace.enable = true;
         settings = {
           host = hostName;
           store.retention_days = 90;
@@ -86,8 +89,9 @@ in
         };
       };
 
-      # NOTE: the database's nightly copies and the collectors' Claude Code
+      # NOTE: the database's nightly copies, the collectors' Claude Code
       # state (sessions, prompt history; plain files outside the database)
+      # and the workspace repositories (sync.directory/workspace)
       tensorfiles.services.backup.restic.paths = with config.services.ccdash-hub; [
         backup.directory
         sync.directory
