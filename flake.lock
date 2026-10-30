@@ -164,11 +164,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1793029521,
-        "narHash": "sha256-YPxyNorFl2Hbmnv74R/P1oAWqNbqXdXchS+POe7TDFE=",
+        "lastModified": 1793400747,
+        "narHash": "sha256-+ZJ6Ia9/99AenjOSSqNfDEY1QZahuPVjTX9O2uTdd1w=",
         "owner": "tsandrini",
         "repo": "ccdash",
-        "rev": "c0c54cf28613bf575083310f8976b2d5aba7f72f",
+        "rev": "19c8e67e5986b524ae68a69c58a555936b7dee6e",
         "type": "github"
       },
       "original": {
@@ -1284,11 +1284,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792987030,
-        "narHash": "sha256-t//ltF7M58hc9Rqags5IQCLyzMOPgAuyxkzDwcn1bj0=",
+        "lastModified": 1793267696,
+        "narHash": "sha256-pU0HWLzBuoGIYLMIjoZNqiALCAUl9JwV6ujIyOZO3i4=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "a5500f41321b0a6b68407500f26dd55dbeb5793f",
+        "rev": "e452052b9efb54fd59f8a06cbc09978fb542a3c2",
         "type": "github"
       },
       "original": {
@@ -1342,11 +1342,11 @@
     "meteopress-radar-radar_deploy": {
       "flake": false,
       "locked": {
-        "lastModified": 1792767253,
-        "narHash": "sha256-wgvjiOv/IQjPvA6sIlkj/hpSJOXdYs+ttzAY+8BOZVM=",
+        "lastModified": 1793293789,
+        "narHash": "sha256-hB0cgrovOgAnEu7UjGslrKCeGJ24UGyT1+b27GLN4nM=",
         "ref": "refs/heads/main",
-        "rev": "55c40fff34bec6a309b607d0a970e9a0d5d8e0ca",
-        "revCount": 793,
+        "rev": "df0e8da52b8c6fa895d893b81c3c192ce5330005",
+        "revCount": 803,
         "type": "git",
         "url": "ssh://git@github.com/Meteopresscz/radar-radar_deploy.git"
       },
@@ -1977,11 +1977,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1792116957,
-        "narHash": "sha256-EjZqHKObBfIOeHZnMRVV87HB3pPq/WBkmRJWyFxmZu8=",
+        "lastModified": 1793225069,
+        "narHash": "sha256-sx1f99WGrDfJ83KKuQrqGPmot0rnDgmpLJDzpU2oHQQ=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "f20cd90e28fe0403873f473b29e42662cd86e8c4",
+        "rev": "e62746b0b472753ef019baceab6f1e2e52014980",
         "type": "github"
       },
       "original": {
