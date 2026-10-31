@@ -12,7 +12,12 @@
 # 888   88888888 888  888 "Y8888b. 888  888 888     888    888 888 88888888 "Y8888b.
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
-{ inputs, config, ... }:
+{
+  inputs,
+  config,
+  lib,
+  ...
+}:
 let
   inherit (inputs) deploy-rs;
   inherit (config) infraVars;
@@ -22,7 +27,7 @@ let
 
   deployHost =
     hostName: system: opts:
-    {
+    lib.recursiveUpdate {
       hostname = infraVars.hosts.${hostName}.address;
 
       profiles.system = {
@@ -36,8 +41,7 @@ let
         magicRollback = true;
         path = hostPath system hostName;
       };
-    }
-    // opts;
+    } opts;
 in
 {
   flake.deploy.nodes = {
@@ -54,6 +58,17 @@ in
     };
     "krupikbundle" = deployHost "krupikbundle" "x86_64-linux" {
       hostname = infraVars.hosts."krupikbundle".wgAddress;
+    };
+    "navibundle" = deployHost "navibundle" "x86_64-linux" {
+      hostname = infraVars.hosts."navibundle".address;
+    };
+    "flatbundle" = deployHost "flatbundle" "x86_64-linux" {
+      hostname = infraVars.hosts."flatbundle".wgAddress;
+      profiles.system.sshUser = "tsandrini";
+    };
+    "jetbundle" = deployHost "jetbundle" "x86_64-linux" {
+      hostname = infraVars.hosts."jetbundle".wgAddress;
+      profiles.system.sshUser = "tsandrini";
     };
   };
 

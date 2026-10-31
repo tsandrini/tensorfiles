@@ -84,6 +84,21 @@ _: rec {
       wgAddress = "10.0.33.16";
     };
     # ----------------------------------
+    "navibundle" = {
+      address = "10.10.0.204";
+      wgAddress = null;
+    };
+    # ----------------------------------
+    "flatbundle" = {
+      address = "10.10.0.110";
+      wgAddress = "10.0.33.11";
+    };
+    # ----------------------------------
+    "jetbundle" = {
+      address = null;
+      wgAddress = "10.0.33.10";
+    };
+    # ----------------------------------
     "remotebundle" =
       let
         address = "localhost";

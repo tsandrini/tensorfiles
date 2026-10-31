@@ -84,9 +84,6 @@ in
       packages-extra.enable = true;
       packages-graphical-extra.enable = true;
 
-      # NOTE: unlike flatbundle this box is a deploy/kexec target from the
-      # laptop: key-only sshd (port 2222, root login off) + `deploy` sudo user,
-      # reachable from the LAN subnets only (see subnets-firewall below)
       with-deploy-user.enable = true;
     };
     services.networking.ssh.enable = true;
