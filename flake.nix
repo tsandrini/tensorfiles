@@ -131,7 +131,7 @@
       flake = false;
     };
     bbhost-src = {
-      url = "github:droogie/bbhost";
+      url = "github:droogie/bbhost/v0.2.22";
       flake = false;
     };
     danksearch = {

@@ -12,7 +12,7 @@
   curl,
   zlib,
   spirv-tools,
-  # flake input `bbhost-src` (droogie/bbhost master)
+  # flake input `bbhost-src` (droogie/bbhost)
   bbhost-src,
 }:
 let
@@ -23,6 +23,15 @@ stdenv.mkDerivation {
   pname = "bbhost";
   inherit version;
   src = bbhost-src;
+
+  # NOTE: the test includes menu_assets.cpp, which calls config(); it links
+  # upstream only because clang's -O2 proves that call dead, gcc keeps it
+  postPatch = ''
+    substituteInPlace tests/menu_assets_test.cpp \
+      --replace-fail 'void hle_fs_set_generated_root(const char*) {}' \
+        'void hle_fs_set_generated_root(const char*) {}
+    const HostConfig& config() { static HostConfig c; return c; }'
+  '';
 
   nativeBuildInputs = [
     cmake
