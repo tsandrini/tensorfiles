@@ -164,11 +164,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1793442233,
-        "narHash": "sha256-vGtPWkviPzf0yeRV8Q6+t9FVdtDThBuiJLRpGDUl4ZI=",
+        "lastModified": 1793446993,
+        "narHash": "sha256-oG18TxYYyj4MjFh0yfPOjXvkiik+MdXbwwyPjPfG6yc=",
         "owner": "tsandrini",
         "repo": "ccdash",
-        "rev": "704962c464dac54afc1f73aee9cf1f7712797ef2",
+        "rev": "95dd11861a29773ddd06e07fc3c14d31bf06c5b0",
         "type": "github"
       },
       "original": {
