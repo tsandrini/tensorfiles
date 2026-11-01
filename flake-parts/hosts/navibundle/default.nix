@@ -235,7 +235,6 @@ in
     ];
 
     tensorfiles.hm = {
-      programs.handoff.enable = true;
       programs.evnia-panel.enable = true;
       programs.dank-calendar.enable = true;
       profiles.graphical-dms-niri.enable = true;

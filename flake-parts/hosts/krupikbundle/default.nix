@@ -20,14 +20,12 @@
 }:
 {
   config,
-  lib,
   pkgs,
   system,
   ...
 }:
 let
   selfVars = infraVars.hosts.krupikbundle;
-  storageBox = infraVars.hosts."storagebundle-1";
   vilaGateway = "192.168.31.1"; # vilekula-nuc, VLAN 31
   mikrobundleWgPublicKey = "RY2XHIRk+2RtA27EUQdLj+CcqAP2Izj4cGI3Nm0d5CE="; # pragma: allowlist secret
 in
@@ -93,8 +91,7 @@ in
     security.agenix.enable = true;
 
     # backup admin like flatbundle/navibundle (owner's call 2026-10-29): the
-    # full-access Storage Box key + repository passwords live here; `backupctl`
-    # and the handoff relay use them
+    # full-access Storage Box key + repository passwords live here for `backupctl`
     services.backup.restic.admin = {
       enable = true;
       user = "tsandrini";
@@ -103,7 +100,6 @@ in
         blehbundle = { };
         pupibundle = { };
       };
-      handoff.enable = true;
     };
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -213,19 +209,6 @@ in
   };
   age.secrets."hosts/krupikbundle/wg-home-tunnel-privkey".file =
     "${secretsPath}/hosts/krupikbundle/wg-home-tunnel-privkey.age";
-
-  # handoff's sftp relay (rclone) pins the Storage Box here, see
-  # ~/.config/handoff/config.toml (private, hand-copied); it logs in with the
-  # restic admin key (`key_file` = that agenix secret's path)
-  programs.ssh.knownHosts = lib.listToAttrs (
-    lib.imap0 (i: key: {
-      name = "storagebox-handoff-${toString i}";
-      value = {
-        hostNames = [ "[${storageBox.address}]:${toString storageBox.port}" ];
-        publicKey = key;
-      };
-    }) ([ pubkeys.hosts."storagebundle-1".hostKey ] ++ pubkeys.hosts."storagebundle-1".extraHostKeys)
-  );
 
   # --- remote console: Sunshine (wlr capture + NVENC + uinput) for Moonlight ---
   services.sunshine = {
@@ -442,7 +425,6 @@ in
     ];
 
     tensorfiles.hm = {
-      programs.handoff.enable = true;
       programs.dank-calendar.enable = true;
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;

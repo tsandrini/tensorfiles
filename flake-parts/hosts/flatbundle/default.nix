@@ -95,7 +95,6 @@ in
         blehbundle = { };
         pupibundle = { };
       };
-      handoff.enable = true;
     };
 
     # Use the `nh` garbage collect to also collect .direnv and XDG profiles
@@ -236,7 +235,6 @@ in
     ];
 
     tensorfiles.hm = {
-      programs.handoff.enable = true;
       programs.dank-calendar.enable = true;
       profiles.graphical-dms-niri.enable = true;
       programs.pywal.enable = true;
