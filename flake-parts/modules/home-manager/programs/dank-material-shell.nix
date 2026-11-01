@@ -13,7 +13,12 @@
 # Y88b. Y8b.     888  888      X88 Y88..88P 888     888    888 888 Y8b.          X88
 #  "Y888 "Y8888  888  888  88888P'  "Y88P"  888     888    888 888  "Y8888   88888P'
 { localFlake, inputs }:
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  options,
+  ...
+}:
 let
   inherit (lib) mkIf mkMerge mkEnableOption;
   inherit (localFlake.lib.modules) mkOverrideAtHmModuleLevel;
@@ -53,6 +58,14 @@ in
     {
       programs.dank-material-shell = {
         enable = _ true;
+        # NOTE: only real input wakes monitors, see the patch header
+        package = _ (
+          options.programs.dank-material-shell.package.default.overrideAttrs (old: {
+            postInstall = old.postInstall + ''
+              patch --forward -d $out/share/quickshell/dms -p2 < ${./dank-material-shell-no-inhibit-wake.patch}
+            '';
+          })
+        );
         systemd = {
           enable = _ (!niri-flakeCheck);
           restartIfChanged = _ true;

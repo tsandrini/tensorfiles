@@ -1,0 +1,69 @@
+idle: only real input wakes monitors
+
+An idle inhibitor appearing (Firefox "Playing audio", any ScreenSaver.Inhibit)
+makes the compositor send `resumed` to every notification that respects
+inhibitors. IdleService took that for the user coming back and powered the
+monitors on with nobody there; niri already wakes on real input by itself.
+
+- monitorOffMonitor no longer requests power-on
+- postLockMonitorOffMonitor ignores inhibitors: a locked screen goes dark
+  whatever is playing behind it
+- lockWakeMonitor runs whenever DMS powered the monitors off (upstream
+  22fa08f0f + 14de920cd) and is the only path that clears monitorsOff
+
+Applied to the installed tree in postInstall: `src` is `./core`, so `patches`
+never reaches the QML. Drop the lockWakeMonitor hunks on a bump past 14de920cd
+(upstream renames it to wakeMonitor).
+
+--- a/quickshell/Services/IdleService.qml
++++ b/quickshell/Services/IdleService.qml
+@@ -89,10 +89,11 @@
+                     root.requestMonitorOff();
+                 }
+             } else {
++                // NOTE: never a wake path, isIdle also drops when an inhibitor
++                // appears. Real input wakes niri itself, see lockWakeMonitor.
+                 if (SettingsData.fadeToDpmsEnabled) {
+                     root.cancelFadeToDpms();
+                 }
+-                root.requestMonitorOn();
+             }
+         }
+     }
+@@ -100,16 +101,14 @@
+     IdleMonitor {
+         id: postLockMonitorOffMonitor
+         timeout: root.postLockMonitorTimeout > 0 ? root.postLockMonitorTimeout : 86400
+-        respectInhibitors: root.respectInhibitors
++        // NOTE: a locked screen goes dark whatever is playing behind it
++        respectInhibitors: false
+         enabled: false
+         onIsIdleChanged: {
+             if (!enabled)
+                 return;
+-            if (isIdle) {
++            if (isIdle)
+                 root.requestMonitorOff();
+-            } else {
+-                root.requestMonitorOn();
+-            }
+         }
+     }
+
+@@ -148,14 +147,14 @@
+         }
+     }
+
+-    // Wakes monitors powered off by the "power off monitors on lock" path.
+     // Lock.qml's own wake handlers sit outside the session-lock surface and
+     // never receive input, so wake on input via seat-level idle-notify instead.
++    // Ignores inhibitors: the only path that clears monitorsOff.
+     IdleMonitor {
+         id: lockWakeMonitor
+         timeout: 1
+         respectInhibitors: false
+-        enabled: root.enabled && root.isShellLocked && root.monitorsOff && (SettingsData.lockScreenPowerOffMonitorsOnLock || root.lockPowerOffRequested)
++        enabled: root.enabled && root.monitorsOff
+         onIsIdleChanged: {
+             if (!enabled)
+                 return;
