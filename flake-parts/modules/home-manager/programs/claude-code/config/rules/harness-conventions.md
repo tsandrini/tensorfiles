@@ -37,7 +37,9 @@ harness files are touched. Canonical copy lives in tensorfiles:
 - Skills: `<scope>-<verb>` for procedures, `<scope>-<noun>` for reference;
   the directory name is the slash command.
 - Memory notes (ccdash): slug `<scope>--<topic>`, a one-line summary for
-  the index. `.claude/memory/` is a frozen archive since 2026-10-18.
+  the index. Documents (plans, specs, research, handoffs, meeting notes):
+  `doc_write`, slug `<topic>--<part>`. No `.claude/memory/` directories
+  and no loose note files since 2026-11-01: the hub is the only store.
 
 ## Workspace meta layer
 

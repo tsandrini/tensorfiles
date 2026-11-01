@@ -78,9 +78,12 @@ message of the turn, complete; text before a tool call may never reach me.
   reads it with its next prompt (it never starts a turn there). Messages
   and claims of others arrive as context with your prompts; a warning
   before an edit means the file is claimed — coordinate first.
-- `.claude/memory/` directories are frozen archives (imported into the hub
-  2026-10-18): never write there. When the tools report the hub offline,
-  writes are queued and land later; carry on.
+- Opt-out, not opt-in: every note, plan, spec, research write-up,
+  handoff or meeting note goes into the hub (`doc_write` for long ones),
+  never into a loose file or a `.claude/memory/` directory. The one
+  exception is Claude material colleagues read inside a repository (that
+  repo's own `CLAUDE.md`, `.claude/`). When the tools report the hub
+  offline, writes are queued and land later; carry on.
 
 ## Missing information
 

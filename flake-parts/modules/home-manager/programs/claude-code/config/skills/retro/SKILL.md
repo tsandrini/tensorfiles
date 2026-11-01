@@ -26,4 +26,4 @@ ccdash (the hub), through the ccdash tools.
    table — constraints/orientation into a rule, procedures/reference
    into a skill — and archive the memory once promoted. Present
    proposals to the user; never promote silently.
-5. Never write `.claude/memory/` files: they are a frozen archive.
+5. Never write memory files; `remember` is the only store.
