@@ -434,7 +434,10 @@ in
       security.agenix.enable = true;
       programs.editors.emacs-doom.enable = true;
       services.keepassxc.enable = true;
-      services.ccdash.enable = true;
+      services.ccdash = {
+        enable = true;
+        power.suspend = true;
+      };
 
       programs.claude-code = {
         enable = true;

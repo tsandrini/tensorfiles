@@ -86,6 +86,10 @@ in
             "tsandrini"
           ];
           push.subject = "mailto:${infraVars.common.contacts.securityEmail}";
+          # NOTE: vila VLAN 31 is no network of the hub's; mikrobundle routes this
+          # one /32 (UDP/9 from here only) into the vila site tunnel, the vila
+          # router keeps a permanent neighbour entry for the sleeping box
+          wake.via.krupikbundle = infraVars.hosts."krupikbundle".address;
         };
       };
 

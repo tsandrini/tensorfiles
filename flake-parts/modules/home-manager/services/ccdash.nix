@@ -103,6 +103,27 @@ in
       '';
     };
 
+    power.lock = mkOption {
+      type = types.bool;
+      default = true;
+      description = ''
+        Whether the ccdash panel may lock this machine's graphical session
+        (Machines › the machine › Lock, also on its card while the session
+        is unlocked), through logind, which DankMaterialShell answers.
+      '';
+    };
+
+    power.suspend = mkOption {
+      type = types.bool;
+      default = false;
+      description = ''
+        Whether the ccdash panel may suspend this machine (Machines › the
+        machine › Suspend). The hub wakes it again with a wake-on-LAN magic
+        packet when it shares a network with the machine's wired card, or
+        through the hub's `wake.via` for a machine elsewhere.
+      '';
+    };
+
     telemetry.enable = mkOption {
       type = types.bool;
       default = true;
@@ -197,6 +218,10 @@ in
         hub.url = _ cfg.hub.url;
         hub.tokenFile = _ config.age.secrets."${tokenSecret}".path;
         sync.enable = _ cfg.sync.enable;
+        power = {
+          suspend = _ cfg.power.suspend;
+          lock = _ cfg.power.lock;
+        };
         workspace = {
           enable = _ cfg.workspace.enable;
           root = _ "~/ProjectBundle";
