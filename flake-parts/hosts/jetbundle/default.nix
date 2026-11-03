@@ -186,7 +186,7 @@
       DEFAULT_USERNAME = "tsandrini";
       DEFAULT_MAIL = "t@tsandrini.sh";
     };
-    programs.git.signing.key = "3E83AD690FA4F657"; # pragma: allowlist secret
+    programs.git.signing.key = "3E83AD690FA4F657!"; # pragma: allowlist secret
 
     programs.mcp.enable = true;
 
