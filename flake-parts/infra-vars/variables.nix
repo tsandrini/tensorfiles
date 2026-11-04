@@ -86,7 +86,7 @@ _: rec {
     # ----------------------------------
     "navibundle" = {
       address = "10.10.0.204";
-      wgAddress = null;
+      wgAddress = "10.10.0.204"; # NOTE: always on site
     };
     # ----------------------------------
     "flatbundle" = {
