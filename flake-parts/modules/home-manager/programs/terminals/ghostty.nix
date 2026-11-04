@@ -16,6 +16,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 let
@@ -46,6 +47,24 @@ in
     {
       programs.ghostty = {
         enable = _ true;
+        # TODO: drop once ghostty closes inherited fds itself (ghostty-org/ghostty#5341)
+        # NOTE: GTK/EGL fds lack CLOEXEC; every shell pins the dmabufs it
+        # inherits (krupikbundle VRAM exhaustion, 2026-11-04)
+        package = _ (
+          pkgs.ghostty.overrideAttrs (old: {
+            postPatch = (old.postPatch or "") + ''
+              substituteInPlace src/Command.zig --replace-fail \
+                '    if (self.rt_pre_exec) |f| if (f(self)) |exitcode| posix.exit(exitcode);' \
+                '    if (self.rt_pre_exec) |f| if (f(self)) |exitcode| posix.exit(exitcode);
+                  if (comptime builtin.os.tag == .linux) _ = linux.syscall3(.close_range, 3, std.math.maxInt(u32), 0);'
+              # NOTE: std.process.Child has no pre-exec hook; 4 = CLOSE_RANGE_CLOEXEC
+              substituteInPlace src/os/open.zig --replace-fail \
+                '    try exe.spawn();' \
+                '    if (comptime builtin.os.tag == .linux) _ = std.os.linux.syscall3(.close_range, 3, std.math.maxInt(u32), 4);
+                  try exe.spawn();'
+            '';
+          })
+        );
         systemd.enable = _ true;
         settings = {
           font-size = _ 10;
