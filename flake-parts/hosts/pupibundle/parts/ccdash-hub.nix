@@ -94,11 +94,13 @@ in
       };
 
       # NOTE: the database's nightly copies, the collectors' Claude Code
-      # state (sessions, prompt history; plain files outside the database)
-      # and the workspace repositories (sync.directory/workspace)
+      # state (sessions, prompt history; plain files outside the database),
+      # the workspace repositories (sync.directory/workspace) and the
+      # published reports (plain HTML files outside the database)
       tensorfiles.services.backup.restic.paths = with config.services.ccdash-hub; [
         backup.directory
         sync.directory
+        reports.directory
       ];
 
       age.secrets = {

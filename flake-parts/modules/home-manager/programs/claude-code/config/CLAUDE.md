@@ -16,10 +16,13 @@
 
 ## Reports & page-shaped output
 
-- A report, dashboard, visualization, or any other "HTML" deliverable
-  means a standalone local `.html` file — self-contained (inline
-  CSS/JS), openable offline, shareable as a plain file. Place it at the
-  path I name, otherwise per the Temporary-files rules above.
+- A report, dashboard, visualization, research write-up or any other
+  "HTML" deliverable is a ccdash report: load the `ccdash:report` skill
+  and follow it — one self-contained `.html` in the shared design, built
+  with `ccdash report build`, published with `report_publish`, read and
+  downloaded in the ccdash panel (Reports). The hub's copy is the
+  deliverable; the local file is scaffolding (scratchpad or
+  `.claude-tmp/`), never a loose file in a repo.
 - Never substitute a claude.ai Artifact for it: artifacts are hard to
   distribute and I cannot edit them myself. Use the Artifact tool only
   when I explicitly ask for an artifact.
