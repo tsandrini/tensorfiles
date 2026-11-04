@@ -163,6 +163,36 @@ in
       systemd.user.services.niri-flake-polkit.enable = _ false;
     }
     # |----------------------------------------------------------------------| #
+    (mkIf config.hardware.nvidia.enabled {
+      # NOTE: the driver's own "No VidMem Reuse" rules skip niri (~1 GiB VRAM),
+      # https://niri-wm.github.io/niri/Nvidia.html
+      environment.etc."nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json".text =
+        _ (
+          builtins.toJSON {
+            rules = [
+              {
+                pattern = {
+                  feature = "procname";
+                  matches = "niri";
+                };
+                profile = "Limit Free Buffer Pool On Wayland Compositors";
+              }
+            ];
+            profiles = [
+              {
+                name = "Limit Free Buffer Pool On Wayland Compositors";
+                settings = [
+                  {
+                    key = "GLVidHeapReuseRatio";
+                    value = 0;
+                  }
+                ];
+              }
+            ];
+          }
+        );
+    })
+    # |----------------------------------------------------------------------| #
   ]);
 
   meta.maintainers = with localFlake.lib.maintainers; [ tsandrini ];
