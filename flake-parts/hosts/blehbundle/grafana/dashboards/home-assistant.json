@@ -713,7 +713,7 @@
         "w": 24,
         "h": 6
       },
-      "description": "Tapo L530 on the IoT subnet. Brightness 0 = off; unavailable = no answer (the shower bulb is wall-switched).",
+      "description": "Tapo L530 on the IoT subnet (obejvak 1, obejvak 2, kuchyne) and the Hue koupelna over Zigbee. Brightness 0 = off; unavailable = no answer (kuchyne and koupelna are wall-switched).",
       "targets": [
         {
           "datasource": {
