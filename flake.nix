@@ -145,6 +145,8 @@
     ccdash = {
       url = "github:tsandrini/ccdash";
       inputs.nixpkgs.follows = "nixpkgs";
+      # NOTE: ccdash's VM tests only
+      inputs.home-manager.follows = "home-manager";
     };
     llm-agents.url = "github:numtide/llm-agents.nix";
     # NOTE: pinned pre-`2026.8.31` servers bump — reference servers now need

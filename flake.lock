@@ -158,6 +158,9 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "flake-parts-builder": "flake-parts-builder",
+        "home-manager": [
+          "home-manager"
+        ],
         "nixpkgs": [
           "nixpkgs"
         ],
@@ -165,11 +168,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1794141343,
-        "narHash": "sha256-sYVOYlUqH0kdInaS6FQMBgmnhzGRQwv75YyIEWLkXAE=",
+        "lastModified": 1794145098,
+        "narHash": "sha256-py1dp2q3baqq5G6CmJPvnq99Dg9I/FP3Gqrq2q/Bw08=",
         "owner": "tsandrini",
         "repo": "ccdash",
-        "rev": "4446aa01468330525f4b0dadf8472f7d1de502b6",
+        "rev": "4f934e7d2cef6f47e2d586a97f7841a765c1d14e",
         "type": "github"
       },
       "original": {
