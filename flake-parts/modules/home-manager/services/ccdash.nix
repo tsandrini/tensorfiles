@@ -228,6 +228,15 @@ in
           include = _ cfg.workspace.include;
           exclude = _ cfg.workspace.exclude;
         };
+        # NOTE: ccdash assumes no terminal or editor since H14; these were its old defaults
+        terminal = _ {
+          command = [
+            "ghostty"
+            "-e"
+          ];
+          appId = "com.mitchellh.ghostty";
+        };
+        editor = _ "nvim";
         # NOTE: the meta tokens direnv injects at the workspace root (claude-code module)
         launch.env = _ [ "CLAUDE_META_*" ];
         claudeCode.channel.enable = _ cfg.channel.enable;

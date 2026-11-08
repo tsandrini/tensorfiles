@@ -165,11 +165,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1793795188,
-        "narHash": "sha256-WN47LcGcD95trZV2HupHBU9o/snuZpn/j6lw2HUcfJ0=",
+        "lastModified": 1794141343,
+        "narHash": "sha256-sYVOYlUqH0kdInaS6FQMBgmnhzGRQwv75YyIEWLkXAE=",
         "owner": "tsandrini",
         "repo": "ccdash",
-        "rev": "f92e19c9ce8f055959dd8756e73f199529b81bca",
+        "rev": "4446aa01468330525f4b0dadf8472f7d1de502b6",
         "type": "github"
       },
       "original": {
@@ -854,11 +854,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790898470,
-        "narHash": "sha256-zTwuwezD0w3hpga6a6P8emidzAZFyWqlNeRBlpWOOl8=",
+        "lastModified": 1793576659,
+        "narHash": "sha256-V1h85lUaJBQoHFrB2vpXZOE0Ju1MYSnIpsehoVZYlDo=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "024633cd702b10285db5cb19b40ad48d2399ba60",
+        "rev": "ea2630b7470978622c7689a1ff75d2b389175399",
         "type": "github"
       },
       "original": {
@@ -1285,11 +1285,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1793267696,
-        "narHash": "sha256-pU0HWLzBuoGIYLMIjoZNqiALCAUl9JwV6ujIyOZO3i4=",
+        "lastModified": 1793859612,
+        "narHash": "sha256-DDsPI44qOjlRdnWbaVlcU5iwUPfadigR4oUrVWq2G0I=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "e452052b9efb54fd59f8a06cbc09978fb542a3c2",
+        "rev": "499fb79f92064e92cdb968d12ffeb92d36243b50",
         "type": "github"
       },
       "original": {
@@ -1343,11 +1343,11 @@
     "meteopress-radar-radar_deploy": {
       "flake": false,
       "locked": {
-        "lastModified": 1793293789,
-        "narHash": "sha256-hB0cgrovOgAnEu7UjGslrKCeGJ24UGyT1+b27GLN4nM=",
+        "lastModified": 1793912838,
+        "narHash": "sha256-Cv4o3GVYf9zXP0dZZYXeLZj6tUZ6J9zcjjKB4k2lMl0=",
         "ref": "refs/heads/main",
-        "rev": "df0e8da52b8c6fa895d893b81c3c192ce5330005",
-        "revCount": 803,
+        "rev": "2341fb32eba811e728c70f5c20bc4aaeedbf3e82",
+        "revCount": 810,
         "type": "git",
         "url": "ssh://git@github.com/Meteopresscz/radar-radar_deploy.git"
       },
@@ -1978,11 +1978,11 @@
     },
     "nixpkgs_11": {
       "locked": {
-        "lastModified": 1793225069,
-        "narHash": "sha256-sx1f99WGrDfJ83KKuQrqGPmot0rnDgmpLJDzpU2oHQQ=",
+        "lastModified": 1793795574,
+        "narHash": "sha256-pgG/CO+txdf2sA2z6DsM+2G3F9ajfIp/3BMC4wfKMDY=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e62746b0b472753ef019baceab6f1e2e52014980",
+        "rev": "13e53762c5afaf384d4614e94527a9ccfafe41d0",
         "type": "github"
       },
       "original": {
