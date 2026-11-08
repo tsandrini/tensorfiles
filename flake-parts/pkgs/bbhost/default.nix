@@ -24,15 +24,6 @@ stdenv.mkDerivation {
   inherit version;
   src = bbhost-src;
 
-  # NOTE: the test includes menu_assets.cpp, which calls config(); it links
-  # upstream only because clang's -O2 proves that call dead, gcc keeps it
-  postPatch = ''
-    substituteInPlace tests/menu_assets_test.cpp \
-      --replace-fail 'void hle_fs_set_generated_root(const char*) {}' \
-        'void hle_fs_set_generated_root(const char*) {}
-    const HostConfig& config() { static HostConfig c; return c; }'
-  '';
-
   nativeBuildInputs = [
     cmake
     ninja
@@ -67,7 +58,8 @@ stdenv.mkDerivation {
     runHook preInstall
 
     install -Dm0755 bbhost -t $out/libexec/bbhost
-    install -Dm0755 plugins/{randomizer,boss_rush,mutators,debug_menu}.so -t $out/libexec/bbhost/plugins
+    # NOTE: upstream's list of official plugins; fails if one was not built
+    bash $src/tools/package_plugins.sh plugins $out/libexec/bbhost/plugins
     cp -r $src/patches $out/libexec/bbhost/patches
     install -Dm0644 $src/bbhost.example.toml $src/docs/*.md -t $out/share/doc/bbhost
 

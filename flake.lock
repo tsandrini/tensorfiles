@@ -58,16 +58,16 @@
     "bbhost-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1793412103,
-        "narHash": "sha256-ERi/8LJ1dfPWqgD+nHJBtqgpSHEXsdAniaNSg46E24g=",
+        "lastModified": 1794071541,
+        "narHash": "sha256-7zw221wDGTrc92wG5uDLXl2ljoRY+Yz6HWcbWHvW7iE=",
         "owner": "droogie",
         "repo": "bbhost",
-        "rev": "d54ea7e0dc14d0494db8b15edd9003d76f9cffd1",
+        "rev": "8018f3b1ea19d4e78a5fcbd5bfb3f2def2341a56",
         "type": "github"
       },
       "original": {
         "owner": "droogie",
-        "ref": "v0.2.22",
+        "ref": "v0.2.27",
         "repo": "bbhost",
         "type": "github"
       }
