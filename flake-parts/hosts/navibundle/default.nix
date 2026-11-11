@@ -70,6 +70,7 @@ in
 
     # --- gaming ---
     inputs.self.packages.${system}.bbhost # Bloodborne (PS4) translation layer
+    inputs.self.packages.${system}.pt-pc # P.T. (PS4) native PC port
   ];
 
   # ---------------------
