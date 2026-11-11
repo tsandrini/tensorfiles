@@ -134,6 +134,10 @@
       url = "github:droogie/bbhost/v0.2.27";
       flake = false;
     };
+    pt-pc-src = {
+      url = "github:LoreanXavier/pt-pc/v1.0.8";
+      flake = false;
+    };
     danksearch = {
       url = "github:AvengeMedia/danksearch";
       inputs.nixpkgs.follows = "nixpkgs";

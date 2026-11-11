@@ -1,0 +1,34 @@
+Read-only installs (the Nix store) cannot hold data/ next to the executable,
+where the Linux build keeps pt.ini, saves, logs, caches and mods. PT_DATA_DIR
+names a writable folder instead; the first-run screen then extracts the game
+there too, as on macOS. Unset, nothing changes.
+
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -862,6 +862,8 @@
+     if (!std::filesystem::is_directory(pt::ExecutableDir() / "mods", ec)) {
+         if (const std::filesystem::path user = UserDataDir(); !user.empty()) return user / "mods";
+     }
++#elif !defined(_WIN32)
++    if (!pt::os::GetEnv("PT_DATA_DIR").empty()) return UserDataDir() / "mods";
+ #endif
+     return pt::ExecutableDir() / "mods";
+ }
+@@ -1102,6 +1104,8 @@
+     }();
+     return directory;
+ #else
++    /* read-only installs: PT_DATA_DIR names the writable data folder */
++    if (const auto value = pt::os::GetEnv("PT_DATA_DIR"); !value.empty()) return pt::os::PathFromUtf8(value);
+     return pt::ExecutableDir() / "data";
+ #endif
+ }
+@@ -1212,6 +1216,8 @@
+ #ifdef __APPLE__
+     context.helper_candidates.push_back(pt::ExecutablePath().parent_path() / "extractor" / "PT.PkgExtract");
+     context.program_dir_read_only = UserDataDir() != pt::ExecutableDir() / "data";
++#elif !defined(_WIN32)
++    context.program_dir_read_only = UserDataDir() != pt::ExecutableDir() / "data";
+ #endif
+     context.missing_packages = [](const std::filesystem::path& dir) {
+         pt::Vfs check;

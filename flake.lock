@@ -2560,6 +2560,23 @@
         "type": "github"
       }
     },
+    "pt-pc-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1792709730,
+        "narHash": "sha256-1iEKVrKdPppdKsOYMt91beNRqxmFM+NBg3NlYL3ctcg=",
+        "owner": "LoreanXavier",
+        "repo": "pt-pc",
+        "rev": "3b1392abe5215773d4c353f5bc1ecb85233be68a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LoreanXavier",
+        "ref": "v1.0.8",
+        "repo": "pt-pc",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "agenix": "agenix",
@@ -2608,6 +2625,7 @@
         "packwiz-lt-aoc-aeronautics": "packwiz-lt-aoc-aeronautics",
         "plasma-manager": "plasma-manager",
         "pre-commit-hooks": "pre-commit-hooks_4",
+        "pt-pc-src": "pt-pc-src",
         "shadow-nix": "shadow-nix",
         "smithay-spicy-src": "smithay-spicy-src",
         "systems": "systems_16",

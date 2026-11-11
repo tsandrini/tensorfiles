@@ -1,0 +1,10 @@
+GCC instantiates ~unique_ptr<FrameGeneration> for the stub's `return nullptr`
+and needs the complete type; clang (upstream's Linux compiler) does not.
+
+--- a/src/engine/render/upscale/metalfx_stub.cpp
++++ b/src/engine/render/upscale/metalfx_stub.cpp
+@@ -1,4 +1,5 @@
+ #include "engine/render/upscale/upscale.h"
++#include "engine/render/upscale/frame_generation.h"
+
+ #if !defined(PT_WITH_METALFX)
