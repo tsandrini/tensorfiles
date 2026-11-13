@@ -98,6 +98,7 @@ in
       inherit localFlake;
     };
     programs_thunderbird = importApply ./programs/thunderbird.nix { inherit localFlake; };
+    programs_wayvr = importApply ./programs/wayvr.nix { inherit localFlake; };
 
     # -- security --
 
