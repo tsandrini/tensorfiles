@@ -106,6 +106,7 @@ in
     services_monitoring_loki = importApply ./services/monitoring/loki.nix {
       inherit localFlake;
     };
+    services_wivrn = importApply ./services/wivrn.nix { inherit localFlake; };
 
     # -- system --
     system_impermanence = importApply ./system/impermanence.nix { inherit localFlake inputs; };
