@@ -95,6 +95,12 @@ in
 
     security.agenix.enable = true;
 
+    # Quest 3 PC VR streaming
+    services.wivrn = {
+      enable = true;
+      gpu = "1002:7550"; # RX 9070 XT; the Radeon 610M iGPU shares the vendor id
+    };
+
     # NOTE: no remote-builders client here -- binfmt aarch64 on 16 Zen 5 cores
     # beats building on the Pi, and it would need hosts/navibundle/nix-remote-builder-ssh-key
 
@@ -237,6 +243,10 @@ in
 
     tensorfiles.hm = {
       programs.evnia-panel.enable = true;
+      programs.wayvr = {
+        enable = true;
+        outputScales."DP-1" = 1.5; # Evnia: 4K is too dense for the headset
+      };
       programs.dank-calendar.enable = true;
       profiles.graphical-dms-niri.enable = true;
       programs.niri-flake = {
